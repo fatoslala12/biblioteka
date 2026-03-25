@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+from urllib.parse import urlparse
 
 import environ
 
@@ -37,6 +39,17 @@ if DEBUG and "testserver" not in ALLOWED_HOSTS:
 
 # HTTPS në Render / proxy; CSRF për login admin
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+
+# Render.com: variabla të vendosura automatikisht (pa nevojë për ALLOWED_HOSTS manual)
+_render_url = os.environ.get("RENDER_EXTERNAL_URL", "").strip()
+if _render_url:
+    _pu = urlparse(_render_url)
+    if _pu.netloc:
+        ALLOWED_HOSTS = list(dict.fromkeys([*ALLOWED_HOSTS, _pu.netloc, ".onrender.com"]))
+        _origin = f"{_pu.scheme}://{_pu.netloc}"
+        if _origin not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS = list(CSRF_TRUSTED_ORIGINS) + [_origin]
+
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SESSION_COOKIE_SECURE = True

@@ -1,0 +1,207 @@
+/**
+ * Smart Library — Premium Skeleton Loading States
+ * Shimmer-style, modern, with brand identity
+ */
+
+/* Shimmer keyframes — smooth wave across */
+@keyframes sl-shimmer {
+  0% { transform: translateX(-100%) skewX(-12deg); }
+  100% { transform: translateX(200%) skewX(-12deg); }
+}
+
+@keyframes sl-shimmer-subtle {
+  0% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.4; }
+}
+
+/* Base skeleton — gradient background + shimmer overlay */
+.sl-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    105deg,
+    rgba(148, 163, 184, 0.18) 0%,
+    rgba(148, 163, 184, 0.26) 35%,
+    rgba(148, 163, 184, 0.18) 70%
+  );
+  border-radius: 12px;
+}
+
+.dark .sl-skeleton,
+.sl-skeleton.sl-skeleton-dark {
+  background: linear-gradient(
+    105deg,
+    rgba(71, 85, 105, 0.25) 0%,
+    rgba(71, 85, 105, 0.4) 35%,
+    rgba(71, 85, 105, 0.25) 70%
+  );
+}
+
+/* Shimmer overlay */
+.sl-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 45%,
+    rgba(255, 255, 255, 0.65) 50%,
+    rgba(255, 255, 255, 0.5) 55%,
+    transparent 100%
+  );
+  animation: sl-shimmer 1.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.dark .sl-skeleton::after,
+.sl-skeleton.sl-skeleton-dark::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 45%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.08) 55%,
+    transparent 100%
+  );
+}
+
+/* Brand-tinted variant for admin/modals */
+.sl-skeleton-brand {
+  background: linear-gradient(
+    105deg,
+    rgba(49, 145, 137, 0.08) 0%,
+    rgba(49, 145, 137, 0.16) 35%,
+    rgba(49, 145, 137, 0.08) 70%
+  ) !important;
+}
+
+.sl-skeleton-brand::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.6) 45%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0.6) 55%,
+    transparent 100%
+  ) !important;
+}
+
+/* Variants */
+.sl-skeleton-block { height: 24px; min-width: 60px; }
+.sl-skeleton-block-sm { height: 14px; min-width: 40px; }
+.sl-skeleton-block-lg { height: 32px; min-width: 120px; }
+.sl-skeleton-text { height: 1em; min-width: 80%; border-radius: 6px; }
+.sl-skeleton-text-short { width: 45%; }
+.sl-skeleton-avatar { width: 34px; height: 34px; border-radius: 9999px; }
+.sl-skeleton-avatar-lg { width: 48px; height: 48px; border-radius: 9999px; }
+.sl-skeleton-input { height: 42px; width: 100%; border-radius: 12px; }
+.sl-skeleton-card { height: 120px; width: 100%; border-radius: 20px; }
+
+/* Tailwind-utility style (inline) */
+.sl-skeleton-inline {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Admin/Bootstrap context — works inside form-control areas */
+.sl-skeleton-admin {
+  border-radius: 12px;
+  min-height: 42px;
+  background: linear-gradient(
+    105deg,
+    rgba(49, 145, 137, 0.06) 0%,
+    rgba(49, 145, 137, 0.14) 35%,
+    rgba(49, 145, 137, 0.06) 70%
+  ) !important;
+}
+
+.sl-skeleton-admin::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.7) 45%,
+    rgba(255, 255, 255, 0.95) 50%,
+    rgba(255, 255, 255, 0.7) 55%,
+    transparent 100%
+  ) !important;
+}
+
+/* Member row skeleton (avatar + 2 lines) */
+.sl-skeleton-member {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+}
+
+.sl-skeleton-member .sl-skeleton-avatar { flex-shrink: 0; }
+.sl-skeleton-member .sl-skeleton-text { height: 14px; }
+.sl-skeleton-member .sl-skeleton-text-sm { height: 10px; width: 60%; margin-top: 6px; }
+
+/* Card grid skeleton (for catalog, etc.) */
+.sl-skeleton-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.sl-skeleton-catalog-card {
+  border-radius: 24px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.dark .sl-skeleton-catalog-card {
+  background: rgba(15, 23, 42, 0.4);
+  border-color: rgba(71, 85, 105, 0.3);
+}
+
+.sl-skeleton-catalog-card .sl-skeleton-block-lg { margin-bottom: 12px; }
+.sl-skeleton-catalog-card .sl-skeleton-block { margin-bottom: 8px; width: 70%; }
+.sl-skeleton-catalog-card .sl-skeleton-tags {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+.sl-skeleton-catalog-card .sl-skeleton-tags span {
+  width: 56px;
+  height: 24px;
+  border-radius: 9999px;
+}
+
+/* Table row skeleton (admin changelist) */
+.sl-skeleton-table-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.sl-skeleton-table-row .sl-skeleton-block { flex: 1; max-width: 140px; }
+.sl-skeleton-table-row .sl-skeleton-block-sm { flex: 0.6; }
+
+/* Pulse fallback for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .sl-skeleton::after,
+  .sl-skeleton-brand::after,
+  .sl-skeleton-admin::after {
+    animation: sl-shimmer-subtle 2s ease-in-out infinite;
+    background: rgba(255, 255, 255, 0.3) !important;
+  }
+}
+
+/* Prevent layout shift */
+.sl-skeleton-wrap {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+}
+
+.sl-skeleton-wrap.sl-skeleton-wrap-multiline {
+  min-height: 56px;
+  align-items: flex-start;
+}

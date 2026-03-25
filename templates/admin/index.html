@@ -1,0 +1,858 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static jazzmin admin_stats %}
+{% get_jazzmin_ui_tweaks as jazzmin_ui %}
+
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    /* —— Dashboard i njësuar: një theme për të gjithë faqen —— */
+    .sl-dashboard { padding-bottom: 2rem; }
+    .sl-dashboard .sl-section-title-row { margin-bottom: 0.5rem; margin-top: 0; }
+    .sl-dashboard .sl-section-title-row + .row { margin-top: 0; }
+    .sl-dashboard .sl-stats-row { margin-top: 0; }
+    .sl-dashboard .sl-top-row { margin-top: 1.5rem; }
+    .sl-dashboard .sl-section-title {
+      font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 1.25rem;
+      letter-spacing: -0.03em; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .sl-dashboard .sl-section-title::before {
+      content: ''; display: inline-block; width: 4px; height: 1.4rem; border-radius: 4px;
+      background: linear-gradient(180deg, #0d9488, #06b6d4);
+    }
+    .sl-dashboard .card {
+      border: 1px solid rgba(15,23,42,.06); border-radius: 20px; overflow: hidden;
+      box-shadow: 0 1px 3px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.06);
+      transition: transform .25s ease, box-shadow .25s ease;
+      background: #fff;
+    }
+    .sl-dashboard .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(15,23,42,.1), 0 4px 12px rgba(15,23,42,.06);
+    }
+    .sl-dashboard .card-header {
+      background: linear-gradient(180deg, #fafbfc 0%, #f1f5f9 100%);
+      border-bottom: 1px solid rgba(15,23,42,.06); font-weight: 700; color: #0f172a;
+      font-size: 0.95rem; padding: 0.85rem 1.1rem; letter-spacing: -0.01em;
+    }
+    .sl-dashboard .card-header h5 { font-size: 0.95rem; font-weight: 700; color: #0f172a; }
+    .sl-dashboard .card-body {
+      padding: 1rem 1.1rem; color: #334155;
+    }
+    .sl-dashboard .sl-stats-row .card .card-body {
+      padding: 1rem 1.15rem; display: flex; align-items: center; justify-content: space-between;
+    }
+    .sl-dashboard .sl-stats-row .card .text-muted { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #64748b !important; }
+    .sl-dashboard .sl-stats-row .card .h3 { font-size: 1.5rem; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; }
+    .sl-dashboard .sl-stats-row .card .h2.m-0 { color: #0d9488 !important; font-size: 1.5rem; opacity: .9; }
+    .sl-dashboard .sl-top-row .card .card-body { padding: 0; }
+    .sl-dashboard .sl-top-row .list-group-item {
+      padding: 0.85rem 1.1rem; border-color: rgba(15,23,42,.06) !important; font-size: 0.9rem;
+    }
+    .sl-dashboard .sl-top-row .list-group-item:hover { background: rgba(13,148,136,.03); }
+    .sl-dashboard .sl-top-row .sl-stealth-link { color: #0f172a; font-weight: 600; }
+    .sl-dashboard .sl-top-row .sl-stealth-link:hover { color: #0d9488; }
+    .sl-dashboard .sl-top-row .badge-pill {
+      background: linear-gradient(135deg, #0d9488, #0f766e) !important; color: #fff; font-weight: 700;
+      padding: 0.35rem 0.65rem; border-radius: 999px; font-size: 0.75rem;
+    }
+    .sl-dashboard .sl-top-row .sl-member-avatar {
+      width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+    }
+    .sl-dashboard .sl-top-row .sl-member-avatar-fallback {
+      width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, rgba(13,148,136,.2), rgba(13,148,136,.35));
+      color: #0d9488; font-weight: 800; font-size: 1rem;
+    }
+    .sl-dashboard .sl-actions-row .card { margin-bottom: 1rem; }
+    .sl-dashboard .sl-actions-row .card:last-child { margin-bottom: 0; }
+    .sl-dashboard .sl-actions-row { margin-top: 1.5rem; }
+    .sl-dashboard .sl-actions-row .table { font-size: 0.9rem; }
+    .sl-dashboard .sl-actions-row .table td { padding: 0.6rem 0.75rem; vertical-align: middle; }
+    .sl-dashboard .sl-actions-row .table a { color: #0f172a; font-weight: 500; }
+    .sl-dashboard .sl-actions-row .table a:hover { color: #0d9488; }
+    .sl-dashboard .sl-actions-row .btn-primary { background: linear-gradient(135deg, #0d9488, #0f766e); border: none; font-weight: 600; }
+    .sl-dashboard .sl-actions-row .btn-primary:hover { background: linear-gradient(135deg, #0f766e, #115e59); }
+    .sl-dashboard #content-related .module {
+      background: #fff; border-radius: 20px; overflow: hidden;
+      box-shadow: 0 1px 3px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.06);
+      border: 1px solid rgba(15,23,42,.06); padding: 1.1rem;
+    }
+    .sl-dashboard #content-related h4 {
+      font-size: 1rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem;
+      padding-bottom: 0.5rem; border-bottom: 3px solid transparent;
+      border-image: linear-gradient(90deg, #0d9488, #06b6d4) 1;
+    }
+    .sl-dashboard #content-related .timeline-item { font-size: 0.85rem; }
+    .sl-dashboard #content-related .timeline-item a { color: #0d9488; font-weight: 600; }
+    .sl-dashboard #content-related .time { color: #64748b; font-size: 0.75rem; }
+
+    /* —— Analitikë: karta speciale (mbetën si më parë) —— */
+    .sl-analytics { margin-top: 1.5rem; padding-bottom: 1rem; }
+    /* Karta periudhave — gradient i butë */
+    .sl-analytics .sl-period-card {
+      background: linear-gradient(145deg, #0d9488 0%, #0f766e 50%, #115e59 100%);
+      color: #fff; position: relative; overflow: hidden; border: none !important;
+    }
+    .sl-analytics .sl-period-card::before {
+      content: ''; position: absolute; top: -50%; right: -30%; width: 80%; height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .sl-analytics .sl-period-card .card-body { position: relative; z-index: 1; padding: 1.25rem 1.35rem; }
+    .sl-analytics .sl-period-card .sl-label {
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+      opacity: .9; margin-bottom: 0.25rem;
+    }
+    .sl-analytics .sl-period-card .sl-num {
+      font-size: 2rem; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em;
+    }
+    .sl-analytics .sl-period-card .sl-delta {
+      font-size: 0.8rem; margin-top: 0.5rem; opacity: .88; font-weight: 500;
+    }
+    .sl-analytics .sl-period-card.sl-compare-up .sl-delta { color: #a7f3d0; }
+    .sl-analytics .sl-period-card.sl-compare-down .sl-delta { color: #fecaca; }
+    .sl-analytics .sl-chart-card .card-header { font-size: 0.9rem; }
+    /* Gjoba — e kuqe e kontrolluar */
+    .sl-analytics .sl-fines-card {
+      background: linear-gradient(145deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
+      color: #fff; position: relative; overflow: hidden; border: none !important;
+    }
+    .sl-analytics .sl-fines-card::before {
+      content: ''; position: absolute; top: -40%; left: -20%; width: 60%; height: 180%;
+      background: radial-gradient(circle, rgba(255,255,255,.1) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .sl-analytics .sl-fines-card .card-body { position: relative; z-index: 1; padding: 1.25rem 1.35rem; }
+    .sl-analytics .sl-fines-card .sl-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; opacity: .92; }
+    .sl-analytics .sl-fines-card .sl-num { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; }
+    .sl-analytics .sl-fines-card .sl-delta { font-size: 0.8rem; margin-top: 0.35rem; opacity: .88; }
+    .sl-analytics .sl-copies-pie-card .card-body { padding: 1.1rem; }
+    .sl-analytics .sl-copies-pie-card .sl-label { font-size: 0.8rem; font-weight: 700; color: #64748b; }
+    /* Rezervime në pritje — vjollce elegante */
+    .sl-analytics .sl-reservations-pending-card {
+      background: linear-gradient(145deg, #6366f1 0%, #4f46e5 50%, #4338ca 100%);
+      color: #fff; position: relative; overflow: hidden; text-decoration: none; display: block;
+      transition: transform .25s ease, box-shadow .25s ease; border: none !important;
+    }
+    .sl-analytics .sl-reservations-pending-card:hover { transform: translateY(-4px); color: #fff; text-decoration: none; }
+    .sl-analytics .sl-reservations-pending-card::before {
+      content: ''; position: absolute; bottom: -30%; right: -20%; width: 70%; height: 120%;
+      background: radial-gradient(circle, rgba(255,255,255,.12) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .sl-analytics .sl-reservations-pending-card .card-body { position: relative; z-index: 1; padding: 1.25rem 1.35rem; }
+    .sl-analytics .sl-reservations-pending-card .sl-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; opacity: .9; }
+    .sl-analytics .sl-reservations-pending-card .sl-num { font-size: 1.6rem; font-weight: 800; }
+    .sl-analytics .sl-reservations-pending-card .sl-delta { font-size: 0.8rem; margin-top: 0.35rem; opacity: .88; }
+    /* Top lista — rreshta me hover, shirita të rrumbullakosura */
+    .sl-analytics .sl-top-table { font-size: 0.875rem; }
+    .sl-analytics .sl-top-table .d-flex { transition: background .15s ease; border-radius: 10px; }
+    .sl-analytics .sl-top-table .d-flex:hover { background: rgba(15,23,42,.03); }
+    .sl-analytics .sl-top-table .sl-bar-wrap {
+      background: #e2e8f0; border-radius: 999px; height: 6px; overflow: hidden; min-width: 48px;
+    }
+    .sl-analytics .sl-top-table .sl-bar-fill {
+      height: 100%; border-radius: 999px;
+      background: linear-gradient(90deg, #0d9488, #14b8a6); transition: width .4s ease;
+    }
+    .sl-analytics .sl-top-table a { color: #0f172a; font-weight: 600; transition: color .15s ease; }
+    .sl-analytics .sl-top-table a:hover { color: #0d9488; }
+    /* Tabela huazime që skadojnë */
+    .sl-analytics .sl-due-soon-table { font-size: 0.85rem; }
+    .sl-analytics .sl-due-soon-table thead th {
+      font-weight: 700; color: #64748b; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em;
+      padding: 0.75rem 1rem; border-bottom: 1px solid #e2e8f0;
+    }
+    .sl-analytics .sl-due-soon-table tbody tr { transition: background .15s ease; }
+    .sl-analytics .sl-due-soon-table tbody tr:hover { background: rgba(13,148,136,.04); }
+    .sl-analytics .sl-due-soon-table td { padding: 0.65rem 1rem; vertical-align: middle; }
+    .sl-analytics .sl-due-soon-table a { color: #0d9488; font-weight: 600; }
+    .sl-analytics .sl-due-soon-table a:hover { color: #0f766e; text-decoration: underline; }
+    /* Butonat Shpejt */
+    .sl-analytics .sl-quick-actions .btn {
+      font-weight: 700; padding: 0.6rem 1rem; border-radius: 12px;
+      transition: transform .15s ease, box-shadow .2s ease;
+    }
+    .sl-analytics .sl-quick-actions .btn:hover { transform: translateY(-1px); }
+    .sl-analytics .sl-quick-actions .btn-success {
+      background: linear-gradient(135deg, #0d9488, #0f766e); border: none; color: #fff;
+    }
+    .sl-analytics .sl-quick-actions .btn-success:hover { background: linear-gradient(135deg, #0f766e, #115e59); color: #fff; box-shadow: 0 4px 14px rgba(13,148,136,.35); }
+    .sl-analytics .text-teal { color: #0d9488 !important; }
+  </style>
+{% endblock %}
+
+{% block content_title %} Paneli {% endblock %}
+
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'admin:index' %}">Kryefaqja</a></li>
+        <li class="breadcrumb-item">Paneli</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="sl-dashboard">
+    {% get_side_menu using="app_list" as dashboard_list %}
+    {% if dashboard_list %}
+        {% widthratio dashboard_list|length 2 1 as middle %}
+    {% endif %}
+    {% top_members_by_loans 5 as top_members %}
+    {% top_books_by_loans 5 as top_books %}
+    {% dashboard_loans_by_month 12 as chart_loans_data %}
+    {% dashboard_reservations_by_month 12 as chart_reservations_data %}
+    {% dashboard_loans_today as loans_today %}
+    {% dashboard_loans_yesterday as loans_yesterday %}
+    {% dashboard_loans_this_week as loans_this_week %}
+    {% dashboard_loans_prev_week as loans_prev_week %}
+    {% dashboard_loans_this_month as loans_this_month %}
+    {% dashboard_loans_prev_month as loans_prev_month %}
+    {% dashboard_top_books 15 as top_books_15 %}
+    {% dashboard_top_authors 10 as top_authors_10 %}
+    {% dashboard_top_members 15 as top_members_15 %}
+    {% dashboard_unpaid_fines_total as unpaid_fines_total %}
+    {% dashboard_unpaid_fines_member_count as unpaid_fines_members %}
+    {% dashboard_copies_on_loan as copies_on_loan %}
+    {% stat_available_copies as copies_available %}
+    {% dashboard_loans_due_soon as loans_due_soon %}
+    {% dashboard_reservations_pending_count as reservations_pending %}
+    {{ chart_loans_data|json_script:"chartLoansData" }}
+    {{ chart_reservations_data|json_script:"chartReservationsData" }}
+
+    <div class="row sl-section-title-row">
+      <div class="col-12">
+        <h5 class="sl-section-title">Statistikat kryesore</h5>
+      </div>
+    </div>
+
+    <div class="row sl-stats-row">
+      <div class="col-12">
+        <div class="row g-3">
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted text-xs font-weight-bold">Libra</div>
+                            <div class="h3 m-0">{% stat_books %}</div>
+                        </div>
+                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-book"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted text-xs font-weight-bold">Zhanre</div>
+                            <div class="h3 m-0">{% stat_genres %}</div>
+                        </div>
+                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-tags"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted text-xs font-weight-bold">Huazime aktive</div>
+                            <div class="h3 m-0">{% stat_active_loans %}</div>
+                        </div>
+                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-exchange-alt"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted text-xs font-weight-bold">Anëtarë</div>
+                            <div class="h3 m-0">{% stat_members %}</div>
+                        </div>
+                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-id-card"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted text-xs font-weight-bold">Kërkesa (në pritje)</div>
+                            <div class="h3 m-0">{% stat_requests_pending %}</div>
+                        </div>
+                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-inbox"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted text-xs font-weight-bold">Pranime</div>
+                            <div class="h3 m-0">{% stat_requests_approved %}</div>
+                        </div>
+                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-check-circle"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted text-xs font-weight-bold">Refuzime</div>
+                            <div class="h3 m-0">{% stat_requests_rejected %}</div>
+                        </div>
+                        <div class="h2 m-0 text-danger"><i class="fas fa-times-circle"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted text-xs font-weight-bold">Mes. ditë të mbajtura</div>
+                            <div class="h3 m-0">{% stat_avg_days_kept %}</div>
+                        </div>
+                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-calendar-day"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted text-xs font-weight-bold">Autorë</div>
+                            <div class="h3 m-0">{% stat_authors %}</div>
+                        </div>
+                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-pen-nib"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted text-xs font-weight-bold">Botues</div>
+                            <div class="h3 m-0">{% stat_publishers %}</div>
+                        </div>
+                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-building"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted text-xs font-weight-bold">Kopje gjithsej</div>
+                            <div class="h3 m-0">{% stat_copies %}</div>
+                        </div>
+                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-copy"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted text-xs font-weight-bold">Kopje të lira</div>
+                            <div class="h3 m-0">{% stat_available_copies %}</div>
+                        </div>
+                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-check-double"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row sl-section-title-row">
+        <div class="col-12">
+            <h5 class="sl-section-title">Top performuesit</h5>
+        </div>
+    </div>
+
+    <div class="row sl-top-row">
+        <div class="col-lg-6 col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="m-0 font-weight-bold">Top 5 anëtarët me më shumë huazime</h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if top_members %}
+                        <ul class="list-group list-group-flush">
+                            {% for member in top_members %}
+                                <li class="list-group-item d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        {% if member.photo %}
+                                            <img src="{{ member.photo.url }}" alt="{{ member.full_name }}" class="sl-member-avatar">
+                                        {% else %}
+                                            <span class="sl-member-avatar sl-member-avatar-fallback">
+                                                {{ member.full_name|default:member.member_no|first|upper }}
+                                            </span>
+                                        {% endif %}
+                                            <div class="ml-2">
+                                                <div class="font-weight-bold">
+                                                    <a href="/panel/members/{{ member.id }}/" class="sl-stealth-link">{{ member.full_name|default:member.member_no }}</a>
+                                                </div>
+                                            <small class="text-muted">{{ member.member_no }}</small>
+                                        </div>
+                                    </div>
+                                    <span class="badge badge-primary badge-pill">{{ member.total_loans }} libra</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="p-3 text-muted">Nuk ka të dhëna ende.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="m-0 font-weight-bold">Top 5 librat më të lexuar</h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if top_books %}
+                        <ul class="list-group list-group-flush">
+                            {% for book in top_books %}
+                                <li class="list-group-item d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <div class="font-weight-bold">
+                                            <a href="/admin/catalog/book/{{ book.id }}/change/" class="sl-stealth-link">{{ book.title }}</a>
+                                        </div>
+                                        <small class="text-muted">
+                                            {% if book.authors.first %}{{ book.authors.first.name }}{% else %}Pa autor{% endif %}
+                                        </small>
+                                    </div>
+                                    <span class="badge badge-info badge-pill">{{ book.total_loans }} huazime</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="p-3 text-muted">Nuk ka të dhëna ende.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard analitikë -->
+    <div class="row sl-section-title-row sl-analytics">
+      <div class="col-12">
+        <h5 class="sl-section-title">Analitikë dhe trendet</h5>
+      </div>
+    </div>
+
+    <div class="row sl-analytics mb-4">
+      <div class="col-12">
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <div class="card sl-period-card {% if loans_today >= loans_yesterday %}sl-compare-up{% else %}sl-compare-down{% endif %}">
+              <div class="card-body">
+                <div class="sl-label"><i class="fas fa-calendar-day mr-1"></i> Huazime sot</div>
+                <div class="sl-num">{{ loans_today }}</div>
+                <div class="sl-delta">Dje: {{ loans_yesterday }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card sl-period-card {% if loans_this_week >= loans_prev_week %}sl-compare-up{% else %}sl-compare-down{% endif %}">
+              <div class="card-body">
+                <div class="sl-label"><i class="fas fa-calendar-week mr-1"></i> Këtë javë</div>
+                <div class="sl-num">{{ loans_this_week }}</div>
+                <div class="sl-delta">Javën e kaluar: {{ loans_prev_week }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card sl-period-card {% if loans_this_month >= loans_prev_month %}sl-compare-up{% else %}sl-compare-down{% endif %}">
+              <div class="card-body">
+                <div class="sl-label"><i class="fas fa-calendar-alt mr-1"></i> Këtë muaj</div>
+                <div class="sl-num">{{ loans_this_month }}</div>
+                <div class="sl-delta">Muajin e kaluar: {{ loans_prev_month }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+          <div class="col-lg-6">
+            <div class="card sl-chart-card">
+              <div class="card-header"><i class="fas fa-chart-bar mr-2 text-teal"></i> Huazime sipas muajve (12 muajt e fundit)</div>
+              <div class="card-body p-3"><canvas id="chartLoans" height="220"></canvas></div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card sl-chart-card">
+              <div class="card-header"><i class="fas fa-chart-line mr-2" style="color:#6366f1;"></i> Rezervime sipas muajve (12 muajt e fundit)</div>
+              <div class="card-body p-3"><canvas id="chartReservations" height="220"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <div class="card sl-fines-card">
+              <div class="card-body">
+                <div class="sl-label"><i class="fas fa-file-invoice-dollar mr-1"></i> Gjoba të papaguara</div>
+                <div class="sl-num">{{ unpaid_fines_total|floatformat:0 }} €</div>
+                <div class="sl-delta">{{ unpaid_fines_members }} anëtarë me gjoba</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card sl-copies-pie-card">
+              <div class="card-body text-center">
+                <div class="sl-label mb-2"><i class="fas fa-pie-chart mr-1"></i> Kopje — në huazim vs të lira</div>
+                <canvas id="chartCopies" height="140"></canvas>
+                <div class="d-flex justify-content-center gap-3 mt-2 small font-weight-600" style="color:#64748b;">
+                  <span><span class="d-inline-block rounded-circle" style="width:10px;height:10px;background:#22c55e;"></span> Të lira: {{ copies_available }}</span>
+                  <span><span class="d-inline-block rounded-circle" style="width:10px;height:10px;background:#0d9488;"></span> Në huazim: {{ copies_on_loan }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <a href="/admin/circulation/reservationrequest/" class="text-decoration-none">
+              <div class="card sl-reservations-pending-card">
+                <div class="card-body">
+                  <div class="sl-label"><i class="fas fa-inbox mr-1"></i> Rezervime në pritje</div>
+                  <div class="sl-num">{{ reservations_pending }}</div>
+                  <div class="sl-delta">Kliko për listën →</div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+          <div class="col-lg-4">
+            <div class="card sl-chart-card">
+              <div class="card-header py-2"><i class="fas fa-book-open mr-2 text-teal"></i> Top 15 librat më të huazuar</div>
+              <div class="card-body p-2 sl-top-table">
+                {% for b in top_books_15 %}
+                <div class="d-flex align-items-center justify-content-between py-1 px-2 border-bottom border-light">
+                  <span class="text-truncate flex-grow-1 mr-2" title="{{ b.title }}"><a href="/admin/catalog/book/{{ b.id }}/change/" class="text-dark">{{ b.title|truncatechars:28 }}</a></span>
+                  <span class="small font-weight-bold text-nowrap">{{ b.total_loans }}</span>
+                  <div class="sl-bar-wrap ml-2" style="width:60px;"><div class="sl-bar-fill" style="width:{% widthratio b.total_loans top_books_15.0.total_loans 100 %}%;"></div></div>
+                </div>
+                {% empty %}
+                <p class="text-muted small mb-0">Nuk ka të dhëna.</p>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card sl-chart-card">
+              <div class="card-header py-2"><i class="fas fa-pen-fancy mr-2 text-teal"></i> Top 10 autorët më të lexuar</div>
+              <div class="card-body p-2 sl-top-table">
+                {% for a in top_authors_10 %}
+                <div class="d-flex align-items-center justify-content-between py-1 px-2 border-bottom border-light">
+                  <span class="text-truncate flex-grow-1"><a href="/admin/catalog/author/{{ a.id }}/change/" class="text-dark">{{ a.name|truncatechars:24 }}</a></span>
+                  <span class="small font-weight-bold">{{ a.total_loans }}</span>
+                  <div class="sl-bar-wrap ml-2" style="width:50px;"><div class="sl-bar-fill" style="width:{% widthratio a.total_loans top_authors_10.0.total_loans 100 %}%;"></div></div>
+                </div>
+                {% empty %}
+                <p class="text-muted small mb-0">Nuk ka të dhëna.</p>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card sl-chart-card">
+              <div class="card-header py-2"><i class="fas fa-users mr-2 text-teal"></i> Top 15 anëtarët më aktivë</div>
+              <div class="card-body p-2 sl-top-table">
+                {% for m in top_members_15 %}
+                <div class="d-flex align-items-center justify-content-between py-1 px-2 border-bottom border-light">
+                  <span class="text-truncate flex-grow-1"><a href="/admin/accounts/memberprofile/{{ m.id }}/change/" class="text-dark">{{ m.full_name|default:m.member_no|truncatechars:22 }}</a></span>
+                  <span class="small font-weight-bold">{{ m.total_loans }}</span>
+                  <div class="sl-bar-wrap ml-2" style="width:50px;"><div class="sl-bar-fill" style="width:{% widthratio m.total_loans top_members_15.0.total_loans 100 %}%;"></div></div>
+                </div>
+                {% empty %}
+                <p class="text-muted small mb-0">Nuk ka të dhëna.</p>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-lg-8">
+            <div class="card sl-chart-card">
+              <div class="card-header py-2 d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-clock mr-2 text-teal"></i> Huazime që skadojnë së shpejti (1–3 ditët e ardhshme)</span>
+                <a href="/admin/circulation/loan/?status__exact=ACTIVE" class="btn btn-sm btn-outline-primary rounded-pill">Të gjitha</a>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive sl-due-soon-table">
+                  <table class="table table-hover table-sm mb-0">
+                    <thead><tr><th>Anëtari</th><th>Kopja / Libri</th><th>Afati i kthimit</th><th></th></tr></thead>
+                    <tbody>
+                      {% for loan in loans_due_soon %}
+                      <tr>
+                        <td>{{ loan.member.full_name|default:loan.member.member_no }}</td>
+                        <td>{{ loan.copy.barcode }} — {{ loan.copy.book.title|truncatechars:35 }}</td>
+                        <td>{{ loan.due_at|date:"d.m.Y H:i" }}</td>
+                        <td><a href="/admin/circulation/loan/{{ loan.id }}/change/">Hap</a></td>
+                      </tr>
+                      {% empty %}
+                      <tr><td colspan="4" class="text-muted text-center py-3">Asnjë huazim që skadon në 1–3 ditë.</td></tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card sl-chart-card h-100">
+              <div class="card-header py-2"><i class="fas fa-bolt mr-2 text-teal"></i> Shpejt</div>
+              <div class="card-body sl-quick-actions">
+                <a href="/admin/circulation/loan/" class="btn btn-block btn-success mb-2"><i class="fas fa-plus-circle mr-1"></i> Shto huazim</a>
+                <a href="/admin/circulation/reservation/" class="btn btn-block btn-outline-primary mb-2"><i class="fas fa-calendar-check mr-1"></i> Shto rezervim</a>
+                <a href="/admin/fines/fine/" class="btn btn-block btn-outline-secondary"><i class="fas fa-file-invoice-dollar mr-1"></i> Shiko gjobat</a>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+    (function() {
+      var loansEl = document.getElementById('chartLoans');
+      var resEl = document.getElementById('chartReservations');
+      var copiesEl = document.getElementById('chartCopies');
+      var loansData = [], resData = [];
+      try {
+        var rawLoans = document.getElementById('chartLoansData');
+        if (rawLoans) { loansData = JSON.parse(rawLoans.textContent); }
+        var rawRes = document.getElementById('chartReservationsData');
+        if (rawRes) { resData = JSON.parse(rawRes.textContent); }
+      } catch (e) {}
+      if (typeof Chart !== 'undefined') {
+        Chart.defaults.font.family = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+        Chart.defaults.color = '#64748b';
+        if (loansEl && loansData.length) {
+          var counts = loansData.map(function(x) { return x.count; });
+          var maxVal = Math.max.apply(null, counts) || 1;
+          new Chart(loansEl, {
+            type: 'bar',
+            data: {
+              labels: loansData.map(function(x) { return x.month; }),
+              datasets: [{
+                label: 'Huazime',
+                data: counts,
+                backgroundColor: counts.map(function(c) { return 'rgba(13,148,136,' + (0.5 + 0.35 * c / maxVal) + ')'; }),
+                borderColor: '#0d9488',
+                borderWidth: 1,
+                borderRadius: 6,
+                borderSkipped: false
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+              plugins: { legend: { display: false } },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: { stepSize: 1, font: { size: 11 } },
+                  grid: { color: 'rgba(15,23,42,0.06)' }
+                },
+                x: {
+                  ticks: { font: { size: 10 }, maxRotation: 45 },
+                  grid: { display: false }
+                }
+              }
+            }
+          });
+        }
+        if (resEl && resData.length) {
+          new Chart(resEl, {
+            type: 'line',
+            data: {
+              labels: resData.map(function(x) { return x.month; }),
+              datasets: [{
+                label: 'Rezervime',
+                data: resData.map(function(x) { return x.count; }),
+                borderColor: '#6366f1',
+                borderWidth: 2,
+                backgroundColor: 'rgba(99,102,241,0.08)',
+                fill: true,
+                tension: 0.35,
+                pointBackgroundColor: '#6366f1',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+              plugins: { legend: { display: false } },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: { stepSize: 1, font: { size: 11 } },
+                  grid: { color: 'rgba(15,23,42,0.06)' }
+                },
+                x: {
+                  ticks: { font: { size: 10 }, maxRotation: 45 },
+                  grid: { display: false }
+                }
+              }
+            }
+          });
+        }
+        if (copiesEl) {
+          var onLoan = {{ copies_on_loan }};
+          var avail = {{ copies_available }};
+          new Chart(copiesEl, {
+            type: 'doughnut',
+            data: {
+              labels: ['Të lira', 'Në huazim'],
+              datasets: [{
+                data: [avail, onLoan],
+                backgroundColor: ['#22c55e', '#0d9488'],
+                borderWidth: 0,
+                hoverOffset: 6
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+              plugins: { legend: { display: false } },
+              cutout: '68%'
+            }
+          });
+        }
+      }
+    })();
+    </script>
+
+    <div class="row sl-section-title-row">
+      <div class="col-12">
+        <h5 class="sl-section-title">Veprime të shpejta</h5>
+      </div>
+    </div>
+
+    <div class="row sl-actions-row">
+      <div class="col-lg-9 col-12">
+        <div class="row g-3">
+            <div class="col-md-6 col-sm-12">
+                {% for app in dashboard_list %}
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="m-0 font-weight-bold">{{ app.name }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-sm">
+                                <tbody>
+                                {% for model in app.models %}
+                                    <tr>
+                                        <td>
+                                            {% if model.url %}<a href="{{ model.url }}">{{ model.name }}</a>{% else %}{{ model.name }}{% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group float-right">
+                                                {% if model.add_url %}
+                                                    <a href="{{ model.add_url }}" class="btn btn-xs btn-primary addlink">Shto të re</a>
+                                                {% endif %}
+                                                {% if model.url %}
+                                                    {% if model.view_only %}
+                                                        <a href="{{ model.url }}" class="btn btn-xs btn-outline-secondary viewlink">Shiko</a>
+                                                    {% else %}
+                                                        <a href="{{ model.url }}" class="btn btn-xs btn-outline-secondary changelink">{% if model.custom %}Hap{% else %}Ndrysho{% endif %}</a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {% if forloop.counter == middle|add:"0" %}
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                    {% endif %}
+
+                {% endfor %}
+                </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-12">
+        <div id="content-related">
+            <div class="module" id="recent-actions-module">
+                <h4 class="mb-3 font-weight-bold">Veprime së fundi</h4>
+                {% load log %}
+                {% get_admin_log 6 as admin_log for_user user %}
+                {% if not admin_log %}
+                    <p>{% trans 'None available' %}</p>
+                {% else %}
+                    <div class="timeline">
+                        {% for entry in admin_log %}
+                            <div>
+                                {% if entry.is_change %}
+                                    <i class="fas fa-edit bg-gray text-xs"></i>
+                                {% elif entry.is_deletion %}
+                                    <i class="fas fa-trash bg-danger text-xs"></i>
+                                {% elif entry.is_addition %}
+                                    <i class="fas fa-plus-circle bg-success text-xs"></i>
+                                {% endif %}
+
+                                <div class="timeline-item">
+                                    <span class="time"><i class="fas fa-clock"></i> {% blocktrans with timesince=entry.action_time|timesince %}{{ timesince }} më parë{% endblocktrans %}</span>
+                                    <h3 class="timeline-header no-border">
+                                        {% if entry.is_deletion or not entry.get_admin_url %}
+                                            {{ entry.object_repr }}
+                                        {% else %}
+                                            <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                                        {% endif %}
+
+                                        {% if entry.model %}
+                                            <span class="mini quiet">
+                                                {% filter capfirst %}
+                                                    {{ entry.model }}
+                                                {% endfilter %}
+                                            </span>
+                                        {% endif %}
+                                    </h3>
+                                    {% if not entry.is_deletion %}
+                                        <div class="timeline-body">
+                                            {% if entry.is_addition %}
+                                                {{ entry }}
+                                            {% else %}
+                                                <ul style="list-style: none; padding: 0;">
+                                                    {% action_message_to_list entry as action_message_list %}
+                                                    {% for action_message in action_message_list %}
+                                                        <li>{{ action_message.msg|style_bold_first_word }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+      </div>
+    </div>
+    </div><!-- .sl-dashboard -->
+{% endblock %}
+

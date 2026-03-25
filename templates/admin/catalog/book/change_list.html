@@ -1,0 +1,180 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_list jazzmin %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <style>
+    .app-catalog.model-book.change-list #changelist-filter { display:none !important; }
+    .app-catalog.model-book.change-list #change-list-filters {
+      padding-top: 10px !important;
+    }
+    .app-catalog.model-book.change-list #change-list-filters > .d-flex {
+      width: 100% !important;
+      flex-wrap: wrap !important;
+      justify-content: flex-start !important;
+      align-items: center !important;
+      gap: 16px !important;
+    }
+    .app-catalog.model-book.change-list #changelist-search {
+      flex: 0 1 420px !important;
+      max-width: 420px !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      gap: 12px !important;
+      margin-right: auto !important;
+    }
+    .app-catalog.model-book.change-list #searchbar {
+      flex: 1 1 auto !important;
+      width: auto !important;
+      min-width: 280px !important;
+    }
+    .app-catalog.model-book.change-list #changelist-search .btn,
+    .app-catalog.model-book.change-list #changelist-search input[type="submit"] {
+      border-radius:999px !important;
+      padding:8px 16px !important;
+      font-size:12px !important;
+      min-height:38px !important;
+      line-height:1.2 !important;
+    }
+    .app-catalog.model-book.change-list .sl-list-actions {
+      display:flex;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      gap:10px;
+      width:100%;
+    }
+    .app-catalog.model-book.change-list #result_list thead th,
+    .app-catalog.model-book.change-list #result_list thead th a {
+      color:#0f172a !important;
+      font-weight:900 !important;
+    }
+    .app-catalog.model-book.change-list #result_list tbody td {
+      color:#111827 !important;
+      font-weight:500;
+    }
+    .app-catalog.model-book.change-list #result_list tbody tr:hover {
+      background:rgba(49,145,137,.08) !important;
+    }
+    .app-catalog.model-book.change-list .object-tools {
+      flex: 1 1 620px !important;
+      justify-content: flex-end !important;
+      gap: 14px !important;
+    }
+    .app-catalog.model-book.change-list .object-tools li {
+      list-style:none !important;
+      margin:0 !important;
+    }
+    .app-catalog.model-book.change-list .object-tools > li:first-of-type {
+      flex: 1 1 auto !important;
+      min-width: 420px !important;
+    }
+    @media (max-width: 991.98px) {
+      .app-catalog.model-book.change-list #changelist-search {
+        max-width: none !important;
+        width: 100% !important;
+      }
+      .app-catalog.model-book.change-list .object-tools,
+      .app-catalog.model-book.change-list .object-tools > li:first-of-type {
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+      .app-catalog.model-book.change-list .sl-list-actions {
+        justify-content:flex-start !important;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block search %}
+  <div class="col-12 pb-4" id="change-list-filters">
+    <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+      <form id="changelist-search" class="d-flex flex-wrap gap-2 align-items-center flex-grow-1" method="GET">
+        {% if cl.search_fields %}
+          <input class="form-control" style="width: auto; min-width: 260px;" type="text" name="q" value="{{ cl.query }}" id="searchbar"
+              {% if cl.search_help_text %} placeholder="{{ cl.search_help_text }}{% endif %}>
+        {% endif %}
+
+        {% if cl.search_fields %}
+          <button type="submit" class="btn btn-primary">{% trans 'Kërko' %}</button>
+          {% if show_result_count %}
+            <span class="small quiet ms-2">
+              {% blocktrans count counter=cl.result_count %}{{ counter }} result{% plural %}{{ counter }} results{% endblocktrans %}
+              (<a href="?{% if cl.is_popup %}_popup=1{% endif %}">
+                {% if cl.show_full_result_count %}
+                  {% blocktrans with full_result_count=cl.full_result_count %}{{ full_result_count }} total{% endblocktrans %}
+                {% else %}
+                  {% trans "Show all" %}
+                {% endif %}
+              </a>)
+            </span>
+          {% endif %}
+          {% admin_extra_filters cl as extra_filters %}
+          {% for pair in extra_filters.items %}
+            {% if pair.0 != "q" %}<input type="hidden" name="{{ pair.0 }}" value="{{ pair.1 }}">{% endif %}
+          {% endfor %}
+        {% endif %}
+      </form>
+
+      <ul class="object-tools d-flex flex-wrap gap-2 align-items-center m-0 p-0">
+        <li>
+          <div class="sl-list-actions">
+            <a href="/admin/catalog/book/" class="btn btn-outline-secondary">Pastro filtrat</a>
+            <a href="{% url 'admin:catalog_book_import_sample' %}" class="btn btn-outline-secondary">
+              <i class="fas fa-download me-1"></i>Shkarko shembull Excel
+            </a>
+            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#slImportModal">
+              <i class="fas fa-file-import me-1"></i>Import
+            </a>
+          </div>
+        </li>
+        <li>{% change_list_object_tools %}</li>
+      </ul>
+    </div>
+  </div>
+{% endblock %}
+
+{% block object-tools-items %}
+  <li>
+    <div class="sl-list-actions">
+      <a href="/admin/catalog/book/" class="btn btn-sm btn-outline-secondary">Pastro filtrat</a>
+      <a href="{% url 'admin:catalog_book_import_sample' %}" class="btn btn-sm btn-outline-secondary">
+        <i class="fas fa-download me-1"></i>Shkarko shembull Excel
+      </a>
+      <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#slImportModal">
+        <i class="fas fa-file-import me-1"></i>Import
+      </a>
+    </div>
+  </li>
+  {{ block.super }}
+{% endblock %}
+
+{% block content %}
+  {{ block.super }}
+
+  <div class="modal fade" id="slImportModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Import libra nga Excel/CSV</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form method="post" action="{% url 'admin:catalog_book_import' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-body">
+            <p class="text-muted small">Zgjidhni një skedar .xlsx ose .csv. Kolonat: titulli, isbn, pershkrimi, gjuha, viti, lloji_librit, botuesi, autoret, zhanret, etiketa, nr_kopjeve, lokacioni, rafti.</p>
+            <p><a href="{% url 'admin:catalog_book_import_sample' %}">Shkarko skedarin shembull</a> me të gjitha fushat dhe udhëzime.</p>
+            <div class="mb-0">
+              <label class="form-label">Skedari</label>
+              <input type="file" name="file" class="form-control" accept=".xlsx,.xls,.csv" required />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Mbyll</button>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-upload me-1"></i>Importo</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

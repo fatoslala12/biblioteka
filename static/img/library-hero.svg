@@ -1,0 +1,60 @@
+<svg width="900" height="650" viewBox="0 0 900 650" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="140" y1="40" x2="760" y2="610" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#319088" stop-opacity="0.20"/>
+      <stop offset="0.45" stop-color="#319088" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#0EA5A3" stop-opacity="0.05"/>
+    </linearGradient>
+    <filter id="blur" x="-50" y="-50" width="1000" height="750" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+
+  <!-- background glow -->
+  <g filter="url(#blur)">
+    <circle cx="270" cy="220" r="160" fill="#319088" fill-opacity="0.18"/>
+    <circle cx="650" cy="210" r="170" fill="#319088" fill-opacity="0.12"/>
+    <circle cx="540" cy="470" r="210" fill="#319088" fill-opacity="0.10"/>
+  </g>
+
+  <!-- card -->
+  <rect x="140" y="70" width="620" height="510" rx="36" fill="white" fill-opacity="0.75"/>
+  <rect x="140" y="70" width="620" height="510" rx="36" stroke="#319088" stroke-opacity="0.16" stroke-width="2"/>
+  <rect x="170" y="105" width="220" height="18" rx="9" fill="#0F172A" fill-opacity="0.10"/>
+  <rect x="170" y="135" width="320" height="14" rx="7" fill="#0F172A" fill-opacity="0.08"/>
+
+  <!-- bookshelf -->
+  <rect x="190" y="190" width="520" height="10" rx="5" fill="#319088" fill-opacity="0.18"/>
+  <rect x="190" y="385" width="520" height="10" rx="5" fill="#319088" fill-opacity="0.18"/>
+
+  <!-- books top shelf -->
+  <rect x="205" y="215" width="38" height="150" rx="10" fill="#319088"/>
+  <rect x="250" y="235" width="34" height="130" rx="10" fill="#0F172A" fill-opacity="0.12"/>
+  <rect x="291" y="225" width="44" height="140" rx="10" fill="#319088" fill-opacity="0.85"/>
+  <rect x="342" y="245" width="30" height="120" rx="10" fill="#0F172A" fill-opacity="0.10"/>
+  <rect x="379" y="220" width="40" height="145" rx="10" fill="#319088" fill-opacity="0.70"/>
+  <rect x="426" y="240" width="28" height="125" rx="10" fill="#0F172A" fill-opacity="0.10"/>
+  <rect x="461" y="230" width="52" height="135" rx="10" fill="#319088" fill-opacity="0.55"/>
+  <rect x="520" y="245" width="30" height="120" rx="10" fill="#0F172A" fill-opacity="0.10"/>
+  <rect x="557" y="220" width="46" height="145" rx="10" fill="#319088" fill-opacity="0.78"/>
+  <rect x="610" y="235" width="36" height="130" rx="10" fill="#0F172A" fill-opacity="0.12"/>
+  <rect x="653" y="225" width="42" height="140" rx="10" fill="#319088" fill-opacity="0.62"/>
+
+  <!-- books bottom shelf -->
+  <rect x="210" y="410" width="46" height="140" rx="12" fill="#0F172A" fill-opacity="0.12"/>
+  <rect x="264" y="430" width="30" height="120" rx="12" fill="#319088" fill-opacity="0.75"/>
+  <rect x="301" y="420" width="60" height="130" rx="12" fill="#0F172A" fill-opacity="0.10"/>
+  <rect x="369" y="440" width="28" height="110" rx="12" fill="#319088" fill-opacity="0.65"/>
+  <rect x="404" y="418" width="40" height="132" rx="12" fill="#319088"/>
+  <rect x="452" y="438" width="28" height="112" rx="12" fill="#0F172A" fill-opacity="0.10"/>
+  <rect x="487" y="425" width="52" height="125" rx="12" fill="#319088" fill-opacity="0.55"/>
+  <rect x="547" y="440" width="30" height="110" rx="12" fill="#0F172A" fill-opacity="0.10"/>
+  <rect x="584" y="415" width="58" height="135" rx="12" fill="#319088" fill-opacity="0.80"/>
+  <rect x="650" y="435" width="34" height="115" rx="12" fill="#0F172A" fill-opacity="0.12"/>
+
+  <!-- magnifier -->
+  <circle cx="670" cy="175" r="44" fill="url(#g)"/>
+  <circle cx="670" cy="175" r="28" stroke="#319088" stroke-width="8" stroke-opacity="0.6"/>
+  <rect x="702" y="205" width="54" height="14" rx="7" transform="rotate(45 702 205)" fill="#319088" fill-opacity="0.7"/>
+</svg>
+

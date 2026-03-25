@@ -1,0 +1,93 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Kontakt — Smart Library{% endblock %}
+
+{% block extrahead %}
+  <style>
+    .sl-contact-shell input,
+    .sl-contact-shell textarea {
+      transition: box-shadow .18s ease, border-color .18s ease, background-color .18s ease;
+    }
+    .sl-contact-shell input:focus,
+    .sl-contact-shell textarea:focus {
+      outline: none !important;
+      border-color: rgba(49, 145, 137, .62) !important;
+      box-shadow: 0 0 0 4px rgba(49, 145, 137, .20) !important;
+      background: #fff !important;
+    }
+    .sl-contact-shell .sl-info-card {
+      border: 1px solid rgba(15, 23, 42, .08);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, .05);
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <section class="sl-contact-shell mx-auto max-w-5xl px-4 pt-10 sm:px-6 lg:px-8">
+    <div class="grid gap-8 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+          <div class="text-sm font-semibold text-brand-700 dark:text-brand-200">Kontakt</div>
+          <h1 class="mt-2 text-3xl font-extrabold tracking-tight">Na shkruaj.</h1>
+          <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+            Për pyetje rreth katalogut, rezervimeve, apo problemeve me llogarinë — dërgo një mesazh dhe do të të kthehemi.
+          </p>
+
+          <div class="mt-8 space-y-4 text-sm">
+            <div class="sl-info-card rounded-2xl border border-brand-200 bg-brand-50 p-4 dark:border-brand-900/40 dark:bg-brand-900/20">
+              <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Email</div>
+              <div class="mt-1 font-semibold">fatoslala12@gmail.com</div>
+            </div>
+            <div class="sl-info-card rounded-2xl bg-slate-50 p-4 dark:bg-slate-900/40">
+              <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Telefon</div>
+              <div class="mt-1 font-semibold">+355 69 70 70 700</div>
+            </div>
+            <div class="sl-info-card rounded-2xl bg-slate-50 p-4 dark:bg-slate-900/40">
+              <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Adresa</div>
+              <div class="mt-1 font-semibold">Bulevardi Blu, Kamëz, Tiranë</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7">
+        <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+          <div class="text-sm font-semibold">Formë kontakti</div>
+          <form method="post" class="mt-6 space-y-4">
+            {% csrf_token %}
+
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.name.label }}</label>
+                <input name="{{ form.name.html_name }}" value="{{ form.name.value|default_if_none:'' }}" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none dark:border-slate-800 dark:bg-slate-950" />
+                {% if form.name.errors %}<div class="mt-2 text-xs font-semibold text-rose-600">{{ form.name.errors|striptags }}</div>{% endif %}
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.email.label }}</label>
+                <input type="email" name="{{ form.email.html_name }}" value="{{ form.email.value|default_if_none:'' }}" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none dark:border-slate-800 dark:bg-slate-950" />
+                {% if form.email.errors %}<div class="mt-2 text-xs font-semibold text-rose-600">{{ form.email.errors|striptags }}</div>{% endif %}
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.subject.label }}</label>
+              <input name="{{ form.subject.html_name }}" value="{{ form.subject.value|default_if_none:'' }}" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none dark:border-slate-800 dark:bg-slate-950" />
+              {% if form.subject.errors %}<div class="mt-2 text-xs font-semibold text-rose-600">{{ form.subject.errors|striptags }}</div>{% endif %}
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.message.label }}</label>
+              <textarea name="{{ form.message.html_name }}" rows="6" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none dark:border-slate-800 dark:bg-slate-950">{{ form.message.value|default_if_none:'' }}</textarea>
+              {% if form.message.errors %}<div class="mt-2 text-xs font-semibold text-rose-600">{{ form.message.errors|striptags }}</div>{% endif %}
+            </div>
+
+            <button class="inline-flex w-full items-center justify-center rounded-2xl bg-brand-700 px-4 py-3 text-sm font-extrabold text-white shadow-sm hover:bg-brand-800">
+              Dërgo
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

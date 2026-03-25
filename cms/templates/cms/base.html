@@ -1,0 +1,329 @@
+{% load static %}
+<!doctype html>
+<html lang="sq" class="h-full scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Smart Library{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Smart Library — katalog, rezervime dhe menaxhim modern biblioteke.{% endblock %}" />
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script>
+      // Tailwind CDN config (after loading tailwindcdn)
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
+            },
+            colors: {
+              brand: {
+                50:  '#e9f7f6',
+                100: '#cff0ee',
+                200: '#a0e1de',
+                300: '#72d2cd',
+                400: '#45c0ba',
+                500: '#3aa69e',
+                600: '#319088', /* #319088 */
+                700: '#277a74',
+                800: '#1f645f',
+                900: '#184f4b'
+              }
+            }
+          }
+        }
+      };
+    </script>
+    <script>
+      (function () {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const dark = saved ? saved === 'dark' : prefersDark;
+        document.documentElement.classList.toggle('dark', dark);
+      })();
+    </script>
+    <link rel="stylesheet" href="{% static 'css/skeleton.css' %}">
+    <link rel="stylesheet" href="{% static 'css/toast.css' %}">
+    <style>
+      .glass { background: rgba(255,255,255,.72); backdrop-filter: blur(10px); }
+      .dark .glass { background: rgba(2, 6, 23, .40); }
+      .dark .site-header {
+        background: linear-gradient(90deg, rgba(15, 23, 42, .96), rgba(30, 41, 59, .96));
+        border-color: rgba(49, 145, 137, .32);
+      }
+      .dark .site-footer {
+        background: linear-gradient(180deg, rgba(15, 23, 42, .98), rgba(17, 24, 39, .98));
+        border-color: rgba(49, 145, 137, .26);
+      }
+      /* Top loading bar */
+      #sl-loading-bar { position:fixed; top:0; left:0; right:0; height:3px; z-index:9999; background:linear-gradient(90deg, #319189, #45c0ba); transform:scaleX(0); transform-origin:left; transition:transform .2s ease-out; pointer-events:none; }
+      #sl-loading-bar.loading { animation:sl-loading-bar 1.2s cubic-bezier(.4,0,.2,1) infinite; }
+      @keyframes sl-loading-bar { 0%{transform:scaleX(0);transform-origin:left} 40%{transform:scaleX(.6);transform-origin:left} 60%{transform:scaleX(.6);transform-origin:right} 100%{transform:scaleX(0);transform-origin:right} }
+      /* Image skeleton placeholder */
+      .sl-img-skeleton { position:relative; overflow:hidden; }
+      .sl-img-skeleton img { opacity:0; transition:opacity .35s ease; }
+      .sl-img-skeleton img.loaded { opacity:1; }
+      .sl-img-skeleton::before { content:""; position:absolute; inset:0; background:linear-gradient(105deg,rgba(148,163,184,.18) 0%,rgba(148,163,184,.28) 50%,rgba(148,163,184,.18) 100%); animation:sl-shimmer 2s ease-in-out infinite; }
+      .dark .sl-img-skeleton::before { background:linear-gradient(105deg,rgba(71,85,105,.3) 0%,rgba(71,85,105,.45) 50%,rgba(71,85,105,.3) 100%); }
+      /* Responsive: parandalon rrëshqitje horizontale, imazhe elastike */
+      html { overflow-x: hidden; }
+      body { overflow-x: hidden; }
+      #sl-ajax-container { min-width: 0; overflow-x: hidden; }
+      #sl-ajax-container img { max-width: 100%; height: auto; }
+      @media (max-width: 640px) {
+        .site-header .leading-tight .text-xs { display: none; }
+      }
+    </style>
+  </head>
+  <body class="h-full bg-brand-50 font-sans text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
+    <div id="sl-loading-bar" aria-hidden="true"></div>
+    <div class="min-h-full">
+      {% block site_header %}
+      <header class="site-header sticky top-0 z-40 border-b border-white/15 bg-brand-600/95 backdrop-blur dark:border-brand-500/30">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="flex h-16 items-center justify-between gap-3">
+            <a href="/" class="group flex items-center gap-2">
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 text-white shadow-sm ring-1 ring-white/20">
+                <!-- book icon -->
+                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
+                </svg>
+              </span>
+              <div class="leading-tight">
+                <div class="text-sm font-semibold tracking-tight text-white group-hover:opacity-95">Smart Library</div>
+                <div class="text-xs text-white/80">Katalog • Rezervime • Menaxhim</div>
+              </div>
+            </a>
+
+            <button id="sl-mobile-menu-btn" type="button" class="md:hidden rounded-xl p-2 text-white hover:bg-white/10 aria-expanded=false" aria-label="Hap menunë">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            <nav id="sl-desktop-nav" class="hidden items-center gap-1 md:flex">
+              <a href="/catalog/" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/catalog/' in request.path or '/books/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Katalog</a>
+              <a href="/njoftime/" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/njoftime/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Njoftime</a>
+              <a href="/evente/" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/evente/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Evente</a>
+              <a href="/video/" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/video/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Video</a>
+              <a href="/rreth-nesh/" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/rreth-nesh/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Rreth nesh</a>
+              <a href="/rregullore/" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/rregullore/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Rregullore</a>
+              <a href="/orar/" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/orar/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Orar</a>
+              <a href="/kontakt/" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/kontakt/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Kontakt</a>
+            </nav>
+
+            <div class="flex items-center gap-2">
+              {% if request.user.is_authenticated %}
+                <a href="/anetar/" class="hidden rounded-xl border border-white/25 bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white/15 sm:inline-flex">
+                  {% with nm=request.user.get_full_name %}
+                    {% if nm %}{{ nm }}{% else %}{{ request.user.username }}{% endif %}
+                  {% endwith %}
+                </a>
+                <a href="/dil/" class="rounded-xl bg-white px-3 py-2 text-sm font-extrabold text-brand-700 shadow-sm hover:bg-white/90">
+                  Dil
+                </a>
+              {% else %}
+                <a href="/hyr/" class="rounded-xl bg-white px-3 py-2 text-sm font-extrabold text-brand-700 shadow-sm hover:bg-white/90">
+                  Logohu
+                </a>
+              {% endif %}
+              <button id="themeToggle" type="button" class="rounded-xl border border-white/25 bg-white/10 p-2 text-white shadow-sm hover:bg-white/15" aria-label="Ndrysho temën">
+                <svg id="sun" viewBox="0 0 24 24" class="h-5 w-5 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path>
+                  <path d="M12 2v2"></path><path d="M12 20v2"></path>
+                  <path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path>
+                  <path d="M2 12h2"></path><path d="M20 12h2"></path>
+                  <path d="m4.93 19.07 1.41-1.41"></path><path d="m17.66 6.34 1.41-1.41"></path>
+                </svg>
+                <svg id="moon" viewBox="0 0 24 24" class="h-5 w-5 dark:hidden" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 3a7.5 7.5 0 1 0 9 9 9 9 0 0 1-9-9Z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+      <div id="sl-mobile-menu" class="fixed inset-0 z-30 hidden md:hidden" aria-hidden="true">
+        <div id="sl-mobile-menu-backdrop" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+        <div class="absolute right-0 top-0 h-full w-72 max-w-[85vw] border-l border-white/10 bg-brand-700 shadow-xl dark:bg-slate-900">
+          <div class="flex h-16 items-center justify-between border-b border-white/15 px-4">
+            <span class="text-sm font-semibold text-white">Menuja</span>
+            <button id="sl-mobile-menu-close" type="button" class="rounded-lg p-2 text-white hover:bg-white/10" aria-label="Mbylle">✕</button>
+          </div>
+          <nav class="flex flex-col gap-1 p-4">
+            <a href="/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Kryefaqja</a>
+            <a href="/catalog/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Katalog</a>
+            <a href="/njoftime/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Njoftime</a>
+            <a href="/evente/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Evente</a>
+            <a href="/video/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Video</a>
+            <a href="/rreth-nesh/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Rreth nesh</a>
+            <a href="/rregullore/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Rregullore</a>
+            <a href="/orar/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Orar</a>
+            <a href="/kontakt/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Kontakt</a>
+            <div class="my-2 border-t border-white/15"></div>
+            {% if request.user.is_authenticated %}
+            <a href="/anetar/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Portali im</a>
+            <a href="/dil/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Dil</a>
+            {% else %}
+            <a href="/hyr/" class="rounded-xl bg-white px-3 py-2.5 text-sm font-extrabold text-brand-700 hover:bg-white/90">Logohu</a>
+            {% endif %}
+          </nav>
+        </div>
+      </div>
+      {% endblock %}
+
+      <main class="relative">
+        {% block flash_messages %}
+          {% if messages %}
+            <script>
+              (function(){
+                var msgs = [{% for message in messages %}{level:'{{ message.tags|default:"info" }}',text:'{{ message|escapejs }}'}{% if not forloop.last %},{% endif %}{% endfor %}];
+                document.addEventListener('DOMContentLoaded',function(){
+                  var M={error:'error',success:'success',warning:'warning'};
+                  msgs.forEach(function(m){
+                    var t = (m.level || '').split(/\s+/)[0];
+                    t = M[t] || 'info';
+                    if(window.SLToast) window.SLToast[t](m.text);
+                  });
+                });
+              })();
+            </script>
+          {% endif %}
+        {% endblock %}
+
+        <div id="sl-ajax-container">
+          {% block content %}{% endblock %}
+        </div>
+      </main>
+      <div id="sl-toast-container" role="region" aria-label="Njoftime"></div>
+
+      {% block site_footer %}
+      <footer class="site-footer mt-20 border-t border-white/15 bg-brand-700 py-10 text-white dark:border-brand-500/25">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="rounded-3xl border border-white/15 bg-white/5 px-5 py-4 shadow-sm backdrop-blur sm:px-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="text-sm font-semibold text-white/95">
+                Biblioteka Bashkia Kamëz — ambient modern, i qetë dhe i fokusuar te dija.
+              </div>
+              <a href="/catalog/" class="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-extrabold text-brand-700 shadow-sm transition hover:bg-white/90">
+                <span>🔎</span>
+                <span>Kërko në katalog</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="mt-8 grid gap-8 md:grid-cols-12">
+            <div class="md:col-span-5">
+              <div class="text-base font-extrabold tracking-tight">Smart Library</div>
+              <p class="mt-3 max-w-md text-sm leading-6 text-white/80">
+                Platformë moderne për menaxhim biblioteke: katalog, kopje, huazime, rezervime dhe gjoba.
+                Ndërtuar për staf të shpejtë dhe eksperiencë të qartë për anëtarët.
+              </p>
+              <div class="mt-5 inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-xs font-semibold text-white/85">
+                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-300"></span>
+                Sistemi aktiv
+              </div>
+            </div>
+
+            <div class="md:col-span-3">
+              <div class="text-sm font-semibold text-white">Navigim</div>
+              <div class="mt-3 space-y-2 text-sm">
+                <a class="block text-white/80 transition hover:text-white" href="/catalog/">Katalog</a>
+                <a class="block text-white/80 transition hover:text-white" href="/njoftime/">Njoftime</a>
+                <a class="block text-white/80 transition hover:text-white" href="/evente/">Evente</a>
+                <a class="block text-white/80 transition hover:text-white" href="/video/">Video</a>
+                <a class="block text-white/80 transition hover:text-white" href="/kontakt/">Kontakt</a>
+              </div>
+            </div>
+
+            <div class="md:col-span-4">
+              <div class="text-sm font-semibold text-white">Kontakt</div>
+              <div class="mt-3 space-y-3 text-sm text-white/85">
+                <div class="flex items-start gap-2.5">
+                  <span class="mt-0.5">📍</span>
+                  <span>Bulevardi Blu, Kamëz, Tiranë</span>
+                </div>
+                <div class="flex items-start gap-2.5">
+                  <span class="mt-0.5">📞</span>
+                  <span>+355 69 70 70 700</span>
+                </div>
+                <div class="flex items-start gap-2.5">
+                  <span class="mt-0.5">✉️</span>
+                  <a class="transition hover:text-white" href="mailto:fatoslala12@gmail.com">fatoslala12@gmail.com</a>
+                </div>
+                <div class="pt-1 text-xs text-white/65">
+                  Orari: Hënë–Premte 08:00–19:00, E Shtunë 09:00–14:00
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 border-t border-white/15 pt-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-white/70">
+              <div>© {% now "Y" %} Smart Library — Të gjitha të drejtat e rezervuara.</div>
+              <div class="text-white/60">Projektuar me fokus te përdorshmëria dhe shpejtësia.</div>
+            </div>
+          </div>
+        </div>
+      </footer>
+      {% endblock %}
+    </div>
+
+    <script src="{% static 'js/toast.js' %}"></script>
+    <script src="{% static 'js/sl-ajax.js' %}"></script>
+    <script>
+      (function () {
+        const btn = document.getElementById('themeToggle');
+        if (btn) {
+          btn.addEventListener('click', function () {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          });
+        }
+        /* Loading bar on navigation & form submit */
+        const bar = document.getElementById('sl-loading-bar');
+        if (bar) {
+          document.addEventListener('click', function (e) {
+            var a = e.target.closest('a[href]');
+            if (a && a.href && !a.target && !a.download && a.origin === location.origin && !a.hash) {
+              bar.classList.add('loading');
+            }
+          });
+          document.addEventListener('submit', function (e) {
+            var f = e.target;
+            if (f && f.tagName === 'FORM') bar.classList.add('loading');
+          });
+          window.addEventListener('pageshow', function () { bar.classList.remove('loading'); });
+        }
+        /* Mobile menu */
+        (function () {
+          var menu = document.getElementById('sl-mobile-menu');
+          var btn = document.getElementById('sl-mobile-menu-btn');
+          var closeBtn = document.getElementById('sl-mobile-menu-close');
+          var backdrop = document.getElementById('sl-mobile-menu-backdrop');
+          function openMenu() { if (menu) { menu.classList.remove('hidden'); menu.setAttribute('aria-hidden', 'false'); if (btn) btn.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; } }
+          function closeMenu() { if (menu) { menu.classList.add('hidden'); menu.setAttribute('aria-hidden', 'true'); if (btn) btn.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; } }
+          if (btn) btn.addEventListener('click', openMenu);
+          if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+          if (backdrop) backdrop.addEventListener('click', closeMenu);
+          menu && menu.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeMenu); });
+        })();
+        /* Image skeleton: show shimmer until loaded */
+        document.querySelectorAll('img[loading="lazy"]').forEach(function (img) {
+          if (img.closest('.sl-img-skeleton')) return;
+          var w = document.createElement('div');
+          w.className = 'sl-img-skeleton';
+          img.parentNode.insertBefore(w, img);
+          w.appendChild(img);
+          img.addEventListener('load', function () { img.classList.add('loaded'); });
+          if (img.complete) img.classList.add('loaded');
+        });
+      })();
+    </script>
+  </body>
+</html>
+

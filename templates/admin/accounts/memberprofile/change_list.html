@@ -1,0 +1,328 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static jazzmin %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script src="{% static 'jazzmin/js/ui_feedback.js' %}"></script>
+  <style>
+    .app-accounts.model-memberprofile.change-list #change-list-filters {
+      padding-top: 10px !important;
+    }
+    .app-accounts.model-memberprofile.change-list #change-list-filters > .d-flex {
+      width: 100% !important;
+      flex-wrap: wrap !important;
+      justify-content: flex-start !important;
+      align-items: center !important;
+      gap: 16px !important;
+    }
+    .app-accounts.model-memberprofile.change-list #changelist-search {
+      flex: 0 1 420px !important;
+      max-width: 420px !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      gap: 12px !important;
+      margin-right: auto !important;
+    }
+    .app-accounts.model-memberprofile.change-list #searchbar {
+      flex: 1 1 auto !important;
+      width: auto !important;
+      min-width: 280px !important;
+    }
+    .app-accounts.model-memberprofile.change-list .object-tools {
+      flex: 1 1 520px !important;
+      justify-content: flex-end !important;
+      gap: 14px !important;
+    }
+    .app-accounts.model-memberprofile.change-list .object-tools > li:first-of-type {
+      flex: 1 1 auto !important;
+      min-width: 320px !important;
+    }
+    .app-accounts.model-memberprofile.change-list .sl-quick-filters {
+      display:flex;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      width:100%;
+      gap:10px;
+      margin:0;
+    }
+    .app-accounts.model-memberprofile.change-list .sl-quick-filters a {
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:38px;
+      border-radius:999px;
+      padding:8px 16px;
+      font-weight:800;
+      font-size:12px;
+      letter-spacing:.01em;
+      white-space:nowrap;
+      border:1px solid rgba(148,163,184,.24);
+      color:#475569;
+      background:#eef2f6;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+      transition:all .18s ease;
+    }
+    .app-accounts.model-memberprofile.change-list .sl-quick-filters a.is-active {
+      color:#fff;
+      background:linear-gradient(135deg, #319189, #2b7f78);
+      border-color:transparent;
+      box-shadow:0 10px 18px rgba(49,145,137,.22);
+    }
+    .app-accounts.model-memberprofile.change-list .sl-quick-filters a:hover {
+      color:#0f172a;
+      background:#e2e8f0;
+      border-color:rgba(49,145,137,.18);
+      transform:translateY(-1px);
+    }
+    .app-accounts.model-memberprofile.change-list #changelist-filter { display:none !important; }
+    .app-accounts.model-memberprofile.change-list #result_list thead th,
+    .app-accounts.model-memberprofile.change-list #result_list thead th a { color:#0f172a !important; font-weight:900 !important; }
+    .app-accounts.model-memberprofile.change-list #result_list tbody td { color:#111827 !important; font-weight:500; }
+    .app-accounts.model-memberprofile.change-list #result_list tbody tr:hover { background:rgba(49,145,137,.08) !important; }
+    .app-accounts.model-memberprofile.change-list .object-tools li {
+      list-style:none !important;
+      margin:0 !important;
+    }
+    .app-accounts.model-memberprofile.change-list #changelist-search .btn,
+    .app-accounts.model-memberprofile.change-list #changelist-search input[type="submit"] {
+      border-radius:999px !important;
+      padding:8px 16px !important;
+      font-size:12px !important;
+      min-height:38px !important;
+      line-height:1.2 !important;
+    }
+    @media (max-width: 991.98px) {
+      .app-accounts.model-memberprofile.change-list #changelist-search {
+        max-width: none !important;
+        width: 100% !important;
+      }
+      .app-accounts.model-memberprofile.change-list .object-tools,
+      .app-accounts.model-memberprofile.change-list .object-tools > li:first-of-type {
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+      .app-accounts.model-memberprofile.change-list .sl-quick-filters {
+        justify-content:flex-start !important;
+      }
+    }
+
+    .sl-quick-member-modal .modal-content { border-radius:18px; overflow:hidden; background:rgba(255,255,255,.985); border:1px solid rgba(255,255,255,.78); box-shadow:0 24px 55px rgba(15,23,42,.24); }
+    .sl-quick-member-modal .modal-header { background:#319189; color:#fff; border-bottom:0; }
+    .sl-quick-member-modal .modal-title { color:#0f172a !important; font-weight:800 !important; }
+    .sl-quick-member-modal .form-control, .sl-quick-member-modal .form-select { border-radius:12px; color:#0f172a !important; border-color:rgba(15,23,42,.16) !important; background:#fff !important; font-weight:600; }
+    .sl-member-photo-preview { width:68px; height:68px; border-radius:999px; object-fit:cover; border:1px solid rgba(49,145,137,.28); background:#f5fbfa; }
+    .modal-backdrop.show { background:rgba(9,14,27,.42) !important; backdrop-filter:blur(14px) saturate(125%); -webkit-backdrop-filter:blur(14px) saturate(125%); }
+  </style>
+{% endblock %}
+
+{% block search %}
+  <div class="col-12 pb-4" id="change-list-filters">
+    <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+      <form id="changelist-search" class="d-flex flex-wrap gap-2 align-items-center flex-grow-1" method="GET">
+        {% if cl.search_fields %}
+          <input class="form-control" style="width: auto; min-width: 260px;" type="text" name="q" value="{{ cl.query }}" id="searchbar"
+              {% if cl.search_help_text %} placeholder="{{ cl.search_help_text }}{% endif %}>
+        {% endif %}
+
+        {% if cl.search_fields %}
+          <button type="submit" class="btn btn-primary">{% trans 'Kërko' %}</button>
+          {% if show_result_count %}
+            <span class="small quiet ms-2">
+              {% blocktrans count counter=cl.result_count %}{{ counter }} result{% plural %}{{ counter }} results{% endblocktrans %}
+              (<a href="?{% if cl.is_popup %}_popup=1{% endif %}">
+                {% if cl.show_full_result_count %}
+                  {% blocktrans with full_result_count=cl.full_result_count %}{{ full_result_count }} total{% endblocktrans %}
+                {% else %}
+                  {% trans "Show all" %}
+                {% endif %}
+              </a>)
+            </span>
+          {% endif %}
+          {% admin_extra_filters cl as extra_filters %}
+          {% for pair in extra_filters.items %}
+            {% if pair.0 != "q" %}<input type="hidden" name="{{ pair.0 }}" value="{{ pair.1 }}">{% endif %}
+          {% endfor %}
+        {% endif %}
+      </form>
+
+      <ul class="object-tools d-flex flex-wrap gap-2 align-items-center m-0 p-0">
+        <li>
+          <div class="sl-quick-filters">
+            <a href="?member_scope=ACTIVE" class="{% if current_scope == 'ACTIVE' %}is-active{% endif %}">Aktivë</a>
+            <a href="?member_scope=SUSPENDED" class="{% if current_scope == 'SUSPENDED' %}is-active{% endif %}">Pezulluar</a>
+            <a href="?member_scope=BLOCKED" class="{% if current_scope == 'BLOCKED' %}is-active{% endif %}">Bllokuar</a>
+            <a href="?member_scope=ALL" class="{% if current_scope == 'ALL' %}is-active{% endif %}">Të gjithë</a>
+          </div>
+        </li>
+        <li>
+          <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quickMemberModal">Shto anëtar</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+{% endblock %}
+
+{% block object-tools-items %}
+  <li>
+    <div class="sl-quick-filters">
+      <a href="?member_scope=ACTIVE" class="{% if current_scope == 'ACTIVE' %}is-active{% endif %}">Aktivë</a>
+      <a href="?member_scope=SUSPENDED" class="{% if current_scope == 'SUSPENDED' %}is-active{% endif %}">Pezulluar</a>
+      <a href="?member_scope=BLOCKED" class="{% if current_scope == 'BLOCKED' %}is-active{% endif %}">Bllokuar</a>
+      <a href="?member_scope=ALL" class="{% if current_scope == 'ALL' %}is-active{% endif %}">Të gjithë</a>
+    </div>
+  </li>
+  <li>
+    <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#quickMemberModal">Shto anëtar</a>
+  </li>
+{% endblock %}
+
+{% block content %}
+  {{ block.super }}
+  <div class="modal fade sl-quick-member-modal" id="quickMemberModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title font-weight-bold">Shto Anëtar të Ri</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="memberAlert" class="alert" style="display:none;"></div>
+          <form class="row g-3" novalidate>
+            <div class="col-md-8">
+              <label class="form-label">Emri dhe mbiemri *</label>
+              <input id="mp_full_name" class="form-control" type="text" placeholder="p.sh. Arben Hoxha" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Nr. ID</label>
+              <input id="mp_national_id" class="form-control" type="text" placeholder="p.sh. J50408078S" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Foto</label>
+              <input id="mp_photo" class="form-control" type="file" accept="image/*" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Preview</label>
+              <div class="d-flex align-items-center gap-2">
+                <img id="mp_photo_preview" class="sl-member-photo-preview" alt="Preview" />
+                <small class="text-muted">Opsionale</small>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Nr. telefoni</label>
+              <input id="mp_phone" class="form-control" type="text" placeholder="p.sh. 068xxxxxxx" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Lloji anëtarit</label>
+              <select id="mp_member_type" class="form-select">
+                <option value="STANDARD">Standard</option>
+                <option value="STUDENT">Student</option>
+                <option value="VIP">VIP</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Statusi</label>
+              <select id="mp_status" class="form-select">
+                <option value="ACTIVE">Aktiv</option>
+                <option value="SUSPENDED">Pezulluar</option>
+                <option value="BLOCKED">Bllokuar</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Datëlindja</label>
+              <input id="mp_date_of_birth" class="form-control" type="date" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Vendlindja</label>
+              <input id="mp_place_of_birth" class="form-control" type="text" placeholder="p.sh. Kukës" />
+            </div>
+            <div class="col-12">
+              <label class="form-label">Adresa</label>
+              <input id="mp_address" class="form-control" type="text" placeholder="p.sh. Rruga..." />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Mbyll</button>
+          <button id="memberSubmit" type="button" class="btn btn-primary">Ruaj anëtarin</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const createUrl = "{{ quick_member_create_url }}";
+      const submitBtn = document.getElementById("memberSubmit");
+      const alertBox = document.getElementById("memberAlert");
+      const f = {
+        full_name: document.getElementById("mp_full_name"),
+        national_id: document.getElementById("mp_national_id"),
+        phone: document.getElementById("mp_phone"),
+        member_type: document.getElementById("mp_member_type"),
+        status: document.getElementById("mp_status"),
+        date_of_birth: document.getElementById("mp_date_of_birth"),
+        place_of_birth: document.getElementById("mp_place_of_birth"),
+        address: document.getElementById("mp_address"),
+        photo: document.getElementById("mp_photo")
+      };
+      const photoPreview = document.getElementById("mp_photo_preview");
+      if (!submitBtn) return;
+
+      function csrfToken(){const m=document.cookie.match(/csrftoken=([^;]+)/);return m?decodeURIComponent(m[1]):"";}
+      function show(kind,text){if(window.SLFeedback){window.SLFeedback.show(alertBox,kind,text);return;}alertBox.style.display="block";alertBox.className="alert alert-"+kind;alertBox.textContent=text;}
+
+      if (f.photo && photoPreview) {
+        photoPreview.src = "";
+        f.photo.addEventListener("change", function () {
+          const file = f.photo.files && f.photo.files[0];
+          if (!file) {
+            photoPreview.src = "";
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = function (e) { photoPreview.src = e.target.result; };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      submitBtn.addEventListener("click", async function () {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Duke ruajtur...";
+        try {
+          const payload = new FormData();
+          Object.keys(f).forEach((k) => {
+            if (!f[k]) return;
+            if (k === "photo") {
+              if (f.photo.files && f.photo.files[0]) payload.append("photo", f.photo.files[0]);
+              return;
+            }
+            payload.append(k, f[k].value || "");
+          });
+          const res = await fetch(createUrl, {
+            method: "POST",
+            headers: {
+              "X-CSRFToken": csrfToken(),
+              "X-Requested-With": "XMLHttpRequest"
+            },
+            body: payload
+          });
+          const data = await res.json();
+          if (!res.ok || !data.ok) {
+            show("danger", data.error || "Nuk u krijua anëtari.");
+            return;
+          }
+          show("success", "Anëtari u krijua: " + (data.member_no || ""));
+          window.setTimeout(() => { window.location.href = data.redirect || window.location.href; }, 500);
+        } catch (e) {
+          show("danger", "Gabim i papritur.");
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Ruaj anëtarin";
+        }
+      });
+    })();
+  </script>
+{% endblock %}
+

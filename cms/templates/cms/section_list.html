@@ -1,0 +1,69 @@
+{% extends "cms/base.html" %}
+
+{% block title %}{{ title }} — Smart Library{% endblock %}
+
+{% block content %}
+  <section class="mx-auto max-w-7xl px-4 pt-10 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-200 bg-white p-10 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+      <div class="text-sm font-semibold text-brand-700 dark:text-brand-200">{{ title }}</div>
+      <h1 class="mt-2 text-3xl font-extrabold tracking-tight">{{ subtitle }}</h1>
+
+      <div class="mt-8 grid gap-5 md:grid-cols-2">
+        {% for it in items %}
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
+            {% if is_videos_page and not it.image_url %}
+              <div class="mb-4 flex h-40 w-full items-center justify-center rounded-2xl border border-slate-200 bg-gradient-to-br from-brand-50 to-white dark:border-slate-800 dark:from-slate-900 dark:to-slate-950">
+                <div class="inline-flex items-center gap-2 rounded-full bg-brand-600 px-4 py-2 text-sm font-extrabold text-white shadow-sm">
+                  ▶ Video
+                </div>
+              </div>
+            {% endif %}
+            {% if it.image_url %}
+              <img src="{{ it.image_url }}" alt="{{ it.title }}" class="mb-4 h-40 w-full rounded-2xl object-cover border border-slate-200 dark:border-slate-800" />
+            {% endif %}
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <div class="truncate text-base font-extrabold">{{ it.title }}</div>
+                <div class="mt-1 text-xs font-semibold text-slate-500 dark:text-slate-400">{{ it.date }}</div>
+              </div>
+              <div class="shrink-0 rounded-full bg-brand-100 px-2 py-1 text-xs font-extrabold text-brand-800 dark:bg-brand-900/40 dark:text-brand-100">
+                {{ it.badge }}
+              </div>
+            </div>
+            {% if is_announcements_page %}
+              <div class="mt-3 flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-extrabold text-brand-800 dark:bg-brand-900/30 dark:text-brand-100">📰 Njoftim zyrtar</span>
+                <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-extrabold text-slate-700 dark:bg-slate-800 dark:text-slate-200">📅 {{ it.date }}</span>
+              </div>
+            {% endif %}
+            {% if is_events_page %}
+              <div class="mt-3 flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-extrabold text-brand-800 dark:bg-brand-900/30 dark:text-brand-100">📅 {{ it.event_date|default:it.date }}</span>
+                <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-extrabold text-slate-700 dark:bg-slate-800 dark:text-slate-200">📍 {{ it.location|default:"Biblioteka Kamëz" }}</span>
+              </div>
+            {% endif %}
+            {% if is_videos_page %}
+              <div class="mt-3 flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-extrabold text-brand-800 dark:bg-brand-900/30 dark:text-brand-100">🎬 Video</span>
+                {% if it.source_host %}
+                  <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-extrabold text-slate-700 dark:bg-slate-800 dark:text-slate-200">📡 {{ it.source_host }}</span>
+                {% endif %}
+              </div>
+            {% endif %}
+            <div class="mt-3 text-sm text-slate-600 dark:text-slate-300">{{ it.excerpt }}</div>
+            {% if it.url %}
+              <a href="{{ it.url }}" target="_blank" class="mt-3 inline-flex items-center gap-1 rounded-xl bg-brand-600 px-3 py-1.5 text-xs font-extrabold text-white hover:bg-brand-700">
+                ▶ Shiko videon
+              </a>
+            {% endif %}
+          </div>
+        {% empty %}
+          <div class="rounded-3xl border border-slate-200 bg-white p-8 text-sm text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 md:col-span-2">
+            S’ka përmbajtje ende.
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

@@ -1,0 +1,110 @@
+{% extends "cms/panel/base_panel.html" %}
+
+{% block panel_title %}{{ book.title }}{% endblock %}
+{% block panel_subtitle %}Menaxho kopjet dhe shiko disponueshmërinë.{% endblock %}
+
+{% block panel_content %}
+  <div class="grid gap-6 lg:grid-cols-12">
+    <div class="lg:col-span-8">
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div class="min-w-0">
+            <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">ISBN: {{ book.isbn|default:"—" }}</div>
+            <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">
+              Botuesi: {% if book.publisher %}<span class="font-extrabold">{{ book.publisher.name }}</span>{% else %}—{% endif %}
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <a href="/panel/books/{{ book.id }}/edit/" class="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-extrabold text-slate-800 shadow-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 dark:hover:bg-slate-900">Përditëso librin</a>
+            <a href="/panel/books/{{ book.id }}/copies/new/" class="rounded-2xl bg-brand-700 px-4 py-2 text-sm font-extrabold text-white shadow-sm hover:bg-brand-800">+ Shto kopje</a>
+          </div>
+        </div>
+
+        <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 dark:border-slate-800 dark:bg-slate-900/40 dark:text-slate-200">
+          <span class="font-extrabold">I lirë për huazim</span> = ka të paktën 1 kopje me status <span class="font-extrabold">“Disponueshme”</span>.
+        </div>
+
+        <div class="mt-6 grid gap-3 sm:grid-cols-4">
+          <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-900/40">
+            <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Totali</div>
+            <div class="mt-1 text-xl font-extrabold">{{ counts.total }}</div>
+          </div>
+          <div class="rounded-2xl bg-brand-100 p-4 dark:bg-brand-900/40">
+            <div class="text-xs font-semibold text-brand-800/80 dark:text-brand-100/80">Disponueshme</div>
+            <div class="mt-1 text-xl font-extrabold text-brand-800 dark:text-brand-100">{{ counts.available }}</div>
+          </div>
+          <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-900/40">
+            <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Në huazim</div>
+            <div class="mt-1 text-xl font-extrabold">{{ counts.on_loan }}</div>
+          </div>
+          <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-900/40">
+            <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Në pritje</div>
+            <div class="mt-1 text-xl font-extrabold">{{ counts.on_hold }}</div>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <div class="text-sm font-extrabold">Kopjet</div>
+          <div class="mt-4 overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-xs font-extrabold text-slate-500 dark:bg-slate-900/40 dark:text-slate-400">
+                <tr>
+                  <th class="px-4 py-3">Kodi</th>
+                  <th class="px-4 py-3">Statusi</th>
+                  <th class="px-4 py-3">Lokacioni</th>
+                  <th class="px-4 py-3">Rafti</th>
+                  <th class="px-4 py-3"></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-950">
+                {% for c in copies %}
+                  <tr>
+                    <td class="px-4 py-3 font-extrabold">{{ c.barcode }}</td>
+                    <td class="px-4 py-3">
+                      {% if c.status == "AVAILABLE" %}
+                        <span class="rounded-full bg-brand-100 px-2 py-1 text-xs font-extrabold text-brand-800 dark:bg-brand-900/40 dark:text-brand-100">Disponueshme</span>
+                      {% elif c.status == "ON_LOAN" %}
+                        <span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-extrabold text-slate-800 dark:bg-slate-900/40 dark:text-slate-100">Në huazim</span>
+                      {% elif c.status == "ON_HOLD" %}
+                        <span class="rounded-full bg-amber-500/10 px-2 py-1 text-xs font-extrabold text-amber-700 dark:text-amber-300">Në pritje</span>
+                      {% else %}
+                        <span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-extrabold text-slate-800 dark:bg-slate-900/40 dark:text-slate-100">{{ c.get_status_display }}</span>
+                      {% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-slate-600 dark:text-slate-300">{{ c.location|default:"—" }}</td>
+                    <td class="px-4 py-3 text-slate-600 dark:text-slate-300">{{ c.shelf|default:"—" }}</td>
+                    <td class="px-4 py-3 text-right">
+                      <a href="/panel/copies/{{ c.id }}/edit/" class="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-extrabold text-slate-800 shadow-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 dark:hover:bg-slate-900">Ndrysho</a>
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td class="px-4 py-6 text-sm text-slate-600 dark:text-slate-300" colspan="5">
+                      S’ka kopje ende. Kliko “Shto kopje”.
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="lg:col-span-4">
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div class="text-sm font-extrabold">Shfaqja publike</div>
+        <div class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+          Kjo është faqja që e shohin përdoruesit:
+        </div>
+        <a href="/books/{{ book.id }}/" target="_blank" class="mt-4 inline-flex w-full items-center justify-center rounded-2xl bg-brand-700 px-4 py-3 text-sm font-extrabold text-white shadow-sm hover:bg-brand-800">
+          Hap detajin e librit
+        </a>
+        <a href="/catalog/" target="_blank" class="mt-3 inline-flex w-full items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-extrabold text-slate-800 shadow-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 dark:hover:bg-slate-900">
+          Hap katalogun
+        </a>
+      </div>
+    </aside>
+  </div>
+{% endblock %}
+

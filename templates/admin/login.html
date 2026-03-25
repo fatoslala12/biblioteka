@@ -1,0 +1,93 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <style>
+    :root { --sl-teal: #319088; }
+    body.login {
+      background: var(--sl-teal) !important;
+      background-image:
+        radial-gradient(circle at 20% 10%, rgba(255,255,255,.14), transparent 40%),
+        radial-gradient(circle at 80% 30%, rgba(255,255,255,.10), transparent 35%);
+    }
+    .login-box, .register-box { width: 420px; }
+    .card {
+      border-radius: 18px !important;
+      overflow: hidden;
+      box-shadow: 0 18px 50px rgba(0,0,0,.18) !important;
+    }
+    .card-header {
+      background: transparent !important;
+      border-bottom: 0 !important;
+      padding-top: 26px !important;
+    }
+    .brand-link, .login-logo a { color: #fff !important; }
+    .btn-primary {
+      background: rgba(255,255,255,.18) !important;
+      border-color: rgba(255,255,255,.25) !important;
+      font-weight: 800 !important;
+    }
+    .btn-primary:hover { background: rgba(255,255,255,.24) !important; }
+    .form-control {
+      border-radius: 14px !important;
+      padding: 12px 14px !important;
+    }
+    .input-group-text {
+      border-radius: 14px 0 0 14px !important;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="login-box">
+    <div class="login-logo">
+      <a href="/"><b>SMART</b> LIBRARY</a>
+      <div style="margin-top:6px; font-size: 12px; color: rgba(255,255,255,.9); font-weight: 600;">
+        Sistemi i Menaxhimit të Bibliotekës
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header text-center">
+        <h1 style="font-size: 42px; font-weight: 800; margin: 0;">Mirë se vini!</h1>
+        <div style="margin-top: 10px; font-size: 13px; color: rgba(17,24,39,.75); font-weight: 600;">
+          Hyni me kredencialet tuaja
+        </div>
+      </div>
+      <div class="card-body">
+        {% if form.errors %}
+          <div class="alert alert-danger" role="alert">
+            {% trans "Username or password incorrect." %}
+          </div>
+        {% endif %}
+
+        <form method="post" action="{{ app_path }}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ next }}">
+
+          <div class="form-group">
+            <label class="font-weight-bold">{% trans "Username" %}</label>
+            {{ form.username }}
+          </div>
+          <div class="form-group">
+            <label class="font-weight-bold">{% trans "Password" %}</label>
+            {{ form.password }}
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">
+            Hyr
+          </button>
+        </form>
+
+        {% url 'admin:password_reset' as admin_password_reset_url %}
+        {% if admin_password_reset_url %}
+          <div class="mt-3 text-center" style="font-size: 12px;">
+            <a href="{{ admin_password_reset_url }}">{% trans "Forgotten your password or username?" %}</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

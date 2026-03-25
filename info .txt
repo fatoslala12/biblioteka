@@ -1,0 +1,112 @@
+Vizion & Kufijtë e Produktit
+Qëllimi: një platformë “Smart Library” me faqe publike + sistem të brendshëm (admin/librarian) + portal anëtari.
+Objektivi kryesor: menaxhim i inventarit (kopjeve), huazimeve, rezervimeve, gjobave dhe komunikimit me anëtarët.
+Objektivi dytësor: CMS (faqe, njoftime), video, evente, punësime (opsionale/si modul).
+Rolet (me të drejta të qarta)
+Admin: konfigurime, role/permission, menaxhim total, raporte, audit, pagesa/waive, import/eksport, CMS.
+Librarian/Staff: huazim/kthim, rezervime, gjoba (jo konfigurime globale), menaxhim librash/kopjesh brenda rregullave.
+Member: kërkim, rezervim, profil, histori, gjoba, wishlist, preferenca njoftimesh.
+(Opsionale) Guest: vetëm faqe publike + kërkim bazë.
+Arkitektura e Modulëve (e ndarë qartë)
+1) Website publik (CMS + katalog)
+Rreth nesh / Rregullore / Orar / Kontakt
+Katalog & kërkim:
+kërkim (titull/autor/ISBN/kod kopje)
+filtra (zhanër, vit, gjuhë, disponueshmëri, publisher, tag)
+faqe detaji e librit: përmbledhje + metadata + disponueshmëri e kopjeve (pa ekspozuar të dhëna sensitive)
+Njoftime / Evente / Video (si seksione CMS)
+Punësime (modul i veçantë; mos e përziej me core në fazën e parë)
+2) Core LMS (Panel administrimi)
+Users & Access: login/logout, reset, bllokim, role/permission, audit log
+Catalog: Books (vepra) + Copies (kopje fizike) + Authors/Genres/Publishers/Tags
+Circulation: Loans (huazime), Returns (kthime), Renewals (zgjatje), Holds (rezervime/queue)
+Fines & Payments: gjoba, pagesa, falje me arsye, kufizime automatike
+Notifications: email + in-app (SMS opsional më vonë)
+Reports: dashboard + raporte + export
+3) Portali i anëtarit
+huazimet aktive + afatet
+rezervimet (radhë, status, afat marrjeje)
+historik
+gjoba & pagesa
+wishlist + sugjero libër
+preferenca njoftimesh
+Rregulla Biznesi (që shpesh harrohen, por janë kritike)
+Statuset e kopjes (state machine e qartë)
+Available
+OnLoan
+OnHold (i bllokuar për rezervuesin, gati për ta marrë)
+Reserved/Waiting (rezervim ekziston, por kopja s’është ende “OnHold”)
+Lost
+Damaged
+(Opsionale) InProcessing (inventar/etiketim/karantinë)
+Huazimi
+Kontrollo:
+limit huazimesh aktive
+gjoba të papaguara mbi prag
+bllokim llogarie
+status kopje (duhet Available ose OnHold për atë anëtar)
+Gjenero:
+due date sipas politikës (member type + book type)
+Kthimi
+Llogarit gjobën:
+daysLate=max(0,today−dueDate)
+daysLate=max(0,today−dueDate)
+fine = min(daysLate * finePerDay, fineCap)
+Ndrysho status:
+nëse ka rezervime në radhë → kalo në OnHold për rezervuesin e radhës + start “hold window”
+përndryshe → Available
+Zgjatja (Renewal)
+lejohet vetëm nëse:
+s’ka rezervim aktiv për atë vepër/kopje
+s’ka kaluar max renewals
+anëtari s’është i bllokuar
+Rezervimet (Queue / Holds)
+Rezervimi bëhet zakonisht për Book (vepër), jo për një kopje specifike (më praktike).
+Kur një kopje lirohet:
+i caktohet rezervuesit të parë (FIFO, me rregulla për prioritet nëse do)
+status rezervimi: ReadyForPickup
+kopja: OnHold
+anëtari ka p.sh. 48 orë (konfigurueshme) ta marrë
+Në skadim:
+rezervimi bëhet Expired
+kalon te tjetri në radhë
+Parametra të konfigurueshëm (policy engine “i thjeshtë”)
+max active loans / member
+loan period (ditë) sipas llojit të anëtarit / llojit të librit
+finePerDay, fineCap
+hold window (p.sh. 48h)
+max renewals
+bllokim automatik pas pragut të gjobës ose pas X vonesash
+Modeli i të dhënave (i pastruar për praktikë)
+users (auth, role, status)
+members (profil anëtari, lidhur me user)
+books (vepra: titull, isbn, përshkrim, metadata)
+copies (kopje: barcode/qr, status, location/shelf, condition)
+authors, genres, publishers, tags + tabela lidhëse (many-to-many)
+loans (member_id, copy_id, dates, status)
+holds/reservations (member_id, book_id, queue_position, status, ready_at, expires_at)
+fines (loan_id, amount, reason, status)
+payments (fine_id, amount, method, reference, recorded_by)
+notifications (channel, template, payload, status, sent_at)
+audit_logs (actor_user_id, action, entity, before/after)
+cms_pages, announcements, videos
+job_posts, job_applications (nëse e mbani si modul)
+Siguria & Kontrolli
+Password hashing (Argon2 ose bcrypt), rate limiting login, lockout
+RBAC (role-based) + (opsionale) permissions fine-grained
+Audit log për veprime kritike (loan/return, waive fine, delete book/copy, import)
+Soft delete për entitete kryesore (books/copies/members)
+Upload i sigurt (CV, media): validim tipi/masa, antivirus opsional më vonë
+Raporte (Minimum i vlefshëm)
+huazime sot / kthime sot
+overdue list
+top books (30/90 ditë)
+members me gjoba mbi prag
+inventar: lost/damaged/unused
+Faza të sugjeruara (që ta bëjmë realisht të realizueshëm)
+MVP (Faza 1): Auth + role, katalog (books/copies), huazim/kthim/zgjatje, rezervime bazë, gjoba bazë, dashboard i thjeshtë, email njoftime.
+Faza 2: CMS (faqe/njoftime), portal anëtari i plotë, import Excel, print etiketa, raporte të avancuara.
+Faza 3: pagesa online, SMS, video/evente, punësime, integrime ISBN lookup.
+Sugjerim teknologjie (praktik për produkt serioz)
+DB: PostgreSQL (zgjedhje shumë e mirë)
+Backend: Node.js (NestJS) ose Laravel ose Django (cil

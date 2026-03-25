@@ -1,0 +1,545 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static jazzmin %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script src="{% static 'jazzmin/js/ui_feedback.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'css/toast.css' %}">
+  <script src="{% static 'js/toast.js' %}"></script>
+  <style>
+    .app-circulation.model-loan.change-list #change-list-filters {
+      padding: 16px 28px !important;
+    }
+    .app-circulation.model-loan.change-list #change-list-filters > .d-flex {
+      width: 100% !important;
+      flex-wrap: wrap !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      gap: 12px !important;
+    }
+    .app-circulation.model-loan.change-list #changelist-search {
+      flex: 0 1 auto !important;
+      max-width: 400px !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      gap: 10px !important;
+      margin-right: 0 !important;
+    }
+    .app-circulation.model-loan.change-list #searchbar {
+      flex: 1 1 auto !important;
+      width: 180px !important;
+      min-width: 180px !important;
+    }
+    .app-circulation.model-loan.change-list .object-tools {
+      flex: 0 1 auto !important;
+      justify-content: flex-end !important;
+      gap: 10px !important;
+      align-items: center !important;
+    }
+    .app-circulation.model-loan.change-list .object-tools > li {
+      flex: 0 0 auto !important;
+    }
+    .app-circulation.model-loan.change-list .object-tools > li.sl-loan-filters-pills {
+      flex: 1 1 auto !important;
+      min-width: 0 !important;
+    }
+    .app-circulation.model-loan.change-list .sl-quick-filters {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+      margin: 0;
+    }
+    .app-circulation.model-loan.change-list .sl-quick-filters a {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: .01em;
+      border: 1px solid rgba(148,163,184,.24);
+      color: #475569;
+      background: #eef2f6;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+      transition: all .18s ease;
+      white-space: nowrap;
+    }
+    .app-circulation.model-loan.change-list .sl-quick-filters a.is-active {
+      color: #fff;
+      background: linear-gradient(135deg, #319189, #2b7f78);
+      border-color: transparent;
+      box-shadow: 0 10px 18px rgba(49,145,137,.22);
+    }
+    .app-circulation.model-loan.change-list .sl-quick-filters a:hover {
+      color: #0f172a;
+      background: #e2e8f0;
+      border-color: rgba(49,145,137,.18);
+      transform: translateY(-1px);
+    }
+    .app-circulation.model-loan.change-list .sl-search-small .btn,
+    .app-circulation.model-loan.change-list #changelist-search .btn {
+      border-radius: 999px !important;
+      padding: 7px 14px !important;
+      font-size: 12px !important;
+      min-height: 36px !important;
+      line-height: 1.2 !important;
+    }
+    .app-circulation.model-loan.change-list #changelist-search input[type="submit"] {
+      border-radius: 999px !important;
+      padding: 7px 14px !important;
+      font-size: 12px !important;
+      min-height: 36px !important;
+      line-height: 1.2 !important;
+    }
+    .app-circulation.model-loan.change-list #changelist-filter {
+      display: none !important;
+    }
+    .app-circulation.model-loan.change-list .object-tools li {
+      list-style: none !important;
+      margin: 0 !important;
+    }
+    .app-circulation.model-loan.change-list #result_list thead th,
+    .app-circulation.model-loan.change-list #result_list thead th a {
+      color: #0f172a !important;
+      font-weight: 900 !important;
+    }
+    .app-circulation.model-loan.change-list #jazzy-sidebar {
+      position: fixed !important;
+      inset: 0 auto 0 0 !important;
+      overflow: hidden !important;
+    }
+    .app-circulation.model-loan.change-list #jazzy-sidebar .sidebar-wrapper {
+      overflow-y: auto !important;
+      height: calc(100vh - 72px) !important;
+    }
+    .app-circulation.model-loan.change-list .app-main {
+      height: 100vh !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+    }
+    .app-circulation.model-loan.change-list .app-content {
+      overflow-x: auto !important;
+    }
+    @media (max-width: 991.98px) {
+      .app-circulation.model-loan.change-list #changelist-search {
+        max-width: none !important;
+        width: 100% !important;
+      }
+      .app-circulation.model-loan.change-list #searchbar {
+        min-width: 140px !important;
+      }
+      .app-circulation.model-loan.change-list .object-tools,
+      .app-circulation.model-loan.change-list .object-tools > li.sl-loan-filters-pills {
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+      .app-circulation.model-loan.change-list .sl-quick-filters {
+        justify-content: flex-start !important;
+      }
+    }
+    .sl-quick-loan-modal .modal-content {
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(255,255,255,.985);
+      border: 1px solid rgba(255,255,255,.78);
+      box-shadow: 0 24px 55px rgba(15,23,42,.24);
+      transform: translateZ(0);
+      filter: none !important;
+    }
+    .sl-quick-loan-modal .modal-header {
+      background: #319189;
+      color: white;
+      border-bottom: 0;
+    }
+    .sl-quick-loan-modal .modal-title {
+      color: #0f172a !important;
+      font-weight: 800 !important;
+    }
+    .sl-quick-loan-modal .modal-body,
+    .sl-quick-loan-modal .modal-body label,
+    .sl-quick-loan-modal .modal-body .form-label {
+      color: #0f172a !important;
+      font-weight: 700;
+    }
+    .sl-quick-loan-modal .form-control,
+    .sl-quick-loan-modal .form-select {
+      border-radius: 12px;
+      color: #0f172a !important;
+      border-color: rgba(15,23,42,.16) !important;
+      background: #fff !important;
+      font-weight: 600;
+    }
+    .sl-quick-loan-modal .form-control::placeholder {
+      color: rgba(15,23,42,.60) !important;
+    }
+    .modal-backdrop.show {
+      background: rgba(9, 14, 27, .42) !important;
+      backdrop-filter: blur(14px) saturate(125%);
+      -webkit-backdrop-filter: blur(14px) saturate(125%);
+    }
+    /* hide default ugly dropdown, keep quick buttons */
+    .app-circulation.model-loan.change-list select[name="loan_status"] {
+      display: none !important;
+    }
+    .sl-quick-loan-modal .modal-dialog {
+      filter: none !important;
+    }
+    .sl-quick-loan-modal .modal-body,
+    .sl-quick-loan-modal .modal-body * {
+      filter: none !important;
+    }
+    .sl-ql-input-wrap { min-height: 42px; }
+    .sl-ql-input-wrap input:read-only { background: #f5fbfa !important; }
+    .sl-ql-field .sl-skeleton-member { padding: 4px 0; }
+  </style>
+{% endblock %}
+
+{% block search %}
+  <div class="col-12 pb-4" id="change-list-filters">
+    <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+      <form id="changelist-search" class="d-flex flex-wrap gap-2 align-items-center flex-grow-1" method="GET">
+        {% if cl.search_fields %}
+          <input class="form-control" style="width: auto; min-width: 260px;" type="text" name="q" value="{{ cl.query }}" id="searchbar"
+              {% if cl.search_help_text %} placeholder="{{ cl.search_help_text }}{% endif %}>
+        {% endif %}
+
+        {% if cl.search_fields %}
+          <button type="submit" class="btn btn-primary">{% trans 'Kërko' %}</button>
+          {% if show_result_count %}
+            <span class="small quiet ms-2">
+              {% blocktrans count counter=cl.result_count %}{{ counter }} result{% plural %}{{ counter }} results{% endblocktrans %}
+              (<a href="?{% if cl.is_popup %}_popup=1{% endif %}">
+                {% if cl.show_full_result_count %}
+                  {% blocktrans with full_result_count=cl.full_result_count %}{{ full_result_count }} total{% endblocktrans %}
+                {% else %}
+                  {% trans "Show all" %}
+                {% endif %}
+              </a>)
+            </span>
+          {% endif %}
+          {% admin_extra_filters cl as extra_filters %}
+          {% for pair in extra_filters.items %}
+            {% if pair.0 != "q" %}<input type="hidden" name="{{ pair.0 }}" value="{{ pair.1 }}">{% endif %}
+          {% endfor %}
+        {% endif %}
+      </form>
+
+      <ul class="object-tools d-flex flex-wrap gap-2 align-items-center m-0 p-0">
+        <li class="sl-loan-filters-pills">
+          <div class="sl-quick-filters">
+            <a href="{{ loan_status_urls.active }}" class="{% if current_scope == 'ACTIVE' %}is-active{% endif %}">Vetëm aktiv</a>
+            <a href="{{ loan_status_urls.all }}" class="{% if current_scope == 'ALL' %}is-active{% endif %}">Të gjithë</a>
+            <a href="{{ loan_status_urls.returned }}" class="{% if current_scope == 'RETURNED' %}is-active{% endif %}">Dorëzuar</a>
+            <a href="{{ loan_source_urls.all }}" class="{% if current_source == 'ALL' %}is-active{% endif %}">Të gjitha mënyrat</a>
+            <a href="{{ loan_source_urls.reservation }}" class="{% if current_source == 'RESERVATION' %}is-active{% endif %}">Nga rezervimi</a>
+            <a href="{{ loan_source_urls.direct }}" class="{% if current_source == 'DIRECT' %}is-active{% endif %}">Direkt</a>
+          </div>
+        </li>
+        <li class="d-flex gap-2 align-items-center flex-shrink-0">
+          <a href="#" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#exportModal" title="Eksporto në Excel/PDF me filtra">
+            <i class="fas fa-file-excel me-1"></i>Excel
+          </a>
+          <a href="#" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exportModal" title="Eksporto në Excel/PDF me filtra">
+            <i class="fas fa-file-pdf me-1"></i>PDF
+          </a>
+          <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quickLoanModal">
+            Shto huazim
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+{% endblock %}
+
+{% block object-tools-items %}
+  <li class="sl-loan-filters-pills">
+    <div class="sl-quick-filters">
+      <a href="{{ loan_status_urls.active }}" class="{% if current_scope == 'ACTIVE' %}is-active{% endif %}">Vetëm aktiv</a>
+      <a href="{{ loan_status_urls.all }}" class="{% if current_scope == 'ALL' %}is-active{% endif %}">Të gjithë</a>
+      <a href="{{ loan_status_urls.returned }}" class="{% if current_scope == 'RETURNED' %}is-active{% endif %}">Dorëzuar</a>
+      <a href="{{ loan_source_urls.all }}" class="{% if current_source == 'ALL' %}is-active{% endif %}">Të gjitha mënyrat</a>
+      <a href="{{ loan_source_urls.reservation }}" class="{% if current_source == 'RESERVATION' %}is-active{% endif %}">Nga rezervimi</a>
+      <a href="{{ loan_source_urls.direct }}" class="{% if current_source == 'DIRECT' %}is-active{% endif %}">Direkt</a>
+    </div>
+  </li>
+  <li class="d-flex gap-2 align-items-center flex-shrink-0">
+    <a href="#" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#exportModal" title="Eksporto në Excel/PDF me filtra">
+      <i class="fas fa-file-excel me-1"></i>Excel
+    </a>
+    <a href="#" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exportModal" title="Eksporto në Excel/PDF me filtra">
+      <i class="fas fa-file-pdf me-1"></i>PDF
+    </a>
+    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quickLoanModal">
+      Shto huazim
+    </a>
+  </li>
+{% endblock %}
+
+{% block content %}
+  {{ block.super }}
+
+  {% include "admin/include_export_modal.html" with export_excel_base=export_excel_base export_pdf_base=export_pdf_base export_modal_report_label=export_modal_report_label export_modal_has_book=export_modal_has_book export_modal_has_author=export_modal_has_author export_modal_has_member=export_modal_has_member export_modal_has_dates=export_modal_has_dates %}
+
+  <div class="modal fade sl-quick-loan-modal" id="quickLoanModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title font-weight-bold">Shto Huazim të Ri</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="qlAlert" class="alert" style="display:none;"></div>
+          <form id="quickLoanFormModal" class="row g-3" novalidate>
+            <div class="col-md-6">
+              <label class="form-label">Nr. ID (anëtari)</label>
+              {{ quick_loan_form.national_id }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Anëtari</label>
+              <div id="qlMemberBox" class="form-control sl-ql-field" style="height:auto; min-height: 42px; background:#f5fbfa;">
+                —
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Libri</label>
+              {{ quick_loan_form.book }}
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">ISBN</label>
+              <div class="sl-ql-input-wrap position-relative">
+                <div id="qlIsbnSkeleton" class="sl-skeleton sl-skeleton-admin sl-skeleton-input position-absolute top-0 start-0 end-0" style="display:none;"></div>
+                <input id="qlIsbn" class="form-control" type="text" value="—" readonly />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Kopja (e sugjeruar)</label>
+              <div class="sl-ql-input-wrap position-relative">
+                <div id="qlCopySkeleton" class="sl-skeleton sl-skeleton-admin sl-skeleton-input position-absolute top-0 start-0 end-0" style="display:none;"></div>
+                <input id="qlCopy" class="form-control" type="text" value="—" readonly />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Data e marrjes</label>
+              {{ quick_loan_form.pickup_date }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Data e kthimit</label>
+              {{ quick_loan_form.return_date }}
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Shënim</label>
+              {{ quick_loan_form.note }}
+            </div>
+            <div class="col-12">
+              <label class="form-label">Smart Assist</label>
+              <div id="qlSmartBox" class="form-control sl-ql-field" style="height:auto; min-height: 56px; background:#f8fbff;">
+                —
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Mbyll</button>
+          <button id="qlSubmitBtn" type="button" class="btn btn-primary">Ruaj huazimin</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const apiUrl = "{{ quick_loan_api_url }}";
+      const createUrl = "{{ quick_loan_create_url }}";
+      const nid = document.getElementById("id_national_id");
+      const book = document.getElementById("id_book");
+      const pickup = document.getElementById("id_pickup_date");
+      const ret = document.getElementById("id_return_date");
+      const note = document.getElementById("id_note");
+      const alertBox = document.getElementById("qlAlert");
+      const memberBox = document.getElementById("qlMemberBox");
+      const isbnBox = document.getElementById("qlIsbn");
+      const copyBox = document.getElementById("qlCopy");
+      const smartBox = document.getElementById("qlSmartBox");
+      const submitBtn = document.getElementById("qlSubmitBtn");
+
+      if (!nid || !book || !pickup || !ret || !submitBtn) return;
+
+      function csrfToken() {
+        const m = document.cookie.match(/csrftoken=([^;]+)/);
+        return m ? decodeURIComponent(m[1]) : "";
+      }
+
+      function showAlert(kind, text) {
+        if (window.SLToast) {
+          var t = kind === 'danger' ? 'error' : (kind === 'success' ? 'success' : (kind === 'warning' ? 'warning' : 'info'));
+          window.SLToast[t](text, { duration: kind === 'danger' ? 7000 : 5000 });
+          return;
+        }
+        if (window.SLFeedback) {
+          window.SLFeedback.show(alertBox, kind, text);
+          return;
+        }
+        alertBox.style.display = "block";
+        alertBox.className = "alert alert-" + kind;
+        alertBox.textContent = text;
+      }
+
+      var memberSkeletonHtml = '<div class="sl-skeleton-member sl-skeleton-brand"><span class="sl-skeleton sl-skeleton-avatar sl-skeleton-brand"></span><div><span class="sl-skeleton sl-skeleton-block sl-skeleton-brand" style="width:120px;"></span><span class="sl-skeleton sl-skeleton-block-sm sl-skeleton-brand sl-skeleton-text-sm" style="display:block;"></span></div></div>';
+      var smartSkeletonHtml = '<div class="sl-skeleton-brand" style="padding:4px 0;"><span class="sl-skeleton sl-skeleton-block sl-skeleton-brand" style="width:90%;display:block;margin-bottom:8px;"></span><span class="sl-skeleton sl-skeleton-block-sm sl-skeleton-brand" style="width:70%;display:block;"></span></div>';
+
+      function showSkeletons() {
+        if (nid.value || book.value) {
+          memberBox.innerHTML = memberSkeletonHtml;
+          memberBox.classList.add('sl-loading');
+          var isbnSk = document.getElementById("qlIsbnSkeleton");
+          var copySk = document.getElementById("qlCopySkeleton");
+          if (isbnSk) { isbnSk.style.display = "block"; }
+          if (copySk) { copySk.style.display = "block"; }
+          if (smartBox) {
+            smartBox.innerHTML = smartSkeletonHtml;
+            smartBox.classList.add('sl-loading');
+          }
+        }
+      }
+      function hideSkeletons() {
+        memberBox.classList.remove('sl-loading');
+        var isbnSk = document.getElementById("qlIsbnSkeleton");
+        var copySk = document.getElementById("qlCopySkeleton");
+        if (isbnSk) { isbnSk.style.display = "none"; }
+        if (copySk) { copySk.style.display = "none"; }
+        if (smartBox) smartBox.classList.remove('sl-loading');
+      }
+
+      function setMember(m) {
+        if (!m) {
+          memberBox.innerHTML = "—";
+          return;
+        }
+        const avatar = m.photo_url
+          ? '<img src="' + m.photo_url + '" alt="Foto" style="width:34px;height:34px;border-radius:999px;object-fit:cover;border:1px solid rgba(49,145,137,.25);" />'
+          : '<span style="width:34px;height:34px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;background:rgba(49,145,137,.14);color:#1f5f5a;font-weight:800;">' + ((m.full_name || "A").substring(0,1).toUpperCase()) + "</span>";
+        memberBox.innerHTML = '<div style="display:flex;align-items:center;gap:8px;">' + avatar + '<div><b>' + (m.full_name || "") + '</b><div style="font-size:12px;opacity:.8;">' + (m.member_no || "") + '</div></div></div>';
+      }
+
+      function setBookInfo(b) {
+        isbnBox.value = (b && b.isbn) ? b.isbn : "—";
+        copyBox.value = (b && b.suggested_copy_barcode) ? b.suggested_copy_barcode : "—";
+      }
+      function setSmart(data) {
+        if (!smartBox) return;
+        if (!data) {
+          smartBox.innerHTML = "—";
+          submitBtn.disabled = false;
+          return;
+        }
+        const warnings = Array.isArray(data.warnings) ? data.warnings : [];
+        const best = data.best_copy || null;
+        const list = [];
+        if (best && best.barcode) {
+          list.push('<div style="font-weight:800;color:#0f172a;">Kopja më e mirë: <span style="color:#1f5f5a;">' + best.barcode + '</span></div>');
+          if (best.reason) {
+            list.push('<div style="font-size:12px;color:#334155;">' + best.reason + "</div>");
+          }
+        }
+        warnings.forEach(function (w) {
+          const color = w.level === "danger" ? "#b91c1c" : (w.level === "warning" ? "#92400e" : "#0f766e");
+          list.push('<div style="font-size:12px;color:' + color + ';font-weight:800;">• ' + (w.text || "") + "</div>");
+        });
+        smartBox.innerHTML = list.length ? list.join("") : '<div style="font-size:12px;color:#0f766e;font-weight:800;">Asnjë konflikt i dukshëm.</div>';
+        submitBtn.disabled = data.can_checkout === false;
+      }
+
+      async function refresh() {
+        const params = new URLSearchParams({
+          national_id: nid.value || "",
+          book_id: book.value || "",
+          pickup_date: pickup.value || "",
+          return_date: ret.value || "",
+        });
+        showSkeletons();
+        try {
+          const res = await fetch(apiUrl + "?" + params.toString(), { headers: { "X-Requested-With": "XMLHttpRequest" } });
+          const data = await res.json();
+          hideSkeletons();
+          setMember(data.member);
+          setBookInfo(data.book);
+          setSmart(data.smart);
+          if (data.error) {
+            showAlert("warning", data.error);
+            return;
+          }
+          if (data.availability) {
+            const a = data.availability;
+            const free = Number(a.free || 0);
+            if (free > 0) {
+              showAlert("success", "Libri është i lirë. Kopje të lira: " + free);
+            } else {
+              showAlert("warning", "Libri është i zënë në këto data.");
+            }
+          } else {
+            alertBox.style.display = "none";
+          }
+        } catch (e) {
+          hideSkeletons();
+          setMember(null);
+          setBookInfo(null);
+          setSmart(null);
+          isbnBox.value = "—";
+          copyBox.value = "—";
+          memberBox.innerHTML = "—";
+          if (smartBox) smartBox.innerHTML = "—";
+          showAlert("danger", "Gabim gjatë verifikimit.");
+        }
+      }
+
+      [nid, book, pickup, ret].forEach((el) => {
+        el.addEventListener("change", refresh);
+        el.addEventListener("blur", refresh);
+      });
+
+      submitBtn.addEventListener("click", async function () {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Duke ruajtur...";
+        try {
+          const res = await fetch(createUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrfToken(),
+              "X-Requested-With": "XMLHttpRequest"
+            },
+            body: JSON.stringify({
+              national_id: nid.value || "",
+              book_id: book.value || "",
+              pickup_date: pickup.value || "",
+              return_date: ret.value || "",
+              note: note ? note.value : "",
+            })
+          });
+          const data = await res.json();
+          if (!res.ok || !data.ok) {
+            showAlert("danger", data.error || "Nuk u ruajt huazimi.");
+            return;
+          }
+          showAlert("success", "Huazimi u shtua: " + (data.book_title || "") + (data.copy_barcode ? " • Kopja: " + data.copy_barcode : ""));
+          window.setTimeout(() => { window.location.href = data.redirect || window.location.href; }, 500);
+        } catch (e) {
+          showAlert("danger", "Gabim i papritur.");
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Ruaj huazimin";
+        }
+      });
+    })();
+  </script>
+{% endblock %}
+

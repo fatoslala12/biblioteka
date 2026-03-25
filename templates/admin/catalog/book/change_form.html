@@ -1,0 +1,440 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{# Pamje (view) si parazgjedhje; ndryshim (edit) me ?edit=1 #}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script src="{% static 'jazzmin/js/ui_feedback.js' %}"></script>
+  <style>
+    .app-catalog.model-book.change-form .sl-book-form-shell {
+      background: linear-gradient(180deg, #fbfdff 0%, #f5fbfa 100%);
+      border: 1px solid rgba(15,23,42,.08);
+      border-radius: 18px;
+      box-shadow: 0 16px 38px rgba(15,23,42,.08);
+      overflow: hidden;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-head {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(15,23,42,.08);
+      background: rgba(49,145,137,.08);
+    }
+    .app-catalog.model-book.change-form .sl-book-form-title {
+      font-weight: 900;
+      color: #0f172a;
+      font-size: 19px;
+      line-height: 1.2;
+      margin: 0;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-sub {
+      color: #475569;
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-body {
+      padding: 14px 16px 6px;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-body .card {
+      border-radius: 14px !important;
+      border-color: rgba(15,23,42,.08) !important;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-body .form-group label,
+    .app-catalog.model-book.change-form .sl-book-form-body .control-label,
+    .app-catalog.model-book.change-form .sl-book-form-body label {
+      color: #0f172a !important;
+      font-weight: 800 !important;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-body fieldset.module.aligned {
+      border: 1px solid rgba(15,23,42,.10) !important;
+      border-radius: 14px !important;
+      background: #fff !important;
+      margin-bottom: 12px !important;
+      padding: 10px 12px 4px !important;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-body fieldset.module.aligned h2,
+    .app-catalog.model-book.change-form .sl-book-form-body fieldset.module.aligned .fieldset-heading {
+      margin: -10px -12px 10px !important;
+      padding: 10px 12px !important;
+      background: rgba(49,145,137,.08) !important;
+      border-bottom: 1px solid rgba(15,23,42,.08) !important;
+      border-radius: 14px 14px 0 0 !important;
+      color: #0f172a !important;
+      font-weight: 900 !important;
+      font-size: 14px !important;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-body .form-row {
+      border-bottom: 1px dashed rgba(15,23,42,.08);
+      padding-top: 10px !important;
+      padding-bottom: 10px !important;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-body .form-row:last-child {
+      border-bottom: 0;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-body input[type="text"],
+    .app-catalog.model-book.change-form .sl-book-form-body input[type="number"],
+    .app-catalog.model-book.change-form .sl-book-form-body input[type="date"],
+    .app-catalog.model-book.change-form .sl-book-form-body textarea,
+    .app-catalog.model-book.change-form .sl-book-form-body select {
+      border-radius: 12px !important;
+      border: 1px solid rgba(15,23,42,.16) !important;
+      color: #0f172a !important;
+      background: #fff !important;
+      font-weight: 600;
+    }
+    .app-catalog.model-book.change-form .select2-container {
+      min-width: 280px;
+    }
+    .app-catalog.model-book.change-form .select2-container--admin-autocomplete .select2-selection {
+      border-radius: 12px !important;
+      border: 1px solid rgba(15,23,42,.16) !important;
+      min-height: 40px !important;
+      background: #fff !important;
+    }
+    .app-catalog.model-book.change-form .select2-container--admin-autocomplete .select2-selection__rendered {
+      color: #0f172a !important;
+      font-weight: 700 !important;
+      padding-left: 10px !important;
+    }
+    .app-catalog.model-book.change-form .select2-container--admin-autocomplete .select2-search__field {
+      margin-top: 6px !important;
+    }
+    .app-catalog.model-book.change-form .select2-container--admin-autocomplete .select2-selection__choice {
+      border-radius: 999px !important;
+      background: rgba(49,145,137,.12) !important;
+      color: #134e4a !important;
+      border: 1px solid rgba(49,145,137,.25) !important;
+      font-weight: 700 !important;
+      padding: 1px 8px !important;
+    }
+    .app-catalog.model-book.change-form .sl-quick-add-btn {
+      border-radius: 999px !important;
+      padding: 3px 10px !important;
+      font-size: 11px !important;
+      font-weight: 800 !important;
+      margin-left: 8px !important;
+      border-color: rgba(49,145,137,.35) !important;
+      color: #134e4a !important;
+      background: rgba(49,145,137,.08) !important;
+    }
+    .app-catalog.model-book.change-form .sl-quick-add-btn:hover {
+      background: rgba(49,145,137,.16) !important;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-body .selector {
+      border-radius: 14px;
+      border: 1px solid rgba(15,23,42,.12);
+      background: #fff;
+      padding: 8px;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-body .selector h2 {
+      color: #0f172a !important;
+      font-weight: 800 !important;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-actions {
+      margin-top: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(15,23,42,.08);
+      background: #fff;
+      padding: 10px 12px;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-actions .btn,
+    .app-catalog.model-book.change-form .sl-book-form-actions input[type="submit"] {
+      border-radius: 999px !important;
+      font-weight: 800 !important;
+      min-height: 34px !important;
+      padding: 6px 14px !important;
+    }
+    .sl-related-modal .modal-content {
+      border-radius: 14px;
+      border: 1px solid rgba(15,23,42,.12);
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(15,23,42,.20);
+    }
+    .sl-related-modal .modal-header {
+      background: #319189;
+      border-bottom: 0;
+    }
+    .sl-related-modal .modal-title {
+      color: #fff;
+      font-weight: 900;
+    }
+  </style>
+{% endblock %}
+
+{% block field_sets %}
+  {% if add or request.GET.edit == "1" %}
+    <div class="col-12 col-xl-10">
+      <div class="sl-book-form-shell">
+        <div class="sl-book-form-head">
+          <div>
+            <h2 class="sl-book-form-title">
+              {% if add %}Shto libër të ri{% else %}Ndrysho librin{% endif %}
+            </h2>
+            <div class="sl-book-form-sub">
+              Plotëso të dhënat kryesore të librit dhe menaxho autorët/zhanret.
+            </div>
+          </div>
+          <a class="btn btn-outline-secondary btn-sm" href="/admin/catalog/book/">Shiko gjithë listën</a>
+        </div>
+        <div class="sl-book-form-body">
+          {{ block.super }}
+        </div>
+      </div>
+      <div class="modal fade sl-related-modal" id="quickRelatedModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="quickRelatedTitle">Shto element të ri</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div id="quickRelatedAlert" class="alert" style="display:none;"></div>
+              <label class="form-label" for="quickRelatedName">Emri</label>
+              <input id="quickRelatedName" type="text" class="form-control" placeholder="p.sh. Ismail Kadare" />
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Mbyll</button>
+              <button type="button" class="btn btn-primary" id="quickRelatedSaveBtn">Ruaj</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        const apiUrl = "{{ sl_quick_related_api_url|default:'' }}";
+        if (!apiUrl || !window.bootstrap) return;
+
+        const modalEl = document.getElementById("quickRelatedModal");
+        const titleEl = document.getElementById("quickRelatedTitle");
+        const nameEl = document.getElementById("quickRelatedName");
+        const alertEl = document.getElementById("quickRelatedAlert");
+        const saveBtn = document.getElementById("quickRelatedSaveBtn");
+        if (!modalEl || !titleEl || !nameEl || !alertEl || !saveBtn) return;
+        const modal = new bootstrap.Modal(modalEl);
+
+        const mappings = [
+          { field: "publisher", kind: "publisher", label: "Botues", multiple: false },
+          { field: "authors", kind: "author", label: "Autor", multiple: true },
+          { field: "genres", kind: "genre", label: "Zhanër", multiple: true },
+          { field: "tags", kind: "tag", label: "Etiketë", multiple: true },
+        ];
+
+        function csrfToken() {
+          const m = document.cookie.match(/csrftoken=([^;]+)/);
+          return m ? decodeURIComponent(m[1]) : "";
+        }
+
+        function showAlert(kind, msg) {
+          if (window.SLFeedback) {
+            window.SLFeedback.show(alertEl, kind, msg);
+            return;
+          }
+          alertEl.style.display = "block";
+          alertEl.className = "alert alert-" + kind;
+          alertEl.textContent = msg;
+        }
+
+        let current = null;
+        function openFor(cfg, selectEl) {
+          current = { cfg, selectEl };
+          titleEl.textContent = "Shto " + cfg.label + " të ri";
+          nameEl.value = "";
+          alertEl.style.display = "none";
+          modal.show();
+          window.setTimeout(() => nameEl.focus(), 150);
+        }
+
+        function attachQuickButton(cfg) {
+          const selectEl = document.getElementById("id_" + cfg.field);
+          if (!selectEl) return;
+          const row = selectEl.closest(".form-row") || selectEl.closest(".fieldBox") || selectEl.parentElement;
+          if (!row) return;
+          if (row.querySelector(".sl-quick-add-btn")) return;
+
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "btn btn-xs sl-quick-add-btn";
+          btn.textContent = "+ " + cfg.label;
+          btn.addEventListener("click", function () { openFor(cfg, selectEl); });
+
+          const select2 = row.querySelector(".select2-container");
+          if (select2 && select2.parentElement) {
+            select2.parentElement.appendChild(btn);
+          } else {
+            selectEl.insertAdjacentElement("afterend", btn);
+          }
+        }
+
+        mappings.forEach(attachQuickButton);
+
+        saveBtn.addEventListener("click", async function () {
+          if (!current) return;
+          const value = (nameEl.value || "").trim();
+          if (!value) {
+            showAlert("warning", "Vendos emrin.");
+            return;
+          }
+          saveBtn.disabled = true;
+          saveBtn.textContent = "Duke ruajtur...";
+          try {
+            const fd = new FormData();
+            fd.append("kind", current.cfg.kind);
+            fd.append("name", value);
+            const res = await fetch(apiUrl, {
+              method: "POST",
+              headers: { "X-CSRFToken": csrfToken(), "X-Requested-With": "XMLHttpRequest" },
+              body: fd,
+            });
+            const data = await res.json();
+            if (!res.ok || !data.ok) {
+              showAlert("danger", data.error || "Nuk u ruajt.");
+              return;
+            }
+            const selectEl = current.selectEl;
+            const opt = new Option(data.label, String(data.id), true, true);
+            if (!current.cfg.multiple) {
+              Array.from(selectEl.options).forEach((o) => { o.selected = false; });
+            }
+            selectEl.add(opt);
+            selectEl.dispatchEvent(new Event("change", { bubbles: true }));
+            modal.hide();
+          } catch (e) {
+            showAlert("danger", "Gabim i papritur.");
+          } finally {
+            saveBtn.disabled = false;
+            saveBtn.textContent = "Ruaj";
+          }
+        });
+      })();
+    </script>
+  {% else %}
+    <div class="col-12 col-lg-9">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex flex-wrap align-items-start justify-content-between" style="gap: 12px;">
+            <div>
+              <div style="font-weight: 900; font-size: 20px; line-height: 1.2;">{{ original.title }}</div>
+              <div class="text-muted" style="font-weight: 700; margin-top: 4px;">
+                {% if original.isbn %}ISBN: {{ original.isbn }}{% endif %}
+                {% if original.publication_year %}{% if original.isbn %} • {% endif %}Viti: {{ original.publication_year }}{% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-12 col-xl-7">
+              <div class="card" style="border-radius: 16px;">
+                <div class="card-header" style="font-weight: 900;">Të dhënat</div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-12 col-md-6 mb-3">
+                      <div class="text-muted" style="font-weight: 800;">Autori</div>
+                      <div style="font-weight: 800;">
+                        {% if original.authors.all %}
+                          {% for a in original.authors.all %}{{ a.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        {% else %}
+                          —
+                        {% endif %}
+                      </div>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                      <div class="text-muted" style="font-weight: 800;">Botuesi</div>
+                      <div style="font-weight: 800;">{{ original.publisher|default:"—" }}</div>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                      <div class="text-muted" style="font-weight: 800;">Lloji</div>
+                      <div style="font-weight: 800;">{{ original.get_book_type_display|default:"—" }}</div>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                      <div class="text-muted" style="font-weight: 800;">Zhanret</div>
+                      <div style="font-weight: 800;">
+                        {% if original.genres.all %}
+                          {% for g in original.genres.all %}{{ g.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        {% else %}
+                          —
+                        {% endif %}
+                      </div>
+                    </div>
+                    <div class="col-12 mb-0">
+                      <div class="text-muted" style="font-weight: 800;">Etiketat</div>
+                      <div style="font-weight: 800;">
+                        {% if original.tags.all %}
+                          {% for t in original.tags.all %}{{ t.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        {% else %}
+                          —
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-xl-5">
+              <div class="card" style="border-radius: 16px;">
+                <div class="card-header" style="font-weight: 900;">Statistika</div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-6 mb-3">
+                      <div class="text-muted" style="font-weight: 800;">Kopje totale</div>
+                      <div style="font-weight: 900; font-size: 20px;">{{ sl_book_total_copies|default:"0" }}</div>
+                    </div>
+                    <div class="col-6 mb-3">
+                      <div class="text-muted" style="font-weight: 800;">Kopje të lira</div>
+                      <div style="font-weight: 900; font-size: 20px;">{{ sl_book_available_copies|default:"0" }}</div>
+                    </div>
+                    <div class="col-6 mb-3">
+                      <div class="text-muted" style="font-weight: 800;">Huazime (total)</div>
+                      <div style="font-weight: 900; font-size: 18px;">{{ sl_borrow_count_html|safe }}</div>
+                    </div>
+                    <div class="col-6 mb-3">
+                      <div class="text-muted" style="font-weight: 800;">Huazime aktive</div>
+                      <div style="font-weight: 900; font-size: 20px;">{{ sl_book_active_loans|default:"0" }}</div>
+                    </div>
+                  </div>
+                  <div class="text-muted" style="font-weight: 700;">
+                    Kliko “Huazime (total)” për historikun e plotë.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mt-3" style="border-radius: 16px;">
+            <div class="card-header" style="font-weight: 900; display:flex; align-items:center; justify-content:space-between; gap: 10px;">
+              <span>Historiku i huazimeve</span>
+              <a class="btn btn-outline-secondary btn-sm" href="{{ sl_book_history_list_url|default:'/admin/circulation/loan/' }}">Shiko gjithë listën</a>
+            </div>
+            <div class="card-body">
+              {{ sl_borrow_history_html|safe }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block submit_buttons_bottom %}
+  {% if add or request.GET.edit == "1" %}
+    <div class="sl-book-form-actions">
+      {{ block.super }}
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="card-body">
+        <div style="font-weight: 900; margin-bottom: 10px;">Veprime</div>
+        <div class="d-grid" style="gap: 8px;">
+          <a class="btn btn-success" style="border-radius: 999px; font-weight: 800;" href="?edit=1">Ndrysho</a>
+          <a class="btn btn-danger" style="border-radius: 999px; font-weight: 800;" href="/admin/catalog/book/">Shiko gjithë listën</a>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
+

@@ -1,0 +1,27 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Paneli i stafit — Smart Library{% endblock %}
+
+{% block content %}
+  <section class="bg-brand-600 text-white">
+    <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div class="text-sm font-semibold text-white/85">Paneli i stafit</div>
+          <div class="mt-1 text-3xl font-extrabold tracking-tight">{% block panel_title %}{% endblock %}</div>
+          <div class="mt-2 text-sm text-white/90">{% block panel_subtitle %}{% endblock %}</div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <a href="/panel/" class="rounded-2xl border border-white/25 bg-white/10 px-4 py-2 text-sm font-extrabold hover:bg-white/15">Dashboard</a>
+          <a href="/panel/books/" class="rounded-2xl border border-white/25 bg-white/10 px-4 py-2 text-sm font-extrabold hover:bg-white/15">Librat</a>
+          <a href="/admin/" class="rounded-2xl bg-white px-4 py-2 text-sm font-extrabold text-brand-700 hover:bg-white/90">Admin</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto -mt-8 max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    {% block panel_content %}{% endblock %}
+  </section>
+{% endblock %}
+

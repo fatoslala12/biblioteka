@@ -1,0 +1,164 @@
+{% extends "cms/base.html" %}
+{% load static %}
+
+{% block title %}Rregullore — Smart Library{% endblock %}
+
+{% block content %}
+  <section class="relative">
+    <div class="pointer-events-none absolute inset-0">
+      <div class="absolute -top-20 left-0 right-0 h-72 bg-gradient-to-r from-brand-200/60 via-white to-brand-100/70 blur-2xl"></div>
+    </div>
+    <div class="relative mx-auto max-w-7xl px-4 pt-10 sm:px-6 lg:px-8">
+      <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div class="inline-flex items-center gap-2 rounded-full bg-brand-100 px-3 py-1 text-xs font-extrabold text-brand-800 dark:bg-brand-900/40 dark:text-brand-100">
+          📚 RREGULLORE ZYRTARE
+        </div>
+        <h1 class="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl">Biblioteka e Bashkia Kamëz</h1>
+        <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+          Kjo rregullore përcakton mënyrën e funksionimit, shërbimet, të drejtat dhe detyrimet e përdoruesve të Bibliotekës së Bashkisë Kamëz, me synim garantimin e një mjedisi profesional, të qetë dhe të sigurt për të gjithë komunitetin.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto mt-8 max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="grid gap-5 lg:grid-cols-2">
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">🌟 Neni 1 – Qëllimi</div>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+          Rregullorja synon të sigurojë standard të lartë shërbimi, qartësi të proceseve dhe respekt të ndërsjellë mes stafit dhe përdoruesve.
+        </p>
+      </div>
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">🎯 Neni 2 – Misioni</div>
+        <div class="mt-2 grid gap-2 text-sm text-slate-600 dark:text-slate-300">
+          <div>📖 Promovon leximin dhe edukimin</div>
+          <div>👩‍🎓 Mbështet arsimin dhe kërkimin</div>
+          <div>🌍 Ofron akses të barabartë në informacion</div>
+          <div>🤝 Nxit përfshirjen komunitare</div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 lg:col-span-2">
+        <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">🪪 Neni 3 – Anëtarësimi</div>
+        <div class="mt-3 grid gap-4 md:grid-cols-3">
+          <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+            <div class="text-xs font-extrabold text-slate-500 dark:text-slate-400">3.1 Kush mund të regjistrohet?</div>
+            <ul class="mt-2 list-disc pl-4 text-sm text-slate-600 dark:text-slate-300">
+              <li>Çdo qytetar rezident ose jo-rezident</li>
+              <li>Të miturit me pëlqimin e prindit/kujdestarit</li>
+            </ul>
+          </div>
+          <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+            <div class="text-xs font-extrabold text-slate-500 dark:text-slate-400">3.2 Dokumentacioni</div>
+            <ul class="mt-2 list-disc pl-4 text-sm text-slate-600 dark:text-slate-300">
+              <li>Dokument identifikimi</li>
+              <li>Plotësimi i formularit të regjistrimit</li>
+            </ul>
+          </div>
+          <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+            <div class="text-xs font-extrabold text-slate-500 dark:text-slate-400">3.3 Karta e Anëtarit</div>
+            <ul class="mt-2 list-disc pl-4 text-sm text-slate-600 dark:text-slate-300">
+              <li>Çdo anëtar pajiset me kartë personale 📇</li>
+              <li>Karta është e patransferueshme</li>
+              <li>Humbja e kartës raportohet menjëherë</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">📦 Neni 4 – Huazimi i Materialeve</div>
+        <div class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+          <div class="font-extrabold">4.1 Limiti i huazimit</div>
+          <ul class="mt-1 list-disc pl-4">
+            <li>👤 Adult: deri në 5 libra</li>
+            <li>👦 Fëmijë: deri në 3 libra</li>
+            <li>🎓 Student: deri në 7 libra</li>
+          </ul>
+          <div class="mt-3 font-extrabold">4.2 Afati</div>
+          <ul class="mt-1 list-disc pl-4">
+            <li>⏳ 14 ditë kalendarike</li>
+            <li>🔁 1 rinovim (nëse materiali nuk është i rezervuar)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">🔔 Neni 5 – Vonesat dhe Gjobat</div>
+        <ul class="mt-2 list-disc pl-4 text-sm text-slate-600 dark:text-slate-300">
+          <li>💰 Gjobë ditore sipas tarifës së miratuar nga Drejtoria</li>
+          <li>🚫 Bllokim i përkohshëm nëse gjoba kalon pragun e përcaktuar</li>
+          <li>📕 Në rast humbjeje, anëtari zëvendëson librin ose paguan vlerën</li>
+        </ul>
+      </div>
+
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">📌 Neni 6 – Rezervimet</div>
+        <ul class="mt-2 list-disc pl-4 text-sm text-slate-600 dark:text-slate-300">
+          <li>📲 Rezervimi mund të bëhet fizikisht ose online</li>
+          <li>📅 Afati i tërheqjes: 48–72 orë</li>
+          <li>🔄 Mosparaqitja çon në anulim automatik</li>
+        </ul>
+      </div>
+
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">🏛️ Neni 7 – Rregullat e Qëndrimit në Bibliotekë</div>
+        <ul class="mt-2 list-disc pl-4 text-sm text-slate-600 dark:text-slate-300">
+          <li>🤫 Ruajtja e qetësisë është e detyrueshme</li>
+          <li>📵 Telefonat në silent</li>
+          <li>🍔 Ndalohet konsumimi i ushqimeve në ambientet e leximit</li>
+          <li>💻 Pajisjet elektronike lejohen me kufizime zhurme</li>
+        </ul>
+      </div>
+
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">🛡️ Neni 8 – Siguria dhe Privatësia</div>
+        <ul class="mt-2 list-disc pl-4 text-sm text-slate-600 dark:text-slate-300">
+          <li>📊 Të dhënat personale ruhen sipas legjislacionit në fuqi</li>
+          <li>🔐 Informacioni përdoret vetëm për qëllime bibliotekare</li>
+          <li>📹 Ambientet mund të monitorohen për arsye sigurie</li>
+        </ul>
+      </div>
+
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">📚 Neni 9 – Inventari dhe Kujdesi për Materialet</div>
+        <ul class="mt-2 list-disc pl-4 text-sm text-slate-600 dark:text-slate-300">
+          <li>Anëtarët duhet të trajtojnë materialet me kujdes</li>
+          <li>Çdo dëmtim i qëllimshëm sanksionohet</li>
+          <li>Biblioteka kryen inventar periodik</li>
+        </ul>
+      </div>
+
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">🌐 Neni 10 – Shërbimet Digjitale</div>
+        <ul class="mt-2 list-disc pl-4 text-sm text-slate-600 dark:text-slate-300">
+          <li>📲 Akses online në katalog</li>
+          <li>📧 Njoftime automatike për afate</li>
+          <li>💳 Menaxhim i huazimeve përmes platformës</li>
+        </ul>
+      </div>
+
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">⚖️ Neni 11 – Masat Disiplinore</div>
+        <ul class="mt-2 list-disc pl-4 text-sm text-slate-600 dark:text-slate-300">
+          <li>Pezullim i përkohshëm i anëtarësisë</li>
+          <li>Bllokim i huazimeve</li>
+          <li>Masa administrative në rast shkeljeje të rregullores</li>
+        </ul>
+      </div>
+
+      <div class="rounded-3xl border border-brand-200 bg-brand-50 p-6 shadow-sm dark:border-brand-900/40 dark:bg-brand-900/20 lg:col-span-2">
+        <div class="text-sm font-extrabold text-brand-800 dark:text-brand-100">📅 Neni 12 – Hyrja në Fuqi</div>
+        <p class="mt-2 text-sm text-slate-700 dark:text-slate-200">
+          Kjo rregullore hyn në fuqi me miratimin e Drejtorisë së Bibliotekës dhe miratimin institucional nga Bashkia Kamëz.
+        </p>
+        <div class="mt-4 rounded-2xl border border-brand-300/60 bg-white/70 p-4 dark:border-brand-800/40 dark:bg-slate-900/40">
+          <div class="text-sm font-extrabold">🌟 Parimi Ynë</div>
+          <div class="mt-1 text-base font-extrabold">“Dija është pasuria më e madhe e komunitetit.”</div>
+          <div class="mt-2 text-sm text-slate-700 dark:text-slate-200">Biblioteka e Bashkisë Kamëz • 📍 Në shërbim të qytetarëve • 📚 Moderne • Profesionale • Për të gjithë</div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

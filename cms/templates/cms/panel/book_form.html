@@ -1,0 +1,89 @@
+{% extends "cms/panel/base_panel.html" %}
+
+{% block panel_title %}{% if mode == "new" %}Shto libër{% else %}Përditëso librin{% endif %}{% endblock %}
+{% block panel_subtitle %}Plotëso të dhënat kryesore. Autorët/zhanret/tags mund t’i shkruash me presje.{% endblock %}
+
+{% block panel_content %}
+  <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+    <form method="post" class="space-y-5">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-semibold text-rose-700 dark:border-rose-900/40 dark:bg-rose-950/30 dark:text-rose-200">
+          {{ form.non_field_errors|striptags }}
+        </div>
+      {% endif %}
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.title.label }}</label>
+          <input name="{{ form.title.html_name }}" value="{{ form.title.value|default_if_none:'' }}" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none ring-brand-600/25 focus:ring-4 dark:border-slate-800 dark:bg-slate-950" />
+          {% if form.title.errors %}<div class="mt-2 text-xs font-extrabold text-rose-600">{{ form.title.errors|striptags }}</div>{% endif %}
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.isbn.label }}</label>
+          <input name="{{ form.isbn.html_name }}" value="{{ form.isbn.value|default_if_none:'' }}" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none ring-brand-600/25 focus:ring-4 dark:border-slate-800 dark:bg-slate-950" />
+          {% if form.isbn.errors %}<div class="mt-2 text-xs font-extrabold text-rose-600">{{ form.isbn.errors|striptags }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.language.label }}</label>
+          <input name="{{ form.language.html_name }}" value="{{ form.language.value|default_if_none:'' }}" placeholder="p.sh. shqip" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none ring-brand-600/25 focus:ring-4 dark:border-slate-800 dark:bg-slate-950" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.publication_year.label }}</label>
+          <input name="{{ form.publication_year.html_name }}" value="{{ form.publication_year.value|default_if_none:'' }}" placeholder="p.sh. 2006" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none ring-brand-600/25 focus:ring-4 dark:border-slate-800 dark:bg-slate-950" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.book_type.label }}</label>
+          <select name="{{ form.book_type.html_name }}" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none ring-brand-600/25 focus:ring-4 dark:border-slate-800 dark:bg-slate-950">
+            {% for val, label in form.book_type.field.choices %}
+              <option value="{{ val }}" {% if form.book_type.value == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.publisher_name.label }}</label>
+        <input name="{{ form.publisher_name.html_name }}" value="{{ form.publisher_name.value|default_if_none:'' }}" placeholder="p.sh. OMSC-A" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none ring-brand-600/25 focus:ring-4 dark:border-slate-800 dark:bg-slate-950" />
+        <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ form.publisher_name.help_text }}</div>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.authors_csv.label }}</label>
+          <input name="{{ form.authors_csv.html_name }}" value="{{ form.authors_csv.value|default_if_none:'' }}" placeholder="p.sh. Ismail Kadare" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none ring-brand-600/25 focus:ring-4 dark:border-slate-800 dark:bg-slate-950" />
+          <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ form.authors_csv.help_text }}</div>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.genres_csv.label }}</label>
+          <input name="{{ form.genres_csv.html_name }}" value="{{ form.genres_csv.value|default_if_none:'' }}" placeholder="p.sh. Roman" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none ring-brand-600/25 focus:ring-4 dark:border-slate-800 dark:bg-slate-950" />
+          <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ form.genres_csv.help_text }}</div>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.tags_csv.label }}</label>
+          <input name="{{ form.tags_csv.html_name }}" value="{{ form.tags_csv.value|default_if_none:'' }}" placeholder="p.sh. klasike" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none ring-brand-600/25 focus:ring-4 dark:border-slate-800 dark:bg-slate-950" />
+          <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ form.tags_csv.help_text }}</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.description.label }}</label>
+        <textarea name="{{ form.description.html_name }}" rows="6" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none ring-brand-600/25 focus:ring-4 dark:border-slate-800 dark:bg-slate-950">{{ form.description.value|default_if_none:'' }}</textarea>
+      </div>
+
+      <div class="flex flex-col gap-3 sm:flex-row">
+        <button class="rounded-2xl bg-brand-700 px-5 py-3 text-sm font-extrabold text-white shadow-sm hover:bg-brand-800">
+          Ruaj
+        </button>
+        <a href="/panel/books/" class="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-extrabold text-slate-800 shadow-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 dark:hover:bg-slate-900">
+          Anulo
+        </a>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+

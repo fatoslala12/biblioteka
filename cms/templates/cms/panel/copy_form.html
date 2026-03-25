@@ -1,0 +1,63 @@
+{% extends "cms/panel/base_panel.html" %}
+
+{% block panel_title %}{% if mode == "new" %}Shto kopje{% else %}Përditëso kopjen{% endif %}{% endblock %}
+{% block panel_subtitle %}Statusi “Disponueshme” e bën titullin të lirë për huazim.{% endblock %}
+
+{% block panel_content %}
+  <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+    <div class="mb-6 rounded-2xl bg-slate-50 p-4 text-sm dark:bg-slate-900/40">
+      <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Titulli</div>
+      <div class="mt-1 text-sm font-extrabold">{{ book.title }}</div>
+    </div>
+
+    <form method="post" class="space-y-5">
+      {% csrf_token %}
+
+      <div>
+        <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.barcode.label }}</label>
+        <input name="{{ form.barcode.html_name }}" value="{{ form.barcode.value|default_if_none:'' }}" placeholder="p.sh. C001" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none ring-brand-600/25 focus:ring-4 dark:border-slate-800 dark:bg-slate-950" />
+        {% if form.barcode.errors %}<div class="mt-2 text-xs font-extrabold text-rose-600">{{ form.barcode.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.status.label }}</label>
+          <select name="{{ form.status.html_name }}" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none ring-brand-600/25 focus:ring-4 dark:border-slate-800 dark:bg-slate-950">
+            {% for val, label in form.status.field.choices %}
+              <option value="{{ val }}" {% if form.status.value == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.condition.label }}</label>
+          <select name="{{ form.condition.html_name }}" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none ring-brand-600/25 focus:ring-4 dark:border-slate-800 dark:bg-slate-950">
+            {% for val, label in form.condition.field.choices %}
+              <option value="{{ val }}" {% if form.condition.value == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.location.label }}</label>
+          <input name="{{ form.location.html_name }}" value="{{ form.location.value|default_if_none:'' }}" placeholder="p.sh. Sallë 1" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none ring-brand-600/25 focus:ring-4 dark:border-slate-800 dark:bg-slate-950" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ form.shelf.label }}</label>
+          <input name="{{ form.shelf.html_name }}" value="{{ form.shelf.value|default_if_none:'' }}" placeholder="p.sh. A-3" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm outline-none ring-brand-600/25 focus:ring-4 dark:border-slate-800 dark:bg-slate-950" />
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3 sm:flex-row">
+        <button class="rounded-2xl bg-brand-700 px-5 py-3 text-sm font-extrabold text-white shadow-sm hover:bg-brand-800">
+          Ruaj
+        </button>
+        <a href="/panel/books/{{ book.id }}/" class="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-extrabold text-slate-800 shadow-sm hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 dark:hover:bg-slate-900">
+          Kthehu te libri
+        </a>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+

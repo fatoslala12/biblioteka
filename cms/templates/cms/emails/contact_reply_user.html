@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="sq">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ subject }}</title>
+  </head>
+  <body style="margin:0;padding:0;background:#e9f7f6;font-family:Inter,Segoe UI,Arial,sans-serif;color:#0f172a;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#e9f7f6;padding:24px 12px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="680" cellspacing="0" cellpadding="0" style="max-width:680px;width:100%;">
+            <tr>
+              <td style="padding:0 0 12px 0;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-radius:18px;overflow:hidden;box-shadow:0 18px 40px rgba(15,23,42,.10);">
+                  <tr>
+                    <td style="background:linear-gradient(90deg,#319088,#45c0ba);padding:18px 18px;">
+                      <div style="font-weight:900;font-size:16px;letter-spacing:-0.02em;color:#ffffff;">
+                        {{ library_name|default:"Smart Library • Biblioteka Kamëz" }}
+                      </div>
+                      <div style="opacity:.92;color:#ffffff;font-weight:700;font-size:12px;margin-top:4px;">
+                        Përgjigje ndaj mesazhit tënd nga formulari i kontaktit
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="background:#ffffff;padding:18px 18px;">
+                      <div style="font-weight:900;font-size:18px;margin:0 0 6px 0;">
+                        {{ subject }}
+                      </div>
+                      {% if replied_at %}
+                      <div style="color:#64748b;font-weight:700;font-size:12px;">
+                        Përgjigjur më: {{ replied_at|date:"d/m/Y H:i" }}
+                      </div>
+                      {% endif %}
+
+                      <!-- Conversation bubbles -->
+                      <div style="margin-top:14px;">
+                        <div style="display:block;margin:0 0 10px 0;">
+                          <div style="font-size:11px;color:#64748b;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin:0 0 6px 0;">
+                            Mesazhi yt
+                          </div>
+                          <div style="background:#f8fafc;border:1px solid rgba(15,23,42,.08);border-radius:16px;padding:12px 14px;white-space:pre-wrap;font-weight:600;line-height:1.55;color:#0f172a;">
+                            {{ original_message }}
+                          </div>
+                        </div>
+
+                        <div style="display:block;margin:0;">
+                          <div style="font-size:11px;color:#64748b;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin:0 0 6px 0;text-align:right;">
+                            Përgjigja jonë
+                          </div>
+                          <div style="background:linear-gradient(135deg, rgba(15,118,110,.12), rgba(13,148,136,.10));border:1px solid rgba(13,148,136,.28);border-radius:16px;padding:12px 14px;white-space:pre-wrap;font-weight:650;line-height:1.55;color:#0f172a;">
+                            {{ reply_body }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style="margin-top:14px;padding:12px 14px;border-radius:16px;background:rgba(148,163,184,.10);border:1px solid rgba(15,23,42,.06);">
+                        <div style="font-weight:900;color:#0f172a;font-size:12px;text-transform:uppercase;letter-spacing:.05em;">Kujdes</div>
+                        <div style="margin-top:6px;color:#64748b;font-weight:700;font-size:12px;line-height:1.5;">
+                          Ky email është dërguar automatikisht nga sistemi i Bibliotekës Kamëz (Smart Library).
+                          Nëse ke pyetje të tjera, përgjigju direkt në këtë email.
+                        </div>
+                      </div>
+
+                      <div style="margin-top:14px;font-size:12px;color:#64748b;font-weight:700;">
+                        Faleminderit,<br/>
+                        <b>{{ library_name|default:"Smart Library • Biblioteka Kamëz" }}</b>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:10px 2px 0;color:#64748b;font-size:11px;font-weight:700;text-align:center;">
+                © {% now "Y" %} Smart Library — Biblioteka Kamëz
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+

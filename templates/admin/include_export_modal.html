@@ -1,0 +1,99 @@
+{% load i18n %}
+<div class="modal fade sl-export-modal" id="exportModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:16px; overflow:hidden; border:1px solid rgba(13,148,136,.2); box-shadow:0 20px 48px rgba(15,23,42,.18);">
+      <div class="modal-header" style="background:#0d9488; color:#fff; border-bottom:0;">
+        <h5 class="modal-title fw-bold">Eksporto {{ export_modal_report_label|default:"raport" }}</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Mbyll"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted small mb-3">Filtro sipas datave, librit, autorit ose anëtarit. Lini bosh për të gjitha.</p>
+        <form id="exportFilterForm" class="row g-2">
+          {% if export_modal_has_dates|default:True %}
+          <div class="col-6">
+            <label class="form-label small fw-bold">Data nga</label>
+            <input type="date" name="date_from" class="form-control form-control-sm" placeholder="YYYY-MM-DD">
+          </div>
+          <div class="col-6">
+            <label class="form-label small fw-bold">Data deri</label>
+            <input type="date" name="date_to" class="form-control form-control-sm" placeholder="YYYY-MM-DD">
+          </div>
+          {% endif %}
+          {% if export_modal_has_book|default:False %}
+          <div class="col-12">
+            <label class="form-label small fw-bold">Libri</label>
+            <select name="book_id" class="form-select form-select-sm">
+              <option value="">— Të gjithë librat</option>
+              {% for item in export_books %}
+              <option value="{{ item.0 }}">{{ item.1|truncatechars:60 }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          {% endif %}
+          {% if export_modal_has_author|default:False %}
+          <div class="col-12">
+            <label class="form-label small fw-bold">Autori</label>
+            <select name="author_id" class="form-select form-select-sm">
+              <option value="">— Të gjithë autorët</option>
+              {% for item in export_authors %}
+              <option value="{{ item.0 }}">{{ item.1 }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          {% endif %}
+          {% if export_modal_has_member|default:True %}
+          <div class="col-12">
+            <label class="form-label small fw-bold">Anëtari</label>
+            <select name="member_id" class="form-select form-select-sm">
+              <option value="">— Të gjithë anëtarët</option>
+              {% for item in export_members %}
+              <option value="{{ item.0 }}">{{ item.1|truncatechars:50 }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          {% endif %}
+        </form>
+      </div>
+      <div class="modal-footer border-top">
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Anulo</button>
+        <button type="button" class="btn btn-success btn-sm" id="exportExcelBtn" title="Shkarko Excel">
+          <i class="fas fa-file-excel me-1"></i>Shkarko Excel
+        </button>
+        <button type="button" class="btn btn-danger btn-sm" id="exportPdfBtn" title="Shkarko PDF">
+          <i class="fas fa-file-pdf me-1"></i>Shkarko PDF
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function() {
+  var excelBase = "{{ export_excel_base|default:'' }}";
+  var pdfBase = "{{ export_pdf_base|default:'' }}";
+  var form = document.getElementById("exportFilterForm");
+  var excelBtn = document.getElementById("exportExcelBtn");
+  var pdfBtn = document.getElementById("exportPdfBtn");
+  if (!form || !excelBase || !pdfBase) return;
+  function buildParams() {
+    var params = new URLSearchParams(window.location.search);
+    var fd = new FormData(form);
+    for (var pair of fd.entries()) {
+      if (pair[1] !== "" && pair[1] !== null && pair[1] !== undefined) {
+        params.set(pair[0], pair[1]);
+      }
+    }
+    return params.toString();
+  }
+  function openExport(url) {
+    var qs = buildParams();
+    var full = url + (qs ? "?" + qs : "");
+    window.open(full, "_blank");
+  }
+  if (excelBtn) {
+    excelBtn.addEventListener("click", function() { openExport(excelBase); });
+  }
+  if (pdfBtn) {
+    pdfBtn.addEventListener("click", function() { openExport(pdfBase); });
+  }
+})();
+</script>

@@ -1,0 +1,15 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block object-tools-items %}
+  <li>
+    <a href="#" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#exportModal" title="Eksporto me filtra"><i class="fas fa-file-excel me-1"></i>Excel</a>
+    <a href="#" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exportModal" title="Eksporto me filtra"><i class="fas fa-file-pdf me-1"></i>PDF</a>
+  </li>
+  {{ block.super }}
+{% endblock %}
+
+{% block content %}
+  {{ block.super }}
+  {% include "admin/include_export_modal.html" with export_excel_base=export_excel_base export_pdf_base=export_pdf_base export_modal_report_label=export_modal_report_label export_modal_has_book=export_modal_has_book export_modal_has_author=export_modal_has_author export_modal_has_member=export_modal_has_member export_modal_has_dates=export_modal_has_dates %}
+{% endblock %}

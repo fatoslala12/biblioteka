@@ -1,0 +1,48 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <style>
+    /* Modern table look (Jazzmin-friendly) */
+    #changelist table {
+      border-collapse: separate !important;
+      border-spacing: 0 10px !important;
+    }
+    #changelist table thead th {
+      border: 0 !important;
+      color: rgba(15,23,42,.72) !important;
+      font-weight: 900 !important;
+      letter-spacing: .02em;
+    }
+    #changelist table tbody tr {
+      background: #fff;
+      box-shadow: 0 10px 24px rgba(15,23,42,.06);
+      border: 1px solid rgba(15,23,42,.08);
+    }
+    #changelist table tbody tr td,
+    #changelist table tbody tr th {
+      border-top: 1px solid rgba(15,23,42,.06) !important;
+      border-bottom: 1px solid rgba(15,23,42,.06) !important;
+    }
+    #changelist table tbody tr th:first-child,
+    #changelist table tbody tr td:first-child {
+      border-left: 1px solid rgba(15,23,42,.06) !important;
+      border-top-left-radius: 14px;
+      border-bottom-left-radius: 14px;
+      overflow: hidden;
+    }
+    #changelist table tbody tr th:last-child,
+    #changelist table tbody tr td:last-child {
+      border-right: 1px solid rgba(15,23,42,.06) !important;
+      border-top-right-radius: 14px;
+      border-bottom-right-radius: 14px;
+      overflow: hidden;
+    }
+    /* Rreshta pa përgjigje (NEW) – theks i lehtë */
+    #changelist table tbody tr:has(.sl-new-badge) {
+      background: linear-gradient(90deg, rgba(13,148,136,.06), #fff 60%);
+    }
+  </style>
+{% endblock %}
+

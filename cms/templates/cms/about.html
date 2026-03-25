@@ -1,0 +1,120 @@
+{% extends "cms/base.html" %}
+{% load static %}
+
+{% block title %}Rreth nesh — Smart Library{% endblock %}
+
+{% block content %}
+  <section class="relative">
+    <div class="pointer-events-none absolute inset-0">
+      <div class="absolute -top-20 left-0 right-0 h-72 bg-gradient-to-r from-brand-200/60 via-white to-brand-100/70 blur-2xl"></div>
+    </div>
+
+    <div class="relative mx-auto max-w-7xl px-4 pt-10 sm:px-6 lg:px-8">
+      <div class="grid items-start gap-8 lg:grid-cols-12">
+        <div class="lg:col-span-7">
+          <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+            <div class="inline-flex items-center gap-2 rounded-full bg-brand-100 px-3 py-1 text-xs font-extrabold text-brand-800 dark:bg-brand-900/40 dark:text-brand-100">
+              Rreth Nesh
+            </div>
+            <h1 class="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl">
+              Mirë se vini në Bibliotekën Online të Bashkia Kamëz
+            </h1>
+            <p class="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+              Një hapësirë moderne digjitale e krijuar për të sjellë dijen, kulturën dhe leximin më pranë çdo qytetari.
+            </p>
+            <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+              Ne besojmë se biblioteka nuk është vetëm një ndërtesë me libra, por një ekosistem dijesh, një pikë takimi mes ideve, brezave dhe teknologjisë. Platforma jonë online është ndërtuar për të ofruar akses të shpejtë, të thjeshtë dhe transparent në koleksionin tonë, duke e bërë përvojën e leximit më të aksesueshme se kurrë.
+            </p>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5">
+          <div class="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+            <img src="{% static 'img/library-hero.svg' %}" alt="Biblioteka Kamëz" class="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto mt-10 max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+      <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">📊 Në shifra</div>
+      <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-900/40">
+          <div class="text-2xl font-extrabold">18,500+</div>
+          <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">📚 Libra në koleksion</div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-900/40">
+          <div class="text-2xl font-extrabold">4,200+</div>
+          <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">✍️ Autorë vendas dhe të huaj</div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-900/40">
+          <div class="text-2xl font-extrabold">1,200</div>
+          <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">📖 Tituj për fëmijë dhe të rinj</div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-900/40">
+          <div class="text-2xl font-extrabold">3,000+</div>
+          <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">🎓 Materiale akademike dhe studimore</div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-900/40">
+          <div class="text-2xl font-extrabold">7,500+</div>
+          <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">👥 Anëtarë aktivë</div>
+        </div>
+        <div class="rounded-2xl border border-brand-200 bg-brand-50 p-5 dark:border-brand-900/40 dark:bg-brand-900/20">
+          <div class="text-sm font-extrabold text-brand-800 dark:text-brand-100">Shënim</div>
+          <div class="mt-1 text-sm text-slate-700 dark:text-slate-200">Shifrat janë indikative dhe përditësohen vazhdimisht.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto mt-10 max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">🎯 Misioni Ynë</div>
+        <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+          Të promovojmë kulturën e leximit, edukimin e vazhdueshëm dhe zhvillimin intelektual të komunitetit të Kamzës përmes shërbimeve moderne bibliotekare dhe teknologjisë digjitale.
+        </p>
+      </div>
+      <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">🌍 Vizioni</div>
+        <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+          Të bëhemi një qendër moderne e dijes dhe inovacionit, ku tradita e leximit bashkohet me teknologjinë, duke krijuar një bibliotekë që i përgjigjet nevojave të sotme dhe të nesërme të qytetarëve.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto mt-10 max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+      <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">🚀 Çfarë Ofrojmë</div>
+      <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
+          <div class="text-sm font-extrabold">Kërkim i avancuar</div>
+          <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">Kërkim i shpejtë dhe rezervim online.</div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
+          <div class="text-sm font-extrabold">Huazime live</div>
+          <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">Menaxhim i huazimeve dhe afateve në kohë reale.</div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
+          <div class="text-sm font-extrabold">Njoftime automatike</div>
+          <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">Njoftime të qarta për përdoruesit dhe stafin.</div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
+          <div class="text-sm font-extrabold">Evente kulturore</div>
+          <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">Aktivitete promovuese dhe komunitare.</div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
+          <div class="text-sm font-extrabold">Bashkëpunim me shkollat</div>
+          <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">Hapësirë e përbashkët për edukim dhe zhvillim.</div>
+        </div>
+        <div class="rounded-2xl border border-brand-200 bg-brand-50 p-5 dark:border-brand-900/40 dark:bg-brand-900/20">
+          <div class="text-sm font-extrabold text-brand-800 dark:text-brand-100">Biblioteka Online e Bashkisë Kamëz</div>
+          <div class="mt-1 text-sm text-slate-700 dark:text-slate-200">Dija fillon këtu. 📚✨</div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

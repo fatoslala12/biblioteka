@@ -1,0 +1,297 @@
+{% extends "admin/change_form.html" %}
+{% load static admin_modify admin_urls i18n %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script src="{% static 'jazzmin/js/ui_feedback.js' %}"></script>
+  <style>
+    .sl-reply-card {
+      border-radius: 16px;
+      border: 1px solid rgba(15,23,42,.08);
+      box-shadow: 0 10px 24px rgba(15,23,42,.08);
+      overflow: hidden;
+      background: #fff;
+    }
+    .sl-reply-card .card-header {
+      font-weight: 900;
+      background: linear-gradient(90deg, rgba(49,145,137,.14), rgba(248,250,252,1));
+      border-bottom: 1px solid rgba(15,23,42,.08);
+    }
+    .sl-msg-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (min-width: 992px) {
+      .sl-msg-grid {
+        grid-template-columns: 1.25fr .75fr;
+        align-items: start;
+      }
+    }
+    .sl-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-weight: 850;
+      font-size: 12px;
+      color: #0f172a;
+      background: rgba(148,163,184,.12);
+      border: 1px solid rgba(15,23,42,.08);
+      white-space: nowrap;
+    }
+    .sl-bubble {
+      border-radius: 16px;
+      padding: 12px 14px;
+      border: 1px solid rgba(15,23,42,.08);
+      background: #f8fafc;
+      white-space: pre-wrap;
+      font-weight: 650;
+      line-height: 1.55;
+      color: #0f172a;
+    }
+    .sl-bubble--reply {
+      border-color: rgba(13,148,136,.28);
+      background: linear-gradient(135deg, rgba(15,118,110,.10), rgba(13,148,136,.08));
+    }
+    .sl-reply-btn {
+      border-radius: 999px !important;
+      font-weight: 800 !important;
+    }
+    .sl-reply-modal .modal-content {
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(255,255,255,.985);
+      border: 1px solid rgba(255,255,255,.78);
+      box-shadow: 0 24px 55px rgba(15,23,42,.24);
+    }
+    .sl-reply-modal .modal-header {
+      background: #319189;
+      color: #fff;
+      border-bottom: 0;
+    }
+    .sl-reply-modal .modal-title {
+      color: #fff;
+      font-weight: 900;
+    }
+    .sl-reply-modal .form-control {
+      border-radius: 12px;
+      color: #0f172a !important;
+      border-color: rgba(15,23,42,.16) !important;
+      background: #fff !important;
+      font-weight: 600;
+    }
+    /* Komanda: Përgjigju / Fshije / Historik / Shiko listën – moderne me emoji */
+    .sl-actions {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(15,23,42,.08);
+    }
+    .sl-actions .sl-cmd {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-weight: 850;
+      font-size: 14px;
+      text-decoration: none;
+      border: 1px solid transparent;
+      transition: all .2s ease;
+    }
+    .sl-actions .sl-cmd:hover { transform: translateY(-1px); }
+    .sl-actions .sl-cmd--reply {
+      background: linear-gradient(135deg, #0d9488, #0f766e);
+      color: #fff;
+      border-color: rgba(13,148,136,.4);
+    }
+    .sl-actions .sl-cmd--reply:hover { color: #fff; box-shadow: 0 6px 16px rgba(13,148,136,.35); }
+    .sl-actions .sl-cmd--delete {
+      background: rgba(239,68,68,.08);
+      color: #dc2626;
+      border-color: rgba(239,68,68,.3);
+    }
+    .sl-actions .sl-cmd--delete:hover { color: #b91c1c; background: rgba(239,68,68,.14); }
+    .sl-actions .sl-cmd--more {
+      background: rgba(100,116,139,.1);
+      color: #475569;
+      border-color: rgba(15,23,42,.12);
+    }
+    .sl-actions .sl-cmd--more:hover { color: #0f172a; background: rgba(100,116,139,.18); }
+    .sl-actions .sl-cmd-row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .modal-backdrop.show { background:rgba(9,14,27,.42) !important; backdrop-filter:blur(14px) saturate(125%); -webkit-backdrop-filter:blur(14px) saturate(125%); }
+  </style>
+{% endblock %}
+
+{# i heqim object-tools lart (do e kemi button brenda kartës) #}
+{% block object-tools %}{% endblock %}
+
+{# i heqim submit buttons lart/poshtë – do i renderojmë te karta Status #}
+{% block submit_buttons_top %}{% endblock %}
+{% block submit_buttons_bottom %}{% endblock %}
+
+{% block content %}
+  {{ block.super }}
+  {% if original %}
+    <div class="sl-msg-grid">
+      <div class="card sl-reply-card">
+        <div class="card-header d-flex align-items-center justify-content-between" style="gap:10px;">
+          <span><i class="far fa-envelope me-1"></i> Mesazhi origjinal</span>
+          <span class="sl-pill">
+            <i class="far fa-calendar-alt"></i> {{ original.created_at|date:"d/m/Y H:i" }}
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="d-flex flex-wrap" style="gap:10px;">
+            <span class="sl-pill"><i class="far fa-user"></i> {{ original.name|default:"—" }}</span>
+            <span class="sl-pill"><i class="far fa-at"></i> {{ original.email|default:"—" }}</span>
+            {% if original.subject %}
+              <span class="sl-pill"><i class="far fa-comment-dots"></i> {{ original.subject }}</span>
+            {% endif %}
+          </div>
+
+          <div class="mt-3">
+            <div class="text-muted small" style="font-weight: 850; letter-spacing: .04em; text-transform: uppercase;">
+              Body i mesazhit
+            </div>
+            <div class="sl-bubble mt-2">{{ original.message }}</div>
+          </div>
+
+          {% if original.is_replied %}
+            <div class="mt-3">
+              <div class="text-muted small" style="font-weight: 850; letter-spacing: .04em; text-transform: uppercase;">
+                Përgjigja e dërguar
+              </div>
+              <div class="sl-bubble sl-bubble--reply mt-2">{{ original.reply_body }}</div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card sl-reply-card">
+        <div class="card-header d-flex align-items-center justify-content-between" style="gap: 10px;">
+          <span><i class="fas fa-reply me-1"></i> Status përgjigjeje</span>
+          {% if original.is_replied %}
+            <span class="badge badge-success" style="border-radius:999px; font-weight:900; padding:6px 10px;">U përgjigj</span>
+          {% else %}
+            <span class="badge badge-secondary" style="border-radius:999px; font-weight:900; padding:6px 10px;">Pa përgjigje</span>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          {% if original.is_replied %}
+            <div class="text-muted small">Përgjigjur më: <b>{{ original.replied_at|date:"d/m/Y H:i" }}</b></div>
+            <div class="text-muted small">Subjekti: <b>{{ original.reply_subject }}</b></div>
+            {% if original.replied_by %}
+              <div class="text-muted small">Nga: <b>{{ original.replied_by }}</b></div>
+            {% endif %}
+          {% endif %}
+          <div class="sl-actions">
+            <div class="sl-cmd-row">
+              {% if original and not original.is_replied %}
+                <a href="#" class="sl-cmd sl-cmd--reply" data-bs-toggle="modal" data-bs-target="#replyModal">💬 Përgjigju</a>
+              {% endif %}
+              {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
+              <a href="{% add_preserved_filters delete_url %}" class="sl-cmd sl-cmd--delete">🗑️ Fshije</a>
+              <a href="{% url opts|admin_urlname:'history' original.pk|admin_urlquote %}" class="sl-cmd sl-cmd--more">📜 Historik</a>
+              <a href="{% url opts|admin_urlname:'changelist' %}" class="sl-cmd sl-cmd--more">📋 Shiko listën</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if original and not original.is_replied %}
+    <div class="modal fade sl-reply-modal" id="replyModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Përgjigju mesazhit</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="replyAlert" class="alert" style="display:none;"></div>
+            <div class="alert alert-info" style="border-radius: 14px; font-weight: 700;">
+              Status: <span id="replyStatusText">Gati për dërgim</span>
+            </div>
+            <div class="mb-2 text-muted small">
+              To: <b>{{ original.email }}</b><br/>
+              Subject: <b>Re: {{ original.subject }}</b>
+            </div>
+            <div class="mt-2 mb-3 p-3" style="border-radius:14px;background:rgba(148,163,184,.12);border:1px solid rgba(15,23,42,.08);">
+              <div class="text-muted small" style="font-weight: 800; margin-bottom: 6px;">Mesazhi origjinal</div>
+              <div style="white-space: pre-wrap; font-weight: 600;">{{ original.message }}</div>
+            </div>
+            <label class="form-label">Përgjigja</label>
+            <textarea id="replyBody" class="form-control" rows="8" placeholder="Shkruaj përgjigjen këtu..."></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Mbyll</button>
+            <button id="sendReplyBtn" type="button" class="btn btn-success sl-reply-btn">Dërgo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const btn = document.getElementById("sendReplyBtn");
+        const bodyEl = document.getElementById("replyBody");
+        const alertEl = document.getElementById("replyAlert");
+        const modalEl = document.getElementById("replyModal");
+        const statusEl = document.getElementById("replyStatusText");
+        const replyUrl = "{% url 'admin:cms_contactmessage_reply' original.id %}";
+        if (!btn || !bodyEl || !alertEl || !modalEl) return;
+
+        function csrfToken(){const m=document.cookie.match(/csrftoken=([^;]+)/);return m?decodeURIComponent(m[1]):"";}
+        function show(kind,text){
+          if(window.SLFeedback){window.SLFeedback.show(alertEl,kind,text);return;}
+          alertEl.style.display="block";
+          alertEl.className="alert alert-"+kind;
+          alertEl.textContent=text;
+        }
+        function setStatus(text){ if(statusEl) statusEl.textContent = text; }
+
+        btn.addEventListener("click", async function () {
+          const body = (bodyEl.value || "").trim();
+          if (!body) { show("warning", "Shkruaj përgjigjen."); setStatus("Mungon përmbajtja"); return; }
+          btn.disabled = true;
+          btn.textContent = "Duke dërguar...";
+          setStatus("Duke u dërguar…");
+          try {
+            const fd = new FormData();
+            fd.append("body", body);
+            const res = await fetch(replyUrl, {
+              method: "POST",
+              headers: { "X-CSRFToken": csrfToken(), "X-Requested-With": "XMLHttpRequest" },
+              body: fd
+            });
+            const data = await res.json();
+            if (!res.ok || !data.ok) {
+              show("danger", data.error || "Nuk u dërgua.");
+              setStatus("Dështoi: " + (data.error_type || "UNKNOWN"));
+              return;
+            }
+            show("success", data.detail || "Përgjigja u dërgua me sukses.");
+            setStatus("U dërgua te: " + (data.to || "{{ original.email }}"));
+            window.setTimeout(() => window.location.reload(), 600);
+          } catch (e) {
+            show("danger", "Gabim i papritur.");
+            setStatus("Dështoi: exception");
+          } finally {
+            btn.disabled = false;
+            btn.textContent = "Dërgo";
+          }
+        });
+      })();
+    </script>
+  {% endif %}
+
+{% endblock %}
+
+{# Heqim komplet form/tab-et sipër – e kemi dizajnin poshtë #}
+{% block field_sets %}{% endblock %}
+{% block inline_field_sets %}{% endblock %}
+

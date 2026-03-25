@@ -1,0 +1,230 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static jazzmin %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script src="{% static 'jazzmin/js/ui_feedback.js' %}"></script>
+  <style>
+    .app-circulation.model-reservationrequest.change-list #change-list-filters {
+      padding-top: 10px !important;
+    }
+    .app-circulation.model-reservationrequest.change-list #change-list-filters > .d-flex {
+      width: 100% !important;
+      flex-wrap: wrap !important;
+      justify-content: flex-start !important;
+      align-items: center !important;
+      gap: 16px !important;
+    }
+    .app-circulation.model-reservationrequest.change-list #changelist-search {
+      flex: 0 1 420px !important;
+      max-width: 420px !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      gap: 12px !important;
+      margin-right: auto !important;
+    }
+    .app-circulation.model-reservationrequest.change-list #searchbar {
+      flex: 1 1 auto !important;
+      width: auto !important;
+      min-width: 280px !important;
+    }
+    .app-circulation.model-reservationrequest.change-list .search-filter[data-name="status__exact"],
+    .app-circulation.model-reservationrequest.change-list select[name="status__exact"] {
+      display: none !important;
+    }
+    .app-circulation.model-reservationrequest.change-list .search-filter[data-name="status__exact"] + .select2-container {
+      display: none !important;
+    }
+    .app-circulation.model-reservationrequest.change-list .object-tools {
+      flex: 1 1 560px !important;
+      justify-content: flex-end !important;
+      gap: 14px !important;
+    }
+    .app-circulation.model-reservationrequest.change-list #change-list-filters > .d-flex > li:first-of-type,
+    .app-circulation.model-reservationrequest.change-list .object-tools > li:first-of-type {
+      flex: 1 1 auto !important;
+      min-width: 360px !important;
+    }
+    .app-circulation.model-reservationrequest.change-list .sl-quick-filters {
+      display:flex;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      width:100%;
+      gap:10px;
+      margin:0;
+    }
+    .app-circulation.model-reservationrequest.change-list .sl-quick-filters a {
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:38px;
+      border-radius:999px;
+      padding:8px 16px;
+      font-weight:800;
+      font-size:12px;
+      letter-spacing:.01em;
+      white-space:nowrap;
+      border:1px solid rgba(148,163,184,.24);
+      color:#475569;
+      background:#eef2f6;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+      transition:all .18s ease;
+    }
+    .app-circulation.model-reservationrequest.change-list .sl-quick-filters a.is-active {
+      color:#fff;
+      background:linear-gradient(135deg, #319189, #2b7f78);
+      border-color:transparent;
+      box-shadow:0 10px 18px rgba(49,145,137,.22);
+    }
+    .app-circulation.model-reservationrequest.change-list .sl-quick-filters a:hover {
+      color:#0f172a;
+      background:#e2e8f0;
+      border-color:rgba(49,145,137,.18);
+      transform:translateY(-1px);
+    }
+    .app-circulation.model-reservationrequest.change-list #changelist-filter { display:none !important; }
+    .app-circulation.model-reservationrequest.change-list .object-tools li {
+      list-style:none !important;
+      margin:0 !important;
+    }
+    .app-circulation.model-reservationrequest.change-list #result_list thead th,
+    .app-circulation.model-reservationrequest.change-list #result_list thead th a {
+      color: #0f172a !important;
+      font-weight: 900 !important;
+    }
+    .app-circulation.model-reservationrequest.change-list #changelist-search .btn,
+    .app-circulation.model-reservationrequest.change-list #changelist-search input[type="submit"] {
+      border-radius:999px !important;
+      padding:8px 16px !important;
+      font-size:12px !important;
+      min-height:38px !important;
+      line-height:1.2 !important;
+    }
+    .app-circulation.model-reservationrequest.change-list .btn.btn-xs { border-radius:999px !important; font-weight:800 !important; padding:4px 10px !important; font-size:11px !important; }
+    .app-circulation.model-reservationrequest.change-list .btn.btn-xs.btn-success { background:#2e8b57 !important; border-color:#2e8b57 !important; color:#fff !important; }
+    @media (max-width: 991.98px) {
+      .app-circulation.model-reservationrequest.change-list #changelist-search {
+        max-width: none !important;
+        width: 100% !important;
+      }
+      .app-circulation.model-reservationrequest.change-list .object-tools,
+      .app-circulation.model-reservationrequest.change-list .object-tools > li:first-of-type {
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+      .app-circulation.model-reservationrequest.change-list .sl-quick-filters {
+        justify-content: flex-start !important;
+      }
+    }
+    .sl-quick-req-modal .modal-content { border-radius:18px; overflow:hidden; background:rgba(255,255,255,.985); border:1px solid rgba(255,255,255,.78); box-shadow:0 24px 55px rgba(15,23,42,.24); }
+    .sl-quick-req-modal .modal-header { background:#319189; color:#fff; border-bottom:0; }
+    .sl-quick-req-modal .modal-title { color:#0f172a !important; font-weight:800 !important; }
+    .sl-quick-req-modal .form-control, .sl-quick-req-modal .form-select { border-radius:12px; color:#0f172a !important; border-color:rgba(15,23,42,.16) !important; background:#fff !important; font-weight:600; }
+    .modal-backdrop.show { background:rgba(9,14,27,.42) !important; backdrop-filter:blur(14px) saturate(125%); -webkit-backdrop-filter:blur(14px) saturate(125%); }
+  </style>
+{% endblock %}
+
+{% block search %}
+  <div class="col-12 pb-4" id="change-list-filters">
+    <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+      <form id="changelist-search" class="d-flex flex-wrap gap-2 align-items-center flex-grow-1" method="GET">
+        {% if cl.search_fields %}
+          <input class="form-control" style="width: auto; min-width: 260px;" type="text" name="q" value="{{ cl.query }}" id="searchbar"
+              {% if cl.search_help_text %} placeholder="{{ cl.search_help_text }}{% endif %}>
+        {% endif %}
+
+        {% if cl.search_fields %}
+          <button type="submit" class="btn btn-primary">{% trans 'Kërko' %}</button>
+          {% if show_result_count %}
+            <span class="small quiet ms-2">
+              {% blocktrans count counter=cl.result_count %}{{ counter }} result{% plural %}{{ counter }} results{% endblocktrans %}
+              (<a href="?{% if cl.is_popup %}_popup=1{% endif %}">
+                {% if cl.show_full_result_count %}
+                  {% blocktrans with full_result_count=cl.full_result_count %}{{ full_result_count }} total{% endblocktrans %}
+                {% else %}
+                  {% trans "Show all" %}
+                {% endif %}
+              </a>)
+            </span>
+          {% endif %}
+          {% admin_extra_filters cl as extra_filters %}
+          {% for pair in extra_filters.items %}
+            {% if pair.0 != "q" %}<input type="hidden" name="{{ pair.0 }}" value="{{ pair.1 }}">{% endif %}
+          {% endfor %}
+        {% endif %}
+      </form>
+
+      <ul class="object-tools d-flex flex-wrap gap-2 align-items-center m-0 p-0">
+        <li>
+          <div class="sl-quick-filters">
+            <a href="?status__exact=PENDING" class="{% if current_scope == 'PENDING' %}is-active{% endif %}">Në pritje</a>
+            <a href="?status__exact=APPROVED" class="{% if current_scope == 'APPROVED' %}is-active{% endif %}">Pranuar</a>
+            <a href="?status__exact=REJECTED" class="{% if current_scope == 'REJECTED' %}is-active{% endif %}">Refuzuar</a>
+            <a href="?status__exact=CANCELLED" class="{% if current_scope == 'CANCELLED' %}is-active{% endif %}">Anuluar</a>
+            <a href="?status__exact=ALL" class="{% if current_scope == 'ALL' %}is-active{% endif %}">Të gjithë</a>
+          </div>
+        </li>
+        <li>
+          <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quickReqModal">Shto kërkesë</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  {{ block.super }}
+  <div class="modal fade sl-quick-req-modal" id="quickReqModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title font-weight-bold">Shto Kërkesë për Rezervim</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="reqAlert" class="alert" style="display:none;"></div>
+          <form class="row g-3" novalidate>
+            <div class="col-md-6"><label class="form-label">Nr. ID (anëtari)</label>{{ quick_req_form.national_id }}</div>
+            <div class="col-md-6"><label class="form-label">Anëtari</label><div id="reqMember" class="form-control" style="height:auto;min-height:42px;background:#f5fbfa;">—</div></div>
+            <div class="col-12"><label class="form-label">Libri</label>{{ quick_req_form.book }}</div>
+            <div class="col-md-6"><label class="form-label">ISBN</label><input id="reqIsbn" class="form-control" type="text" value="—" readonly></div>
+            <div class="col-md-6"><label class="form-label">Gjendja</label><input id="reqAvail" class="form-control" type="text" value="—" readonly></div>
+            <div class="col-md-6"><label class="form-label">Data e marrjes</label>{{ quick_req_form.pickup_date }}</div>
+            <div class="col-md-6"><label class="form-label">Data e kthimit</label>{{ quick_req_form.return_date }}</div>
+            <div class="col-12"><label class="form-label">Shënim</label>{{ quick_req_form.note }}</div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Mbyll</button>
+          <button id="reqSubmit" type="button" class="btn btn-primary">Ruaj kërkesën</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const apiUrl = "{{ quick_req_api_url }}";
+      const createUrl = "{{ quick_req_create_url }}";
+      const nid = document.getElementById("id_national_id");
+      const book = document.getElementById("id_book");
+      const pickup = document.getElementById("id_pickup_date");
+      const ret = document.getElementById("id_return_date");
+      const note = document.getElementById("id_note");
+      const submitBtn = document.getElementById("reqSubmit");
+      const alertBox = document.getElementById("reqAlert");
+      const memberBox = document.getElementById("reqMember");
+      const isbnBox = document.getElementById("reqIsbn");
+      const availBox = document.getElementById("reqAvail");
+      if (!nid || !book || !pickup || !ret || !submitBtn) return;
+      function csrfToken(){const m=document.cookie.match(/csrftoken=([^;]+)/);return m?decodeURIComponent(m[1]):"";}
+      function show(kind,text){if(window.SLFeedback){window.SLFeedback.show(alertBox,kind,text);return;}alertBox.style.display="block";alertBox.className="alert alert-"+kind;alertBox.textContent=text;}
+      function setMember(m){if(!m){memberBox.innerHTML="—";return;} const av=m.photo_url?'<img src="'+m.photo_url+'" style="width:34px;height:34px;border-radius:999px;object-fit:cover;border:1px solid rgba(49,145,137,.25);" />':'<span style="width:34px;height:34px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;background:rgba(49,145,137,.14);color:#1f5f5a;font-weight:800;">'+((m.full_name||"A").substring(0,1).toUpperCase())+'</span>'; memberBox.innerHTML='<div style="display:flex;align-items:center;gap:8px;">'+av+'<div><b>'+(m.full_name||"")+'</b><div style="font-size:12px;opacity:.8;">'+(m.member_no||"")+'</div></div></div>'; }
+      async function refresh(){const p=new URLSearchParams({national_id:nid.value||"",book_id:book.value||"",pickup_date:pickup.value||"",return_date:ret.value||""}); try{const r=await fetch(apiUrl+"?"+p.toString(),{headers:{"X-Requested-With":"XMLHttpRequest"}}); const d=await r.json(); setMember(d.member); isbnBox.value=(d.book&&d.book.isbn)?d.book.isbn:"—"; if(d.error){show("warning",d.error); availBox.value="—"; return;} if(d.availability){const free=Number(d.availability.free||0); availBox.value=free>0?("I lirë ("+free+" kopje)"):"I zënë"; show(free>0?"success":"warning",free>0?"Titulli është i lirë për këto data.":"Titulli është i zënë në këto data.");} else {alertBox.style.display="none"; availBox.value="—";}}catch(e){show("danger","Gabim gjatë verifikimit.");}}
+      [nid,book,pickup,ret].forEach((el)=>{el.addEventListener("change",refresh);el.addEventListener("blur",refresh);});
+      submitBtn.addEventListener("click", async function(){submitBtn.disabled=true;submitBtn.textContent="Duke ruajtur..."; try{const r=await fetch(createUrl,{method:"POST",headers:{"Content-Type":"application/json","X-CSRFToken":csrfToken(),"X-Requested-With":"XMLHttpRequest"},body:JSON.stringify({national_id:nid.value||"",book_id:book.value||"",pickup_date:pickup.value||"",return_date:ret.value||"",note:note?note.value:""})}); const d=await r.json(); if(!r.ok||!d.ok){show("danger",d.error||"Nuk u krijua kërkesa.");return;} show("success","Kërkesa u krijua me sukses."); window.setTimeout(()=>{window.location.href=d.redirect||window.location.href;},500);}catch(e){show("danger","Gabim i papritur.");} finally{submitBtn.disabled=false;submitBtn.textContent="Ruaj kërkesën";}});
+    })();
+  </script>
+{% endblock %}
+

@@ -140,9 +140,9 @@ class MemberSignUpForm(forms.Form):
     # Honeypot (fshehur me CSS) – botët e mbushin
     company_website = forms.CharField(
         required=False,
+        label="",
         widget=forms.TextInput(
             attrs={
-                "class": "sl-honeypot",
                 "tabindex": "-1",
                 "autocomplete": "off",
                 "aria-hidden": "true",
@@ -178,7 +178,12 @@ class MemberSignUpForm(forms.Form):
         p = self.cleaned_data.get("password1") or ""
         if len(p) < 10:
             raise ValidationError("Fjalëkalimi duhet të ketë të paktën 10 karaktere.")
-        password_validation.validate_password(p, user=User())
+        if len(p) > 128:
+            raise ValidationError("Fjalëkalimi është shumë i gjatë.")
+        if not any(c.isalpha() for c in p):
+            raise ValidationError("Fjalëkalimi duhet të përmbajë të paktën një shkronjë.")
+        if not any(c.isdigit() for c in p):
+            raise ValidationError("Fjalëkalimi duhet të përmbajë të paktën një shifër (0–9).")
         return p
 
     def clean(self):

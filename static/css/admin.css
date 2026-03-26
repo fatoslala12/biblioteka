@@ -1276,3 +1276,77 @@ body.change-list #changelist .card-body.table-responsive {
   background: rgba(255,255,255,.2) !important;
 }
 
+/* ===== Mobile fixes (header/changelist) ===== */
+@media (max-width: 991.98px) {
+  /* Header must span full width on mobile */
+  #jazzy-navbar,
+  .app-header.navbar,
+  .main-header.navbar {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Avoid content being shifted by desktop sidebar offsets */
+  .app-main,
+  .app-footer,
+  .content-wrapper,
+  .main-footer {
+    margin-left: 0 !important;
+  }
+
+  /* Keep topbar compact: hide duplicate search bars on small screens */
+  #jazzy-navbar form.d-flex.ms-2 {
+    display: none !important;
+  }
+
+  /* Compact top-right user/logout block */
+  #sl-top-user {
+    margin-right: 0 !important;
+    gap: 6px !important;
+  }
+  #sl-top-user .sl-top-username {
+    display: none !important;
+  }
+  #sl-top-user .btn {
+    padding: 0.3rem 0.65rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  /* Reduce nav icon/button footprint to prevent clipping */
+  #jazzy-navbar .nav-link,
+  #jazzy-navbar .btn-navbar {
+    padding-left: 0.45rem !important;
+    padding-right: 0.45rem !important;
+  }
+  #jazzy-navbar .nav-link i,
+  #jazzy-navbar .btn-navbar i {
+    font-size: 1rem !important;
+  }
+
+  /* Changelist controls stack cleanly on narrow screens */
+  #change-list-filters,
+  body.change-list #change-list-filters {
+    padding: 14px !important;
+  }
+  #change-list-filters > .d-flex,
+  body.change-list #change-list-filters > .d-flex {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+  }
+  #changelist-search {
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  #changelist-search .form-control,
+  #changelist-search select.search-filter,
+  #changelist-search input[type="text"],
+  #changelist-search #searchbar,
+  #changelist-search .btn-primary,
+  #changelist-search input[type="submit"] {
+    width: 100% !important;
+  }
+}

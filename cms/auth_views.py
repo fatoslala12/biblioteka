@@ -72,6 +72,18 @@ def _login_default_destination(user) -> str:
     return "/anetar/"
 
 
+def _member_signup_errors_to_messages(request: HttpRequest, form: MemberSignUpForm) -> None:
+    for field, errs in form.errors.items():
+        if field == "__all__":
+            for err in errs:
+                messages.error(request, str(err))
+            continue
+        fld = form.fields.get(field)
+        prefix = f"{fld.label}: " if fld and fld.label else ""
+        for err in errs:
+            messages.error(request, f"{prefix}{err}")
+
+
 def _safe_next_for_user(request: HttpRequest, user, next_url: str | None) -> str | None:
     if not next_url:
         return None
@@ -198,6 +210,7 @@ def sign_up(request: HttpRequest):
                 f"Mirë se erdhe! Nr. anëtari: {member_no}. Hyni më vonë me email-in tuaj si përdorues.",
             )
             return redirect("/anetar/")
+        _member_signup_errors_to_messages(request, form)
     else:
         form = MemberSignUpForm()
 

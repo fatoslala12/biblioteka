@@ -1594,3 +1594,53 @@ body.change-list #changelist .card-body.table-responsive {
     font-size: 0.78rem !important;
   }
 }
+
+/* ===== Reliable horizontal table scroll across all admin changelists ===== */
+@media (max-width: 991.98px) {
+  body.change-list #content-main,
+  body.change-list #changelist,
+  body.change-list #changelist-form {
+    overflow-x: visible !important;
+  }
+
+  body.change-list #changelist .sl-mobile-table-wrap,
+  body.change-list #changelist .results,
+  body.change-list #changelist .table-responsive,
+  body.change-list #changelist .card-body.table-responsive,
+  body.change-list #changelist .card {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(49, 145, 137, 0.65) rgba(148, 163, 184, 0.2);
+    padding-bottom: 8px !important; /* keep scrollbar visible */
+  }
+
+  body.change-list #changelist .sl-mobile-table-wrap::-webkit-scrollbar,
+  body.change-list #changelist .results::-webkit-scrollbar,
+  body.change-list #changelist .table-responsive::-webkit-scrollbar,
+  body.change-list #changelist .card-body.table-responsive::-webkit-scrollbar {
+    height: 8px;
+  }
+  body.change-list #changelist .sl-mobile-table-wrap::-webkit-scrollbar-track,
+  body.change-list #changelist .results::-webkit-scrollbar-track,
+  body.change-list #changelist .table-responsive::-webkit-scrollbar-track,
+  body.change-list #changelist .card-body.table-responsive::-webkit-scrollbar-track {
+    background: rgba(148, 163, 184, 0.22);
+    border-radius: 999px;
+  }
+  body.change-list #changelist .sl-mobile-table-wrap::-webkit-scrollbar-thumb,
+  body.change-list #changelist .results::-webkit-scrollbar-thumb,
+  body.change-list #changelist .table-responsive::-webkit-scrollbar-thumb,
+  body.change-list #changelist .card-body.table-responsive::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #319189, #2b7f78);
+    border-radius: 999px;
+  }
+
+  body.change-list #changelist #result_list,
+  body.change-list #changelist table {
+    width: max-content !important;
+    min-width: 960px !important;
+    table-layout: auto !important;
+  }
+}

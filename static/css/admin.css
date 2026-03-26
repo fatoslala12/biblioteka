@@ -1370,3 +1370,63 @@ body.change-list #changelist .card-body.table-responsive {
     display: none !important;
   }
 }
+
+/* ===== Admin mobile body polish ===== */
+@media (max-width: 991.98px) {
+  /* Keep content clear below fixed navbar */
+  body:not(.login-page) .app-main {
+    padding-top: 56px !important;
+  }
+  body:not(.login-page) .app-content {
+    padding: 0.9rem 0.6rem 1.1rem !important;
+  }
+  body:not(.login-page) .app-content > .container-fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Softer mobile canvas and cleaner cards */
+  .content-wrapper,
+  .app-content {
+    background: linear-gradient(180deg, #f4f6f9 0%, #eef2f7 100%) !important;
+  }
+  .card {
+    border-radius: 16px !important;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08) !important;
+  }
+  .card-header {
+    padding: 12px 14px !important;
+  }
+  .card-body {
+    padding: 12px 14px !important;
+  }
+
+  /* Dashboard stat cards: tighter and easier to scan */
+  .dashboard .sl-stats-row .card .text-muted {
+    font-size: 0.78rem !important;
+    letter-spacing: 0.03em !important;
+  }
+  .dashboard .sl-stats-row .card .h3 {
+    font-size: 1.9rem !important;
+    line-height: 1.1 !important;
+  }
+
+  /* Changelist/table: prevent squashed columns on phones */
+  #changelist .card-body.table-responsive,
+  #changelist .results {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  #changelist #result_list {
+    min-width: 0 !important;
+    width: 100% !important;
+    table-layout: auto !important;
+  }
+  #changelist #result_list thead th,
+  #changelist #result_list tbody td {
+    white-space: normal !important;
+    word-break: break-word !important;
+    padding: 10px 12px !important;
+    vertical-align: top !important;
+  }
+}

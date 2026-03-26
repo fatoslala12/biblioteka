@@ -324,11 +324,69 @@
         padding: 0.68rem 0.9rem;
         font-size: 0.84rem;
       }
+
+      /* Stats cards: 2 per row, compact premium look */
+      .sl-dashboard .sl-stats-row .col-6 .card .card-body {
+        min-height: 86px;
+        padding: 0.75rem 0.78rem !important;
+      }
+      .sl-dashboard .sl-stats-row .col-6 .text-muted {
+        font-size: 0.68rem !important;
+        letter-spacing: 0.02em !important;
+      }
+      .sl-dashboard .sl-stats-row .col-6 .h3 {
+        font-size: 1.2rem !important;
+      }
+      .sl-dashboard .sl-stats-row .col-6 .h2 {
+        font-size: 1.45rem !important;
+        opacity: .95;
+      }
+
+      /* Quick actions/Qarkullimi: avoid clipped right-side buttons */
+      .sl-dashboard .sl-actions-row .table {
+        table-layout: fixed;
+        width: 100%;
+      }
+      .sl-dashboard .sl-actions-row .table td:first-child {
+        width: 56%;
+        white-space: normal;
+        word-break: break-word;
+      }
+      .sl-dashboard .sl-actions-row .table td:last-child {
+        width: 44%;
+        text-align: right;
+      }
+      .sl-dashboard .sl-actions-row .btn-group.float-right {
+        float: none !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: flex-end !important;
+        gap: 5px !important;
+        width: 100%;
+      }
+      .sl-dashboard .sl-actions-row .btn-group.float-right .btn.btn-xs {
+        min-width: 0 !important;
+        font-size: 0.7rem !important;
+        padding: 0.17rem 0.44rem !important;
+      }
+    }
+
+    @media (max-width: 575.98px) {
+      .sl-dashboard .sl-actions-row .table td:first-child {
+        width: 54%;
+      }
+      .sl-dashboard .sl-actions-row .table td:last-child {
+        width: 46%;
+      }
+      .sl-dashboard .sl-actions-row .btn-group.float-right .btn.btn-xs {
+        font-size: 0.66rem !important;
+        padding: 0.15rem 0.38rem !important;
+      }
     }
   </style>
 {% endblock %}
 
-{% block content_title %} Paneli {% endblock %}
+{% block content_title %}{% endblock %}
 
 {% block breadcrumbs %}
     <ol class="breadcrumb">
@@ -374,7 +432,7 @@
     <div class="row sl-stats-row">
       <div class="col-12">
         <div class="row g-3">
-            <div class="col-md-3 col-sm-6 col-12">
+            <div class="col-md-3 col-sm-6 col-6">
                 <div class="card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
@@ -385,7 +443,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6 col-12">
+            <div class="col-md-3 col-sm-6 col-6">
                 <div class="card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
@@ -396,7 +454,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6 col-12">
+            <div class="col-md-3 col-sm-6 col-6">
                 <div class="card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
@@ -407,7 +465,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6 col-12">
+            <div class="col-md-3 col-sm-6 col-6">
                 <div class="card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
@@ -421,7 +479,7 @@
         </div>
 
         <div class="row g-3">
-            <div class="col-md-3 col-sm-6 col-12">
+            <div class="col-md-3 col-sm-6 col-6">
                 <div class="card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
@@ -432,7 +490,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6 col-12">
+            <div class="col-md-3 col-sm-6 col-6">
                 <div class="card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
@@ -443,7 +501,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6 col-12">
+            <div class="col-md-3 col-sm-6 col-6">
                 <div class="card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
@@ -454,7 +512,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6 col-12">
+            <div class="col-md-3 col-sm-6 col-6">
                 <div class="card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
@@ -467,7 +525,7 @@
             </div>
         </div>
         <div class="row g-3">
-            <div class="col-md-3 col-sm-6 col-12">
+            <div class="col-md-3 col-sm-6 col-6">
                 <div class="card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
@@ -478,7 +536,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6 col-12">
+            <div class="col-md-3 col-sm-6 col-6">
                 <div class="card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
@@ -489,7 +547,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6 col-12">
+            <div class="col-md-3 col-sm-6 col-6">
                 <div class="card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
@@ -500,7 +558,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6 col-12">
+            <div class="col-md-3 col-sm-6 col-6">
                 <div class="card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>

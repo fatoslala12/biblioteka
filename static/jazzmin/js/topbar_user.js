@@ -1,13 +1,4 @@
 (function ($) {
-  function escapeHtml(s) {
-    return String(s || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-
   function detectRoleLabel(username) {
     var uname = (username || "").toLowerCase();
     if (uname.indexOf("admin") !== -1 || uname.indexOf("root") !== -1) {
@@ -25,13 +16,6 @@
   }
 
   $(function () {
-    var isMobile = window.matchMedia && window.matchMedia("(max-width: 991.98px)").matches;
-    var $nav = $("#jazzy-navbar .navbar-nav.ml-auto");
-    if (!$nav.length) {
-      $nav = $("#jazzy-navbar .navbar-nav").last();
-    }
-    if (!$nav.length) return;
-
     var username = "";
     var $defaultUser = $("#jazzy-navbar .nav-item.dropdown").first();
     if ($defaultUser.length) {
@@ -47,13 +31,9 @@
       username = ($("#jazzy-sidebar .user-panel .info a").first().text() || "").trim();
     }
 
-    // Desktop: use custom user capsule. Mobile: keep Jazzmin default dropdown visible.
+    // Keep Jazzmin default topbar user dropdown visible on all viewports.
     if ($defaultUser.length) {
-      if (isMobile) {
-        $defaultUser.show();
-      } else {
-        $defaultUser.hide();
-      }
+      $defaultUser.show();
     }
 
     // In sidebar user panel, show user type instead of username.
@@ -64,22 +44,6 @@
       $sidebarUser.attr("title", "Përdoruesi: " + (username || "—"));
     }
 
-    if (isMobile || $("#sl-top-user").length) return;
-
-    var logoutHref = "/dil/";
-    var html =
-      '<li class="nav-item d-flex align-items-center" id="sl-top-user" style="gap:10px; margin-right:8px;">' +
-      '  <span class="sl-top-username" style="color:#fff; font-weight:800; white-space:nowrap; max-width:180px; overflow:hidden; text-overflow:ellipsis;" title="' +
-      escapeHtml(username || "Përdorues") +
-      '">' +
-      escapeHtml(username || "Përdorues") +
-      "</span>" +
-      '  <a class="btn btn-sm btn-primary" href="' +
-      logoutHref +
-      '" style="padding:6px 12px; border-radius: 999px;">Dil</a>' +
-      "</li>";
-
-    $nav.prepend($(html));
   });
 
   /* Lucide SVG icons – më të holla se FontAwesome */

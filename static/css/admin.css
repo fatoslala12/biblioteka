@@ -1316,22 +1316,7 @@ body.change-list #changelist .card-body.table-responsive {
     font-size: 0.78rem !important;
   }
 
-  /* Compact top-right user/logout block */
-  #sl-top-user {
-    margin-right: 0 !important;
-    gap: 6px !important;
-  }
-  #sl-top-user .sl-top-username {
-    display: none !important;
-  }
-  #sl-top-user .btn {
-    padding: 0.3rem 0.65rem !important;
-    font-size: 0.82rem !important;
-  }
-  /* Use built-in user dropdown on mobile; hide custom capsule */
-  #sl-top-user {
-    display: none !important;
-  }
+  /* Keep default user dropdown and icon visible on mobile */
   #jazzy-navbar .navbar-nav.ms-auto > .nav-item.dropdown {
     display: list-item !important;
   }

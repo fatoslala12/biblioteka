@@ -101,7 +101,9 @@
                                             {% if action_form and actions_on_top and cl.show_admin_actions %}{% admin_actions %}{% endif %}
                                         </div>
                                     </div>
+                                <div class="sl-mobile-table-wrap">
                                     {% result_list cl %}
+                                </div>
                                     {% if action_form and actions_on_bottom and cl.show_admin_actions %}
                                         <div class="row"><div class="col-12">{% admin_actions %}</div></div>
                                     {% endif %}

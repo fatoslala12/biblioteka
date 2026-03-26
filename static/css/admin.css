@@ -1412,6 +1412,13 @@ body.change-list #changelist .card-body.table-responsive {
   }
 
   /* Changelist/table: prevent squashed columns on phones */
+  #changelist .sl-mobile-table-wrap {
+    width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 14px !important;
+  }
   body.change-list #changelist .results,
   body.change-list #changelist .card,
   #changelist .card-body.table-responsive,
@@ -1436,6 +1443,7 @@ body.change-list #changelist .card-body.table-responsive {
     min-width: 860px !important;
     width: max-content !important;
     table-layout: auto !important;
+    margin-bottom: 0 !important;
   }
   #changelist #result_list thead th,
   #changelist #result_list tbody td {

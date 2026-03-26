@@ -1373,6 +1373,66 @@ body.change-list #changelist .card-body.table-responsive {
 
 /* ===== Admin mobile body polish ===== */
 @media (max-width: 991.98px) {
+  body:not(.login-page) {
+    font-size: 14px !important;
+  }
+
+  .content-wrapper .text-muted,
+  .content-wrapper small,
+  .content-wrapper .small,
+  .content-wrapper .help,
+  .content-wrapper .form-text {
+    color: rgba(30, 41, 59, 0.9) !important;
+  }
+
+  #change-list-filters,
+  body.change-list #change-list-filters {
+    padding: 10px !important;
+    border-radius: 14px !important;
+    margin-bottom: 14px !important;
+  }
+  #change-list-filters .object-tools {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #change-list-filters .object-tools li {
+    margin: 0 !important;
+  }
+  #change-list-filters .object-tools a,
+  #change-list-filters .object-tools .btn,
+  #change-list-filters .d-flex > a,
+  #change-list-filters .d-flex > li > a,
+  #change-list-filters .d-flex a.btn,
+  #changelist-search .btn-primary,
+  #changelist-search input[type="submit"] {
+    min-height: 32px !important;
+    padding: 6px 12px !important;
+    font-size: 0.9rem !important;
+    line-height: 1.2 !important;
+  }
+  #changelist-search .form-control,
+  #changelist-search select.search-filter,
+  #changelist-search input[type="text"],
+  #changelist-search #searchbar {
+    min-height: 32px !important;
+    padding: 6px 12px !important;
+    font-size: 0.9rem !important;
+  }
+  body.change-list .sl-page-title-wrapper .sl-page-title {
+    gap: 8px !important;
+    font-size: 1.05rem !important;
+    padding: 9px 14px !important;
+    border-radius: 12px !important;
+  }
+  body.change-list .sl-page-title::before {
+    width: 22px !important;
+    height: 22px !important;
+    background-size: 20px !important;
+  }
+
   /* Keep content clear below fixed navbar */
   body:not(.login-page) .app-main {
     padding-top: 56px !important;
@@ -1395,10 +1455,23 @@ body.change-list #changelist .card-body.table-responsive {
     box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08) !important;
   }
   .card-header {
-    padding: 12px 14px !important;
+    padding: 10px 12px !important;
   }
   .card-body {
-    padding: 12px 14px !important;
+    padding: 10px 12px !important;
+  }
+  .btn {
+    border-radius: 12px !important;
+    font-size: 0.9rem !important;
+    padding: 6px 11px !important;
+  }
+  .btn.btn-xs {
+    padding: 0.18rem 0.5rem !important;
+    font-size: 0.74rem !important;
+    min-width: 64px !important;
+  }
+  .dashboard .btn-group.float-right .btn.btn-xs {
+    min-width: 64px;
   }
 
   /* Dashboard stat cards: tighter and easier to scan */
@@ -1450,9 +1523,9 @@ body.change-list #changelist .card-body.table-responsive {
     white-space: nowrap !important;
     word-break: normal !important;
     overflow-wrap: normal !important;
-    padding: 9px 10px !important;
+    padding: 8px 9px !important;
     vertical-align: top !important;
-    font-size: 0.84rem !important;
+    font-size: 0.8rem !important;
     line-height: 1.3 !important;
   }
 
@@ -1470,8 +1543,29 @@ body.change-list #changelist .card-body.table-responsive {
     white-space: nowrap !important;
     word-break: normal !important;
     overflow-wrap: normal !important;
-    font-size: 0.84rem !important;
+    font-size: 0.8rem !important;
     line-height: 1.3 !important;
-    padding: 9px 10px !important;
+    padding: 8px 9px !important;
+  }
+}
+
+@media (max-width: 575.98px) {
+  body.change-list .app-content {
+    padding-top: 70px !important;
+  }
+  body.change-form .app-content-header {
+    padding-top: 70px !important;
+    padding-bottom: 12px !important;
+  }
+  body.change-list #changelist #result_list {
+    min-width: 720px !important;
+  }
+  body:not(.login-page) .card .table {
+    min-width: 680px !important;
+  }
+  .nav-tabs .nav-link {
+    margin-right: 5px !important;
+    padding: 7px 10px !important;
+    font-size: 0.88rem !important;
   }
 }

@@ -1297,13 +1297,9 @@ body.change-list #changelist .card-body.table-responsive {
 
   /* Keep header controls visible and usable on mobile */
   #jazzy-navbar .container-fluid {
-    gap: 6px !important;
+    gap: 8px !important;
     flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    scrollbar-width: none;
-  }
-  #jazzy-navbar .container-fluid::-webkit-scrollbar {
-    display: none;
+    overflow-x: hidden !important;
   }
   #jazzy-navbar form.d-flex.ms-2 {
     margin-left: 0 !important;
@@ -1343,8 +1339,8 @@ body.change-list #changelist .card-body.table-responsive {
   /* Reduce nav icon/button footprint to prevent clipping */
   #jazzy-navbar .nav-link,
   #jazzy-navbar .btn-navbar {
-    padding-left: 0.45rem !important;
-    padding-right: 0.45rem !important;
+    padding-left: 0.4rem !important;
+    padding-right: 0.4rem !important;
   }
   #jazzy-navbar .nav-link i,
   #jazzy-navbar .btn-navbar i {
@@ -1375,5 +1371,12 @@ body.change-list #changelist .card-body.table-responsive {
   #changelist-search .btn-primary,
   #changelist-search input[type="submit"] {
     width: 100% !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  /* On narrow phones, remove crowded topbar search boxes */
+  #jazzy-navbar form.d-flex.ms-2 {
+    display: none !important;
   }
 }

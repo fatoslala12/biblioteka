@@ -25,6 +25,7 @@
   }
 
   $(function () {
+    var isMobile = window.matchMedia && window.matchMedia("(max-width: 991.98px)").matches;
     var $nav = $("#jazzy-navbar .navbar-nav.ml-auto");
     if (!$nav.length) {
       $nav = $("#jazzy-navbar .navbar-nav").last();
@@ -46,9 +47,13 @@
       username = ($("#jazzy-sidebar .user-panel .info a").first().text() || "").trim();
     }
 
-    // Hide Jazzmin default user dropdown label (e.g. "Fatos").
+    // Desktop: use custom user capsule. Mobile: keep Jazzmin default dropdown visible.
     if ($defaultUser.length) {
-      $defaultUser.hide();
+      if (isMobile) {
+        $defaultUser.show();
+      } else {
+        $defaultUser.hide();
+      }
     }
 
     // In sidebar user panel, show user type instead of username.
@@ -59,7 +64,7 @@
       $sidebarUser.attr("title", "Përdoruesi: " + (username || "—"));
     }
 
-    if ($("#sl-top-user").length) return;
+    if (isMobile || $("#sl-top-user").length) return;
 
     var logoutHref = "/dil/";
     var html =

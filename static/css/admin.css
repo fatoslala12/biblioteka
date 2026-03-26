@@ -1298,22 +1298,22 @@ body.change-list #changelist .card-body.table-responsive {
   /* Keep header controls visible and usable on mobile */
   #jazzy-navbar .container-fluid {
     gap: 8px !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
     flex-wrap: nowrap !important;
-    overflow-x: hidden !important;
+    overflow-x: visible !important;
   }
+  #jazzy-navbar .navbar-nav {
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+  #jazzy-navbar .navbar-nav.ms-auto {
+    margin-left: auto !important;
+  }
+  /* Remove non-essential top links/search on tablets and phones */
+  #jazzy-navbar .navbar-nav:first-child .nav-item.d-none.d-sm-inline-block,
   #jazzy-navbar form.d-flex.ms-2 {
-    margin-left: 0 !important;
-    flex: 0 0 auto !important;
-  }
-  #jazzy-navbar form.d-flex.ms-2 .input-group {
-    flex-wrap: nowrap !important;
-  }
-  #jazzy-navbar .form-control-navbar {
-    width: 96px !important;
-    min-width: 96px !important;
-    padding-left: 8px !important;
-    padding-right: 8px !important;
-    font-size: 0.78rem !important;
+    display: none !important;
   }
 
   /* Keep default user dropdown and icon visible on mobile */

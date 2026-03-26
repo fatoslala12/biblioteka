@@ -46,45 +46,6 @@
 
   });
 
-  /* Lucide SVG icons – më të holla se FontAwesome */
-  (function () {
-    var faToLucide = {
-      "fa-th-large": "layout-dashboard", "fa-tachometer-alt": "layout-dashboard",
-      "fa-user-shield": "shield", "fa-id-card": "id-card", "fa-book": "book-open",
-      "fa-barcode": "barcode", "fa-pen-nib": "pen-line", "fa-tags": "tags",
-      "fa-building": "building", "fa-hashtag": "hash", "fa-inbox": "inbox",
-      "fa-exchange-alt": "arrow-left-right", "fa-calendar-check": "calendar-check",
-      "fa-envelope": "mail", "fa-bullhorn": "megaphone", "fa-calendar-alt": "calendar",
-      "fa-video": "video", "fa-receipt": "receipt", "fa-cash-register": "wallet",
-      "fa-sliders-h": "sliders", "fa-list-ol": "list-ordered",
-      "fa-chevron-right": "chevron-right", "fa-plus-circle": "plus-circle", "fa-bars": "menu"
-    };
-    function getLucide(el) {
-      var c = (el.className || "").split(/\s+/);
-      for (var i = 0; i < c.length; i++)
-        if (c[i].indexOf("fa-") === 0 && faToLucide[c[i]]) return faToLucide[c[i]];
-      return null;
-    }
-    function run() {
-      document.querySelectorAll("#jazzy-sidebar .nav-icon.fas, #jazzy-sidebar .nav-icon.far, #jazzy-sidebar .nav-icon.fa").forEach(function (el) {
-        var name = getLucide(el);
-        if (name) {
-          el.setAttribute("data-lucide", name);
-          el.className = (el.className || "").replace(/\bfa[sr]?\b|fa-[\w-]+/g, "").trim() + " sl-lucide-icon";
-          el.style.fontSize = "0";
-        }
-      });
-      if (window.lucide && lucide.createIcons) lucide.createIcons();
-    }
-    if (window.lucide) {
-      run();
-      lucide.createIcons();
-    } else {
-      var s = document.createElement("script");
-      s.src = "https://unpkg.com/lucide@latest/dist/umd/lucide.min.js";
-      s.onload = function () { run(); if (window.lucide) lucide.createIcons(); };
-      document.head.appendChild(s);
-    }
-  })();
+  // Keep native FontAwesome icons to avoid missing icons on mobile/offline.
 })(jQuery);
 

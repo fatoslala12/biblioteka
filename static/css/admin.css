@@ -1418,15 +1418,18 @@ body.change-list #changelist .card-body.table-responsive {
     -webkit-overflow-scrolling: touch;
   }
   #changelist #result_list {
-    min-width: 0 !important;
-    width: 100% !important;
+    min-width: 860px !important;
+    width: max-content !important;
     table-layout: auto !important;
   }
   #changelist #result_list thead th,
   #changelist #result_list tbody td {
-    white-space: normal !important;
-    word-break: break-word !important;
-    padding: 10px 12px !important;
+    white-space: nowrap !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    padding: 9px 10px !important;
     vertical-align: top !important;
+    font-size: 0.84rem !important;
+    line-height: 1.3 !important;
   }
 }

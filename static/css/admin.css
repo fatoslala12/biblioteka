@@ -1295,9 +1295,29 @@ body.change-list #changelist .card-body.table-responsive {
     margin-left: 0 !important;
   }
 
-  /* Keep topbar compact: hide duplicate search bars on small screens */
+  /* Keep header controls visible and usable on mobile */
+  #jazzy-navbar .container-fluid {
+    gap: 6px !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scrollbar-width: none;
+  }
+  #jazzy-navbar .container-fluid::-webkit-scrollbar {
+    display: none;
+  }
   #jazzy-navbar form.d-flex.ms-2 {
-    display: none !important;
+    margin-left: 0 !important;
+    flex: 0 0 auto !important;
+  }
+  #jazzy-navbar form.d-flex.ms-2 .input-group {
+    flex-wrap: nowrap !important;
+  }
+  #jazzy-navbar .form-control-navbar {
+    width: 96px !important;
+    min-width: 96px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    font-size: 0.78rem !important;
   }
 
   /* Compact top-right user/logout block */
@@ -1311,6 +1331,13 @@ body.change-list #changelist .card-body.table-responsive {
   #sl-top-user .btn {
     padding: 0.3rem 0.65rem !important;
     font-size: 0.82rem !important;
+  }
+  /* Use built-in user dropdown on mobile; hide custom capsule */
+  #sl-top-user {
+    display: none !important;
+  }
+  #jazzy-navbar .navbar-nav.ms-auto > .nav-item.dropdown {
+    display: list-item !important;
   }
 
   /* Reduce nav icon/button footprint to prevent clipping */

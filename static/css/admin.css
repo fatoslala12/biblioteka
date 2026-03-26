@@ -1286,6 +1286,11 @@ body.change-list #changelist .card-body.table-responsive {
     right: 0 !important;
     width: 100% !important;
   }
+  body.sidebar-collapse #jazzy-navbar,
+  body.sidebar-collapse .app-header.navbar,
+  body.sidebar-collapse .main-header.navbar {
+    left: 0 !important;
+  }
 
   /* Avoid content being shifted by desktop sidebar offsets */
   .app-main,

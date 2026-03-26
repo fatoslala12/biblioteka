@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.core.mail import EmailMultiAlternatives
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -18,6 +18,13 @@ from cms.models import Announcement, Event, Video
 
 def _is_ajax(request):
     return request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+
+def healthz(request):
+    response = HttpResponse("ok", content_type="text/plain; charset=utf-8")
+    # Tiny cache window keeps the endpoint cheap for frequent probes.
+    response["Cache-Control"] = "public, max-age=30, stale-while-revalidate=30"
+    return response
 
 
 def home(request):

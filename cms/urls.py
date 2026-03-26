@@ -7,6 +7,7 @@ from . import panel_views
 app_name = "cms"
 
 urlpatterns = [
+    path("healthz/", views.healthz, name="healthz"),
     path("", views.home, name="home"),
     path("catalog/", views.catalog, name="catalog"),
     path("books/<int:pk>/", views.book_detail, name="book_detail"),

@@ -54,3 +54,11 @@ class MemberSignUpTests(TestCase):
         r = self.client.post("/regjistrohu/", data)
         self.assertEqual(r.status_code, 200)
         self.assertFalse(User.objects.filter(email="bot@test.com").exists())
+
+
+class HealthzTests(TestCase):
+    def test_healthz_ok_and_cache_header(self):
+        r = self.client.get("/healthz/")
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.content.decode("utf-8"), "ok")
+        self.assertIn("max-age=30", r.headers.get("Cache-Control", ""))

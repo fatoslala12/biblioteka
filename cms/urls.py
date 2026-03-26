@@ -20,6 +20,7 @@ urlpatterns = [
 
     # Auth / Member portal
     path("hyr/", auth_views.sign_in, name="sign_in"),
+    path("regjistrohu/", auth_views.sign_up, name="sign_up"),
     path("dil/", auth_views.sign_out, name="sign_out"),
     path("anetar/", auth_views.member_portal, name="member_portal"),
     path("anetar/rezervo/<int:book_id>/", auth_views.member_place_hold, name="member_place_hold"),

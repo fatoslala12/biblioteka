@@ -1,0 +1,138 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Regjistrohu — Smart Library{% endblock %}
+
+{% block site_header %}{% endblock %}
+{% block site_footer %}{% endblock %}
+{% block flash_messages %}{% endblock %}
+
+{% block content %}
+  <style>
+    .sl-honeypot { position: absolute !important; left: -9999px !important; width: 1px !important; height: 1px !important;
+      opacity: 0 !important; pointer-events: none !important; overflow: hidden !important; }
+    .sl-auth-date-input { color-scheme: dark; }
+  </style>
+  <section class="relative flex min-h-screen items-center justify-center bg-brand-600 px-4 py-14 text-white sm:px-6 lg:px-8">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(255,255,255,.14),transparent_40%),radial-gradient(circle_at_80%_30%,rgba(255,255,255,.10),transparent_35%)]"></div>
+
+    <div class="relative mx-auto w-full max-w-2xl text-center">
+      <div class="mx-auto inline-flex items-center gap-2">
+        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-white/25">
+          <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
+          </svg>
+        </span>
+        <div class="text-left">
+          <div class="text-base font-extrabold tracking-tight">SMART LIBRARY</div>
+          <div class="text-xs font-semibold text-white/85">Sistemi i Menaxhimit të Bibliotekës</div>
+        </div>
+      </div>
+
+      <h1 class="mt-6 text-3xl font-extrabold tracking-tight sm:text-4xl">Krijo llogari anëtari ✨</h1>
+      <p class="mt-2 text-sm text-white/90 sm:text-base">
+        Plotëso të dhënat; nr. anëtari caktohet automatikisht. Fjalëkalimi: të paktën 10 karaktere, i fortë.
+      </p>
+
+      <div class="mx-auto mt-8 rounded-3xl border border-white/20 bg-white/10 p-6 text-left shadow-sm backdrop-blur">
+        {% if messages %}
+          <div class="mb-4 space-y-2">
+            {% for message in messages %}
+              <div class="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-semibold text-white/95">
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form method="post" class="space-y-4" novalidate>
+          {% csrf_token %}
+          {% if form.non_field_errors %}
+            <div class="rounded-2xl border border-red-300/40 bg-red-500/20 px-4 py-3 text-sm font-semibold text-white">
+              {{ form.non_field_errors }}
+            </div>
+          {% endif %}
+
+          <div class="fieldWrapper">
+            <label class="text-xs font-semibold text-white/90" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+            {{ form.email }}
+            {% if form.email.errors %}<p class="mt-1 text-xs font-semibold text-red-200">{{ form.email.errors.0 }}</p>{% endif %}
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label class="text-xs font-semibold text-white/90" for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
+              {{ form.password1 }}
+              {% if form.password1.errors %}<p class="mt-1 text-xs font-semibold text-red-200">{{ form.password1.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-white/90" for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
+              {{ form.password2 }}
+              {% if form.password2.errors %}<p class="mt-1 text-xs font-semibold text-red-200">{{ form.password2.errors.0 }}</p>{% endif %}
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-white/90" for="{{ form.full_name.id_for_label }}">{{ form.full_name.label }}</label>
+            {{ form.full_name }}
+            {% if form.full_name.errors %}<p class="mt-1 text-xs font-semibold text-red-200">{{ form.full_name.errors.0 }}</p>{% endif %}
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label class="text-xs font-semibold text-white/90" for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
+              {{ form.phone }}
+              {% if form.phone.errors %}<p class="mt-1 text-xs font-semibold text-red-200">{{ form.phone.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-white/90" for="{{ form.date_of_birth.id_for_label }}">{{ form.date_of_birth.label }}</label>
+              {{ form.date_of_birth }}
+              {% if form.date_of_birth.errors %}<p class="mt-1 text-xs font-semibold text-red-200">{{ form.date_of_birth.errors.0 }}</p>{% endif %}
+            </div>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label class="text-xs font-semibold text-white/90" for="{{ form.national_id.id_for_label }}">{{ form.national_id.label }}</label>
+              {{ form.national_id }}
+              {% if form.national_id.errors %}<p class="mt-1 text-xs font-semibold text-red-200">{{ form.national_id.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-white/90" for="{{ form.place_of_birth.id_for_label }}">{{ form.place_of_birth.label }}</label>
+              {{ form.place_of_birth }}
+              {% if form.place_of_birth.errors %}<p class="mt-1 text-xs font-semibold text-red-200">{{ form.place_of_birth.errors.0 }}</p>{% endif %}
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-white/90" for="{{ form.address.id_for_label }}">{{ form.address.label }}</label>
+            {{ form.address }}
+            {% if form.address.errors %}<p class="mt-1 text-xs font-semibold text-red-200">{{ form.address.errors.0 }}</p>{% endif %}
+          </div>
+
+          <div class="sl-honeypot-wrap" aria-hidden="true">
+            <label for="{{ form.company_website.id_for_label }}">Faqja e kompanisë</label>
+            {{ form.company_website }}
+          </div>
+
+          <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white/20 px-4 py-3 text-sm font-extrabold text-white ring-1 ring-white/25 hover:bg-white/25">
+            Regjistrohu dhe hyr
+          </button>
+        </form>
+
+        <p class="mt-5 text-center text-sm text-white/90">
+          Ke tashmë llogari?
+          <a href="{% url 'cms:sign_in' %}" class="font-extrabold underline decoration-white/40 underline-offset-2 hover:decoration-white">Hyr këtu</a>
+        </p>
+      </div>
+
+      <div class="mt-8 text-xs text-white/80">
+        <a href="/" class="font-semibold underline decoration-white/30 hover:decoration-white">Kthehu te faqja</a>
+      </div>
+
+      <div class="mt-8 text-xs text-white/70">
+        © {% now "Y" %} Fatos Lala
+      </div>
+    </div>
+  </section>
+{% endblock %}

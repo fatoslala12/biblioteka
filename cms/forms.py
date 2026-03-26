@@ -1,8 +1,16 @@
 from django import forms
-from django.contrib.auth import password_validation
+from django.contrib.auth import get_user_model, password_validation
 from django.core.exceptions import ValidationError
 
-from accounts.models import MemberProfile
+from accounts.models import MemberProfile, MemberStatus, MemberType, UserRole
+
+User = get_user_model()
+
+# Stil i njëjtë me faqen e hyrjes (Tailwind)
+_AUTH_INPUT_CLASS = (
+    "mt-2 w-full rounded-2xl border border-white/25 bg-white/10 px-4 py-3 text-sm "
+    "text-white placeholder:text-white/70 outline-none focus:ring-4 focus:ring-white/20"
+)
 
 
 class ContactForm(forms.Form):
@@ -71,6 +79,115 @@ class MemberProfileUpdateForm(forms.ModelForm):
                 }
             ),
         }
+
+
+class MemberSignUpForm(forms.Form):
+    """Regjistrim vetëm anëtarësh (MEMBER); të gjitha fushat e detyrueshme."""
+
+    email = forms.EmailField(
+        label="Email",
+        max_length=254,
+        widget=forms.EmailInput(attrs={"class": _AUTH_INPUT_CLASS, "autocomplete": "email"}),
+    )
+    password1 = forms.CharField(
+        label="Fjalëkalimi",
+        strip=False,
+        widget=forms.PasswordInput(
+            attrs={"class": _AUTH_INPUT_CLASS, "autocomplete": "new-password"}
+        ),
+    )
+    password2 = forms.CharField(
+        label="Përsërit fjalëkalimin",
+        strip=False,
+        widget=forms.PasswordInput(
+            attrs={"class": _AUTH_INPUT_CLASS, "autocomplete": "new-password"}
+        ),
+    )
+    full_name = forms.CharField(
+        label="Emri dhe mbiemri",
+        max_length=160,
+        widget=forms.TextInput(attrs={"class": _AUTH_INPUT_CLASS, "autocomplete": "name"}),
+    )
+    phone = forms.CharField(
+        label="Nr. telefoni",
+        max_length=32,
+        widget=forms.TextInput(attrs={"class": _AUTH_INPUT_CLASS, "autocomplete": "tel"}),
+    )
+    date_of_birth = forms.DateField(
+        label="Datëlindja",
+        widget=forms.DateInput(
+            attrs={
+                "type": "date",
+                "class": _AUTH_INPUT_CLASS + " sl-auth-date-input",
+            }
+        ),
+    )
+    national_id = forms.CharField(
+        label="Nr. ID",
+        max_length=32,
+        widget=forms.TextInput(attrs={"class": _AUTH_INPUT_CLASS}),
+    )
+    place_of_birth = forms.CharField(
+        label="Vendlindja",
+        max_length=160,
+        widget=forms.TextInput(attrs={"class": _AUTH_INPUT_CLASS}),
+    )
+    address = forms.CharField(
+        label="Adresa",
+        max_length=255,
+        widget=forms.TextInput(attrs={"class": _AUTH_INPUT_CLASS, "autocomplete": "street-address"}),
+    )
+    # Honeypot (fshehur me CSS) – botët e mbushin
+    company_website = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "sl-honeypot",
+                "tabindex": "-1",
+                "autocomplete": "off",
+                "aria-hidden": "true",
+            }
+        ),
+    )
+
+    def clean_email(self):
+        email = (self.cleaned_data.get("email") or "").strip().lower()
+        if len(email) > 150:
+            raise ValidationError(
+                "Email-i është shumë i gjatë për përdorues në sistem (maks. 150 karaktere). "
+                "Përdorni një adresë më të shkurtër."
+            )
+        if User.objects.filter(email__iexact=email).exists():
+            raise ValidationError("Ekziston tashmë një llogari me këtë email.")
+        return email
+
+    def clean_national_id(self):
+        nid = (self.cleaned_data.get("national_id") or "").strip()
+        if not nid:
+            raise ValidationError("Kjo fushë është e detyrueshme.")
+        if MemberProfile.objects.filter(national_id__iexact=nid).exists():
+            raise ValidationError("Ky numër ID është i regjistruar tashmë.")
+        return nid
+
+    def clean_company_website(self):
+        if (self.cleaned_data.get("company_website") or "").strip():
+            raise ValidationError("Dërgesa nuk u pranua.")
+        return ""
+
+    def clean_password1(self):
+        p = self.cleaned_data.get("password1") or ""
+        if len(p) < 10:
+            raise ValidationError("Fjalëkalimi duhet të ketë të paktën 10 karaktere.")
+        password_validation.validate_password(p, user=User())
+        return p
+
+    def clean(self):
+        data = super().clean()
+        p1 = data.get("password1")
+        p2 = data.get("password2")
+        if p1 and p2 and p1 != p2:
+            self.add_error("password2", "Fjalëkalimet nuk përputhen.")
+        return data
 
 
 class MemberPasswordChangeForm(forms.Form):

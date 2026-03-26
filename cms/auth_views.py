@@ -5,23 +5,37 @@ from django.db.models.functions import TruncMonth
 from django.utils import timezone
 
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth import authenticate, get_user_model, login, logout, update_session_auth_hash
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 from django.http import HttpRequest
 from django.shortcuts import redirect, render
 
+from django_ratelimit.decorators import ratelimit
+
 from audit.models import AuditSeverity
-from audit.services import log_audit_event
-from accounts.models import UserRole
+from audit.services import get_client_ip, log_audit_event
+from accounts.models import MemberProfile, MemberStatus, MemberType, UserRole
 from catalog.models import Book
 from circulation.exceptions import PolicyViolation
 from circulation.models import Hold, HoldStatus, Loan, LoanStatus
 from circulation.models import ReservationRequest, ReservationRequestStatus
 from circulation.services import create_reservation_request
-from cms.forms import MemberPasswordChangeForm, MemberProfileUpdateForm
+from cms.forms import MemberPasswordChangeForm, MemberProfileUpdateForm, MemberSignUpForm
 from fines.models import Fine, FineStatus
+
+User = get_user_model()
+
+
+def _split_full_name(full_name: str) -> tuple[str, str]:
+    parts = [p for p in (full_name or "").strip().split() if p]
+    if not parts:
+        return "", ""
+    if len(parts) == 1:
+        return parts[0], ""
+    return parts[0], parts[-1]
 
 
 def _audit_member_event(
@@ -86,6 +100,10 @@ def sign_in(request: HttpRequest):
         username = (request.POST.get("username") or "").strip()
         password = request.POST.get("password") or ""
         user = authenticate(request, username=username, password=password)
+        if user is None and "@" in username:
+            match = User.objects.filter(email__iexact=username).only("username").first()
+            if match:
+                user = authenticate(request, username=match.username, password=password)
         if user is None:
             messages.error(request, "Përdoruesi ose fjalëkalimi është i pasaktë.")
         else:
@@ -97,6 +115,93 @@ def sign_in(request: HttpRequest):
                 return redirect(safe_next or _login_default_destination(user))
 
     return render(request, "cms/auth/sign_in.html", {"next": next_url})
+
+
+@ratelimit(key="ip", rate="5/m", method="POST")
+@ratelimit(key="ip", rate="25/h", method="POST")
+def sign_up(request: HttpRequest):
+    if request.user.is_authenticated:
+        return redirect(_login_default_destination(request.user))
+
+    if request.method == "POST" and getattr(request, "limited", False):
+        messages.error(
+            request,
+            "Shumë përpjekje regjistrimi nga kjo adresë. Prisni pak dhe provoni përsëri.",
+        )
+        return render(
+            request,
+            "cms/auth/sign_up.html",
+            {"form": MemberSignUpForm()},
+            status=429,
+        )
+
+    if request.method == "POST":
+        form = MemberSignUpForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            email = data["email"]
+            password = data["password1"]
+            full_name = data["full_name"].strip()
+            fn, ln = _split_full_name(full_name)
+            username = email
+            try:
+                with transaction.atomic():
+                    member_no = MemberProfile._next_member_no()
+                    user = User.objects.create_user(
+                        username=username,
+                        email=email,
+                        password=password,
+                        first_name=(fn or "")[:150],
+                        last_name=(ln or "")[:150],
+                        role=UserRole.MEMBER,
+                        is_staff=False,
+                        is_superuser=False,
+                    )
+                    MemberProfile.objects.create(
+                        user=user,
+                        member_no=member_no,
+                        full_name=full_name,
+                        phone=data["phone"].strip(),
+                        date_of_birth=data["date_of_birth"],
+                        national_id=data["national_id"].strip(),
+                        place_of_birth=data["place_of_birth"].strip(),
+                        address=data["address"].strip(),
+                        status=MemberStatus.ACTIVE,
+                        member_type=MemberType.STANDARD,
+                    )
+            except Exception:
+                messages.error(
+                    request,
+                    "Regjistrimi dështoi (p.sh. përdorues ekzistues). Provoni përsëri ose kontaktoni bibliotekën.",
+                )
+                return render(request, "cms/auth/sign_up.html", {"form": form})
+
+            try:
+                log_audit_event(
+                    target=user,
+                    actor=user,
+                    action_type="MEMBER_SELF_REGISTERED",
+                    source_screen="auth.sign_up",
+                    reason="",
+                    changes={"member_no": member_no},
+                    metadata={"email": email},
+                    severity=AuditSeverity.INFO,
+                    ip_address=get_client_ip(request),
+                    user_agent=(request.META.get("HTTP_USER_AGENT") or "")[:512],
+                )
+            except Exception:
+                pass
+
+            login(request, user)
+            messages.success(
+                request,
+                f"Mirë se erdhe! Nr. anëtari: {member_no}. Hyni më vonë me email-in tuaj si përdorues.",
+            )
+            return redirect("/anetar/")
+    else:
+        form = MemberSignUpForm()
+
+    return render(request, "cms/auth/sign_up.html", {"form": form})
 
 
 def sign_out(request: HttpRequest):

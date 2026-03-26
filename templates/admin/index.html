@@ -8,6 +8,22 @@
   {{ block.super }}
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
+    /* Keep top header fixed */
+    #jazzy-navbar,
+    .app-header.navbar,
+    .main-header.navbar {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      width: 100% !important;
+      z-index: 1045 !important;
+    }
+    body.dashboard .app-main,
+    body.dashboard .content-wrapper {
+      padding-top: 62px !important;
+    }
+
     /* —— Dashboard i njësuar: një theme për të gjithë faqen —— */
     .sl-dashboard { padding-bottom: 2rem; }
     .sl-dashboard .sl-section-title-row { margin-bottom: 0.5rem; margin-top: 0; }
@@ -186,7 +202,7 @@
     /* —— Premium dashboard override pass —— */
     .sl-dashboard {
       position: relative;
-      padding: 0.25rem 0 2.5rem;
+      padding: 0.1rem 0 2.1rem;
       background:
         radial-gradient(70% 50% at 5% 0%, rgba(13,148,136,.12) 0%, transparent 65%),
         radial-gradient(60% 45% at 95% 5%, rgba(99,102,241,.10) 0%, transparent 70%),
@@ -198,6 +214,10 @@
       font-weight: 900;
       letter-spacing: -0.02em;
       color: #0f172a !important;
+      text-align: center;
+      justify-content: center;
+      margin-left: auto;
+      margin-right: auto;
     }
     .sl-dashboard .sl-section-title::before {
       width: 5px;
@@ -249,6 +269,13 @@
       font-weight: 900;
       color: #0f172a;
     }
+    .sl-dashboard .sl-stats-row .card .card-body {
+      text-align: center;
+    }
+    .sl-dashboard .sl-stats-row .card .card-body > div:first-child {
+      width: 100%;
+      text-align: center;
+    }
     .sl-dashboard .sl-top-row .list-group-item {
       border-color: rgba(148,163,184,.14) !important;
       border-left: 0 !important;
@@ -259,6 +286,23 @@
     }
     .sl-dashboard .sl-actions-row .table td {
       border-top-color: rgba(148,163,184,.16);
+    }
+    .sl-dashboard .sl-top-row .card-header h5 {
+      color: #020817 !important;
+      font-weight: 900 !important;
+      letter-spacing: -0.01em;
+      text-align: center;
+    }
+    .sl-dashboard .sl-top-row .list-group-item .font-weight-bold,
+    .sl-dashboard .sl-top-row .list-group-item .font-weight-bold a,
+    .sl-dashboard .sl-top-row .sl-stealth-link {
+      color: #020817 !important;
+      font-weight: 800 !important;
+    }
+    .sl-dashboard .sl-top-row .list-group-item small,
+    .sl-dashboard .sl-top-row .text-muted {
+      color: #334155 !important;
+      font-weight: 700 !important;
     }
     .sl-dashboard .sl-actions-row .btn-primary {
       background: linear-gradient(135deg, #0d9488, #0f766e);
@@ -280,6 +324,8 @@
     .sl-analytics .sl-chart-card .card-header {
       position: relative;
       overflow: hidden;
+      text-align: center;
+      justify-content: center !important;
     }
     .sl-analytics .sl-chart-card .card-header::after {
       content: "";
@@ -291,17 +337,119 @@
     .sl-analytics .sl-quick-actions .btn {
       border-radius: 12px;
       font-weight: 800;
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      box-shadow: 0 6px 14px rgba(15,23,42,.10);
     }
     .sl-dashboard #content-related .module {
       border-radius: 20px;
       border: 1px solid rgba(148,163,184,.18);
       background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(246,250,255,.97));
     }
+    .sl-dashboard .sl-analytics .sl-section-title-row {
+      text-align: center;
+      justify-content: center;
+    }
+    .sl-dashboard .sl-analytics .sl-section-title {
+      display: inline-flex;
+      justify-content: center;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+    }
+    .sl-dashboard .sl-analytics .sl-period-card .card-body {
+      text-align: center;
+    }
+    .sl-dashboard .sl-analytics .sl-fines-card .card-body,
+    .sl-dashboard .sl-analytics .sl-reservations-pending-card .card-body {
+      text-align: center;
+    }
+    .sl-dashboard .sl-analytics .card-header {
+      text-align: center;
+      justify-content: center;
+    }
+    .sl-dashboard .sl-actions-row .card-header h5,
+    .sl-dashboard .sl-actions-row .card-header {
+      text-align: center;
+    }
+    .sl-dashboard .sl-actions-row .card-header h5 {
+      font-size: 1.18rem !important;
+      font-weight: 900 !important;
+      letter-spacing: -0.015em;
+      color: #020817 !important;
+    }
+    .sl-dashboard .sl-actions-row .card-header {
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(243,247,252,.98)) !important;
+      border-bottom: 1px solid rgba(148,163,184,.18) !important;
+    }
+
+    /* User dropdown: premium + modern */
+    #jazzy-navbar .dropdown-menu,
+    .app-header .dropdown-menu {
+      border-radius: 16px !important;
+      border: 1px solid rgba(148,163,184,.24) !important;
+      box-shadow: 0 16px 38px rgba(15,23,42,.18) !important;
+      overflow: hidden !important;
+      min-width: 230px !important;
+      margin-top: 10px !important;
+    }
+    #jazzy-navbar .dropdown-menu .dropdown-item,
+    .app-header .dropdown-menu .dropdown-item {
+      font-weight: 700 !important;
+      color: #0f172a !important;
+      padding: 10px 14px !important;
+      border-bottom: 1px solid rgba(148,163,184,.14);
+    }
+    #jazzy-navbar .dropdown-menu .dropdown-item:last-child,
+    .app-header .dropdown-menu .dropdown-item:last-child {
+      border-bottom: 0;
+    }
+    #jazzy-navbar .dropdown-menu .dropdown-item:hover,
+    .app-header .dropdown-menu .dropdown-item:hover {
+      background: linear-gradient(90deg, rgba(13,148,136,.09), rgba(99,102,241,.06)) !important;
+      color: #0f172a !important;
+    }
+
+    /* Header emoji shortcuts */
+    #sl-header-emoji-home,
+    #sl-header-emoji-search {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 28px !important;
+      height: 28px !important;
+      border-radius: 8px !important;
+      background: rgba(255,255,255,.12) !important;
+      border: 1px solid rgba(255,255,255,.2) !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,.12) !important;
+      font-size: 14px !important;
+      text-decoration: none !important;
+      margin-right: 4px !important;
+      line-height: 1 !important;
+    }
+    #sl-header-emoji-home:hover,
+    #sl-header-emoji-search:hover {
+      background: rgba(255,255,255,.24) !important;
+      transform: translateY(-1px);
+    }
 
     @media (max-width: 991.98px) {
       .sl-dashboard {
         border-radius: 16px;
-        padding: 0.15rem 0 1.1rem;
+        padding: 0.05rem 0.32rem 1rem;
+      }
+      body.dashboard #jazzy-navbar,
+      body.dashboard .app-header.navbar,
+      body.dashboard .main-header.navbar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        z-index: 2000 !important;
       }
       .sl-dashboard .sl-section-title {
         font-size: 1rem;
@@ -324,11 +472,20 @@
         padding: 0.68rem 0.9rem;
         font-size: 0.84rem;
       }
+      .sl-dashboard .sl-section-title-row {
+        margin-top: 0.15rem !important;
+        margin-bottom: 0.2rem !important;
+      }
 
       /* Stats cards: 2 per row, compact premium look */
       .sl-dashboard .sl-stats-row .col-6 .card .card-body {
         min-height: 86px;
         padding: 0.75rem 0.78rem !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 5px !important;
       }
       .sl-dashboard .sl-stats-row .col-6 .text-muted {
         font-size: 0.68rem !important;
@@ -342,58 +499,182 @@
         opacity: .95;
       }
 
-      /* Quick actions/Qarkullimi: avoid clipped right-side buttons */
+      /* Quick actions/Qarkullimi: keep buttons inside viewport */
+      .sl-dashboard .sl-actions-row .card,
+      .sl-dashboard .sl-actions-row .card-body {
+        overflow: hidden !important;
+      }
+      .sl-dashboard .sl-actions-row .table-responsive {
+        overflow-x: hidden !important;
+      }
+      .sl-dashboard .sl-actions-row .card .table {
+        min-width: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
       .sl-dashboard .sl-actions-row .table {
-        table-layout: fixed;
-        width: 100%;
+        table-layout: auto !important;
+        width: 100% !important;
+      }
+      .sl-dashboard .sl-actions-row .table tbody tr {
+        display: block !important;
+        padding: 6px 0;
+        border-bottom: 1px solid rgba(148,163,184,.16);
+      }
+      .sl-dashboard .sl-actions-row .table tbody tr:last-child {
+        border-bottom: 0;
+      }
+      .sl-dashboard .sl-actions-row .table td {
+        display: block !important;
+        width: 100% !important;
+        border-top: 0 !important;
       }
       .sl-dashboard .sl-actions-row .table td:first-child {
-        width: 56%;
-        white-space: normal;
-        word-break: break-word;
+        padding-bottom: 6px !important;
       }
       .sl-dashboard .sl-actions-row .table td:last-child {
-        width: 44%;
-        text-align: right;
+        text-align: left !important;
       }
       .sl-dashboard .sl-actions-row .btn-group.float-right {
         float: none !important;
         display: flex !important;
         flex-wrap: wrap !important;
-        justify-content: flex-end !important;
+        justify-content: center !important;
+        align-items: center !important;
         gap: 5px !important;
         width: 100%;
       }
+      .sl-dashboard .sl-actions-row .btn-group.float-right > .btn {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        max-width: 100% !important;
+      }
       .sl-dashboard .sl-actions-row .btn-group.float-right .btn.btn-xs {
-        min-width: 0 !important;
+        min-width: 64px !important;
         font-size: 0.7rem !important;
-        padding: 0.17rem 0.44rem !important;
+        padding: 0.18rem 0.48rem !important;
+      }
+      .sl-dashboard .sl-actions-row .table td:first-child {
+        text-align: center !important;
+        font-weight: 800 !important;
+        color: #0f172a !important;
+        font-size: 1.02rem !important;
+      }
+      .sl-dashboard .sl-actions-row .table td:last-child {
+        text-align: center !important;
+      }
+      .sl-dashboard .sl-actions-row .table td:last-child .btn-group.float-right .btn {
+        border-radius: 999px !important;
+        box-shadow: 0 4px 10px rgba(15,23,42,.12) !important;
+      }
+
+      /* Keep analytics heading centered on mobile */
+      .sl-dashboard .sl-analytics .sl-section-title-row {
+        text-align: center !important;
+        justify-content: center !important;
+      }
+      .sl-dashboard .sl-analytics .sl-section-title {
+        margin-left: auto !important;
+        margin-right: auto !important;
+        width: fit-content !important;
       }
     }
 
     @media (max-width: 575.98px) {
-      .sl-dashboard .sl-actions-row .table td:first-child {
-        width: 54%;
-      }
-      .sl-dashboard .sl-actions-row .table td:last-child {
-        width: 46%;
+      .sl-dashboard {
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
       }
       .sl-dashboard .sl-actions-row .btn-group.float-right .btn.btn-xs {
-        font-size: 0.66rem !important;
-        padding: 0.15rem 0.38rem !important;
+        min-width: 68px !important;
+        font-size: 0.68rem !important;
+        padding: 0.18rem 0.42rem !important;
+      }
+      .sl-dashboard .sl-top-row .card-header h5 {
+        font-size: 0.9rem;
+      }
+      .sl-dashboard .sl-top-row .list-group-item .font-weight-bold,
+      .sl-dashboard .sl-top-row .list-group-item .font-weight-bold a {
+        font-size: 0.88rem;
       }
     }
   </style>
+  <script>
+    (function () {
+      function localizeUserDropdown() {
+        var dropdowns = document.querySelectorAll("#jazzy-navbar .dropdown-menu, .app-header .dropdown-menu");
+        dropdowns.forEach(function (menu) {
+          menu.querySelectorAll(".dropdown-item").forEach(function (item) {
+            var txt = (item.textContent || "").trim().toLowerCase();
+            if (txt === "account") item.textContent = "Llogaria";
+            if (txt === "see profile") item.textContent = "Shiko profilin";
+            if (txt === "change password") item.textContent = "Ndrysho fjalëkalimin";
+            if (txt === "logout") item.textContent = "Dil";
+          });
+        });
+      }
+
+      function injectHeaderEmojiShortcuts() {
+        var nav = document.querySelector("#jazzy-navbar .navbar-nav, .app-header .navbar-nav");
+        if (!nav) return;
+        if (document.getElementById("sl-header-emoji-home")) return;
+
+        var liHome = document.createElement("li");
+        liHome.className = "nav-item";
+        var home = document.createElement("a");
+        home.id = "sl-header-emoji-home";
+        home.className = "nav-link";
+        home.href = "/";
+        home.title = "Faqja kryesore";
+        home.setAttribute("aria-label", "Faqja kryesore");
+        home.textContent = "🏠";
+        liHome.appendChild(home);
+
+        var liSearch = document.createElement("li");
+        liSearch.className = "nav-item";
+        var search = document.createElement("a");
+        search.id = "sl-header-emoji-search";
+        search.className = "nav-link";
+        search.href = "/admin/catalog/book/";
+        search.title = "Kërko";
+        search.setAttribute("aria-label", "Kërko");
+        search.textContent = "🔎";
+        liSearch.appendChild(search);
+
+        var firstItem = nav.querySelector(".nav-item");
+        if (firstItem && firstItem.nextSibling) {
+          nav.insertBefore(liHome, firstItem.nextSibling);
+          nav.insertBefore(liSearch, liHome.nextSibling);
+        } else if (firstItem) {
+          nav.appendChild(liHome);
+          nav.appendChild(liSearch);
+        } else {
+          nav.insertBefore(liSearch, nav.firstChild);
+          nav.insertBefore(liHome, nav.firstChild);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        localizeUserDropdown();
+        injectHeaderEmojiShortcuts();
+        setTimeout(localizeUserDropdown, 250);
+        setTimeout(injectHeaderEmojiShortcuts, 250);
+      });
+      document.addEventListener("click", function (e) {
+        if (e.target.closest(".nav-item.dropdown")) {
+          setTimeout(localizeUserDropdown, 60);
+        }
+        if (e.target.closest(".navbar, #jazzy-navbar, .app-header")) {
+          setTimeout(injectHeaderEmojiShortcuts, 60);
+        }
+      });
+    })();
+  </script>
 {% endblock %}
 
 {% block content_title %}{% endblock %}
 
-{% block breadcrumbs %}
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'admin:index' %}">Kryefaqja</a></li>
-        <li class="breadcrumb-item">Paneli</li>
-    </ol>
-{% endblock %}
+{% block breadcrumbs %}{% endblock %}
 
 {% block content %}
     <div class="sl-dashboard">
@@ -647,7 +928,7 @@
 
     <!-- Dashboard analitikë -->
     <div class="row sl-section-title-row sl-analytics">
-      <div class="col-12">
+      <div class="col-12 text-center">
         <h5 class="sl-section-title">Analitikë dhe trendet</h5>
       </div>
     </div>

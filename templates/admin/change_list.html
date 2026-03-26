@@ -126,5 +126,58 @@
         window.filterInputLengthDefault = 0;
         window.filterInputLength = { {% for k,v in cl.model_admin.filter_input_length.items %}'{{ k }}': {{ v }},{% endfor %} };
     </script>
+    <script>
+        (function () {
+            function injectHeaderEmojiShortcuts() {
+                var nav = document.querySelector("#jazzy-navbar .navbar-nav, .app-header .navbar-nav");
+                if (!nav) return;
+                if (document.getElementById("sl-header-emoji-home")) return;
+
+                var liHome = document.createElement("li");
+                liHome.className = "nav-item";
+                var home = document.createElement("a");
+                home.id = "sl-header-emoji-home";
+                home.className = "nav-link";
+                home.href = "/";
+                home.title = "Faqja kryesore";
+                home.setAttribute("aria-label", "Faqja kryesore");
+                home.textContent = "🏠";
+                liHome.appendChild(home);
+
+                var liSearch = document.createElement("li");
+                liSearch.className = "nav-item";
+                var search = document.createElement("a");
+                search.id = "sl-header-emoji-search";
+                search.className = "nav-link";
+                search.href = "/admin/catalog/book/";
+                search.title = "Kërko";
+                search.setAttribute("aria-label", "Kërko");
+                search.textContent = "🔎";
+                liSearch.appendChild(search);
+
+                var firstItem = nav.querySelector(".nav-item");
+                if (firstItem && firstItem.nextSibling) {
+                    nav.insertBefore(liHome, firstItem.nextSibling);
+                    nav.insertBefore(liSearch, liHome.nextSibling);
+                } else if (firstItem) {
+                    nav.appendChild(liHome);
+                    nav.appendChild(liSearch);
+                } else {
+                    nav.insertBefore(liSearch, nav.firstChild);
+                    nav.insertBefore(liHome, nav.firstChild);
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                injectHeaderEmojiShortcuts();
+                setTimeout(injectHeaderEmojiShortcuts, 250);
+            });
+            document.addEventListener("click", function (e) {
+                if (e.target.closest(".navbar, #jazzy-navbar, .app-header")) {
+                    setTimeout(injectHeaderEmojiShortcuts, 60);
+                }
+            });
+        })();
+    </script>
     <script type="text/javascript" src="{% static 'jazzmin/js/change_list.js' %}"></script>
 {% endblock %}

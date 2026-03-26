@@ -1412,10 +1412,25 @@ body.change-list #changelist .card-body.table-responsive {
   }
 
   /* Changelist/table: prevent squashed columns on phones */
+  body.change-list #changelist .results,
+  body.change-list #changelist .card,
   #changelist .card-body.table-responsive,
   #changelist .results {
     overflow-x: auto !important;
+    overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch;
+  }
+  body.change-list #changelist .results,
+  body.change-list #changelist .card,
+  #changelist .results,
+  #changelist .card,
+  #changelist .card-body.table-responsive {
+    overflow: auto !important;
+  }
+  #changelist .table-responsive {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
   }
   #changelist #result_list {
     min-width: 860px !important;

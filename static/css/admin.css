@@ -1644,3 +1644,412 @@ body.change-list #changelist .card-body.table-responsive {
     table-layout: auto !important;
   }
 }
+
+/* ===== Premium compact mobile filters (admin-wide) ===== */
+@media (max-width: 991.98px) {
+  body.app-circulation.model-loan.change-list #change-list-filters,
+  body.app-circulation.model-reservation.change-list #change-list-filters,
+  body.app-circulation.model-reservationrequest.change-list #change-list-filters,
+  body.app-accounts.model-user.change-list #change-list-filters,
+  body.app-accounts.model-memberprofile.change-list #change-list-filters,
+  body.app-catalog.model-book.change-list #change-list-filters {
+    padding: 8px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(148, 163, 184, 0.2) !important;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06) !important;
+  }
+
+  body.app-circulation.model-loan.change-list #change-list-filters > .d-flex,
+  body.app-circulation.model-reservation.change-list #change-list-filters > .d-flex,
+  body.app-circulation.model-reservationrequest.change-list #change-list-filters > .d-flex,
+  body.app-accounts.model-user.change-list #change-list-filters > .d-flex,
+  body.app-accounts.model-memberprofile.change-list #change-list-filters > .d-flex,
+  body.app-catalog.model-book.change-list #change-list-filters > .d-flex {
+    gap: 6px !important;
+    align-items: center !important;
+  }
+
+  body.app-circulation.model-loan.change-list #changelist-search,
+  body.app-circulation.model-reservation.change-list #changelist-search,
+  body.app-circulation.model-reservationrequest.change-list #changelist-search,
+  body.app-accounts.model-user.change-list #changelist-search,
+  body.app-accounts.model-memberprofile.change-list #changelist-search,
+  body.app-catalog.model-book.change-list #changelist-search {
+    max-width: none !important;
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    gap: 6px !important;
+    margin-right: 0 !important;
+  }
+
+  body.app-circulation.model-loan.change-list #searchbar,
+  body.app-circulation.model-reservation.change-list #searchbar,
+  body.app-circulation.model-reservationrequest.change-list #searchbar,
+  body.app-accounts.model-user.change-list #searchbar,
+  body.app-accounts.model-memberprofile.change-list #searchbar,
+  body.app-catalog.model-book.change-list #searchbar {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    padding: 4px 10px !important;
+    font-size: 0.82rem !important;
+    border-radius: 999px !important;
+  }
+
+  body.app-circulation.model-loan.change-list #changelist-search .btn,
+  body.app-circulation.model-loan.change-list #changelist-search input[type="submit"],
+  body.app-circulation.model-reservation.change-list #changelist-search .btn,
+  body.app-circulation.model-reservation.change-list #changelist-search input[type="submit"],
+  body.app-circulation.model-reservationrequest.change-list #changelist-search .btn,
+  body.app-circulation.model-reservationrequest.change-list #changelist-search input[type="submit"],
+  body.app-accounts.model-user.change-list #changelist-search .btn,
+  body.app-accounts.model-user.change-list #changelist-search input[type="submit"],
+  body.app-accounts.model-memberprofile.change-list #changelist-search .btn,
+  body.app-accounts.model-memberprofile.change-list #changelist-search input[type="submit"],
+  body.app-catalog.model-book.change-list #changelist-search .btn,
+  body.app-catalog.model-book.change-list #changelist-search input[type="submit"] {
+    min-height: 30px !important;
+    height: 30px !important;
+    padding: 4px 11px !important;
+    font-size: 0.8rem !important;
+    border-radius: 999px !important;
+    box-shadow: 0 4px 10px rgba(49, 145, 137, 0.14) !important;
+  }
+
+  body.app-circulation.model-loan.change-list .object-tools,
+  body.app-circulation.model-reservation.change-list .object-tools,
+  body.app-circulation.model-reservationrequest.change-list .object-tools,
+  body.app-accounts.model-user.change-list .object-tools,
+  body.app-accounts.model-memberprofile.change-list .object-tools,
+  body.app-catalog.model-book.change-list .object-tools {
+    width: 100% !important;
+    min-width: 0 !important;
+    gap: 6px !important;
+    justify-content: flex-start !important;
+  }
+
+  body.app-circulation.model-loan.change-list .sl-quick-filters,
+  body.app-circulation.model-reservation.change-list .sl-quick-filters,
+  body.app-circulation.model-reservationrequest.change-list .sl-quick-filters,
+  body.app-accounts.model-user.change-list .sl-quick-filters,
+  body.app-accounts.model-memberprofile.change-list .sl-quick-filters,
+  body.app-catalog.model-book.change-list .sl-list-actions {
+    gap: 6px !important;
+    justify-content: flex-start !important;
+  }
+
+  body.app-circulation.model-loan.change-list .sl-quick-filters a,
+  body.app-circulation.model-reservation.change-list .sl-quick-filters a,
+  body.app-circulation.model-reservationrequest.change-list .sl-quick-filters a,
+  body.app-accounts.model-user.change-list .sl-quick-filters a,
+  body.app-accounts.model-memberprofile.change-list .sl-quick-filters a {
+    min-height: 30px !important;
+    height: 30px !important;
+    padding: 4px 10px !important;
+    font-size: 0.78rem !important;
+    font-weight: 800 !important;
+    border-radius: 999px !important;
+    border-color: rgba(148, 163, 184, 0.28) !important;
+    background: linear-gradient(180deg, #f4f7fb 0%, #e9eef5 100%) !important;
+    color: #475569 !important;
+  }
+
+  body.app-circulation.model-loan.change-list .sl-quick-filters a.is-active,
+  body.app-circulation.model-reservation.change-list .sl-quick-filters a.is-active,
+  body.app-circulation.model-reservationrequest.change-list .sl-quick-filters a.is-active,
+  body.app-accounts.model-user.change-list .sl-quick-filters a.is-active,
+  body.app-accounts.model-memberprofile.change-list .sl-quick-filters a.is-active {
+    color: #fff !important;
+    background: linear-gradient(135deg, #319189, #2b7f78) !important;
+    border-color: transparent !important;
+    box-shadow: 0 6px 14px rgba(49, 145, 137, 0.24) !important;
+  }
+}
+
+@media (max-width: 575.98px) {
+  body.app-circulation.model-loan.change-list #changelist-search,
+  body.app-circulation.model-reservation.change-list #changelist-search,
+  body.app-circulation.model-reservationrequest.change-list #changelist-search,
+  body.app-accounts.model-user.change-list #changelist-search,
+  body.app-accounts.model-memberprofile.change-list #changelist-search,
+  body.app-catalog.model-book.change-list #changelist-search {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.app-circulation.model-loan.change-list #changelist-search .btn,
+  body.app-circulation.model-loan.change-list #changelist-search input[type="submit"],
+  body.app-circulation.model-reservation.change-list #changelist-search .btn,
+  body.app-circulation.model-reservation.change-list #changelist-search input[type="submit"],
+  body.app-circulation.model-reservationrequest.change-list #changelist-search .btn,
+  body.app-circulation.model-reservationrequest.change-list #changelist-search input[type="submit"],
+  body.app-accounts.model-user.change-list #changelist-search .btn,
+  body.app-accounts.model-user.change-list #changelist-search input[type="submit"],
+  body.app-accounts.model-memberprofile.change-list #changelist-search .btn,
+  body.app-accounts.model-memberprofile.change-list #changelist-search input[type="submit"],
+  body.app-catalog.model-book.change-list #changelist-search .btn,
+  body.app-catalog.model-book.change-list #changelist-search input[type="submit"] {
+    width: 100% !important;
+  }
+}
+
+/* ===== Ultra premium mobile filter UX =====
+   Keep controls compact without eating vertical space:
+   - Search row
+   - Horizontal swipe filter pills
+   - Horizontal swipe action buttons
+*/
+@media (max-width: 991.98px) {
+  body.change-list #change-list-filters > .d-flex {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+  }
+
+  body.change-list #changelist-search {
+    order: 1 !important;
+  }
+
+  body.change-list .object-tools {
+    order: 2 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 7px !important;
+  }
+
+  /* Row 1: quick filter pills (swipe horizontally) */
+  body.change-list .sl-quick-filters {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-snap-type: x proximity;
+    gap: 6px !important;
+    padding: 2px 2px 6px !important;
+    margin: 0 !important;
+    justify-content: flex-start !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(49, 145, 137, 0.58) rgba(148, 163, 184, 0.2);
+  }
+
+  body.change-list .sl-quick-filters a {
+    flex: 0 0 auto !important;
+    scroll-snap-align: start;
+    min-height: 28px !important;
+    height: 28px !important;
+    padding: 3px 9px !important;
+    font-size: 0.76rem !important;
+    font-weight: 800 !important;
+    border-radius: 999px !important;
+    letter-spacing: 0 !important;
+  }
+
+  /* Row 2: action buttons (swipe horizontally) */
+  body.change-list .object-tools > li.d-flex,
+  body.change-list .sl-list-actions {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 6px !important;
+    padding: 2px 2px 6px !important;
+    width: 100% !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(49, 145, 137, 0.58) rgba(148, 163, 184, 0.2);
+  }
+
+  body.change-list .object-tools > li.d-flex > a,
+  body.change-list .sl-list-actions > a {
+    flex: 0 0 auto !important;
+    min-height: 28px !important;
+    height: 28px !important;
+    padding: 3px 9px !important;
+    font-size: 0.76rem !important;
+    border-radius: 999px !important;
+  }
+
+  /* Elegant thin scrollbar for filter/action rows */
+  body.change-list .sl-quick-filters::-webkit-scrollbar,
+  body.change-list .object-tools > li.d-flex::-webkit-scrollbar,
+  body.change-list .sl-list-actions::-webkit-scrollbar {
+    height: 6px;
+  }
+  body.change-list .sl-quick-filters::-webkit-scrollbar-thumb,
+  body.change-list .object-tools > li.d-flex::-webkit-scrollbar-thumb,
+  body.change-list .sl-list-actions::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #319189, #2b7f78);
+    border-radius: 999px;
+  }
+  body.change-list .sl-quick-filters::-webkit-scrollbar-track,
+  body.change-list .object-tools > li.d-flex::-webkit-scrollbar-track,
+  body.change-list .sl-list-actions::-webkit-scrollbar-track {
+    background: rgba(148, 163, 184, 0.2);
+    border-radius: 999px;
+  }
+
+  /* Slightly more premium title card on mobile */
+  body.change-list .sl-page-title-wrapper .sl-page-title {
+    background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(243,248,251,.98)) !important;
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08) !important;
+  }
+}
+
+/* ===== Premium detail pages (change-form) ===== */
+body.change-form #content-main > .card,
+body.change-form #content-main > .module,
+body.change-form .inline-group,
+body.change-form .card {
+  border-radius: 18px !important;
+  border: 1px solid rgba(148, 163, 184, 0.18) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(247,251,255,.97)) !important;
+  box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08) !important;
+}
+
+body.change-form #content-main fieldset.module.aligned,
+body.change-form #content-main fieldset.module {
+  border-radius: 14px !important;
+  border: 1px solid rgba(148,163,184,.2) !important;
+  background: #fff !important;
+  padding: 10px 12px 6px !important;
+  margin-bottom: 12px !important;
+}
+
+body.change-form #content-main fieldset.module h2,
+body.change-form #content-main fieldset.module .fieldset-heading {
+  margin: -10px -12px 10px !important;
+  padding: 10px 12px !important;
+  border-radius: 14px 14px 0 0 !important;
+  border-bottom: 1px solid rgba(148,163,184,.2) !important;
+  background: linear-gradient(180deg, rgba(49,145,137,.12), rgba(241,245,249,.95)) !important;
+  color: #0f172a !important;
+  font-weight: 900 !important;
+  font-size: 0.9rem !important;
+}
+
+body.change-form #content-main .form-row {
+  border-bottom: 1px dashed rgba(148,163,184,.25);
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+body.change-form #content-main .form-row:last-child {
+  border-bottom: 0 !important;
+}
+
+body.change-form #content-main label,
+body.change-form #content-main .control-label {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+}
+
+body.change-form #content-main input[type="text"],
+body.change-form #content-main input[type="number"],
+body.change-form #content-main input[type="email"],
+body.change-form #content-main input[type="date"],
+body.change-form #content-main input[type="datetime-local"],
+body.change-form #content-main input[type="url"],
+body.change-form #content-main input[type="tel"],
+body.change-form #content-main textarea,
+body.change-form #content-main select {
+  border-radius: 12px !important;
+  border: 1px solid rgba(148,163,184,.36) !important;
+  background: #fff !important;
+  color: #0f172a !important;
+  font-weight: 600 !important;
+}
+body.change-form #content-main input:focus,
+body.change-form #content-main textarea:focus,
+body.change-form #content-main select:focus {
+  border-color: rgba(49,145,137,.55) !important;
+  box-shadow: 0 0 0 .2rem rgba(49,145,137,.12) !important;
+}
+
+/* Better readonly/detail blocks */
+body.change-form #content-main .readonly,
+body.change-form #content-main p.readonly {
+  border-radius: 12px !important;
+  border: 1px solid rgba(148,163,184,.24) !important;
+  background: linear-gradient(180deg, #f8fbfe, #f1f6fb) !important;
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  padding: 8px 10px !important;
+}
+
+/* Inline forms (copies, history, etc.) */
+body.change-form .inline-group .tabular table {
+  border-radius: 14px !important;
+  overflow: hidden !important;
+}
+body.change-form .inline-group .tabular thead th {
+  background: linear-gradient(180deg, rgba(241,245,249,.98), rgba(232,240,248,.98)) !important;
+  color: #0f172a !important;
+  font-weight: 900 !important;
+}
+body.change-form .inline-group .tabular td,
+body.change-form .inline-group .tabular th {
+  border-color: rgba(148,163,184,.22) !important;
+}
+
+/* Submit bar + top actions */
+body.change-form .submit-row,
+body.change-form #jazzy-actions {
+  border-radius: 14px !important;
+  border: 1px solid rgba(148,163,184,.24) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(244,248,252,.98)) !important;
+  box-shadow: 0 8px 20px rgba(15,23,42,.07) !important;
+}
+body.change-form .submit-row .btn,
+body.change-form .submit-row input[type="submit"],
+body.change-form #jazzy-actions .btn {
+  border-radius: 999px !important;
+  min-height: 34px !important;
+  padding: 6px 14px !important;
+  font-weight: 800 !important;
+}
+
+/* Member and user detail pages: cleaner card hierarchy */
+body.app-accounts.model-memberprofile.change-form #content-main .card,
+body.app-accounts.model-user.change-form #content-main .card {
+  border-radius: 20px !important;
+  box-shadow: 0 14px 32px rgba(15,23,42,.09) !important;
+}
+
+@media (max-width: 991.98px) {
+  body.change-form .app-content-header {
+    padding-top: 72px !important;
+    padding-bottom: 10px !important;
+  }
+  body.change-form #content-main > .card,
+  body.change-form #content-main > .module,
+  body.change-form .inline-group,
+  body.change-form .card {
+    border-radius: 14px !important;
+  }
+  body.change-form #content-main fieldset.module.aligned,
+  body.change-form #content-main fieldset.module {
+    border-radius: 12px !important;
+    padding: 8px 10px 4px !important;
+  }
+  body.change-form #content-main fieldset.module h2,
+  body.change-form #content-main fieldset.module .fieldset-heading {
+    font-size: 0.82rem !important;
+    padding: 8px 10px !important;
+    margin: -8px -10px 8px !important;
+  }
+  body.change-form #content-main .form-row {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+  body.change-form .submit-row .btn,
+  body.change-form .submit-row input[type="submit"],
+  body.change-form #jazzy-actions .btn {
+    min-height: 30px !important;
+    padding: 4px 10px !important;
+    font-size: 0.8rem !important;
+  }
+}

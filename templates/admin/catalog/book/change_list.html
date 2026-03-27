@@ -4,9 +4,31 @@
 {% block extrahead %}
   {{ block.super }}
   <style>
+    .app-catalog.model-book.change-list .sl-page-title-wrapper .sl-page-title {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      padding: 10px 16px !important;
+      border-radius: 14px !important;
+      background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(241,245,249,.98)) !important;
+      border: 1px solid rgba(148, 163, 184, 0.24) !important;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08) !important;
+      color: #0f172a !important;
+      font-weight: 900 !important;
+      letter-spacing: 0.01em;
+    }
+    .app-catalog.model-book.change-list .sl-page-title-wrapper .sl-page-title::before {
+      content: "📚";
+      font-size: 1.05rem;
+      line-height: 1;
+    }
     .app-catalog.model-book.change-list #changelist-filter { display:none !important; }
     .app-catalog.model-book.change-list #change-list-filters {
       padding-top: 10px !important;
+      border-radius: 16px !important;
+      border: 1px solid rgba(148, 163, 184, 0.2) !important;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%) !important;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08) !important;
     }
     .app-catalog.model-book.change-list #change-list-filters > .d-flex {
       width: 100% !important;
@@ -35,6 +57,8 @@
       font-size:12px !important;
       min-height:38px !important;
       line-height:1.2 !important;
+      font-weight: 900 !important;
+      box-shadow: 0 8px 16px rgba(49,145,137,.22) !important;
     }
     .app-catalog.model-book.change-list .sl-list-actions {
       display:flex;
@@ -44,17 +68,50 @@
       gap:10px;
       width:100%;
     }
+    .app-catalog.model-book.change-list .sl-list-actions .btn {
+      border-radius: 999px !important;
+      font-weight: 900 !important;
+      border: 1px solid rgba(148, 163, 184, 0.24) !important;
+      background: linear-gradient(180deg, #f8fafc, #eef2f7) !important;
+      color: #334155 !important;
+    }
+    .app-catalog.model-book.change-list .sl-list-actions .btn.btn-primary {
+      border: 0 !important;
+      background: linear-gradient(135deg, #319189, #2b7f78) !important;
+      color: #fff !important;
+      box-shadow: 0 8px 16px rgba(49,145,137,.22) !important;
+    }
+    .app-catalog.model-book.change-list .sl-list-actions .btn:hover {
+      transform: translateY(-1px);
+    }
     .app-catalog.model-book.change-list #result_list thead th,
     .app-catalog.model-book.change-list #result_list thead th a {
       color:#0f172a !important;
       font-weight:900 !important;
+      font-size: 0.86rem !important;
+      letter-spacing: 0.02em;
     }
     .app-catalog.model-book.change-list #result_list tbody td {
       color:#111827 !important;
-      font-weight:500;
+      font-weight:700;
+      font-size: 0.9rem;
     }
     .app-catalog.model-book.change-list #result_list tbody tr:hover {
       background:rgba(49,145,137,.08) !important;
+    }
+    .app-catalog.model-book.change-list #result_list tbody tr:nth-child(odd) {
+      background: rgba(248, 250, 252, 0.88) !important;
+    }
+    .app-catalog.model-book.change-list #result_list tbody tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.98) !important;
+    }
+    .app-catalog.model-book.change-list .results,
+    .app-catalog.model-book.change-list .card,
+    .app-catalog.model-book.change-list .card-body.table-responsive {
+      border-radius: 16px !important;
+      border: 1px solid rgba(148, 163, 184, 0.2) !important;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08) !important;
+      overflow: hidden !important;
     }
     .app-catalog.model-book.change-list .object-tools {
       flex: 1 1 620px !important;
@@ -69,18 +126,94 @@
       flex: 1 1 auto !important;
       min-width: 420px !important;
     }
+    .app-catalog.model-book.change-list .object-tools > li:last-child {
+      display: flex !important;
+      align-items: center !important;
+    }
     @media (max-width: 991.98px) {
       .app-catalog.model-book.change-list #changelist-search {
         max-width: none !important;
         width: 100% !important;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        gap: 6px !important;
       }
       .app-catalog.model-book.change-list .object-tools,
       .app-catalog.model-book.change-list .object-tools > li:first-of-type {
         width: 100% !important;
         min-width: 0 !important;
       }
+      .app-catalog.model-book.change-list .object-tools > li:last-child {
+        width: 100% !important;
+        justify-content: center !important;
+      }
+      .app-catalog.model-book.change-list .object-tools > li:last-child .btn,
+      .app-catalog.model-book.change-list .object-tools > li:last-child a {
+        min-height: 36px !important;
+        height: 36px !important;
+        padding: 6px 14px !important;
+        font-size: 0.9rem !important;
+        font-weight: 900 !important;
+        border-radius: 999px !important;
+      }
       .app-catalog.model-book.change-list .sl-list-actions {
         justify-content:flex-start !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        gap: 6px !important;
+        padding-bottom: 4px !important;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(49,145,137,.62) rgba(148,163,184,.2);
+        scroll-snap-type: x proximity;
+      }
+      .app-catalog.model-book.change-list #changelist-search .btn,
+      .app-catalog.model-book.change-list #changelist-search input[type="submit"] {
+        min-height: 32px !important;
+        height: 32px !important;
+        padding: 4px 11px !important;
+        font-size: 0.83rem !important;
+        box-shadow: 0 6px 12px rgba(49,145,137,.2) !important;
+      }
+      .app-catalog.model-book.change-list .sl-list-actions a,
+      .app-catalog.model-book.change-list .object-tools > li > a.btn {
+        min-height: 32px !important;
+        height: 32px !important;
+        padding: 4px 10px !important;
+        font-size: 0.79rem !important;
+        white-space: nowrap !important;
+        flex: 0 0 auto !important;
+        scroll-snap-align: start;
+      }
+      .app-catalog.model-book.change-list .sl-page-title-wrapper .sl-page-title {
+        font-size: 1rem !important;
+        padding: 8px 12px !important;
+      }
+      .app-catalog.model-book.change-list #result_list thead th,
+      .app-catalog.model-book.change-list #result_list tbody td {
+        font-size: 0.82rem !important;
+        padding: 8px 9px !important;
+      }
+      .app-catalog.model-book.change-list .sl-list-actions::-webkit-scrollbar {
+        height: 6px;
+      }
+      .app-catalog.model-book.change-list .sl-list-actions::-webkit-scrollbar-track {
+        background: rgba(148,163,184,.2);
+        border-radius: 999px;
+      }
+      .app-catalog.model-book.change-list .sl-list-actions::-webkit-scrollbar-thumb {
+        background: linear-gradient(90deg, #319189, #2b7f78);
+        border-radius: 999px;
+      }
+    }
+    @media (max-width: 575.98px) {
+      .app-catalog.model-book.change-list #changelist-search {
+        grid-template-columns: 1fr !important;
+      }
+      .app-catalog.model-book.change-list #changelist-search .btn,
+      .app-catalog.model-book.change-list #changelist-search input[type="submit"] {
+        width: 100% !important;
       }
     }
   </style>
@@ -121,7 +254,7 @@
           <div class="sl-list-actions">
             <a href="/admin/catalog/book/" class="btn btn-outline-secondary">Pastro filtrat</a>
             <a href="{% url 'admin:catalog_book_import_sample' %}" class="btn btn-outline-secondary">
-              <i class="fas fa-download me-1"></i>Shkarko shembull Excel
+              <i class="fas fa-download me-1"></i>Excel
             </a>
             <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#slImportModal">
               <i class="fas fa-file-import me-1"></i>Import
@@ -139,7 +272,7 @@
     <div class="sl-list-actions">
       <a href="/admin/catalog/book/" class="btn btn-sm btn-outline-secondary">Pastro filtrat</a>
       <a href="{% url 'admin:catalog_book_import_sample' %}" class="btn btn-sm btn-outline-secondary">
-        <i class="fas fa-download me-1"></i>Shkarko shembull Excel
+        <i class="fas fa-download me-1"></i>Excel
       </a>
       <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#slImportModal">
         <i class="fas fa-file-import me-1"></i>Import

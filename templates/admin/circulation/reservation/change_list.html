@@ -72,6 +72,22 @@
       box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
       transition:all .18s ease;
     }
+    .app-circulation.model-reservation.change-list .object-tools .btn {
+      border-radius: 999px !important;
+      font-weight: 900 !important;
+      border: 1px solid rgba(148, 163, 184, 0.24) !important;
+      background: linear-gradient(180deg, #f8fafc, #eef2f7) !important;
+      color: #334155 !important;
+    }
+    .app-circulation.model-reservation.change-list .object-tools .btn.btn-primary {
+      border: 0 !important;
+      background: linear-gradient(135deg, #319189, #2b7f78) !important;
+      color: #fff !important;
+      box-shadow: 0 8px 16px rgba(49,145,137,.22) !important;
+    }
+    .app-circulation.model-reservation.change-list .object-tools .btn:hover {
+      transform: translateY(-1px);
+    }
     .app-circulation.model-reservation.change-list .sl-quick-filters a.is-active {
       color:#fff;
       background:linear-gradient(135deg, #319189, #2b7f78);
@@ -106,6 +122,9 @@
       .app-circulation.model-reservation.change-list #changelist-search {
         max-width: none !important;
         width: 100% !important;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        gap: 6px !important;
       }
       .app-circulation.model-reservation.change-list .object-tools,
       .app-circulation.model-reservation.change-list .object-tools > li:first-of-type {
@@ -114,6 +133,72 @@
       }
       .app-circulation.model-reservation.change-list .sl-quick-filters {
         justify-content: flex-start !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        gap: 6px !important;
+        padding-bottom: 4px !important;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(49,145,137,.62) rgba(148,163,184,.2);
+        scroll-snap-type: x proximity;
+      }
+      .app-circulation.model-reservation.change-list .sl-quick-filters a {
+        min-height: 32px !important;
+        height: 32px !important;
+        padding: 4px 11px !important;
+        font-size: 0.83rem !important;
+        flex: 0 0 auto !important;
+        scroll-snap-align: start;
+      }
+      .app-circulation.model-reservation.change-list #changelist-search .btn,
+      .app-circulation.model-reservation.change-list #changelist-search input[type="submit"] {
+        min-height: 32px !important;
+        height: 32px !important;
+        padding: 4px 12px !important;
+        font-size: 0.83rem !important;
+      }
+      .app-circulation.model-reservation.change-list .object-tools > li.d-flex {
+        width: 100% !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        gap: 6px !important;
+        padding-bottom: 4px !important;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(49,145,137,.62) rgba(148,163,184,.2);
+      }
+      .app-circulation.model-reservation.change-list .object-tools > li.d-flex > a,
+      .app-circulation.model-reservation.change-list .object-tools > li > a.btn {
+        min-height: 32px !important;
+        height: 32px !important;
+        padding: 4px 11px !important;
+        font-size: 0.79rem !important;
+        white-space: nowrap !important;
+        flex: 0 0 auto !important;
+      }
+      .app-circulation.model-reservation.change-list .sl-quick-filters::-webkit-scrollbar,
+      .app-circulation.model-reservation.change-list .object-tools > li.d-flex::-webkit-scrollbar {
+        height: 6px;
+      }
+      .app-circulation.model-reservation.change-list .sl-quick-filters::-webkit-scrollbar-track,
+      .app-circulation.model-reservation.change-list .object-tools > li.d-flex::-webkit-scrollbar-track {
+        background: rgba(148,163,184,.2);
+        border-radius: 999px;
+      }
+      .app-circulation.model-reservation.change-list .sl-quick-filters::-webkit-scrollbar-thumb,
+      .app-circulation.model-reservation.change-list .object-tools > li.d-flex::-webkit-scrollbar-thumb {
+        background: linear-gradient(90deg, #319189, #2b7f78);
+        border-radius: 999px;
+      }
+    }
+    @media (max-width: 575.98px) {
+      .app-circulation.model-reservation.change-list #changelist-search {
+        grid-template-columns: 1fr !important;
+      }
+      .app-circulation.model-reservation.change-list #changelist-search .btn,
+      .app-circulation.model-reservation.change-list #changelist-search input[type="submit"] {
+        width: 100% !important;
       }
     }
     .sl-quick-res-modal .modal-content { border-radius:18px; overflow:hidden; background:rgba(255,255,255,.985); border:1px solid rgba(255,255,255,.78); box-shadow:0 24px 55px rgba(15,23,42,.24); }

@@ -162,6 +162,185 @@
       color: #fff;
       font-weight: 900;
     }
+    .app-catalog.model-book.change-form .sl-book-view-shell {
+      border-radius: 18px !important;
+      border: 1px solid rgba(15, 23, 42, 0.1) !important;
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.1) !important;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    }
+    .app-catalog.model-book.change-form .sl-book-view-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .app-catalog.model-book.change-form .sl-book-view-head-title {
+      font-weight: 900;
+      font-size: 20px;
+      line-height: 1.2;
+      color: #0f172a;
+    }
+    .app-catalog.model-book.change-form .sl-book-view-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(49, 145, 137, 0.1);
+      border: 1px solid rgba(49, 145, 137, 0.24);
+      color: #115e59;
+      font-weight: 800;
+      font-size: 0.78rem;
+    }
+    .app-catalog.model-book.change-form .sl-book-view-meta::before {
+      content: "📚";
+      font-size: 0.9rem;
+      line-height: 1;
+    }
+    .app-catalog.model-book.change-form .sl-book-data-card,
+    .app-catalog.model-book.change-form .sl-book-stats-card,
+    .app-catalog.model-book.change-form .sl-book-history-card,
+    .app-catalog.model-book.change-form .sl-book-actions-card {
+      border-radius: 16px !important;
+      border: 1px solid rgba(148, 163, 184, 0.22) !important;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06) !important;
+    }
+    .app-catalog.model-book.change-form .sl-book-data-card .card-header,
+    .app-catalog.model-book.change-form .sl-book-stats-card .card-header,
+    .app-catalog.model-book.change-form .sl-book-history-card .card-header {
+      background: linear-gradient(135deg, rgba(49, 145, 137, 0.11), rgba(236, 253, 245, 0.7)) !important;
+      color: #0f172a !important;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.22) !important;
+    }
+    .app-catalog.model-book.change-form .sl-book-kv {
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 12px;
+      background: #fff;
+      padding: 10px;
+    }
+    .app-catalog.model-book.change-form .sl-book-kv-label {
+      font-size: 0.72rem !important;
+      font-weight: 900 !important;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: #64748b !important;
+      margin-bottom: 3px;
+    }
+    .app-catalog.model-book.change-form .sl-book-kv-value {
+      font-size: 1.03rem;
+      font-weight: 800 !important;
+      line-height: 1.25;
+      color: #0f172a !important;
+      word-break: break-word;
+    }
+    .app-catalog.model-book.change-form .sl-book-stat-item {
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 12px;
+      background: #fff;
+      padding: 10px;
+    }
+    .app-catalog.model-book.change-form .sl-book-stat-label {
+      font-size: 0.72rem !important;
+      font-weight: 900 !important;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: #64748b !important;
+    }
+    .app-catalog.model-book.change-form .sl-book-stat-value {
+      margin-top: 4px;
+      font-weight: 900 !important;
+      font-size: 1.45rem !important;
+      line-height: 1.1;
+      color: #0f172a !important;
+    }
+    .app-catalog.model-book.change-form .sl-book-history-tip {
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(49, 145, 137, 0.08);
+      border: 1px solid rgba(49, 145, 137, 0.2);
+      color: #115e59;
+      font-weight: 700;
+      font-size: 0.78rem;
+    }
+    .app-catalog.model-book.change-form .sl-book-actions-grid .btn {
+      min-height: 36px !important;
+      font-weight: 800 !important;
+      border-radius: 999px !important;
+    }
+
+    @media (max-width: 991.98px) {
+      body.app-catalog.model-book.change-form .app-content-header {
+        display: none !important;
+      }
+      body.app-catalog.model-book.change-form .app-content {
+        padding-top: 8px !important;
+      }
+      .app-catalog.model-book.change-form .sl-book-form-shell,
+      .app-catalog.model-book.change-form .sl-book-view-shell {
+        border-radius: 14px !important;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08) !important;
+      }
+      .app-catalog.model-book.change-form .sl-book-form-head {
+        padding: 10px 12px !important;
+        gap: 8px !important;
+      }
+      .app-catalog.model-book.change-form .sl-book-form-title {
+        font-size: 16px !important;
+      }
+      .app-catalog.model-book.change-form .sl-book-form-sub {
+        font-size: 12px !important;
+      }
+      .app-catalog.model-book.change-form .sl-book-form-body {
+        padding: 10px 10px 4px !important;
+      }
+      .app-catalog.model-book.change-form .sl-book-view-head {
+        flex-direction: column !important;
+      }
+      .app-catalog.model-book.change-form .sl-book-view-head-title {
+        font-size: 15px !important;
+      }
+      .app-catalog.model-book.change-form .sl-book-view-meta {
+        font-size: 0.72rem;
+        padding: 3px 9px;
+      }
+      .app-catalog.model-book.change-form .sl-book-view-grid > [class*="col-"] {
+        margin-bottom: 8px;
+      }
+      .app-catalog.model-book.change-form .sl-book-history-card .card-header,
+      .app-catalog.model-book.change-form .sl-book-data-card .card-header,
+      .app-catalog.model-book.change-form .sl-book-stats-card .card-header {
+        padding: 9px 10px !important;
+        font-size: 0.9rem !important;
+      }
+      .app-catalog.model-book.change-form .sl-book-history-card .card-body,
+      .app-catalog.model-book.change-form .sl-book-data-card .card-body,
+      .app-catalog.model-book.change-form .sl-book-stats-card .card-body {
+        padding: 10px !important;
+      }
+      .app-catalog.model-book.change-form .sl-book-history-card .table-responsive,
+      .app-catalog.model-book.change-form .sl-book-history-card table {
+        overflow-x: auto !important;
+        display: block;
+      }
+      .app-catalog.model-book.change-form .sl-book-actions-card {
+        margin-top: 10px !important;
+      }
+      .app-catalog.model-book.change-form .sl-book-kv {
+        padding: 9px;
+      }
+      .app-catalog.model-book.change-form .sl-book-kv-label,
+      .app-catalog.model-book.change-form .sl-book-stat-label {
+        font-size: 0.68rem !important;
+      }
+      .app-catalog.model-book.change-form .sl-book-kv-value {
+        font-size: 0.98rem;
+      }
+      .app-catalog.model-book.change-form .sl-book-stat-value {
+        font-size: 1.35rem !important;
+      }
+    }
   </style>
 {% endblock %}
 
@@ -314,27 +493,28 @@
     </script>
   {% else %}
     <div class="col-12 col-lg-9">
-      <div class="card">
+      <div class="card sl-book-view-shell">
         <div class="card-body">
-          <div class="d-flex flex-wrap align-items-start justify-content-between" style="gap: 12px;">
+          <div class="sl-book-view-head" style="gap: 12px;">
             <div>
-              <div style="font-weight: 900; font-size: 20px; line-height: 1.2;">{{ original.title }}</div>
+              <div class="sl-book-view-head-title">{{ original.title }}</div>
               <div class="text-muted" style="font-weight: 700; margin-top: 4px;">
                 {% if original.isbn %}ISBN: {{ original.isbn }}{% endif %}
                 {% if original.publication_year %}{% if original.isbn %} • {% endif %}Viti: {{ original.publication_year }}{% endif %}
               </div>
+              <div class="sl-book-view-meta">Detaje premium të librit</div>
             </div>
           </div>
 
-          <div class="row mt-3">
+          <div class="row mt-3 sl-book-view-grid">
             <div class="col-12 col-xl-7">
-              <div class="card" style="border-radius: 16px;">
+              <div class="card sl-book-data-card" style="border-radius: 16px;">
                 <div class="card-header" style="font-weight: 900;">Të dhënat</div>
                 <div class="card-body">
                   <div class="row">
-                    <div class="col-12 col-md-6 mb-3">
-                      <div class="text-muted" style="font-weight: 800;">Autori</div>
-                      <div style="font-weight: 800;">
+                    <div class="col-12 col-md-6 mb-3 sl-book-kv">
+                      <div class="text-muted sl-book-kv-label" style="font-weight: 800;">Autori</div>
+                      <div class="sl-book-kv-value" style="font-weight: 800;">
                         {% if original.authors.all %}
                           {% for a in original.authors.all %}{{ a.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
                         {% else %}
@@ -342,17 +522,17 @@
                         {% endif %}
                       </div>
                     </div>
-                    <div class="col-12 col-md-6 mb-3">
-                      <div class="text-muted" style="font-weight: 800;">Botuesi</div>
-                      <div style="font-weight: 800;">{{ original.publisher|default:"—" }}</div>
+                    <div class="col-12 col-md-6 mb-3 sl-book-kv">
+                      <div class="text-muted sl-book-kv-label" style="font-weight: 800;">Botuesi</div>
+                      <div class="sl-book-kv-value" style="font-weight: 800;">{{ original.publisher|default:"—" }}</div>
                     </div>
-                    <div class="col-12 col-md-6 mb-3">
-                      <div class="text-muted" style="font-weight: 800;">Lloji</div>
-                      <div style="font-weight: 800;">{{ original.get_book_type_display|default:"—" }}</div>
+                    <div class="col-12 col-md-6 mb-3 sl-book-kv">
+                      <div class="text-muted sl-book-kv-label" style="font-weight: 800;">Lloji</div>
+                      <div class="sl-book-kv-value" style="font-weight: 800;">{{ original.get_book_type_display|default:"—" }}</div>
                     </div>
-                    <div class="col-12 col-md-6 mb-3">
-                      <div class="text-muted" style="font-weight: 800;">Zhanret</div>
-                      <div style="font-weight: 800;">
+                    <div class="col-12 col-md-6 mb-3 sl-book-kv">
+                      <div class="text-muted sl-book-kv-label" style="font-weight: 800;">Zhanret</div>
+                      <div class="sl-book-kv-value" style="font-weight: 800;">
                         {% if original.genres.all %}
                           {% for g in original.genres.all %}{{ g.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
                         {% else %}
@@ -360,9 +540,9 @@
                         {% endif %}
                       </div>
                     </div>
-                    <div class="col-12 mb-0">
-                      <div class="text-muted" style="font-weight: 800;">Etiketat</div>
-                      <div style="font-weight: 800;">
+                    <div class="col-12 mb-0 sl-book-kv">
+                      <div class="text-muted sl-book-kv-label" style="font-weight: 800;">Etiketat</div>
+                      <div class="sl-book-kv-value" style="font-weight: 800;">
                         {% if original.tags.all %}
                           {% for t in original.tags.all %}{{ t.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
                         {% else %}
@@ -376,28 +556,36 @@
             </div>
 
             <div class="col-12 col-xl-5">
-              <div class="card" style="border-radius: 16px;">
+              <div class="card sl-book-stats-card" style="border-radius: 16px;">
                 <div class="card-header" style="font-weight: 900;">Statistika</div>
                 <div class="card-body">
                   <div class="row">
                     <div class="col-6 mb-3">
-                      <div class="text-muted" style="font-weight: 800;">Kopje totale</div>
-                      <div style="font-weight: 900; font-size: 20px;">{{ sl_book_total_copies|default:"0" }}</div>
+                      <div class="sl-book-stat-item">
+                        <div class="text-muted sl-book-stat-label" style="font-weight: 800;">Kopje totale</div>
+                        <div class="sl-book-stat-value" style="font-weight: 900; font-size: 20px;">{{ sl_book_total_copies|default:"0" }}</div>
+                      </div>
                     </div>
                     <div class="col-6 mb-3">
-                      <div class="text-muted" style="font-weight: 800;">Kopje të lira</div>
-                      <div style="font-weight: 900; font-size: 20px;">{{ sl_book_available_copies|default:"0" }}</div>
+                      <div class="sl-book-stat-item">
+                        <div class="text-muted sl-book-stat-label" style="font-weight: 800;">Kopje të lira</div>
+                        <div class="sl-book-stat-value" style="font-weight: 900; font-size: 20px;">{{ sl_book_available_copies|default:"0" }}</div>
+                      </div>
                     </div>
                     <div class="col-6 mb-3">
-                      <div class="text-muted" style="font-weight: 800;">Huazime (total)</div>
-                      <div style="font-weight: 900; font-size: 18px;">{{ sl_borrow_count_html|safe }}</div>
+                      <div class="sl-book-stat-item">
+                        <div class="text-muted sl-book-stat-label" style="font-weight: 800;">Huazime (total)</div>
+                        <div class="sl-book-stat-value" style="font-weight: 900; font-size: 18px;">{{ sl_borrow_count_html|safe }}</div>
+                      </div>
                     </div>
                     <div class="col-6 mb-3">
-                      <div class="text-muted" style="font-weight: 800;">Huazime aktive</div>
-                      <div style="font-weight: 900; font-size: 20px;">{{ sl_book_active_loans|default:"0" }}</div>
+                      <div class="sl-book-stat-item">
+                        <div class="text-muted sl-book-stat-label" style="font-weight: 800;">Huazime aktive</div>
+                        <div class="sl-book-stat-value" style="font-weight: 900; font-size: 20px;">{{ sl_book_active_loans|default:"0" }}</div>
+                      </div>
                     </div>
                   </div>
-                  <div class="text-muted" style="font-weight: 700;">
+                  <div class="text-muted sl-book-history-tip" style="font-weight: 700;">
                     Kliko “Huazime (total)” për historikun e plotë.
                   </div>
                 </div>
@@ -405,7 +593,7 @@
             </div>
           </div>
 
-          <div class="card mt-3" style="border-radius: 16px;">
+          <div class="card mt-3 sl-book-history-card" style="border-radius: 16px;">
             <div class="card-header" style="font-weight: 900; display:flex; align-items:center; justify-content:space-between; gap: 10px;">
               <span>Historiku i huazimeve</span>
               <a class="btn btn-outline-secondary btn-sm" href="{{ sl_book_history_list_url|default:'/admin/circulation/loan/' }}">Shiko gjithë listën</a>
@@ -426,10 +614,10 @@
       {{ block.super }}
     </div>
   {% else %}
-    <div class="card">
+    <div class="card sl-book-actions-card">
       <div class="card-body">
         <div style="font-weight: 900; margin-bottom: 10px;">Veprime</div>
-        <div class="d-grid" style="gap: 8px;">
+        <div class="d-grid sl-book-actions-grid" style="gap: 8px;">
           <a class="btn btn-success" style="border-radius: 999px; font-weight: 800;" href="?edit=1">Ndrysho</a>
           <a class="btn btn-danger" style="border-radius: 999px; font-weight: 800;" href="/admin/catalog/book/">Shiko gjithë listën</a>
         </div>

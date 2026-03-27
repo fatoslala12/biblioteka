@@ -241,7 +241,7 @@ if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     DEFAULT_FROM_EMAIL = EMAIL_FROM_ADDRESS or "no-reply@localhost"
-LOGIN_URL = "/admin/login/"
+LOGIN_URL = "/hyr/"
 
 JAZZMIN_SETTINGS = {
     "site_title": "Smart Library",

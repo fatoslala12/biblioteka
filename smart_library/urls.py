@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.shortcuts import redirect
 from django.urls import include, path
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
@@ -26,6 +27,11 @@ handler404 = "cms.views.page_not_found_view"
 handler500 = "cms.views.server_error_view"
 
 urlpatterns = [
+    path(
+        "admin/login/",
+        lambda request: redirect(f"/hyr/?next={request.GET.get('next', '/admin/')}"),
+    ),
+    path("admin/logout/", lambda request: redirect("/")),
     path('admin/', admin.site.urls),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),

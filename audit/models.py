@@ -38,6 +38,9 @@ class AuditEntry(models.Model):
         "FINE_UPDATED_MANUAL": "Gjobë e përditësuar manualisht",
         "POLICY_CREATED_MANUAL": "Politikë e krijuar manualisht",
         "POLICY_UPDATED_MANUAL": "Politikë e përditësuar manualisht",
+        "MEMBER_NOTIFICATION_DUE_SOON": "Njoftim anëtarit: afati i kthimit po afrohet",
+        "MEMBER_NOTIFICATION_FINE_CREATED": "Njoftim anëtarit: gjobë e krijuar",
+        "MEMBER_NOTIFICATION_RESERVATION_EXPIRING": "Njoftim anëtarit: rezervimi po skadon",
         "CONTACT_MESSAGE_REPLIED": "Përgjigje e dërguar për mesazhin e kontaktit",
     }
 
@@ -65,6 +68,7 @@ class AuditEntry(models.Model):
         "admin.reservationrequest.list.reject_now": "Admin > Kërkesa > Lista (Refuzo)",
         "admin.fine.change_form": "Admin > Gjoba > Ndrysho",
         "admin.policy.change_form": "Admin > Politika > Ndrysho",
+        "system.notifications.member": "Sistem > Njoftime anëtarësh",
         "admin.contactmessage.reply": "Admin > Mesazhet > Përgjigju",
         "member.book_detail.reserve": "Anëtar > Libri > Rezervo",
         "api.circulation.checkout": "API > Checkout",

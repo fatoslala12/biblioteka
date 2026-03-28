@@ -61,3 +61,4 @@ Use this checklist before every deploy to eliminate visual regressions and UX br
 ## 9) Operations
 - [ ] Run `python manage.py daily_ops_report` and review metrics.
 - [ ] Run `python manage.py expire_reservations` before shift opens (or scheduler/cron).
+- [ ] Run `python manage.py notify_members --channels both` and verify deliveries/logs.

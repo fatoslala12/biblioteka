@@ -307,3 +307,117 @@ class DailyOpsReportCommandTests(TestCase):
         )
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn("[CRITICAL PRIORITY]", mail.outbox[0].subject)
+
+
+@override_settings(
+    EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+    DEFAULT_FROM_EMAIL="ops@test.com",
+    SMS_WEBHOOK_URL="",
+)
+class MemberNotificationsCommandTests(TestCase):
+    def setUp(self):
+        self.member_user = User.objects.create_user(
+            username="member_notify",
+            email="member_notify@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.MEMBER,
+            is_staff=False,
+        )
+        self.staff = User.objects.create_user(
+            username="staff_notify",
+            email="staff_notify@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.STAFF,
+            is_staff=True,
+        )
+        self.member = MemberProfile.objects.create(
+            user=self.member_user,
+            full_name="Member Notify",
+            phone="0691111111",
+            national_id="NOT123X",
+            place_of_birth="Tirane",
+            address="Rruga Notify",
+        )
+        self.book = Book.objects.create(title="Notify Book", isbn="9784444444444")
+        self.copy = Copy.objects.create(book=self.book, barcode="NOT-COPY-1", status=CopyStatus.ON_LOAN)
+
+    @override_settings(NOTIFY_DUE_SOON_DAYS=2, NOTIFY_FINE_CREATED_LOOKBACK_DAYS=5, NOTIFY_RESERVATION_EXPIRY_HOURS=48)
+    def test_notify_members_sends_email_for_due_soon_fine_and_reservation_expiring(self):
+        from django.core import mail
+
+        now = timezone.now()
+        loan = Loan.objects.create(
+            member=self.member,
+            copy=self.copy,
+            due_at=now + timedelta(days=1),
+            status=LoanStatus.ACTIVE,
+            loaned_by=self.staff,
+        )
+        fine_loan = Loan.objects.create(
+            member=self.member,
+            copy=self.copy,
+            due_at=now - timedelta(days=4),
+            status=LoanStatus.RETURNED,
+            loaned_by=self.staff,
+        )
+        fine = Fine.objects.create(
+            loan=fine_loan,
+            member=self.member,
+            amount="120.00",
+            status=FineStatus.UNPAID,
+            reason="Overdue",
+        )
+        policy, _ = LibraryPolicy.objects.get_or_create(name="default")
+        policy.reservation_grace_days = 0
+        policy.save(update_fields=["reservation_grace_days", "updated_at"])
+        reservation = Reservation.objects.create(
+            member=self.member,
+            book=self.book,
+            pickup_date=timezone.localdate(),
+            return_date=timezone.localdate() + timedelta(days=2),
+            status=ReservationStatus.APPROVED,
+            created_by=self.staff,
+        )
+
+        call_command("notify_members", "--channels", "email")
+        self.assertGreaterEqual(len(mail.outbox), 3)
+        subjects = " | ".join(m.subject for m in mail.outbox)
+        self.assertIn("Afati i kthimit po afrohet", subjects)
+        self.assertIn("Njoftim për gjobë të re", subjects)
+        self.assertIn("Rezervimi juaj po skadon", subjects)
+
+        self.assertTrue(
+            AuditEntry.objects.filter(
+                action_type="MEMBER_NOTIFICATION_DUE_SOON",
+                reason__startswith=f"loan:{loan.id}:due_soon:",
+            ).exists()
+        )
+        self.assertTrue(
+            AuditEntry.objects.filter(
+                action_type="MEMBER_NOTIFICATION_FINE_CREATED",
+                reason=f"fine:{fine.id}:created",
+            ).exists()
+        )
+        self.assertTrue(
+            AuditEntry.objects.filter(
+                action_type="MEMBER_NOTIFICATION_RESERVATION_EXPIRING",
+                reason__startswith=f"reservation:{reservation.id}:expiring:",
+            ).exists()
+        )
+
+    def test_notify_members_avoids_duplicate_notifications(self):
+        from django.core import mail
+
+        Loan.objects.create(
+            member=self.member,
+            copy=self.copy,
+            due_at=timezone.now() + timedelta(days=1),
+            status=LoanStatus.ACTIVE,
+            loaned_by=self.staff,
+        )
+
+        call_command("notify_members", "--channels", "email")
+        first_count = len(mail.outbox)
+        call_command("notify_members", "--channels", "email")
+        second_count = len(mail.outbox)
+        self.assertEqual(first_count, second_count)

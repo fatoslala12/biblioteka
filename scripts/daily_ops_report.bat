@@ -15,6 +15,9 @@ set "OUT=docs\ops-reports\daily_ops_%STAMP%.json"
 .venv\Scripts\python.exe manage.py expire_reservations
 if errorlevel 1 exit /b 1
 
+.venv\Scripts\python.exe manage.py notify_members --channels both
+if errorlevel 1 exit /b 1
+
 .venv\Scripts\python.exe manage.py daily_ops_report --save-file "%OUT%" --send-email
 if errorlevel 1 exit /b 1
 

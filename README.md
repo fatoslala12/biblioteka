@@ -96,6 +96,25 @@ Pragjet default mund t’i vendosësh në `.env`:
 - `OPS_ALERT_PENDING_REQUESTS_THRESHOLD`
 - `OPS_ALERT_UNPAID_FINES_TOTAL_THRESHOLD`
 
+Njoftime automatike për anëtarët (email/SMS):
+
+```bash
+.venv\Scripts\python manage.py notify_members --channels both
+```
+
+Dry-run pa dërgim real:
+
+```bash
+.venv\Scripts\python manage.py notify_members --channels email --dry-run
+```
+
+Konfigurime njoftimesh në `.env`:
+- `NOTIFY_DUE_SOON_DAYS`
+- `NOTIFY_FINE_CREATED_LOOKBACK_DAYS`
+- `NOTIFY_RESERVATION_EXPIRY_HOURS`
+- `SMS_WEBHOOK_URL`
+- `SMS_WEBHOOK_TOKEN`
+
 Auto-expire rezervimesh:
 
 ```bash

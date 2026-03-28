@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, time, timedelta
 
 from django import forms
 from django.contrib import admin, messages
@@ -26,6 +27,7 @@ from .models import (
 )
 from accounts.models import MemberProfile
 from catalog.models import Author, Book, Copy, CopyStatus
+from policies.models import LibraryPolicy
 from .services import (
     auto_expire_overdue_reservations,
     approve_reservation_request,
@@ -96,6 +98,11 @@ def _build_audit_timeline_html(*, app_label: str, model_name: str, object_id: st
         "<ul style='list-style:none;padding:0;margin:0;display:grid;gap:8px;'>{}</ul>",
         timeline_items,
     )
+
+
+def _get_reservation_timing_policy() -> LibraryPolicy:
+    policy, _ = LibraryPolicy.objects.get_or_create(name="default")
+    return policy
 
 
 class LoanAdminForm(forms.ModelForm):
@@ -954,7 +961,15 @@ class HoldAdmin(admin.ModelAdmin):
 @admin.register(Reservation)
 class ReservationAdmin(admin.ModelAdmin):
     change_list_template = "admin/circulation/reservation/change_list.html"
-    list_display = ("member_display", "book_display", "pickup_date_display", "return_date_display", "status", "loan_action")
+    list_display = (
+        "member_display",
+        "book_display",
+        "pickup_date_display",
+        "return_date_display",
+        "expiry_badge",
+        "status",
+        "loan_action",
+    )
     list_filter = ("status",)
     search_fields = ("book__title", "member__member_no", "member__user__username")
     autocomplete_fields = ("book", "member")
@@ -1015,6 +1030,34 @@ class ReservationAdmin(admin.ModelAdmin):
     @admin.display(description="Kthimi", ordering="return_date")
     def return_date_display(self, obj: Reservation):
         return obj.return_date.strftime("%d/%m/%Y")
+
+    @admin.display(description="Afati")
+    def expiry_badge(self, obj: Reservation):
+        if obj.status != ReservationStatus.APPROVED:
+            return "—"
+        policy = _get_reservation_timing_policy()
+        grace_days = int(policy.reservation_grace_days or 0)
+        warning_hours = int(policy.reservation_warning_hours or 0)
+
+        expiry_date = obj.pickup_date + timedelta(days=grace_days)
+        expiry_dt = timezone.make_aware(datetime.combine(expiry_date, time(23, 59, 59)))
+        now = timezone.now()
+        seconds_left = int((expiry_dt - now).total_seconds())
+
+        if seconds_left <= 0:
+            return format_html(
+                '<span style="display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;'
+                'font-size:11px;font-weight:900;background:rgba(239,68,68,.14);color:#991b1b;">Skaduar</span>'
+            )
+        if warning_hours > 0 and seconds_left <= warning_hours * 3600:
+            return format_html(
+                '<span style="display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;'
+                'font-size:11px;font-weight:900;background:rgba(245,158,11,.16);color:#92400e;">Afër skadimit</span>'
+            )
+        return format_html(
+            '<span style="display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;'
+            'font-size:11px;font-weight:900;background:rgba(22,163,74,.14);color:#14532d;">Në afat</span>'
+        )
 
     @admin.display(description="Timeline")
     def audit_timeline_display(self, obj: Reservation):
@@ -1185,6 +1228,7 @@ class ReservationAdmin(admin.ModelAdmin):
             return redirect("/admin/circulation/reservation/")
 
     def changelist_view(self, request, extra_context=None):
+        policy = _get_reservation_timing_policy()
         expired_count = auto_expire_overdue_reservations(
             actor=request.user,
             source_screen="admin.reservation.list.auto_expire",
@@ -1208,6 +1252,8 @@ class ReservationAdmin(admin.ModelAdmin):
             "quick_res_api_url": "/admin/circulation/reservation/shto-rezervim/api/",
             "quick_res_create_url": "/admin/circulation/reservation/shto-rezervim/krijo/",
             "current_scope": current_scope,
+            "reservation_grace_days": int(policy.reservation_grace_days or 0),
+            "reservation_warning_hours": int(policy.reservation_warning_hours or 0),
             "export_excel_url": "/admin/circulation/reservation/eksporto-excel/" + ("?" + request.GET.urlencode() if request.GET else ""),
             "export_pdf_url": "/admin/circulation/reservation/eksporto-pdf/" + ("?" + request.GET.urlencode() if request.GET else ""),
             "export_excel_base": "/admin/circulation/reservation/eksporto-excel/",

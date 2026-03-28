@@ -9,6 +9,7 @@ from audit.models import AuditEntry
 from catalog.models import Book
 from circulation.models import Reservation, ReservationStatus
 from circulation.services import auto_expire_overdue_reservations
+from policies.models import LibraryPolicy
 
 User = get_user_model()
 
@@ -38,6 +39,10 @@ class ReservationAutoExpireTests(TestCase):
             address="Rruga Test 10",
         )
         self.book = Book.objects.create(title="Auto Expire Book", isbn="9780000000001")
+        policy, _ = LibraryPolicy.objects.get_or_create(name="default")
+        policy.reservation_grace_days = 0
+        policy.reservation_warning_hours = 24
+        policy.save(update_fields=["reservation_grace_days", "reservation_warning_hours", "updated_at"])
 
     def test_auto_expire_marks_only_overdue_approved_reservations(self):
         today = timezone.localdate()
@@ -87,3 +92,33 @@ class ReservationAutoExpireTests(TestCase):
         ).first()
         self.assertIsNotNone(audit)
         self.assertEqual(audit.actor_id, self.staff.id)
+
+    def test_auto_expire_respects_policy_grace_days(self):
+        policy = LibraryPolicy.objects.get(name="default")
+        policy.reservation_grace_days = 2
+        policy.save(update_fields=["reservation_grace_days", "updated_at"])
+
+        today = timezone.localdate()
+        within_grace = Reservation.objects.create(
+            member=self.member,
+            book=self.book,
+            pickup_date=today - timedelta(days=1),
+            return_date=today + timedelta(days=3),
+            status=ReservationStatus.APPROVED,
+            created_by=self.staff,
+        )
+        outside_grace = Reservation.objects.create(
+            member=self.member,
+            book=self.book,
+            pickup_date=today - timedelta(days=3),
+            return_date=today + timedelta(days=3),
+            status=ReservationStatus.APPROVED,
+            created_by=self.staff,
+        )
+
+        count = auto_expire_overdue_reservations(actor=self.staff, source_screen="test.auto_expire.grace")
+        self.assertEqual(count, 1)
+        within_grace.refresh_from_db()
+        outside_grace.refresh_from_db()
+        self.assertEqual(within_grace.status, ReservationStatus.APPROVED)
+        self.assertEqual(outside_grace.status, ReservationStatus.EXPIRED)

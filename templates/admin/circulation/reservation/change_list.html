@@ -263,6 +263,12 @@
       </ul>
     </div>
   </div>
+  <div class="col-12 pb-3">
+    <div style="border:1px solid rgba(148,163,184,.28);border-radius:14px;background:linear-gradient(180deg,#fff,#f8fbff);padding:10px 14px;font-size:12px;font-weight:700;color:#334155;">
+      Rregull automatik: rezervimi kalon në <b>Skaduar</b> kur kalon data e marrjes + <b>{{ reservation_grace_days }}</b> ditë grace.
+      Paralajmërimi “Afër skadimit” shfaqet në <b>{{ reservation_warning_hours }}</b> orët e fundit.
+    </div>
+  </div>
 {% endblock %}
 
 {% block content %}

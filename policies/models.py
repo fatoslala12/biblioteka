@@ -17,6 +17,14 @@ class LibraryPolicy(models.Model):
 
     default_loan_period_days = models.PositiveIntegerField(default=14)
     default_max_active_loans = models.PositiveIntegerField(default=5)
+    reservation_grace_days = models.PositiveIntegerField(
+        default=0,
+        help_text="Days after pickup_date before approved reservation auto-expires.",
+    )
+    reservation_warning_hours = models.PositiveIntegerField(
+        default=24,
+        help_text="Warning window before reservation auto-expiry (hours).",
+    )
 
     fine_block_threshold = models.DecimalField(
         max_digits=10,

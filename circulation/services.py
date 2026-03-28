@@ -28,6 +28,11 @@ from fines.models import Fine, FineStatus
 from policies.models import LibraryPolicy, LoanRule
 
 
+def _get_default_policy() -> LibraryPolicy:
+    policy, _ = LibraryPolicy.objects.get_or_create(name="default")
+    return policy
+
+
 def _try_log(**kwargs):
     try:
         log_audit_event(**kwargs)
@@ -112,7 +117,7 @@ class PolicySnapshot:
 
 
 def _get_policy_snapshot(member: MemberProfile, copy: Copy) -> PolicySnapshot:
-    policy, _ = LibraryPolicy.objects.get_or_create(name="default")
+    policy = _get_default_policy()
     rule = (
         LoanRule.objects.filter(
             policy=policy, member_type=member.member_type, book_type=copy.book.book_type
@@ -589,14 +594,17 @@ def auto_expire_overdue_reservations(
     """
     Auto-release reservations that passed pickup_date without being borrowed.
     """
+    policy = _get_default_policy()
     today = timezone.localdate()
+    grace_days = int(policy.reservation_grace_days or 0)
+    cutoff_pickup_date = today - timedelta(days=grace_days)
     overdue_qs = (
         Reservation.objects.select_for_update()
         .select_related("member", "book")
         .filter(
             status=ReservationStatus.APPROVED,
             loan__isnull=True,
-            pickup_date__lt=today,
+            pickup_date__lt=cutoff_pickup_date,
         )
     )
 
@@ -617,6 +625,7 @@ def auto_expire_overdue_reservations(
             metadata={
                 "pickup_date": reservation.pickup_date.isoformat() if reservation.pickup_date else "",
                 "today": today.isoformat(),
+                "reservation_grace_days": grace_days,
                 "book_id": reservation.book_id,
                 "member_id": reservation.member_id,
             },

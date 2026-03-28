@@ -23,6 +23,8 @@ class LibraryPolicySerializer(serializers.ModelSerializer):
             "max_renewals",
             "default_loan_period_days",
             "default_max_active_loans",
+            "reservation_grace_days",
+            "reservation_warning_hours",
             "fine_block_threshold",
             "loan_rules",
         )

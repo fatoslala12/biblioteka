@@ -34,6 +34,10 @@ class AuditEntry(models.Model):
         "RESERVATION_REQUEST_UPDATED_MANUAL": "Kërkesë rezervimi e përditësuar manualisht",
         "RESERVATION_REQUEST_APPROVED": "Kërkesë rezervimi e miratuar",
         "RESERVATION_REQUEST_REJECTED": "Kërkesë rezervimi e refuzuar",
+        "FINE_CREATED_MANUAL": "Gjobë e krijuar manualisht",
+        "FINE_UPDATED_MANUAL": "Gjobë e përditësuar manualisht",
+        "POLICY_CREATED_MANUAL": "Politikë e krijuar manualisht",
+        "POLICY_UPDATED_MANUAL": "Politikë e përditësuar manualisht",
         "CONTACT_MESSAGE_REPLIED": "Përgjigje e dërguar për mesazhin e kontaktit",
     }
 
@@ -59,6 +63,8 @@ class AuditEntry(models.Model):
         "admin.reservationrequest.change_form": "Admin > Kërkesa > Ndrysho",
         "admin.reservationrequest.list.approve_now": "Admin > Kërkesa > Lista (Mirato)",
         "admin.reservationrequest.list.reject_now": "Admin > Kërkesa > Lista (Refuzo)",
+        "admin.fine.change_form": "Admin > Gjoba > Ndrysho",
+        "admin.policy.change_form": "Admin > Politika > Ndrysho",
         "admin.contactmessage.reply": "Admin > Mesazhet > Përgjigju",
         "member.book_detail.reserve": "Anëtar > Libri > Rezervo",
         "api.circulation.checkout": "API > Checkout",

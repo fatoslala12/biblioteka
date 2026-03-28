@@ -30,6 +30,8 @@ Use this checklist before every deploy to eliminate visual regressions and UX br
 - [ ] Reservation list loads and action buttons are usable on mobile.
 - [ ] Reservation request list shows "Aktiviteti i fundit" and proper action labels.
 - [ ] Reservation request detail shows audit timeline entries.
+- [ ] Fine list/detail surfaces latest activity and timeline blocks.
+- [ ] Policy detail page shows audit timeline block.
 - [ ] Book detail page has no duplicate header/title block.
 
 ## 5) Member Portal Smoke
@@ -55,3 +57,7 @@ Use this checklist before every deploy to eliminate visual regressions and UX br
 - [ ] Critical UI bugs: 0.
 - [ ] New regression screenshots attached when any issue is found.
 - [ ] Deploy approved.
+
+## 9) Operations
+- [ ] Run `python manage.py daily_ops_report` and review metrics.
+- [ ] Run `python manage.py expire_reservations` before shift opens (or scheduler/cron).

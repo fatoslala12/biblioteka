@@ -1,14 +1,18 @@
 from datetime import timedelta
+import io
+import json
 
+from django.core.management import call_command
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
 
 from accounts.models import MemberProfile, UserRole
 from audit.models import AuditEntry
-from catalog.models import Book
-from circulation.models import Reservation, ReservationStatus
+from catalog.models import Book, Copy, CopyStatus
+from circulation.models import Loan, LoanStatus, Reservation, ReservationRequest, ReservationRequestStatus, ReservationStatus
 from circulation.services import auto_expire_overdue_reservations
+from fines.models import Fine, FineStatus
 from policies.models import LibraryPolicy
 
 User = get_user_model()
@@ -122,3 +126,87 @@ class ReservationAutoExpireTests(TestCase):
         outside_grace.refresh_from_db()
         self.assertEqual(within_grace.status, ReservationStatus.APPROVED)
         self.assertEqual(outside_grace.status, ReservationStatus.EXPIRED)
+
+
+class DailyOpsReportCommandTests(TestCase):
+    def setUp(self):
+        self.staff = User.objects.create_user(
+            username="staff_ops_report",
+            email="staff_ops_report@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.STAFF,
+            is_staff=True,
+        )
+        self.member_user = User.objects.create_user(
+            username="member_ops_report",
+            email="member_ops_report@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.MEMBER,
+            is_staff=False,
+        )
+        self.member = MemberProfile.objects.create(
+            user=self.member_user,
+            full_name="Member Ops Report",
+            phone="0690000000",
+            national_id="OPS123456X",
+            place_of_birth="Tirane",
+            address="Rruga Ops",
+        )
+        self.book = Book.objects.create(title="Ops Report Book", isbn="9782222222222")
+        self.copy = Copy.objects.create(book=self.book, barcode="OPS-COPY-1", status=CopyStatus.ON_LOAN)
+
+        policy, _ = LibraryPolicy.objects.get_or_create(name="default")
+        policy.reservation_grace_days = 1
+        policy.reservation_warning_hours = 48
+        policy.save(update_fields=["reservation_grace_days", "reservation_warning_hours", "updated_at"])
+
+        now = timezone.now()
+        Loan.objects.create(
+            member=self.member,
+            copy=self.copy,
+            due_at=now - timedelta(days=1),
+            status=LoanStatus.ACTIVE,
+            loaned_by=self.staff,
+        )
+        Reservation.objects.create(
+            member=self.member,
+            book=self.book,
+            pickup_date=timezone.localdate() - timedelta(days=3),
+            return_date=timezone.localdate() + timedelta(days=2),
+            status=ReservationStatus.APPROVED,
+            created_by=self.staff,
+        )
+        ReservationRequest.objects.create(
+            member=self.member,
+            book=self.book,
+            status=ReservationRequestStatus.PENDING,
+            created_by=self.staff,
+        )
+        fine_loan = Loan.objects.create(
+            member=self.member,
+            copy=self.copy,
+            due_at=now + timedelta(days=5),
+            status=LoanStatus.RETURNED,
+            loaned_by=self.staff,
+        )
+        Fine.objects.create(
+            loan=fine_loan,
+            member=self.member,
+            amount="200.00",
+            status=FineStatus.UNPAID,
+            reason="Overdue",
+        )
+
+    def test_daily_ops_report_json_output_contains_key_metrics(self):
+        out = io.StringIO()
+        call_command("daily_ops_report", "--json", stdout=out)
+        payload = json.loads(out.getvalue().strip())
+
+        self.assertIn("loans", payload)
+        self.assertIn("reservations", payload)
+        self.assertIn("reservation_requests", payload)
+        self.assertIn("fines", payload)
+        self.assertGreaterEqual(payload["loans"]["overdue"], 1)
+        self.assertGreaterEqual(payload["reservations"]["overdue_auto_expire_candidates"], 1)
+        self.assertGreaterEqual(payload["reservation_requests"]["pending"], 1)
+        self.assertGreaterEqual(payload["fines"]["unpaid_count"], 1)

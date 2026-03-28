@@ -1,12 +1,15 @@
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.test import Client, TestCase, override_settings
+from django.utils import timezone
 from pathlib import Path
 
 from accounts.models import MemberProfile, UserRole
 from audit.services import log_audit_event
-from catalog.models import Book
-from circulation.models import ReservationRequest, ReservationRequestStatus
+from catalog.models import Book, Copy, CopyStatus
+from circulation.models import Loan, LoanStatus, ReservationRequest, ReservationRequestStatus
+from fines.models import Fine, FineStatus
+from policies.models import LibraryPolicy
 
 User = get_user_model()
 
@@ -217,3 +220,74 @@ class AdminAuditSmokeTests(TestCase):
         change_resp = self.client.get(f"/admin/circulation/reservationrequest/{self.req.id}/change/")
         self.assertEqual(change_resp.status_code, 200)
         self.assertContains(change_resp, "Timeline e auditimit")
+
+
+class AdminCriticalEntitiesSmokeTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.admin_user = User.objects.create_superuser(
+            username="admin_critical_smoke",
+            email="admin_critical_smoke@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+        )
+        member_user = User.objects.create_user(
+            username="member_critical_smoke",
+            email="member_critical_smoke@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.MEMBER,
+            is_staff=False,
+            is_superuser=False,
+        )
+        member = MemberProfile.objects.create(
+            user=member_user,
+            full_name="Critical Smoke Member",
+            phone="0671000000",
+            national_id="CRIT123X",
+            place_of_birth="Tirane",
+            address="Rruga Critical",
+        )
+        book = Book.objects.create(title="Critical Smoke Book", isbn="9783333333333")
+        copy = Copy.objects.create(book=book, barcode="CRIT-COPY-1", status=CopyStatus.AVAILABLE)
+        loan = Loan.objects.create(
+            member=member,
+            copy=copy,
+            due_at=timezone.now(),
+            status=LoanStatus.RETURNED,
+            loaned_by=self.admin_user,
+        )
+        self.fine = Fine.objects.create(
+            loan=loan,
+            member=member,
+            amount="150.00",
+            status=FineStatus.UNPAID,
+            reason="Overdue",
+        )
+        self.policy, _ = LibraryPolicy.objects.get_or_create(name="default")
+        log_audit_event(
+            target=self.fine,
+            action_type="FINE_CREATED_MANUAL",
+            actor=self.admin_user,
+            source_screen="test.admin.critical_smoke",
+        )
+        log_audit_event(
+            target=self.policy,
+            action_type="POLICY_UPDATED_MANUAL",
+            actor=self.admin_user,
+            source_screen="test.admin.critical_smoke",
+        )
+
+    def test_fine_and_policy_admin_pages_show_timeline_surfaces(self):
+        self.client.force_login(self.admin_user)
+
+        fine_list = self.client.get("/admin/fines/fine/")
+        self.assertEqual(fine_list.status_code, 200)
+        self.assertContains(fine_list, "Aktiviteti i fundit")
+        self.assertContains(fine_list, "Gjobë e krijuar manualisht")
+
+        fine_change = self.client.get(f"/admin/fines/fine/{self.fine.id}/change/")
+        self.assertEqual(fine_change.status_code, 200)
+        self.assertContains(fine_change, "Timeline")
+
+        policy_change = self.client.get(f"/admin/policies/librarypolicy/{self.policy.id}/change/")
+        self.assertEqual(policy_change.status_code, 200)
+        self.assertContains(policy_change, "Timeline")

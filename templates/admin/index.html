@@ -401,6 +401,32 @@
       background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(243,247,252,.98)) !important;
       border-bottom: 1px solid rgba(148,163,184,.18) !important;
     }
+    .sl-dashboard .sl-exec-row { margin-top: 1.25rem; }
+    .sl-dashboard .sl-exec-card .card-body { padding: 1rem 1rem !important; text-align: left !important; }
+    .sl-dashboard .sl-exec-kpi {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: .75rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+      color: #475569;
+    }
+    .sl-dashboard .sl-exec-value {
+      font-size: 1.55rem; font-weight: 900; letter-spacing: -0.02em; color: #0f172a;
+    }
+    .sl-dashboard .sl-exec-threshold { font-size: .78rem; color: #64748b; font-weight: 700; }
+    .sl-dashboard .sl-sev-badge {
+      display:inline-flex; align-items:center; justify-content:center;
+      border-radius:999px; padding:4px 10px; font-size:.68rem; font-weight:900;
+      border:1px solid transparent;
+    }
+    .sl-dashboard .sl-sev-normal { background: rgba(22,163,74,.12); color:#14532d; border-color: rgba(22,163,74,.26); }
+    .sl-dashboard .sl-sev-medium { background: rgba(245,158,11,.16); color:#92400e; border-color: rgba(245,158,11,.3); }
+    .sl-dashboard .sl-sev-high { background: rgba(239,68,68,.14); color:#991b1b; border-color: rgba(239,68,68,.28); }
+    .sl-dashboard .sl-sev-critical { background: rgba(126,34,206,.16); color:#581c87; border-color: rgba(126,34,206,.3); }
+    .sl-dashboard .sl-exec-actions-card .card-header { text-align: center; }
+    .sl-dashboard .sl-exec-actions-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+    .sl-dashboard .sl-exec-actions-list li {
+      border: 1px solid rgba(148,163,184,.22); border-radius: 12px; padding: 9px 10px;
+      background: linear-gradient(180deg, #fff, #f8fbff); font-size: .86rem; font-weight: 700; color: #1e293b;
+    }
 
     /* User dropdown: premium + modern */
     #jazzy-navbar .dropdown-menu,
@@ -722,6 +748,7 @@
     {% stat_available_copies as copies_available %}
     {% dashboard_loans_due_soon as loans_due_soon %}
     {% dashboard_reservations_pending_count as reservations_pending %}
+    {% dashboard_executive_overview as executive_overview %}
     {{ chart_loans_data|json_script:"chartLoansData" }}
     {{ chart_reservations_data|json_script:"chartReservationsData" }}
 
@@ -871,6 +898,56 @@
                     </div>
                 </div>
             </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row sl-section-title-row">
+      <div class="col-12">
+        <h5 class="sl-section-title">Executive Overview</h5>
+      </div>
+    </div>
+    <div class="row sl-exec-row g-3">
+      {% for m in executive_overview.metrics %}
+      <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+        <a href="{{ m.url }}" class="text-decoration-none">
+          <div class="card sl-exec-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="sl-exec-kpi">{{ m.label }}</span>
+                {% if m.severity == "CRITICAL" %}
+                  <span class="sl-sev-badge sl-sev-critical">CRITICAL</span>
+                {% elif m.severity == "HIGH" %}
+                  <span class="sl-sev-badge sl-sev-high">HIGH</span>
+                {% elif m.severity == "MEDIUM" %}
+                  <span class="sl-sev-badge sl-sev-medium">MEDIUM</span>
+                {% else %}
+                  <span class="sl-sev-badge sl-sev-normal">NORMAL</span>
+                {% endif %}
+              </div>
+              <div class="sl-exec-value mt-1">{{ m.value }}</div>
+              <div class="sl-exec-threshold">Threshold: {{ m.threshold }}</div>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+      <div class="col-12">
+        <div class="card sl-exec-actions-card">
+          <div class="card-header">
+            <h5 class="m-0 font-weight-bold">Action Needed Today</h5>
+          </div>
+          <div class="card-body">
+            {% if executive_overview.actions %}
+              <ul class="sl-exec-actions-list">
+                {% for action in executive_overview.actions %}
+                  <li>{{ action }}</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <div class="text-muted font-weight-bold text-center">Gjithçka është në kontroll për momentin.</div>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>

@@ -291,3 +291,20 @@ class AdminCriticalEntitiesSmokeTests(TestCase):
         policy_change = self.client.get(f"/admin/policies/librarypolicy/{self.policy.id}/change/")
         self.assertEqual(policy_change.status_code, 200)
         self.assertContains(policy_change, "Timeline")
+
+
+class AdminExecutiveDashboardSmokeTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.admin_user = User.objects.create_superuser(
+            username="admin_exec_dash",
+            email="admin_exec_dash@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+        )
+
+    def test_admin_dashboard_contains_executive_overview_section(self):
+        self.client.force_login(self.admin_user)
+        resp = self.client.get("/admin/")
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "Executive Overview")
+        self.assertContains(resp, "Action Needed Today")

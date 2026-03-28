@@ -1,6 +1,8 @@
 from calendar import month_abbr
+from decimal import Decimal
+from django.conf import settings
 from django import template
-from django.db.models import Avg, Count, DurationField, ExpressionWrapper, F
+from django.db.models import Avg, Count, DurationField, ExpressionWrapper, F, Sum
 from django.db.models.functions import TruncMonth
 from django.utils import timezone
 
@@ -10,6 +12,22 @@ from circulation.models import Loan, LoanStatus, Reservation, ReservationRequest
 from fines.models import Fine, FineStatus
 
 register = template.Library()
+
+
+def _severity_rank(level: str) -> int:
+    return {"NORMAL": 0, "MEDIUM": 1, "HIGH": 2, "CRITICAL": 3}.get((level or "").upper(), 0)
+
+
+def _metric_severity(value: Decimal, threshold: Decimal) -> str:
+    if threshold <= 0:
+        return "NORMAL"
+    if value >= threshold * Decimal("2.0"):
+        return "CRITICAL"
+    if value >= threshold:
+        return "HIGH"
+    if value >= threshold * Decimal("0.75"):
+        return "MEDIUM"
+    return "NORMAL"
 
 
 @register.simple_tag
@@ -289,4 +307,73 @@ def dashboard_loans_due_soon():
 def dashboard_reservations_pending_count():
     """Kërkesa rezervimesh në pritje (ReservationRequest PENDING)."""
     return ReservationRequest.objects.filter(status=ReservationRequestStatus.PENDING).count()
+
+
+@register.simple_tag
+def dashboard_executive_overview():
+    now = timezone.now()
+    overdue_loans = Loan.objects.filter(status=LoanStatus.ACTIVE, due_at__lt=now).count()
+    overdue_reservations = Reservation.objects.filter(
+        status="APPROVED",
+        loan__isnull=True,
+        pickup_date__lt=now.date(),
+    ).count()
+    pending_requests = ReservationRequest.objects.filter(status=ReservationRequestStatus.PENDING).count()
+    unpaid_fines = Fine.objects.filter(status=FineStatus.UNPAID)
+    unpaid_fines_total = unpaid_fines.aggregate(s=Sum("amount")).get("s") or Decimal("0.00")
+
+    th_overdue_loans = int(getattr(settings, "OPS_ALERT_OVERDUE_LOANS_THRESHOLD", 10) or 10)
+    th_overdue_reservations = int(getattr(settings, "OPS_ALERT_OVERDUE_RESERVATIONS_THRESHOLD", 5) or 5)
+    th_pending_requests = int(getattr(settings, "OPS_ALERT_PENDING_REQUESTS_THRESHOLD", 20) or 20)
+    try:
+        th_unpaid_fines_total = Decimal(str(getattr(settings, "OPS_ALERT_UNPAID_FINES_TOTAL_THRESHOLD", "1000.00")))
+    except Exception:
+        th_unpaid_fines_total = Decimal("1000.00")
+
+    metrics = [
+        {
+            "key": "overdue_loans",
+            "label": "Huazime me afat të kaluar",
+            "value": overdue_loans,
+            "threshold": th_overdue_loans,
+            "severity": _metric_severity(Decimal(str(overdue_loans)), Decimal(str(th_overdue_loans))),
+            "url": "/admin/circulation/loan/?status__exact=ACTIVE",
+        },
+        {
+            "key": "overdue_reservations",
+            "label": "Rezervime për skadim",
+            "value": overdue_reservations,
+            "threshold": th_overdue_reservations,
+            "severity": _metric_severity(Decimal(str(overdue_reservations)), Decimal(str(th_overdue_reservations))),
+            "url": "/admin/circulation/reservation/?status__exact=APPROVED",
+        },
+        {
+            "key": "pending_requests",
+            "label": "Kërkesa në pritje",
+            "value": pending_requests,
+            "threshold": th_pending_requests,
+            "severity": _metric_severity(Decimal(str(pending_requests)), Decimal(str(th_pending_requests))),
+            "url": "/admin/circulation/reservationrequest/?status__exact=PENDING",
+        },
+        {
+            "key": "unpaid_fines_total",
+            "label": "Gjoba të papaguara (€)",
+            "value": unpaid_fines_total,
+            "threshold": th_unpaid_fines_total,
+            "severity": _metric_severity(Decimal(str(unpaid_fines_total)), th_unpaid_fines_total),
+            "url": "/admin/fines/fine/?status__exact=UNPAID",
+        },
+    ]
+
+    priority = "NORMAL"
+    actions = []
+    for m in metrics:
+        if _severity_rank(m["severity"]) > _severity_rank(priority):
+            priority = m["severity"]
+        if m["severity"] == "NORMAL":
+            continue
+        actions.append(
+            f"[{m['severity']}] {m['label']}: kontrollo menjëherë këtë listë."
+        )
+    return {"priority": priority, "metrics": metrics, "actions": actions}
 

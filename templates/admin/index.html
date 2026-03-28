@@ -403,6 +403,14 @@
     }
     .sl-dashboard .sl-exec-row { margin-top: 1.25rem; }
     .sl-dashboard .sl-exec-card .card-body { padding: 1rem 1rem !important; text-align: left !important; }
+    .sl-dashboard .sl-exec-card {
+      border-left: 4px solid rgba(148,163,184,.35);
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+    }
+    .sl-dashboard .sl-exec-card.sl-exec-sev-normal { border-left-color: rgba(22,163,74,.45); }
+    .sl-dashboard .sl-exec-card.sl-exec-sev-medium { border-left-color: rgba(245,158,11,.55); background: linear-gradient(180deg, #fffdf7, #fff7e6); }
+    .sl-dashboard .sl-exec-card.sl-exec-sev-high { border-left-color: rgba(239,68,68,.6); background: linear-gradient(180deg, #fff8f8, #fff0f0); }
+    .sl-dashboard .sl-exec-card.sl-exec-sev-critical { border-left-color: rgba(126,34,206,.62); background: linear-gradient(180deg, #fbf7ff, #f5ecff); }
     .sl-dashboard .sl-exec-kpi {
       display: inline-flex; align-items: center; gap: 8px;
       font-size: .75rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
@@ -426,6 +434,15 @@
     .sl-dashboard .sl-exec-actions-list li {
       border: 1px solid rgba(148,163,184,.22); border-radius: 12px; padding: 9px 10px;
       background: linear-gradient(180deg, #fff, #f8fbff); font-size: .86rem; font-weight: 700; color: #1e293b;
+    }
+    .sl-dashboard .sl-sparkline {
+      height: 44px; display: flex; align-items: end; gap: 3px; margin-top: 8px;
+    }
+    .sl-dashboard .sl-sparkline .sl-spark-bar {
+      width: 9px; border-radius: 999px; background: linear-gradient(180deg, rgba(13,148,136,.92), rgba(20,184,166,.65));
+    }
+    .sl-dashboard .sl-spark-meta {
+      margin-top: 6px; display: flex; justify-content: space-between; font-size: .72rem; color: #64748b; font-weight: 700;
     }
 
     /* User dropdown: premium + modern */
@@ -911,7 +928,7 @@
       {% for m in executive_overview.metrics %}
       <div class="col-xl-3 col-lg-6 col-md-6 col-12">
         <a href="{{ m.url }}" class="text-decoration-none">
-          <div class="card sl-exec-card">
+          <div class="card sl-exec-card sl-exec-sev-{{ m.severity|lower }}">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-center">
                 <span class="sl-exec-kpi">{{ m.label }}</span>
@@ -927,6 +944,15 @@
               </div>
               <div class="sl-exec-value mt-1">{{ m.value }}</div>
               <div class="sl-exec-threshold">Threshold: {{ m.threshold }}</div>
+              <div class="sl-sparkline" aria-label="7 ditët e fundit">
+                {% for p in m.sparkline %}
+                  <span class="sl-spark-bar" style="height: {{ p.height }}%;" title="{{ p.value }}"></span>
+                {% endfor %}
+              </div>
+              <div class="sl-spark-meta">
+                <span>7d trend</span>
+                <span>Δ {{ m.trend_delta }}</span>
+              </div>
             </div>
           </div>
         </a>

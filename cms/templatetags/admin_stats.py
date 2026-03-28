@@ -1,4 +1,5 @@
 from calendar import month_abbr
+from datetime import timedelta
 from decimal import Decimal
 from django.conf import settings
 from django import template
@@ -28,6 +29,17 @@ def _metric_severity(value: Decimal, threshold: Decimal) -> str:
     if value >= threshold * Decimal("0.75"):
         return "MEDIUM"
     return "NORMAL"
+
+
+def _sparkline(points: list[int]) -> list[dict]:
+    if not points:
+        return []
+    mx = max(points) or 1
+    out = []
+    for p in points:
+        h = int(round(15 + (85 * (p / mx))))
+        out.append({"value": p, "height": max(12, min(100, h))})
+    return out
 
 
 @register.simple_tag
@@ -364,6 +376,28 @@ def dashboard_executive_overview():
             "url": "/admin/fines/fine/?status__exact=UNPAID",
         },
     ]
+
+    now_date = now.date()
+    for m in metrics:
+        points = []
+        for d in range(6, -1, -1):
+            day = now_date - timedelta(days=d)
+            if m["key"] == "overdue_loans":
+                v = Loan.objects.filter(status=LoanStatus.ACTIVE, due_at__date__lte=day).count()
+            elif m["key"] == "overdue_reservations":
+                v = Reservation.objects.filter(status="APPROVED", loan__isnull=True, pickup_date__lt=day).count()
+            elif m["key"] == "pending_requests":
+                v = ReservationRequest.objects.filter(
+                    status=ReservationRequestStatus.PENDING,
+                    created_at__date__lte=day,
+                ).count()
+            else:
+                agg = Fine.objects.filter(status=FineStatus.UNPAID, created_at__date__lte=day).aggregate(s=Sum("amount"))
+                v = float(agg.get("s") or 0)
+            points.append(int(v))
+        m["trend_points"] = points
+        m["sparkline"] = _sparkline(points)
+        m["trend_delta"] = points[-1] - points[0] if points else 0
 
     priority = "NORMAL"
     actions = []

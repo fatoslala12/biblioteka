@@ -308,3 +308,4 @@ class AdminExecutiveDashboardSmokeTests(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, "Executive Overview")
         self.assertContains(resp, "Action Needed Today")
+        self.assertContains(resp, "7d trend")

@@ -9,10 +9,10 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import path
 from django.utils import timezone
-from django.utils.html import format_html
+from django.utils.html import format_html, format_html_join
 from django.utils.http import urlencode
 
-from audit.models import AuditSeverity
+from audit.models import AuditEntry, AuditSeverity
 from audit.services import log_audit_event
 from .exceptions import PolicyViolation
 from .models import (
@@ -27,6 +27,7 @@ from .models import (
 from accounts.models import MemberProfile
 from catalog.models import Author, Book, Copy, CopyStatus
 from .services import (
+    auto_expire_overdue_reservations,
     approve_reservation_request,
     borrow_from_reservation,
     create_reservation_request,
@@ -53,6 +54,48 @@ def _export_members_choices():
             label = f"{mp.member_no} — {label}"
         out.append((mp.id, label))
     return out
+
+
+def _build_audit_timeline_html(*, app_label: str, model_name: str, object_id: str) -> str:
+    entries = (
+        AuditEntry.objects.select_related("actor")
+        .filter(app_label=app_label, model_name=model_name, object_id=str(object_id))
+        .order_by("-created_at")[:15]
+    )
+    if not entries:
+        return "—"
+
+    rows = []
+    for e in entries:
+        actor = e.actor.get_username() if e.actor_id else "Sistem"
+        when = timezone.localtime(e.created_at).strftime("%d/%m/%Y %H:%M")
+        changed_keys = ", ".join((e.changes or {}).keys()) if isinstance(e.changes, dict) else ""
+        reason = (e.reason or "—").strip()
+        rows.append(
+            format_html(
+                (
+                    "<li style='padding:10px 12px;border:1px solid rgba(148,163,184,.25);"
+                    "border-radius:12px;background:#fff;'>"
+                    "<div style='display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;'>"
+                    "<b>{}</b><small style='opacity:.78'>{}</small></div>"
+                    "<div style='margin-top:4px;font-size:12px;opacity:.86'>Aktor: <b>{}</b></div>"
+                    "<div style='margin-top:3px;font-size:12px;opacity:.86'>Arsye: {}</div>"
+                    "<div style='margin-top:3px;font-size:12px;opacity:.86'>Ndryshime: {}</div>"
+                    "</li>"
+                ),
+                e.action_type_sq,
+                when,
+                actor,
+                reason,
+                changed_keys or "—",
+            )
+        )
+
+    timeline_items = format_html_join("", "{}", ((row,) for row in rows))
+    return format_html(
+        "<ul style='list-style:none;padding:0;margin:0;display:grid;gap:8px;'>{}</ul>",
+        timeline_items,
+    )
 
 
 class LoanAdminForm(forms.ModelForm):
@@ -138,8 +181,9 @@ class LoanAdmin(admin.ModelAdmin):
         ("Auditim", {"fields": ("loaned_by", "returned_by")}),
         ("Zgjatjet", {"fields": ("renew_count",)}),
         ("Flow i huazimit", {"fields": ("loan_flow_display",)}),
+        ("Timeline e auditimit", {"fields": ("audit_timeline_display",)}),
     )
-    readonly_fields = ("loaned_at", "loan_flow_display", "loaned_by", "returned_by")
+    readonly_fields = ("loaned_at", "loan_flow_display", "loaned_by", "returned_by", "audit_timeline_display")
 
     def get_queryset(self, request):
         qs = super().get_queryset(request).annotate(
@@ -175,6 +219,14 @@ class LoanAdmin(admin.ModelAdmin):
         if source_isnull == "True":
             return status_qs.filter(from_reservation__isnull=True)
         return status_qs
+
+    @admin.display(description="Timeline")
+    def audit_timeline_display(self, obj: Loan):
+        return _build_audit_timeline_html(
+            app_label=obj._meta.app_label,
+            model_name=obj._meta.model_name,
+            object_id=str(obj.pk),
+        )
 
     @admin.display(description="ID", ordering="id")
     def loan_id_display(self, obj: Loan):
@@ -907,12 +959,13 @@ class ReservationAdmin(admin.ModelAdmin):
     search_fields = ("book__title", "member__member_no", "member__user__username")
     autocomplete_fields = ("book", "member")
     list_select_related = ("book", "member", "loan", "created_by", "borrowed_by")
-    readonly_fields = ("created_at", "updated_at", "source_request", "loan", "created_by", "borrowed_by")
+    readonly_fields = ("created_at", "updated_at", "source_request", "loan", "created_by", "borrowed_by", "audit_timeline_display")
 
     fieldsets = (
         ("Rezervimi", {"fields": ("member", "book", "pickup_date", "return_date", "status")}),
         ("Lidhje", {"fields": ("source_request", "loan")}),
         ("Auditim", {"fields": ("created_by", "borrowed_by")}),
+        ("Timeline e auditimit", {"fields": ("audit_timeline_display",)}),
         ("Meta", {"fields": ("created_at", "updated_at")}),
     )
 
@@ -962,6 +1015,14 @@ class ReservationAdmin(admin.ModelAdmin):
     @admin.display(description="Kthimi", ordering="return_date")
     def return_date_display(self, obj: Reservation):
         return obj.return_date.strftime("%d/%m/%Y")
+
+    @admin.display(description="Timeline")
+    def audit_timeline_display(self, obj: Reservation):
+        return _build_audit_timeline_html(
+            app_label=obj._meta.app_label,
+            model_name=obj._meta.model_name,
+            object_id=str(obj.pk),
+        )
 
     def save_model(self, request, obj, form, change):
         before = None
@@ -1124,6 +1185,17 @@ class ReservationAdmin(admin.ModelAdmin):
             return redirect("/admin/circulation/reservation/")
 
     def changelist_view(self, request, extra_context=None):
+        expired_count = auto_expire_overdue_reservations(
+            actor=request.user,
+            source_screen="admin.reservation.list.auto_expire",
+            reason="Skadim automatik nga sistemi sepse data e marrjes kaloi pa huazim.",
+        )
+        if expired_count:
+            self.message_user(
+                request,
+                f"{expired_count} rezervime u skaduan automatikisht (auto-release).",
+                level=messages.INFO,
+            )
         initial = {
             "pickup_date": timezone.now().date(),
             "return_date": (timezone.now() + timezone.timedelta(days=7)).date(),

@@ -580,6 +580,52 @@ def reject_reservation_request(
 
 
 @transaction.atomic
+def auto_expire_overdue_reservations(
+    *,
+    actor=None,
+    source_screen: str = "system.reservation.auto_expire",
+    reason: str = "Rezervimi skadoi automatikisht sepse libri nuk u mor në datën e caktuar.",
+) -> int:
+    """
+    Auto-release reservations that passed pickup_date without being borrowed.
+    """
+    today = timezone.localdate()
+    overdue_qs = (
+        Reservation.objects.select_for_update()
+        .select_related("member", "book")
+        .filter(
+            status=ReservationStatus.APPROVED,
+            loan__isnull=True,
+            pickup_date__lt=today,
+        )
+    )
+
+    count = 0
+    for reservation in overdue_qs:
+        old_status = reservation.status
+        reservation.status = ReservationStatus.EXPIRED
+        reservation.save(update_fields=["status", "updated_at"])
+        count += 1
+
+        _try_log(
+            target=reservation,
+            action_type="RESERVATION_AUTO_EXPIRED",
+            actor=actor,
+            source_screen=source_screen,
+            reason=reason,
+            changes={"status": {"old": old_status, "new": ReservationStatus.EXPIRED}},
+            metadata={
+                "pickup_date": reservation.pickup_date.isoformat() if reservation.pickup_date else "",
+                "today": today.isoformat(),
+                "book_id": reservation.book_id,
+                "member_id": reservation.member_id,
+            },
+            severity=AuditSeverity.INCIDENT,
+        )
+    return count
+
+
+@transaction.atomic
 def borrow_from_reservation(
     *,
     reservation_id: int,

@@ -79,7 +79,17 @@ Alert pragje (threshold) për prioritet të lartë:
 .venv\Scripts\python manage.py daily_ops_report --send-email --threshold-overdue-loans 5 --threshold-overdue-reservations 3 --threshold-pending-requests 10 --threshold-unpaid-fines-total 500.00
 ```
 
-Kur pragjet kalohen, email subject bëhet `"[HIGH PRIORITY] Daily Ops Report - Smart Library"`.
+Nivelet e prioritetit:
+- `MEDIUM` (afër pragut, ~75%)
+- `HIGH` (pragu i kaluar)
+- `CRITICAL` (>= 2x pragut)
+
+Email subject ndryshon automatikisht:
+- `[MEDIUM PRIORITY] ...`
+- `[HIGH PRIORITY] ...`
+- `[CRITICAL PRIORITY] ...`
+
+Raporti përfshin edhe seksionin `Action Needed Today`.
 Pragjet default mund t’i vendosësh në `.env`:
 - `OPS_ALERT_OVERDUE_LOANS_THRESHOLD`
 - `OPS_ALERT_OVERDUE_RESERVATIONS_THRESHOLD`

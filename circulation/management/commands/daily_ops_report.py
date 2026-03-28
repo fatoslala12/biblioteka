@@ -59,6 +59,20 @@ class Command(BaseCommand):
                 count += 1
         return count
 
+    def _severity_rank(self, level: str) -> int:
+        return {"NORMAL": 0, "MEDIUM": 1, "HIGH": 2, "CRITICAL": 3}.get((level or "").upper(), 0)
+
+    def _metric_severity(self, *, value: Decimal, threshold: Decimal) -> str:
+        if threshold <= 0:
+            return "NORMAL"
+        if value >= threshold * Decimal("2.0"):
+            return "CRITICAL"
+        if value >= threshold:
+            return "HIGH"
+        if value >= threshold * Decimal("0.75"):
+            return "MEDIUM"
+        return "NORMAL"
+
     def _render_text_report(self, report: dict) -> str:
         policy = report["policy"]
         loans = report["loans"]
@@ -66,6 +80,7 @@ class Command(BaseCommand):
         requests = report["reservation_requests"]
         fines = report["fines"]
         alerts = report.get("alerts", [])
+        actions_needed = report.get("actions_needed_today", [])
         lines = [
             "=== Daily Ops Report ===",
             f"Generated at: {report['generated_at']}",
@@ -84,6 +99,10 @@ class Command(BaseCommand):
             lines.append("Alerts:")
             for alert in alerts:
                 lines.append(f"- {alert}")
+        if actions_needed:
+            lines.append("Action Needed Today:")
+            for action in actions_needed:
+                lines.append(f"- {action}")
         return "\n".join(lines)
 
     def _save_report_file(self, *, report: dict, output_file: str) -> None:
@@ -93,7 +112,12 @@ class Command(BaseCommand):
 
     def _send_report_email(self, *, report: dict, recipients: list[str]) -> int:
         priority = (report.get("priority") or "NORMAL").upper()
-        prefix = "[HIGH PRIORITY] " if priority == "HIGH" else ""
+        prefix_map = {
+            "MEDIUM": "[MEDIUM PRIORITY] ",
+            "HIGH": "[HIGH PRIORITY] ",
+            "CRITICAL": "[CRITICAL PRIORITY] ",
+        }
+        prefix = prefix_map.get(priority, "")
         subject = f"{prefix}Daily Ops Report - Smart Library"
         body = self._render_text_report(report)
         sender = getattr(settings, "DEFAULT_FROM_EMAIL", "") or "no-reply@localhost"
@@ -151,21 +175,50 @@ class Command(BaseCommand):
         except Exception:
             th_unpaid_fines_total = Decimal("1000.00")
 
+        evaluations = [
+            {
+                "name": "overdue_loans",
+                "label": "Overdue loans",
+                "value": Decimal(str(overdue_loans)),
+                "threshold": Decimal(str(th_overdue_loans)),
+                "action": "Prioritizo kthimet dhe kontakto anëtarët me afat të kaluar.",
+            },
+            {
+                "name": "overdue_reservations",
+                "label": "Overdue reservation candidates",
+                "value": Decimal(str(overdue_reservations)),
+                "threshold": Decimal(str(th_overdue_reservations)),
+                "action": "Ekzekuto auto-expire dhe liro kopjet për radhën e pritjes.",
+            },
+            {
+                "name": "pending_requests",
+                "label": "Pending reservation requests",
+                "value": Decimal(str(pending_requests)),
+                "threshold": Decimal(str(th_pending_requests)),
+                "action": "Shqyrto kërkesat pending sot për të ulur pritjen e anëtarëve.",
+            },
+            {
+                "name": "unpaid_fines_total",
+                "label": "Unpaid fines total",
+                "value": Decimal(str(unpaid_fines_total)),
+                "threshold": Decimal(str(th_unpaid_fines_total)),
+                "action": "Nis njoftime pagese dhe planifiko mbledhje gjobash për rastet kritike.",
+            },
+        ]
+
         alerts: list[str] = []
-        if overdue_loans >= th_overdue_loans:
-            alerts.append(f"Overdue loans reached {overdue_loans} (threshold {th_overdue_loans}).")
-        if overdue_reservations >= th_overdue_reservations:
+        actions_needed_today: list[str] = []
+        priority = "NORMAL"
+        for item in evaluations:
+            level = self._metric_severity(value=item["value"], threshold=item["threshold"])
+            if self._severity_rank(level) > self._severity_rank(priority):
+                priority = level
+            if level == "NORMAL":
+                continue
             alerts.append(
-                f"Overdue reservation candidates reached {overdue_reservations} (threshold {th_overdue_reservations})."
+                f"{level}: {item['label']} reached {item['value']} (threshold {item['threshold']})."
             )
-        if pending_requests >= th_pending_requests:
-            alerts.append(f"Pending reservation requests reached {pending_requests} (threshold {th_pending_requests}).")
-        if unpaid_fines_total >= th_unpaid_fines_total:
-            alerts.append(
-                "Unpaid fines total reached "
-                f"{unpaid_fines_total} (threshold {th_unpaid_fines_total})."
-            )
-        priority = "HIGH" if alerts else "NORMAL"
+            actions_needed_today.append(f"[{level}] {item['action']}")
 
         report = {
             "generated_at": timezone.localtime(now).isoformat(),
@@ -197,6 +250,7 @@ class Command(BaseCommand):
                 "unpaid_fines_total": str(th_unpaid_fines_total),
             },
             "alerts": alerts,
+            "actions_needed_today": actions_needed_today,
         }
 
         save_file = (options.get("save_file") or "").strip()

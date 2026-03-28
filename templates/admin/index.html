@@ -440,7 +440,16 @@
     }
     .sl-dashboard .sl-sparkline .sl-spark-bar {
       width: 9px; border-radius: 999px; background: linear-gradient(180deg, rgba(13,148,136,.92), rgba(20,184,166,.65));
+      cursor: pointer;
     }
+    .sl-dashboard .sl-sparkline-wrap { position: relative; }
+    .sl-dashboard .sl-spark-tooltip {
+      position: absolute; left: 0; top: -34px; transform: translateX(-50%);
+      background: #0f172a; color: #fff; border-radius: 8px; padding: 4px 8px;
+      font-size: .68rem; font-weight: 800; white-space: nowrap; z-index: 5;
+      box-shadow: 0 6px 18px rgba(15,23,42,.3); pointer-events: none; opacity: 0; transition: opacity .12s ease;
+    }
+    .sl-dashboard .sl-spark-tooltip.is-visible { opacity: 1; }
     .sl-dashboard .sl-spark-meta {
       margin-top: 6px; display: flex; justify-content: space-between; font-size: .72rem; color: #64748b; font-weight: 700;
     }
@@ -944,10 +953,20 @@
               </div>
               <div class="sl-exec-value mt-1">{{ m.value }}</div>
               <div class="sl-exec-threshold">Threshold: {{ m.threshold }}</div>
-              <div class="sl-sparkline" aria-label="7 ditët e fundit">
-                {% for p in m.sparkline %}
-                  <span class="sl-spark-bar" style="height: {{ p.height }}%;" title="{{ p.value }}"></span>
-                {% endfor %}
+              <div class="sl-sparkline-wrap">
+                <div class="sl-spark-tooltip" aria-hidden="true"></div>
+                <div class="sl-sparkline" aria-label="7 ditët e fundit">
+                  {% for p in m.sparkline %}
+                    <span
+                      class="sl-spark-bar"
+                      style="height: {{ p.height }}%;"
+                      title="{{ p.label }}: {{ p.value }}"
+                      data-date="{{ p.label }}"
+                      data-value="{{ p.value }}"
+                      tabindex="0"
+                    ></span>
+                  {% endfor %}
+                </div>
               </div>
               <div class="sl-spark-meta">
                 <span>7d trend</span>
@@ -1343,6 +1362,28 @@
           });
         }
       }
+
+      // Executive sparkline interactive tooltip
+      document.querySelectorAll(".sl-sparkline-wrap").forEach(function (wrap) {
+        var tip = wrap.querySelector(".sl-spark-tooltip");
+        if (!tip) return;
+        function showFor(bar) {
+          var date = bar.getAttribute("data-date") || "";
+          var value = bar.getAttribute("data-value") || "";
+          tip.textContent = date + " - " + value;
+          var x = bar.offsetLeft + (bar.offsetWidth / 2);
+          tip.style.left = x + "px";
+          tip.classList.add("is-visible");
+        }
+        function hideTip() { tip.classList.remove("is-visible"); }
+        wrap.querySelectorAll(".sl-spark-bar").forEach(function (bar) {
+          bar.addEventListener("mouseenter", function () { showFor(bar); });
+          bar.addEventListener("focus", function () { showFor(bar); });
+          bar.addEventListener("mousemove", function () { showFor(bar); });
+          bar.addEventListener("mouseleave", hideTip);
+          bar.addEventListener("blur", hideTip);
+        });
+      });
     })();
     </script>
 

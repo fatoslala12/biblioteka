@@ -31,14 +31,20 @@ def _metric_severity(value: Decimal, threshold: Decimal) -> str:
     return "NORMAL"
 
 
-def _sparkline(points: list[int]) -> list[dict]:
+def _sparkline(points: list[int], labels: list[str]) -> list[dict]:
     if not points:
         return []
     mx = max(points) or 1
     out = []
-    for p in points:
+    for idx, p in enumerate(points):
         h = int(round(15 + (85 * (p / mx))))
-        out.append({"value": p, "height": max(12, min(100, h))})
+        out.append(
+            {
+                "value": p,
+                "height": max(12, min(100, h)),
+                "label": labels[idx] if idx < len(labels) else "",
+            }
+        )
     return out
 
 
@@ -380,8 +386,10 @@ def dashboard_executive_overview():
     now_date = now.date()
     for m in metrics:
         points = []
+        labels = []
         for d in range(6, -1, -1):
             day = now_date - timedelta(days=d)
+            labels.append(day.strftime("%d/%m"))
             if m["key"] == "overdue_loans":
                 v = Loan.objects.filter(status=LoanStatus.ACTIVE, due_at__date__lte=day).count()
             elif m["key"] == "overdue_reservations":
@@ -396,7 +404,7 @@ def dashboard_executive_overview():
                 v = float(agg.get("s") or 0)
             points.append(int(v))
         m["trend_points"] = points
-        m["sparkline"] = _sparkline(points)
+        m["sparkline"] = _sparkline(points, labels)
         m["trend_delta"] = points[-1] - points[0] if points else 0
 
     priority = "NORMAL"

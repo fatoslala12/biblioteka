@@ -4,6 +4,9 @@ from django.test import Client, TestCase, override_settings
 from pathlib import Path
 
 from accounts.models import MemberProfile, UserRole
+from audit.services import log_audit_event
+from catalog.models import Book
+from circulation.models import ReservationRequest, ReservationRequestStatus
 
 User = get_user_model()
 
@@ -163,3 +166,54 @@ class DesignSystemCssTests(TestCase):
         )
         for selector in required_components:
             self.assertIn(selector, content)
+
+
+class AdminAuditSmokeTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.admin_user = User.objects.create_superuser(
+            username="admin_smoke",
+            email="admin_smoke@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+        )
+        self.member_user = User.objects.create_user(
+            username="member_smoke",
+            email="member_smoke@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.MEMBER,
+            is_staff=False,
+            is_superuser=False,
+        )
+        self.member = MemberProfile.objects.create(
+            user=self.member_user,
+            full_name="Member Smoke",
+            phone="0670000000",
+            national_id="SMOKE123X",
+            place_of_birth="Tirane",
+            address="Rruga Smoke",
+        )
+        self.book = Book.objects.create(title="Smoke Book", isbn="9781111111111")
+        self.req = ReservationRequest.objects.create(
+            member=self.member,
+            book=self.book,
+            status=ReservationRequestStatus.PENDING,
+        )
+        log_audit_event(
+            target=self.req,
+            action_type="RESERVATION_REQUEST_CREATED_MANUAL",
+            actor=self.admin_user,
+            source_screen="test.admin.audit_smoke",
+            metadata={"request_id": self.req.id},
+        )
+
+    def test_reservation_request_admin_pages_load_with_timeline(self):
+        self.client.force_login(self.admin_user)
+
+        list_resp = self.client.get("/admin/circulation/reservationrequest/")
+        self.assertEqual(list_resp.status_code, 200)
+        self.assertContains(list_resp, "Aktiviteti i fundit")
+        self.assertContains(list_resp, "Kërkesë rezervimi e krijuar manualisht")
+
+        change_resp = self.client.get(f"/admin/circulation/reservationrequest/{self.req.id}/change/")
+        self.assertEqual(change_resp.status_code, 200)
+        self.assertContains(change_resp, "Timeline e auditimit")

@@ -28,6 +28,8 @@ Use this checklist before every deploy to eliminate visual regressions and UX br
 - [ ] Admin logout redirects to homepage.
 - [ ] Book list loads and table is readable on mobile.
 - [ ] Reservation list loads and action buttons are usable on mobile.
+- [ ] Reservation request list shows "Aktiviteti i fundit" and proper action labels.
+- [ ] Reservation request detail shows audit timeline entries.
 - [ ] Book detail page has no duplicate header/title block.
 
 ## 5) Member Portal Smoke

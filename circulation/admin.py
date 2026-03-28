@@ -1368,6 +1368,7 @@ class ReservationRequestAdmin(admin.ModelAdmin):
         "return_date_display",
         "status",
         "created_at_display",
+        "last_activity_display",
         "decision_actions",
     )
     list_filter = ("status",)
@@ -1380,8 +1381,9 @@ class ReservationRequestAdmin(admin.ModelAdmin):
         ("Kërkesa për rezervim", {"fields": ("member", "book", "pickup_date", "return_date", "note", "status")}),
         ("Vendimi i stafit", {"fields": ("decided_by", "decided_at", "decision_reason")}),
         ("Auditim", {"fields": ("created_by",)}),
+        ("Timeline e auditimit", {"fields": ("audit_timeline_display",)}),
     )
-    readonly_fields = ("created_at", "decided_at", "decided_by", "created_by")
+    readonly_fields = ("created_at", "decided_at", "decided_by", "created_by", "audit_timeline_display")
 
     actions = None
 
@@ -1436,6 +1438,37 @@ class ReservationRequestAdmin(admin.ModelAdmin):
             return "—"
         local_dt = timezone.localtime(obj.created_at)
         return local_dt.strftime("%d/%m/%Y %H:%M")
+
+    @admin.display(description="Aktiviteti i fundit")
+    def last_activity_display(self, obj: ReservationRequest):
+        entry = (
+            AuditEntry.objects.filter(
+                app_label=obj._meta.app_label,
+                model_name=obj._meta.model_name,
+                object_id=str(obj.pk),
+            )
+            .order_by("-created_at")
+            .first()
+        )
+        if not entry:
+            return "—"
+        at = timezone.localtime(entry.created_at).strftime("%d/%m/%Y %H:%M")
+        return format_html(
+            '<span style="display:inline-flex;flex-direction:column;gap:2px;">'
+            "<b>{}</b>"
+            '<small style="opacity:.78;">{}</small>'
+            "</span>",
+            entry.action_type_sq,
+            at,
+        )
+
+    @admin.display(description="Timeline")
+    def audit_timeline_display(self, obj: ReservationRequest):
+        return _build_audit_timeline_html(
+            app_label=obj._meta.app_label,
+            model_name=obj._meta.model_name,
+            object_id=str(obj.pk),
+        )
 
     @admin.display(description="Vendimi")
     def decision_actions(self, obj: ReservationRequest):

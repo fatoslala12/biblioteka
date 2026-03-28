@@ -208,6 +208,9 @@ class DailyOpsReportCommandTests(TestCase):
         self.assertIn("reservations", payload)
         self.assertIn("reservation_requests", payload)
         self.assertIn("fines", payload)
+        self.assertIn("priority", payload)
+        self.assertIn("thresholds", payload)
+        self.assertIn("alerts", payload)
         self.assertGreaterEqual(payload["loans"]["overdue"], 1)
         self.assertGreaterEqual(payload["reservations"]["overdue_auto_expire_candidates"], 1)
         self.assertGreaterEqual(payload["reservation_requests"]["pending"], 1)
@@ -234,3 +237,26 @@ class DailyOpsReportCommandTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn("Daily Ops Report - Smart Library", mail.outbox[0].subject)
         self.assertEqual(set(mail.outbox[0].to), {"ops1@test.com", "ops2@test.com"})
+
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+        DEFAULT_FROM_EMAIL="ops@test.com",
+        OPS_REPORT_RECIPIENTS=["ops1@test.com"],
+    )
+    def test_daily_ops_report_uses_high_priority_subject_when_threshold_crossed(self):
+        from django.core import mail
+
+        call_command(
+            "daily_ops_report",
+            "--send-email",
+            "--threshold-overdue-loans",
+            "1",
+            "--threshold-overdue-reservations",
+            "1",
+            "--threshold-pending-requests",
+            "1",
+            "--threshold-unpaid-fines-total",
+            "1.00",
+        )
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("[HIGH PRIORITY]", mail.outbox[0].subject)

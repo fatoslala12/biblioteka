@@ -73,6 +73,19 @@ ose përdor `OPS_REPORT_RECIPIENTS` në `.env` dhe thjesht:
 .venv\Scripts\python manage.py daily_ops_report --send-email
 ```
 
+Alert pragje (threshold) për prioritet të lartë:
+
+```bash
+.venv\Scripts\python manage.py daily_ops_report --send-email --threshold-overdue-loans 5 --threshold-overdue-reservations 3 --threshold-pending-requests 10 --threshold-unpaid-fines-total 500.00
+```
+
+Kur pragjet kalohen, email subject bëhet `"[HIGH PRIORITY] Daily Ops Report - Smart Library"`.
+Pragjet default mund t’i vendosësh në `.env`:
+- `OPS_ALERT_OVERDUE_LOANS_THRESHOLD`
+- `OPS_ALERT_OVERDUE_RESERVATIONS_THRESHOLD`
+- `OPS_ALERT_PENDING_REQUESTS_THRESHOLD`
+- `OPS_ALERT_UNPAID_FINES_TOTAL_THRESHOLD`
+
 Auto-expire rezervimesh:
 
 ```bash

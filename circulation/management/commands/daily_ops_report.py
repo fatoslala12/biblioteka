@@ -38,6 +38,10 @@ class Command(BaseCommand):
             default=[],
             help="Recipient email (use multiple times for many recipients).",
         )
+        parser.add_argument("--threshold-overdue-loans", dest="th_overdue_loans", type=int, default=None)
+        parser.add_argument("--threshold-overdue-reservations", dest="th_overdue_reservations", type=int, default=None)
+        parser.add_argument("--threshold-pending-requests", dest="th_pending_requests", type=int, default=None)
+        parser.add_argument("--threshold-unpaid-fines-total", dest="th_unpaid_fines_total", default=None)
 
     def _expiring_soon_count(self, *, now, warning_hours: int, grace_days: int) -> int:
         if warning_hours <= 0:
@@ -61,9 +65,11 @@ class Command(BaseCommand):
         reservations = report["reservations"]
         requests = report["reservation_requests"]
         fines = report["fines"]
+        alerts = report.get("alerts", [])
         lines = [
             "=== Daily Ops Report ===",
             f"Generated at: {report['generated_at']}",
+            f"Priority: {report.get('priority', 'NORMAL')}",
             f"Policy -> grace_days: {policy['reservation_grace_days']}, warning_hours: {policy['reservation_warning_hours']}",
             f"Loans -> active: {loans['active']}, overdue: {loans['overdue']}",
             (
@@ -74,6 +80,10 @@ class Command(BaseCommand):
             f"Reservation requests -> pending: {requests['pending']}",
             f"Fines -> unpaid_count: {fines['unpaid_count']}, unpaid_total: {fines['unpaid_total']}",
         ]
+        if alerts:
+            lines.append("Alerts:")
+            for alert in alerts:
+                lines.append(f"- {alert}")
         return "\n".join(lines)
 
     def _save_report_file(self, *, report: dict, output_file: str) -> None:
@@ -82,7 +92,9 @@ class Command(BaseCommand):
         path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
 
     def _send_report_email(self, *, report: dict, recipients: list[str]) -> int:
-        subject = "Daily Ops Report - Smart Library"
+        priority = (report.get("priority") or "NORMAL").upper()
+        prefix = "[HIGH PRIORITY] " if priority == "HIGH" else ""
+        subject = f"{prefix}Daily Ops Report - Smart Library"
         body = self._render_text_report(report)
         sender = getattr(settings, "DEFAULT_FROM_EMAIL", "") or "no-reply@localhost"
         return send_mail(
@@ -122,8 +134,42 @@ class Command(BaseCommand):
         unpaid_fines_count = unpaid_fines_qs.count()
         unpaid_fines_total = unpaid_fines_qs.aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
 
+        th_overdue_loans = options.get("th_overdue_loans")
+        if th_overdue_loans is None:
+            th_overdue_loans = int(getattr(settings, "OPS_ALERT_OVERDUE_LOANS_THRESHOLD", 10) or 10)
+        th_overdue_reservations = options.get("th_overdue_reservations")
+        if th_overdue_reservations is None:
+            th_overdue_reservations = int(getattr(settings, "OPS_ALERT_OVERDUE_RESERVATIONS_THRESHOLD", 5) or 5)
+        th_pending_requests = options.get("th_pending_requests")
+        if th_pending_requests is None:
+            th_pending_requests = int(getattr(settings, "OPS_ALERT_PENDING_REQUESTS_THRESHOLD", 20) or 20)
+        th_unpaid_fines_total_raw = options.get("th_unpaid_fines_total")
+        if th_unpaid_fines_total_raw is None:
+            th_unpaid_fines_total_raw = getattr(settings, "OPS_ALERT_UNPAID_FINES_TOTAL_THRESHOLD", "1000.00")
+        try:
+            th_unpaid_fines_total = Decimal(str(th_unpaid_fines_total_raw))
+        except Exception:
+            th_unpaid_fines_total = Decimal("1000.00")
+
+        alerts: list[str] = []
+        if overdue_loans >= th_overdue_loans:
+            alerts.append(f"Overdue loans reached {overdue_loans} (threshold {th_overdue_loans}).")
+        if overdue_reservations >= th_overdue_reservations:
+            alerts.append(
+                f"Overdue reservation candidates reached {overdue_reservations} (threshold {th_overdue_reservations})."
+            )
+        if pending_requests >= th_pending_requests:
+            alerts.append(f"Pending reservation requests reached {pending_requests} (threshold {th_pending_requests}).")
+        if unpaid_fines_total >= th_unpaid_fines_total:
+            alerts.append(
+                "Unpaid fines total reached "
+                f"{unpaid_fines_total} (threshold {th_unpaid_fines_total})."
+            )
+        priority = "HIGH" if alerts else "NORMAL"
+
         report = {
             "generated_at": timezone.localtime(now).isoformat(),
+            "priority": priority,
             "policy": {
                 "reservation_grace_days": grace_days,
                 "reservation_warning_hours": warning_hours,
@@ -144,6 +190,13 @@ class Command(BaseCommand):
                 "unpaid_count": unpaid_fines_count,
                 "unpaid_total": str(unpaid_fines_total),
             },
+            "thresholds": {
+                "overdue_loans": th_overdue_loans,
+                "overdue_reservations": th_overdue_reservations,
+                "pending_requests": th_pending_requests,
+                "unpaid_fines_total": str(th_unpaid_fines_total),
+            },
+            "alerts": alerts,
         }
 
         save_file = (options.get("save_file") or "").strip()

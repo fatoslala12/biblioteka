@@ -1,10 +1,12 @@
 from datetime import timedelta
 import io
 import json
+import tempfile
+from pathlib import Path
 
 from django.core.management import call_command
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
 
 from accounts.models import MemberProfile, UserRole
@@ -210,3 +212,25 @@ class DailyOpsReportCommandTests(TestCase):
         self.assertGreaterEqual(payload["reservations"]["overdue_auto_expire_candidates"], 1)
         self.assertGreaterEqual(payload["reservation_requests"]["pending"], 1)
         self.assertGreaterEqual(payload["fines"]["unpaid_count"], 1)
+
+    def test_daily_ops_report_can_save_json_file(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            target = Path(temp_dir) / "daily_ops_report.json"
+            call_command("daily_ops_report", "--save-file", str(target))
+            self.assertTrue(target.exists())
+            payload = json.loads(target.read_text(encoding="utf-8"))
+            self.assertIn("generated_at", payload)
+            self.assertIn("fines", payload)
+
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+        DEFAULT_FROM_EMAIL="ops@test.com",
+        OPS_REPORT_RECIPIENTS=["ops1@test.com", "ops2@test.com"],
+    )
+    def test_daily_ops_report_can_send_email_to_default_recipients(self):
+        from django.core import mail
+
+        call_command("daily_ops_report", "--send-email")
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Daily Ops Report - Smart Library", mail.outbox[0].subject)
+        self.assertEqual(set(mail.outbox[0].to), {"ops1@test.com", "ops2@test.com"})

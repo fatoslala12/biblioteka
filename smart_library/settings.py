@@ -229,6 +229,7 @@ SIMPLE_JWT = {
 EMAIL_FROM_ADDRESS = env("EMAIL_FROM_ADDRESS", default="").strip()
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="").strip()
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="").strip()
+OPS_REPORT_RECIPIENTS = [e.strip() for e in env.list("OPS_REPORT_RECIPIENTS", default=[]) if e.strip()]
 
 # Use SMTP if configured; fallback to console for local dev.
 if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:

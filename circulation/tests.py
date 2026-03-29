@@ -385,6 +385,9 @@ class MemberNotificationsCommandTests(TestCase):
         self.assertIn("Afati i kthimit po afrohet", subjects)
         self.assertIn("Njoftim për gjobë të re", subjects)
         self.assertIn("Rezervimi juaj po skadon", subjects)
+        # HTML premium template is attached to outgoing notifications.
+        self.assertTrue(any(msg.alternatives for msg in mail.outbox))
+        self.assertTrue(any("Njoftim automatik për anëtarin" in alt[0] for msg in mail.outbox for alt in msg.alternatives))
 
         self.assertTrue(
             AuditEntry.objects.filter(

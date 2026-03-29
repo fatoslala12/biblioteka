@@ -4,8 +4,9 @@ from datetime import datetime, time
 from urllib import request as urlrequest
 
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.core.management.base import BaseCommand
+from django.template.loader import render_to_string
 from django.utils import timezone
 
 from audit.models import AuditEntry
@@ -67,6 +68,7 @@ class Command(BaseCommand):
         reason_token: str,
         subject: str,
         message: str,
+        html_body: str = "",
         channels: str,
         dry_run: bool,
         metadata: dict,
@@ -80,13 +82,15 @@ class Command(BaseCommand):
         if channels in ("both", "email"):
             if email:
                 if not dry_run:
-                    send_mail(
+                    mail = EmailMultiAlternatives(
                         subject=subject,
-                        message=message,
+                        body=message,
                         from_email=getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@localhost"),
-                        recipient_list=[email],
-                        fail_silently=False,
+                        to=[email],
                     )
+                    if html_body:
+                        mail.attach_alternative(html_body, "text/html")
+                    mail.send(fail_silently=False)
                 delivered_email = True
             else:
                 failures.append("missing email")
@@ -162,12 +166,28 @@ class Command(BaseCommand):
                 "Ju lutem dorëzojeni në kohë për të shmangur gjobat.\n\n"
                 "Smart Library"
             )
+            html_body = render_to_string(
+                "emails/member_notification.html",
+                {
+                    "title": "Afati i kthimit po afrohet",
+                    "subject": "Afati i kthimit po afrohet",
+                    "member_name": loan.member.full_name or loan.member.member_no,
+                    "body": (
+                        f"Afati i kthimit për librin <b>{loan.copy.book.title}</b> po afrohet: "
+                        f"{timezone.localtime(loan.due_at).strftime('%d/%m/%Y %H:%M')}."
+                    ),
+                    "cta_text": "Hap huazimet",
+                    "cta_url": "/anetar/",
+                    "library_name": "Smart Library • Biblioteka Kamëz",
+                },
+            )
             res = self._notify_member(
                 member=loan.member,
                 action_type="MEMBER_NOTIFICATION_DUE_SOON",
                 reason_token=token,
                 subject="Afati i kthimit po afrohet",
                 message=msg,
+                html_body=html_body,
                 channels=channels,
                 dry_run=dry_run,
                 metadata={"loan_id": loan.id, "due_at": loan.due_at.isoformat()},
@@ -192,12 +212,28 @@ class Command(BaseCommand):
                 "Ju lutem kryeni pagesën sa më shpejt për të shmangur kufizimet e huazimit.\n\n"
                 "Smart Library"
             )
+            html_body = render_to_string(
+                "emails/member_notification.html",
+                {
+                    "title": "Njoftim për gjobë të re",
+                    "subject": "Njoftim për gjobë të re",
+                    "member_name": fine.member.full_name or fine.member.member_no,
+                    "body": (
+                        f"Është krijuar një gjobë e re prej <b>{fine.amount} €</b> për librin "
+                        f"<b>{fine.loan.copy.book.title}</b>."
+                    ),
+                    "cta_text": "Shiko gjobat",
+                    "cta_url": "/anetar/",
+                    "library_name": "Smart Library • Biblioteka Kamëz",
+                },
+            )
             res = self._notify_member(
                 member=fine.member,
                 action_type="MEMBER_NOTIFICATION_FINE_CREATED",
                 reason_token=token,
                 subject="Njoftim për gjobë të re",
                 message=msg,
+                html_body=html_body,
                 channels=channels,
                 dry_run=dry_run,
                 metadata={"fine_id": fine.id, "amount": str(fine.amount)},
@@ -227,12 +263,28 @@ class Command(BaseCommand):
                 "Ju lutem paraqituni sa më shpejt për ta marrë librin.\n\n"
                 "Smart Library"
             )
+            html_body = render_to_string(
+                "emails/member_notification.html",
+                {
+                    "title": "Rezervimi juaj po skadon",
+                    "subject": "Rezervimi juaj po skadon",
+                    "member_name": reservation.member.full_name or reservation.member.member_no,
+                    "body": (
+                        f"Rezervimi për librin <b>{reservation.book.title}</b> po skadon më "
+                        f"{expiry_dt.strftime('%d/%m/%Y %H:%M')}."
+                    ),
+                    "cta_text": "Hap rezervimet",
+                    "cta_url": "/anetar/",
+                    "library_name": "Smart Library • Biblioteka Kamëz",
+                },
+            )
             res = self._notify_member(
                 member=reservation.member,
                 action_type="MEMBER_NOTIFICATION_RESERVATION_EXPIRING",
                 reason_token=token,
                 subject="Rezervimi juaj po skadon",
                 message=msg,
+                html_body=html_body,
                 channels=channels,
                 dry_run=dry_run,
                 metadata={"reservation_id": reservation.id, "expires_at": expiry_dt.isoformat()},

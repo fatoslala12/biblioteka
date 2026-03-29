@@ -102,6 +102,8 @@ Njoftime automatike për anëtarët (email/SMS):
 .venv\Scripts\python manage.py notify_members --channels both
 ```
 
+Email-et dërgohen në format **HTML premium** + fallback text.
+
 Dry-run pa dërgim real:
 
 ```bash

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="sq">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ subject }}</title>
+  </head>
+  <body style="margin:0;padding:0;background:#e9f7f6;font-family:Inter,Segoe UI,Arial,sans-serif;color:#0f172a;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#e9f7f6;padding:24px 12px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="680" cellspacing="0" cellpadding="0" style="max-width:680px;width:100%;">
+            <tr>
+              <td style="padding:0 0 12px 0;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-radius:18px;overflow:hidden;box-shadow:0 18px 40px rgba(15,23,42,.10);">
+                  <tr>
+                    <td style="background:linear-gradient(90deg,#319088,#45c0ba);padding:18px 18px;">
+                      <div style="font-weight:900;font-size:16px;letter-spacing:-0.02em;color:#ffffff;">
+                        {{ library_name|default:"Smart Library • Biblioteka Kamëz" }}
+                      </div>
+                      <div style="opacity:.92;color:#ffffff;font-weight:700;font-size:12px;margin-top:4px;">
+                        Njoftim automatik për anëtarin
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="background:#ffffff;padding:18px 18px;">
+                      <div style="font-weight:900;font-size:18px;margin:0 0 10px 0;">{{ title }}</div>
+                      <div style="font-size:14px;line-height:1.6;color:#0f172a;font-weight:600;">
+                        Përshëndetje <b>{{ member_name }}</b>,<br /><br />
+                        {{ body|safe }}
+                      </div>
+
+                      <div style="margin-top:14px;padding:12px 14px;border-radius:16px;background:rgba(148,163,184,.10);border:1px solid rgba(15,23,42,.06);">
+                        <div style="font-weight:900;color:#0f172a;font-size:12px;text-transform:uppercase;letter-spacing:.05em;">Kujdes</div>
+                        <div style="margin-top:6px;color:#64748b;font-weight:700;font-size:12px;line-height:1.5;">
+                          Ky është njoftim automatik. Ju lutem veproni sa më shpejt për të shmangur penalitetet.
+                        </div>
+                      </div>
+
+                      <div style="margin-top:16px;">
+                        <a href="{{ cta_url|default:'/anetar/' }}" style="display:inline-block;background:linear-gradient(135deg,#0f766e,#0d9488);color:#ffffff;text-decoration:none;font-weight:900;font-size:13px;padding:11px 14px;border-radius:999px;">
+                          {{ cta_text|default:"Hap portalin" }} →
+                        </a>
+                      </div>
+
+                      <div style="margin-top:16px;font-size:12px;color:#64748b;font-weight:700;">
+                        Faleminderit,<br />
+                        <b>{{ library_name|default:"Smart Library • Biblioteka Kamëz" }}</b>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:10px 2px 0;color:#64748b;font-size:11px;font-weight:700;text-align:center;">
+                © {% now "Y" %} Smart Library — Biblioteka Kamëz
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

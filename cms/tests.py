@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.test import Client, TestCase, override_settings
@@ -8,7 +9,7 @@ from accounts.models import MemberProfile, UserRole
 from audit.services import log_audit_event
 from catalog.models import Book, Copy, CopyStatus
 from circulation.models import Loan, LoanStatus, ReservationRequest, ReservationRequestStatus
-from fines.models import Fine, FineStatus
+from fines.models import Fine, FineStatus, Payment, PaymentMethod
 from policies.models import LibraryPolicy
 
 User = get_user_model()
@@ -240,7 +241,7 @@ class AdminCriticalEntitiesSmokeTests(TestCase):
             is_staff=False,
             is_superuser=False,
         )
-        member = MemberProfile.objects.create(
+        self.member = MemberProfile.objects.create(
             user=member_user,
             full_name="Critical Smoke Member",
             phone="0671000000",
@@ -251,7 +252,7 @@ class AdminCriticalEntitiesSmokeTests(TestCase):
         book = Book.objects.create(title="Critical Smoke Book", isbn="9783333333333")
         copy = Copy.objects.create(book=book, barcode="CRIT-COPY-1", status=CopyStatus.AVAILABLE)
         loan = Loan.objects.create(
-            member=member,
+            member=self.member,
             copy=copy,
             due_at=timezone.now(),
             status=LoanStatus.RETURNED,
@@ -259,10 +260,28 @@ class AdminCriticalEntitiesSmokeTests(TestCase):
         )
         self.fine = Fine.objects.create(
             loan=loan,
-            member=member,
+            member=self.member,
             amount="150.00",
             status=FineStatus.UNPAID,
             reason="Overdue",
+        )
+        overdue_book = Book.objects.create(title="Only Overdue Loan Book", isbn="9785555555551")
+        overdue_copy = Copy.objects.create(book=overdue_book, barcode="CRIT-COPY-OD-1", status=CopyStatus.ON_LOAN)
+        self.overdue_loan = Loan.objects.create(
+            member=self.member,
+            copy=overdue_copy,
+            due_at=timezone.now() - timedelta(days=3),
+            status=LoanStatus.ACTIVE,
+            loaned_by=self.admin_user,
+        )
+        not_due_book = Book.objects.create(title="Not Due Loan Book", isbn="9785555555552")
+        not_due_copy = Copy.objects.create(book=not_due_book, barcode="CRIT-COPY-ND-1", status=CopyStatus.ON_LOAN)
+        self.not_due_loan = Loan.objects.create(
+            member=self.member,
+            copy=not_due_copy,
+            due_at=timezone.now() + timedelta(days=4),
+            status=LoanStatus.ACTIVE,
+            loaned_by=self.admin_user,
         )
         self.policy, _ = LibraryPolicy.objects.get_or_create(name="default")
         log_audit_event(
@@ -288,11 +307,77 @@ class AdminCriticalEntitiesSmokeTests(TestCase):
 
         fine_change = self.client.get(f"/admin/fines/fine/{self.fine.id}/change/")
         self.assertEqual(fine_change.status_code, 200)
-        self.assertContains(fine_change, "Timeline")
+        self.assertContains(fine_change, "Kronologjia e auditimit")
+        self.assertContains(fine_change, "Ndrysho gjobën")
 
         policy_change = self.client.get(f"/admin/policies/librarypolicy/{self.policy.id}/change/")
         self.assertEqual(policy_change.status_code, 200)
         self.assertContains(policy_change, "Timeline")
+
+    def test_fine_add_form_filters_to_overdue_loans_and_returns_member_preview(self):
+        self.client.force_login(self.admin_user)
+
+        add_resp = self.client.get("/admin/fines/fine/add/")
+        self.assertEqual(add_resp.status_code, 200)
+        self.assertContains(add_resp, "Only Overdue Loan Book")
+        self.assertNotContains(add_resp, "Not Due Loan Book")
+
+        preview_resp = self.client.get(f"/admin/fines/fine/loan-preview/{self.overdue_loan.id}/")
+        self.assertEqual(preview_resp.status_code, 200)
+        payload = preview_resp.json()
+        self.assertTrue(payload.get("ok"))
+        self.assertEqual(payload.get("member_id"), self.member.id)
+        self.assertEqual(payload.get("member_nid"), self.member.national_id)
+
+    def test_payment_add_form_is_albanian_and_shows_fine_preview(self):
+        self.client.force_login(self.admin_user)
+        Payment.objects.create(
+            fine=self.fine,
+            amount="10.00",
+            method=PaymentMethod.CASH,
+            recorded_by=self.admin_user,
+        )
+        payment_list = self.client.get("/admin/fines/payment/")
+        self.assertEqual(payment_list.status_code, 200)
+        self.assertContains(payment_list, "Nr. huazimi")
+        self.assertContains(payment_list, "Anëtari")
+        self.assertContains(payment_list, "Mënyra")
+        payment_add = self.client.get("/admin/fines/payment/add/")
+        self.assertEqual(payment_add.status_code, 200)
+        self.assertContains(payment_add, "Regjistro pagesë të re")
+        self.assertContains(payment_add, "Shuma e pagesës")
+        self.assertContains(payment_add, "Mënyra e pagesës")
+        self.assertContains(payment_add, "fines/payment/fine-preview/")
+
+    def test_payment_updates_fine_to_paid_or_partial(self):
+        self.client.force_login(self.admin_user)
+        partial_amount = "50.00"
+        self.client.post(
+            "/admin/fines/payment/add/",
+            {
+                "fine": self.fine.id,
+                "amount": partial_amount,
+                "method": PaymentMethod.CASH,
+                "reference": "Test pjesshem",
+            },
+            follow=True,
+        )
+        self.fine.refresh_from_db()
+        self.assertEqual(self.fine.status, FineStatus.UNPAID)
+
+        self.client.post(
+            "/admin/fines/payment/add/",
+            {
+                "fine": self.fine.id,
+                "amount": "100.00",
+                "method": PaymentMethod.CARD,
+                "reference": "Test i plote",
+            },
+            follow=True,
+        )
+        self.fine.refresh_from_db()
+        self.assertEqual(self.fine.status, FineStatus.PAID)
+        self.assertEqual(Payment.objects.filter(fine=self.fine).count(), 2)
 
 
 class AdminExecutiveDashboardSmokeTests(TestCase):

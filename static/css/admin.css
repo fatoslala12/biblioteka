@@ -2449,6 +2449,29 @@ body.change-form #jazzy-actions .btn {
   font-weight: 800 !important;
 }
 
+/* ===== Premium fines payments pages ===== */
+body.app-fines.model-payment.change-list .sl-page-title::before {
+  content: "" !important;
+  display: inline-block !important;
+  width: 32px !important;
+  height: 32px !important;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23319189' stroke-width='2'%3E%3Crect x='2' y='3' width='20' height='18' rx='2'/%3E%3Cpath d='M2 9h20'/%3E%3Cpath d='M6 15h4'/%3E%3C/svg%3E") no-repeat center !important;
+  background-size: 28px !important;
+  flex-shrink: 0 !important;
+}
+body.app-fines.model-payment.change-list #change-list-filters {
+  background:
+    radial-gradient(circle at 100% 0, rgba(20, 184, 166, 0.08), transparent 44%),
+    linear-gradient(180deg, #fff, #f8fbff) !important;
+}
+body.app-fines.model-payment.change-list #result_list tbody tr:hover {
+  background: rgba(16, 185, 129, 0.08) !important;
+}
+body.app-fines.model-payment.change-form #content-main fieldset.module h2,
+body.app-fines.model-payment.change-form #content-main fieldset.module .fieldset-heading {
+  background: linear-gradient(180deg, rgba(20, 184, 166, 0.14), rgba(241, 245, 249, 0.96)) !important;
+}
+
 /* Member and user detail pages: cleaner card hierarchy */
 body.app-accounts.model-memberprofile.change-form #content-main .card,
 body.app-accounts.model-user.change-form #content-main .card {

@@ -1,0 +1,243 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <style>
+    .app-fines.model-fine.change-form .sl-fine-form-shell {
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 20px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 100% 0, rgba(20, 184, 166, 0.12), transparent 44%),
+        linear-gradient(180deg, #ffffff, #f8fbff);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.09);
+    }
+    .app-fines.model-fine.change-form .sl-fine-form-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(15, 118, 110, 0.9));
+      border-bottom: 1px solid rgba(148, 163, 184, 0.28);
+      color: #fff;
+    }
+    .app-fines.model-fine.change-form .sl-fine-form-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.2;
+      color: #fff;
+    }
+    .app-fines.model-fine.change-form .sl-fine-form-sub {
+      margin-top: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.86);
+    }
+    .app-fines.model-fine.change-form .sl-fine-form-body {
+      padding: 14px 16px 8px;
+    }
+    .app-fines.model-fine.change-form .sl-fine-chip {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 900;
+      color: #0f172a;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    .app-fines.model-fine.change-form .sl-fine-actions {
+      margin-top: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+      padding: 10px 12px;
+    }
+    .app-fines.model-fine.change-form .sl-member-preview {
+      margin-bottom: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+      padding: 10px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+    .app-fines.model-fine.change-form .sl-member-preview-photo {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      object-fit: cover;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: linear-gradient(180deg, #f8fafc, #e2e8f0);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: #0f172a;
+      flex-shrink: 0;
+    }
+    .app-fines.model-fine.change-form .sl-member-preview-name {
+      font-size: 14px;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.2;
+    }
+    .app-fines.model-fine.change-form .sl-member-preview-meta {
+      margin-top: 2px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+    }
+  </style>
+{% endblock %}
+
+{% block field_sets %}
+  <div class="col-12 col-xl-10">
+    <div class="sl-fine-form-shell">
+      <div class="sl-fine-form-head">
+        <div>
+          <h2 class="sl-fine-form-title">{% if add %}Shto gjobë të re{% else %}Ndrysho gjobën{% endif %}</h2>
+          <div class="sl-fine-form-sub">Formular premium për menaxhimin e gjobave dhe historikut të auditimit.</div>
+        </div>
+        <span class="sl-fine-chip">{% if add %}Regjistrim i ri{% else %}Gjoba #{{ original.id }}{% endif %}</span>
+      </div>
+      <div class="sl-fine-form-body">
+        <div id="slMemberPreview" class="sl-member-preview" aria-live="polite">
+          <img id="slMemberPreviewImg" class="sl-member-preview-photo" src="" alt="Foto e anëtarit" style="display:none;" />
+          <div id="slMemberPreviewInitials" class="sl-member-preview-photo">AN</div>
+          <div>
+            <div id="slMemberPreviewName" class="sl-member-preview-name">Anëtari</div>
+            <div id="slMemberPreviewNid" class="sl-member-preview-meta">NID: —</div>
+          </div>
+        </div>
+        {{ block.super }}
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const loanField = document.getElementById("id_loan");
+      const memberField = document.getElementById("id_member");
+      const preview = document.getElementById("slMemberPreview");
+      const img = document.getElementById("slMemberPreviewImg");
+      const initialsEl = document.getElementById("slMemberPreviewInitials");
+      const nameEl = document.getElementById("slMemberPreviewName");
+      const nidEl = document.getElementById("slMemberPreviewNid");
+      const previewBase = "{{ loan_preview_base|default:'/admin/fines/fine/loan-preview/' }}";
+
+      if (!loanField || !preview || !nameEl || !nidEl || !img || !initialsEl) return;
+
+      // Place preview directly under the "Anëtari" row.
+      const memberRow =
+        (memberField && (memberField.closest(".form-row") || memberField.closest(".fieldBox"))) ||
+        document.getElementById("id_member")?.closest(".form-row");
+      if (memberRow && memberRow.parentElement) {
+        memberRow.insertAdjacentElement("afterend", preview);
+      }
+
+      const makeInitials = (name) => {
+        const parts = (name || "").trim().split(/\s+/).filter(Boolean);
+        if (!parts.length) return "AN";
+        if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      };
+
+      const resetPreview = () => {
+        preview.style.display = "none";
+        nameEl.textContent = "Anëtari";
+        nidEl.textContent = "NID: —";
+        img.style.display = "none";
+        img.src = "";
+        initialsEl.style.display = "inline-flex";
+        initialsEl.textContent = "AN";
+      };
+
+      const updatePreview = async () => {
+        const loanId = (loanField.value || "").trim();
+        if (!loanId) {
+          resetPreview();
+          if (memberField) memberField.value = "";
+          return;
+        }
+
+        try {
+          const resp = await fetch(previewBase + loanId + "/", {
+            headers: { "X-Requested-With": "XMLHttpRequest" },
+          });
+          const data = await resp.json();
+          if (!resp.ok || !data.ok) {
+            resetPreview();
+            if (memberField) memberField.value = "";
+            return;
+          }
+
+          const memberName = (data.member_name || "").trim() || "Anëtar";
+          const memberNid = (data.member_nid || "").trim();
+          nameEl.textContent = memberName;
+          nidEl.textContent = "NID: " + (memberNid || "—");
+          initialsEl.textContent = makeInitials(memberName);
+          preview.style.display = "flex";
+
+          if (data.member_photo_url) {
+            img.src = data.member_photo_url;
+            img.style.display = "inline-flex";
+            initialsEl.style.display = "none";
+          } else {
+            img.style.display = "none";
+            img.src = "";
+            initialsEl.style.display = "inline-flex";
+          }
+
+          if (memberField) {
+            memberField.value = data.member_id || "";
+          }
+        } catch (e) {
+          resetPreview();
+          if (memberField) memberField.value = "";
+        }
+      };
+
+      // Native change/input listeners.
+      loanField.addEventListener("change", updatePreview);
+      loanField.addEventListener("input", updatePreview);
+
+      // Select2/Jazzmin can emit custom events on jQuery layer.
+      if (window.jQuery) {
+        try {
+          window.jQuery(loanField).on("select2:select select2:clear select2:close", updatePreview);
+        } catch (e) {
+          // no-op
+        }
+      }
+
+      // Initial hydration + fallback re-checks for async widgets.
+      updatePreview();
+      window.setTimeout(updatePreview, 180);
+      window.setTimeout(updatePreview, 650);
+
+      // Extra safety: if value changes without events, detect and refresh.
+      let lastLoanValue = (loanField.value || "").trim();
+      window.setInterval(() => {
+        const current = (loanField.value || "").trim();
+        if (current !== lastLoanValue) {
+          lastLoanValue = current;
+          updatePreview();
+        }
+      }, 700);
+    })();
+  </script>
+{% endblock %}
+
+{% block submit_buttons_bottom %}
+  <div class="sl-fine-actions">
+    {{ block.super }}
+  </div>
+{% endblock %}
+

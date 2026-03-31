@@ -13,8 +13,9 @@ from accounts.models import MemberProfile, UserRole
 from audit.models import AuditEntry
 from catalog.models import Book, Copy, CopyStatus
 from circulation.models import Loan, LoanStatus, Reservation, ReservationRequest, ReservationRequestStatus, ReservationStatus
-from circulation.services import auto_expire_overdue_reservations
-from fines.models import Fine, FineStatus
+from circulation.services import auto_expire_overdue_reservations, create_reservation_request
+from circulation.exceptions import PolicyViolation
+from fines.models import Fine, FineStatus, Payment, PaymentMethod
 from policies.models import LibraryPolicy
 
 User = get_user_model()
@@ -128,6 +129,82 @@ class ReservationAutoExpireTests(TestCase):
         outside_grace.refresh_from_db()
         self.assertEqual(within_grace.status, ReservationStatus.APPROVED)
         self.assertEqual(outside_grace.status, ReservationStatus.EXPIRED)
+
+
+class UnpaidFineBlockingTests(TestCase):
+    def setUp(self):
+        self.staff = User.objects.create_user(
+            username="staff_block_tests",
+            email="staff_block_tests@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.STAFF,
+            is_staff=True,
+        )
+        self.member_user = User.objects.create_user(
+            username="member_block_tests",
+            email="member_block_tests@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.MEMBER,
+            is_staff=False,
+        )
+        self.member = MemberProfile.objects.create(
+            user=self.member_user,
+            full_name="Member Block Tests",
+            phone="0677777777",
+            national_id="BLK123456X",
+            place_of_birth="Tirane",
+            address="Rruga Block",
+            member_no="M-BLOCK-001",
+        )
+        self.book = Book.objects.create(title="Blocking Book", isbn="9786666666666")
+        self.copy = Copy.objects.create(book=self.book, barcode="BLK-COPY-1", status=CopyStatus.AVAILABLE)
+        self.loan_for_fine = Loan.objects.create(
+            member=self.member,
+            copy=self.copy,
+            due_at=timezone.now() - timedelta(days=3),
+            status=LoanStatus.RETURNED,
+            loaned_by=self.staff,
+        )
+        self.fine = Fine.objects.create(
+            loan=self.loan_for_fine,
+            member=self.member,
+            amount="50.00",
+            status=FineStatus.UNPAID,
+            reason="Vonesë",
+        )
+        self.reserve_book = Book.objects.create(title="Reserve Block Book", isbn="9787777777777")
+        self.reserve_copy = Copy.objects.create(book=self.reserve_book, barcode="BLK-COPY-2", status=CopyStatus.AVAILABLE)
+
+    def test_member_with_unpaid_fine_cannot_create_reservation_request(self):
+        with self.assertRaisesMessage(PolicyViolation, "Ju keni një gjobë të papaguar"):
+            create_reservation_request(
+                member_no=self.member.member_no,
+                book_id=self.reserve_book.id,
+                pickup_date=timezone.localdate() + timedelta(days=1),
+                return_date=timezone.localdate() + timedelta(days=3),
+                created_by=self.staff,
+                source_screen="test.unpaid_fine_block_reservation",
+            )
+
+    def test_member_can_proceed_after_paying_full_fine(self):
+        Payment.objects.create(
+            fine=self.fine,
+            amount="50.00",
+            method=PaymentMethod.CASH,
+            recorded_by=self.staff,
+        )
+        self.fine.status = FineStatus.PAID
+        self.fine.save(update_fields=["status", "updated_at"])
+
+        req = create_reservation_request(
+            member_no=self.member.member_no,
+            book_id=self.reserve_book.id,
+            pickup_date=timezone.localdate() + timedelta(days=1),
+            return_date=timezone.localdate() + timedelta(days=3),
+            created_by=self.staff,
+            source_screen="test.unpaid_fine_after_payment",
+        )
+        self.assertEqual(req.status, ReservationRequestStatus.PENDING)
 
 
 class DailyOpsReportCommandTests(TestCase):

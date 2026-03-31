@@ -137,21 +137,26 @@ def _get_policy_snapshot(member: MemberProfile, copy: Copy) -> PolicySnapshot:
 
 
 def _unpaid_fines_total(member: MemberProfile) -> Decimal:
-    agg = Fine.objects.filter(member=member, status=FineStatus.UNPAID).aggregate(total=Sum("amount"))
-    return (agg["total"] or Decimal("0.00")).quantize(Decimal("0.01"))
+    fines = Fine.objects.filter(member=member, status=FineStatus.UNPAID).annotate(paid_total=Sum("payments__amount"))
+    total = Decimal("0.00")
+    for fine in fines:
+        paid_total = getattr(fine, "paid_total", None) or Decimal("0.00")
+        remaining = max(Decimal("0.00"), (fine.amount or Decimal("0.00")) - paid_total)
+        total += remaining
+    return total.quantize(Decimal("0.01"))
 
 
 def _ensure_member_can_borrow(member: MemberProfile, policy: PolicySnapshot) -> None:
     if member.status in (MemberStatus.SUSPENDED, MemberStatus.BLOCKED):
-        raise PolicyViolation("Member is not allowed to borrow (blocked/suspended).")
+        raise PolicyViolation("Anëtari nuk lejohet të huazojë (i bllokuar/pezulluar).")
 
     unpaid_total = _unpaid_fines_total(member)
-    if unpaid_total > policy.fine_block_threshold:
-        raise PolicyViolation("Member has unpaid fines above threshold.")
+    if unpaid_total > Decimal("0.00"):
+        raise PolicyViolation("Ju keni një gjobë të papaguar. Ju lutem paguani gjobën dhe më pas procedoni.")
 
     active_loans = Loan.objects.filter(member=member, status=LoanStatus.ACTIVE).count()
     if active_loans >= policy.max_active_loans:
-        raise PolicyViolation("Member has reached the maximum number of active loans.")
+        raise PolicyViolation("Anëtari ka arritur numrin maksimal të huazimeve aktive.")
 
 
 def _expire_ready_holds(book_id: int) -> None:
@@ -303,7 +308,7 @@ def return_copy(
                 "member": loan.member,
                 "amount": fine_amount,
                 "status": FineStatus.UNPAID,
-                "reason": "Overdue",
+                "reason": "Vonesë",
             },
         )
 
@@ -436,6 +441,8 @@ def create_reservation_request(
     member = MemberProfile.objects.select_for_update().get(member_no=member_no)
     if member.status in (MemberStatus.SUSPENDED, MemberStatus.BLOCKED):
         raise PolicyViolation("Anëtari nuk lejohet të bëjë kërkesa (i bllokuar/pezulluar).")
+    if _unpaid_fines_total(member) > Decimal("0.00"):
+        raise PolicyViolation("Ju keni një gjobë të papaguar. Ju lutem paguani gjobën dhe më pas procedoni.")
 
     pickup_date = _as_date(pickup_date)
     return_date = _as_date(return_date)

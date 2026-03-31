@@ -13,7 +13,7 @@ class Fine(models.Model):
 
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=16, choices=FineStatus.choices, default=FineStatus.UNPAID)
-    reason = models.CharField(max_length=255, blank=True, default="Overdue")
+    reason = models.CharField(max_length=255, blank=True, default="Vonesë")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -28,7 +28,7 @@ class Fine(models.Model):
     waived_reason = models.CharField(max_length=255, blank=True, default="")
 
     def __str__(self) -> str:
-        return f"Fine {self.id} - {self.member.member_no} - {self.amount} ({self.status})"
+        return f"Gjoba #{self.id} - {self.member.member_no} - {self.amount} ({self.get_status_display()})"
 
     class Meta:
         verbose_name = "Gjobë"
@@ -36,8 +36,8 @@ class Fine(models.Model):
 
 
 class PaymentMethod(models.TextChoices):
-    CASH = "CASH", "Cash"
-    CARD = "CARD", "Kartelë"
+    CASH = "CASH", "Para në dorë"
+    CARD = "CARD", "Kartë"
     OTHER = "OTHER", "Tjetër"
 
 
@@ -51,7 +51,7 @@ class Payment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return f"Payment {self.id} - {self.amount} ({self.method})"
+        return f"Pagesa #{self.id} - {self.amount} ({self.get_method_display()})"
 
     class Meta:
         verbose_name = "Pagesë"

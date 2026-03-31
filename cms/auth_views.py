@@ -261,9 +261,17 @@ def member_portal(request: HttpRequest):
         .filter(fine__member=member_profile)
         .order_by("-created_at")[:8]
     )
-    unpaid_total = sum([f.amount for f in fines if f.status == FineStatus.UNPAID], start=0)
+    for fine in fines:
+        paid = sum([p.amount for p in getattr(fine, "portal_payments", [])], start=0)
+        remaining = max(0, (fine.amount or 0) - paid)
+        fine.portal_paid_total = paid
+        fine.portal_remaining = remaining
+        fine.portal_status_label = "Pagesë e pjesshme" if (fine.status == FineStatus.UNPAID and paid > 0 and remaining > 0) else (
+            "E paguar" if remaining <= 0 else fine.get_status_display()
+        )
+    unpaid_total = sum([getattr(f, "portal_remaining", 0) for f in fines if f.status == FineStatus.UNPAID], start=0)
     paid_total = Payment.objects.filter(fine__member=member_profile).aggregate(total=Sum("amount")).get("total") or 0
-    unpaid_fines_count = sum([1 for f in fines if f.status == FineStatus.UNPAID])
+    unpaid_fines_count = sum([1 for f in fines if f.status == FineStatus.UNPAID and getattr(f, "portal_remaining", 0) > 0])
     paid_fines_count = sum([1 for f in fines if f.status == FineStatus.PAID])
 
     # Member dashboard metrics

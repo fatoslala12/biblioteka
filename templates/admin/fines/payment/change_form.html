@@ -1,0 +1,279 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <style>
+    .app-fines.model-payment.change-form .sl-payment-shell {
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 20px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 100% 0, rgba(20, 184, 166, 0.12), transparent 44%),
+        linear-gradient(180deg, #ffffff, #f8fbff);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.09);
+    }
+    .app-fines.model-payment.change-form .sl-payment-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(15, 118, 110, 0.9));
+      border-bottom: 1px solid rgba(148, 163, 184, 0.28);
+      color: #fff;
+    }
+    .app-fines.model-payment.change-form .sl-payment-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.2;
+      color: #fff;
+    }
+    .app-fines.model-payment.change-form .sl-payment-sub {
+      margin-top: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.86);
+    }
+    .app-fines.model-payment.change-form .sl-payment-chip {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 900;
+      color: #0f172a;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    .app-fines.model-payment.change-form .sl-payment-body {
+      padding: 14px 16px 8px;
+    }
+    .app-fines.model-payment.change-form .sl-member-preview {
+      margin-bottom: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+      padding: 10px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+    .app-fines.model-payment.change-form .sl-member-preview-photo {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      object-fit: cover;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: linear-gradient(180deg, #f8fafc, #e2e8f0);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: #0f172a;
+      flex-shrink: 0;
+    }
+    .app-fines.model-payment.change-form .sl-member-preview-name {
+      font-size: 14px;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.2;
+    }
+    .app-fines.model-payment.change-form .sl-member-preview-meta {
+      margin-top: 2px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+    }
+    .app-fines.model-payment.change-form .sl-payment-summary {
+      margin-top: 8px;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .app-fines.model-payment.change-form .sl-payment-kpi {
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px 10px;
+    }
+    .app-fines.model-payment.change-form .sl-payment-kpi-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .app-fines.model-payment.change-form .sl-payment-kpi-value {
+      margin-top: 2px;
+      font-size: 15px;
+      font-weight: 900;
+      color: #0f172a;
+    }
+    .app-fines.model-payment.change-form .sl-payment-actions {
+      margin-top: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+      padding: 10px 12px;
+    }
+  </style>
+{% endblock %}
+
+{% block field_sets %}
+  <div class="col-12 col-xl-10">
+    <div class="sl-payment-shell">
+      <div class="sl-payment-head">
+        <div>
+          <h2 class="sl-payment-title">{% if add %}Regjistro pagesë të re{% else %}Ndrysho pagesën{% endif %}</h2>
+          <div class="sl-payment-sub">Formular premium për pagesat e gjobave me përditësim automatik të statusit.</div>
+        </div>
+        <span class="sl-payment-chip">{% if add %}Pagesë e re{% else %}Pagesa #{{ original.id }}{% endif %}</span>
+      </div>
+      <div class="sl-payment-body">
+        <div id="slMemberPreview" class="sl-member-preview" aria-live="polite">
+          <img id="slMemberPreviewImg" class="sl-member-preview-photo" src="" alt="Foto e anëtarit" style="display:none;" />
+          <div id="slMemberPreviewInitials" class="sl-member-preview-photo">AN</div>
+          <div style="min-width:0;">
+            <div id="slMemberPreviewName" class="sl-member-preview-name">Anëtari</div>
+            <div id="slMemberPreviewNo" class="sl-member-preview-meta">Nr. anëtari: —</div>
+            <div id="slMemberPreviewNid" class="sl-member-preview-meta">NID: —</div>
+            <div id="slMemberPreviewPhone" class="sl-member-preview-meta">Tel: —</div>
+            <div id="slMemberPreviewAddress" class="sl-member-preview-meta">Adresë: —</div>
+          </div>
+        </div>
+        <div class="sl-payment-summary">
+          <div class="sl-payment-kpi">
+            <div class="sl-payment-kpi-label">Totali i gjobës</div>
+            <div id="slFineTotal" class="sl-payment-kpi-value">0.00 €</div>
+          </div>
+          <div class="sl-payment-kpi">
+            <div class="sl-payment-kpi-label">E paguar deri tani</div>
+            <div id="slFinePaid" class="sl-payment-kpi-value">0.00 €</div>
+          </div>
+          <div class="sl-payment-kpi">
+            <div class="sl-payment-kpi-label">Mbetja pa paguar</div>
+            <div id="slFineRemaining" class="sl-payment-kpi-value">0.00 €</div>
+          </div>
+        </div>
+        {{ block.super }}
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const fineField = document.getElementById("id_fine");
+      const amountField = document.getElementById("id_amount");
+      const preview = document.getElementById("slMemberPreview");
+      const img = document.getElementById("slMemberPreviewImg");
+      const initialsEl = document.getElementById("slMemberPreviewInitials");
+      const nameEl = document.getElementById("slMemberPreviewName");
+      const noEl = document.getElementById("slMemberPreviewNo");
+      const nidEl = document.getElementById("slMemberPreviewNid");
+      const phoneEl = document.getElementById("slMemberPreviewPhone");
+      const addressEl = document.getElementById("slMemberPreviewAddress");
+      const totalEl = document.getElementById("slFineTotal");
+      const paidEl = document.getElementById("slFinePaid");
+      const remainingEl = document.getElementById("slFineRemaining");
+      const previewBase = "{{ payment_fine_preview_base|default:'/admin/fines/payment/fine-preview/' }}";
+      if (!fineField || !amountField) return;
+
+      const fineRow = fineField.closest(".form-row") || fineField.closest(".fieldBox");
+      if (fineRow && fineRow.parentElement && preview) {
+        fineRow.insertAdjacentElement("afterend", preview);
+      }
+
+      const makeInitials = (name) => {
+        const parts = (name || "").trim().split(/\s+/).filter(Boolean);
+        if (!parts.length) return "AN";
+        if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      };
+
+      const setSummary = (total, paid, remaining) => {
+        if (totalEl) totalEl.textContent = (total || "0.00") + " €";
+        if (paidEl) paidEl.textContent = (paid || "0.00") + " €";
+        if (remainingEl) remainingEl.textContent = (remaining || "0.00") + " €";
+      };
+
+      const resetPreview = () => {
+        if (preview) preview.style.display = "none";
+        if (nameEl) nameEl.textContent = "Anëtari";
+        if (noEl) noEl.textContent = "Nr. anëtari: —";
+        if (nidEl) nidEl.textContent = "NID: —";
+        if (phoneEl) phoneEl.textContent = "Tel: —";
+        if (addressEl) addressEl.textContent = "Adresë: —";
+        if (img) {
+          img.style.display = "none";
+          img.src = "";
+        }
+        if (initialsEl) {
+          initialsEl.style.display = "inline-flex";
+          initialsEl.textContent = "AN";
+        }
+        setSummary("0.00", "0.00", "0.00");
+      };
+
+      const updatePreview = async () => {
+        const fineId = (fineField.value || "").trim();
+        if (!fineId) {
+          resetPreview();
+          return;
+        }
+        try {
+          const resp = await fetch(previewBase + fineId + "/", { headers: { "X-Requested-With": "XMLHttpRequest" } });
+          const data = await resp.json();
+          if (!resp.ok || !data.ok) {
+            resetPreview();
+            return;
+          }
+          if (preview) preview.style.display = "flex";
+          if (nameEl) nameEl.textContent = data.member_name || "Anëtar";
+          if (noEl) noEl.textContent = "Nr. anëtari: " + (data.member_no || "—");
+          if (nidEl) nidEl.textContent = "NID: " + (data.member_nid || "—");
+          if (phoneEl) phoneEl.textContent = "Tel: " + (data.member_phone || "—");
+          if (addressEl) addressEl.textContent = "Adresë: " + (data.member_address || "—");
+          if (initialsEl) initialsEl.textContent = makeInitials(data.member_name || "AN");
+          setSummary(data.fine_amount, data.paid_total, data.remaining);
+
+          // On fine selection, prefill amount with exact remaining.
+          amountField.value = data.remaining || "";
+
+          if (data.member_photo_url) {
+            img.src = data.member_photo_url;
+            img.style.display = "inline-flex";
+            initialsEl.style.display = "none";
+          } else {
+            img.style.display = "none";
+            img.src = "";
+            initialsEl.style.display = "inline-flex";
+          }
+        } catch (e) {
+          resetPreview();
+        }
+      };
+
+      fineField.addEventListener("change", updatePreview);
+      fineField.addEventListener("input", updatePreview);
+      if (window.jQuery) {
+        try {
+          window.jQuery(fineField).on("select2:select select2:clear select2:close", updatePreview);
+        } catch (e) {
+          // no-op
+        }
+      }
+      updatePreview();
+      window.setTimeout(updatePreview, 180);
+      window.setTimeout(updatePreview, 650);
+    })();
+  </script>
+{% endblock %}
+
+{% block submit_buttons_bottom %}
+  <div class="sl-payment-actions">
+    {{ block.super }}
+  </div>
+{% endblock %}
+

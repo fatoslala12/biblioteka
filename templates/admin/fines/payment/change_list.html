@@ -1,0 +1,17 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block content_title %}
+  <div class="sl-page-title-wrapper text-center">
+    <h1 class="sl-page-title">Pagesa</h1>
+  </div>
+{% endblock %}
+
+{% block object-tools-items %}
+  <li>
+    <a href="{% url 'admin:fines_payment_add' %}" class="btn btn-sm btn-primary">
+      <i class="fas fa-plus me-1"></i>Shto pagesë
+    </a>
+  </li>
+{% endblock %}
+

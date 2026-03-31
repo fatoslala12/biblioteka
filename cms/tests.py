@@ -134,6 +134,8 @@ class MemberPortalIntegrationTests(TestCase):
         self.client.force_login(self.user)
         response = self.client.get("/anetar/")
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Gjoba & Pagesa")
+        self.assertContains(response, "Të papaguara")
 
 
 class DesignSystemCssTests(TestCase):

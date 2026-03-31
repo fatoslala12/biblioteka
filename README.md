@@ -102,7 +102,7 @@ Njoftime automatike për anëtarët (email/SMS):
 .venv\Scripts\python manage.py notify_members --channels both
 ```
 
-Email-et dërgohen në format **HTML premium** + fallback text.
+Email-et dërgohen në format **HTML premium** + fallback text, me CTA deep-link (loan/fine/reservation) kur `PUBLIC_BASE_URL` është i konfiguruar.
 
 Dry-run pa dërgim real:
 
@@ -116,6 +116,7 @@ Konfigurime njoftimesh në `.env`:
 - `NOTIFY_RESERVATION_EXPIRY_HOURS`
 - `SMS_WEBHOOK_URL`
 - `SMS_WEBHOOK_TOKEN`
+- `PUBLIC_BASE_URL` (p.sh. `https://biblioteka.example.al`, për CTA absolute në email)
 
 Auto-expire rezervimesh:
 

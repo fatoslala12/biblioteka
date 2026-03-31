@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 
-from django.db.models import Count
+from django.db.models import Count, Prefetch, Sum
 from django.db.models.functions import TruncMonth
 from django.utils import timezone
 
@@ -24,7 +24,7 @@ from circulation.models import Hold, HoldStatus, Loan, LoanStatus
 from circulation.models import ReservationRequest, ReservationRequestStatus
 from circulation.services import create_reservation_request
 from cms.forms import MemberPasswordChangeForm, MemberProfileUpdateForm, MemberSignUpForm
-from fines.models import Fine, FineStatus
+from fines.models import Fine, FineStatus, Payment
 
 User = get_user_model()
 
@@ -251,8 +251,20 @@ def member_portal(request: HttpRequest):
         .filter(member=member_profile, status=HoldStatus.READY_FOR_PICKUP)
         .order_by("expires_at")[:20]
     )
-    fines = Fine.objects.filter(member=member_profile).order_by("-created_at")[:20]
+    fines = (
+        Fine.objects.filter(member=member_profile)
+        .prefetch_related(Prefetch("payments", queryset=Payment.objects.order_by("-created_at"), to_attr="portal_payments"))
+        .order_by("-created_at")[:20]
+    )
+    latest_payments = (
+        Payment.objects.select_related("fine", "fine__loan", "fine__loan__copy", "fine__loan__copy__book")
+        .filter(fine__member=member_profile)
+        .order_by("-created_at")[:8]
+    )
     unpaid_total = sum([f.amount for f in fines if f.status == FineStatus.UNPAID], start=0)
+    paid_total = Payment.objects.filter(fine__member=member_profile).aggregate(total=Sum("amount")).get("total") or 0
+    unpaid_fines_count = sum([1 for f in fines if f.status == FineStatus.UNPAID])
+    paid_fines_count = sum([1 for f in fines if f.status == FineStatus.PAID])
 
     # Member dashboard metrics
     total_loans_count = Loan.objects.filter(member=member_profile).count()
@@ -312,7 +324,11 @@ def member_portal(request: HttpRequest):
             "requests": requests_qs,
             "ready_for_pickup": ready_for_pickup,
             "fines": fines,
+            "latest_payments": latest_payments,
             "unpaid_total": unpaid_total,
+            "paid_total": paid_total,
+            "unpaid_fines_count": unpaid_fines_count,
+            "paid_fines_count": paid_fines_count,
             "total_loans_count": total_loans_count,
             "active_loans_count": active_loans_count,
             "overdue_loans_count": overdue_loans_count,

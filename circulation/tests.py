@@ -313,6 +313,7 @@ class DailyOpsReportCommandTests(TestCase):
     EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
     DEFAULT_FROM_EMAIL="ops@test.com",
     SMS_WEBHOOK_URL="",
+    PUBLIC_BASE_URL="https://biblioteka.example.al",
 )
 class MemberNotificationsCommandTests(TestCase):
     def setUp(self):
@@ -388,6 +389,33 @@ class MemberNotificationsCommandTests(TestCase):
         # HTML premium template is attached to outgoing notifications.
         self.assertTrue(any(msg.alternatives for msg in mail.outbox))
         self.assertTrue(any("Njoftim automatik për anëtarin" in alt[0] for msg in mail.outbox for alt in msg.alternatives))
+        self.assertTrue(
+            any(
+                "https://biblioteka.example.al/anetar/?focus=loans" in alt[0]
+                and f"loan_id={loan.id}" in alt[0]
+                and f"#loan-{loan.id}" in alt[0]
+                for msg in mail.outbox
+                for alt in msg.alternatives
+            )
+        )
+        self.assertTrue(
+            any(
+                "https://biblioteka.example.al/anetar/?focus=fines" in alt[0]
+                and f"fine_id={fine.id}" in alt[0]
+                and f"#fine-{fine.id}" in alt[0]
+                for msg in mail.outbox
+                for alt in msg.alternatives
+            )
+        )
+        self.assertTrue(
+            any(
+                "https://biblioteka.example.al/anetar/?focus=reservations" in alt[0]
+                and f"reservation_id={reservation.id}" in alt[0]
+                and "#member-reservations" in alt[0]
+                for msg in mail.outbox
+                for alt in msg.alternatives
+            )
+        )
 
         self.assertTrue(
             AuditEntry.objects.filter(

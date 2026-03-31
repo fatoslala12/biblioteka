@@ -1,6 +1,7 @@
 import json
 from datetime import timedelta
 from datetime import datetime, time
+from urllib.parse import urljoin
 from urllib import request as urlrequest
 
 from django.conf import settings
@@ -59,6 +60,26 @@ class Command(BaseCommand):
         except Exception as exc:
             return False, f"SMS send failed: {exc}"
         return True, ""
+
+    def _absolute_public_url(self, path: str) -> str:
+        base = (getattr(settings, "PUBLIC_BASE_URL", "") or "").strip()
+        if not base:
+            return path
+        normalized = base if base.endswith("/") else f"{base}/"
+        relative = path[1:] if path.startswith("/") else path
+        return urljoin(normalized, relative)
+
+    def _member_portal_deep_link(self, *, focus: str, object_id: int | None = None, anchor: str | None = None) -> str:
+        path = f"/anetar/?focus={focus}"
+        if focus == "loans" and object_id:
+            path += f"&loan_id={object_id}"
+        elif focus == "fines" and object_id:
+            path += f"&fine_id={object_id}"
+        elif focus == "reservations" and object_id:
+            path += f"&reservation_id={object_id}"
+        if anchor:
+            path += f"#{anchor}"
+        return self._absolute_public_url(path)
 
     def _notify_member(
         self,
@@ -159,11 +180,13 @@ class Command(BaseCommand):
             if self._already_notified(action_type="MEMBER_NOTIFICATION_DUE_SOON", reason_token=token):
                 skipped_count += 1
                 continue
+            deep_link = self._member_portal_deep_link(focus="loans", object_id=loan.id, anchor=f"loan-{loan.id}")
             msg = (
                 f"Përshëndetje {loan.member.full_name or loan.member.member_no},\n\n"
                 f"Afati i kthimit për librin '{loan.copy.book.title}' po afrohet: "
                 f"{timezone.localtime(loan.due_at).strftime('%d/%m/%Y %H:%M')}.\n"
-                "Ju lutem dorëzojeni në kohë për të shmangur gjobat.\n\n"
+                "Ju lutem dorëzojeni në kohë për të shmangur gjobat.\n"
+                f"Hape direkt: {deep_link}\n\n"
                 "Smart Library"
             )
             html_body = render_to_string(
@@ -177,7 +200,7 @@ class Command(BaseCommand):
                         f"{timezone.localtime(loan.due_at).strftime('%d/%m/%Y %H:%M')}."
                     ),
                     "cta_text": "Hap huazimet",
-                    "cta_url": "/anetar/",
+                    "cta_url": deep_link,
                     "library_name": "Smart Library • Biblioteka Kamëz",
                 },
             )
@@ -205,11 +228,13 @@ class Command(BaseCommand):
             if self._already_notified(action_type="MEMBER_NOTIFICATION_FINE_CREATED", reason_token=token):
                 skipped_count += 1
                 continue
+            deep_link = self._member_portal_deep_link(focus="fines", object_id=fine.id, anchor=f"fine-{fine.id}")
             msg = (
                 f"Përshëndetje {fine.member.full_name or fine.member.member_no},\n\n"
                 f"Është krijuar një gjobë e re prej {fine.amount} € për huazimin "
                 f"'{fine.loan.copy.book.title}'.\n"
-                "Ju lutem kryeni pagesën sa më shpejt për të shmangur kufizimet e huazimit.\n\n"
+                "Ju lutem kryeni pagesën sa më shpejt për të shmangur kufizimet e huazimit.\n"
+                f"Hape direkt: {deep_link}\n\n"
                 "Smart Library"
             )
             html_body = render_to_string(
@@ -223,7 +248,7 @@ class Command(BaseCommand):
                         f"<b>{fine.loan.copy.book.title}</b>."
                     ),
                     "cta_text": "Shiko gjobat",
-                    "cta_url": "/anetar/",
+                    "cta_url": deep_link,
                     "library_name": "Smart Library • Biblioteka Kamëz",
                 },
             )
@@ -256,11 +281,15 @@ class Command(BaseCommand):
             if self._already_notified(action_type="MEMBER_NOTIFICATION_RESERVATION_EXPIRING", reason_token=token):
                 skipped_count += 1
                 continue
+            deep_link = self._member_portal_deep_link(
+                focus="reservations", object_id=reservation.id, anchor="member-reservations"
+            )
             msg = (
                 f"Përshëndetje {reservation.member.full_name or reservation.member.member_no},\n\n"
                 f"Rezervimi për librin '{reservation.book.title}' po skadon më "
                 f"{expiry_dt.strftime('%d/%m/%Y %H:%M')}.\n"
-                "Ju lutem paraqituni sa më shpejt për ta marrë librin.\n\n"
+                "Ju lutem paraqituni sa më shpejt për ta marrë librin.\n"
+                f"Hape direkt: {deep_link}\n\n"
                 "Smart Library"
             )
             html_body = render_to_string(
@@ -274,7 +303,7 @@ class Command(BaseCommand):
                         f"{expiry_dt.strftime('%d/%m/%Y %H:%M')}."
                     ),
                     "cta_text": "Hap rezervimet",
-                    "cta_url": "/anetar/",
+                    "cta_url": deep_link,
                     "library_name": "Smart Library • Biblioteka Kamëz",
                 },
             )

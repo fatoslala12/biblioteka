@@ -138,6 +138,98 @@
         height: 210px;
       }
     }
+
+    #member-active-loans,
+    #member-reservations,
+    #member-fines {
+      scroll-margin-top: 96px;
+    }
+    .sl-deep-target:target {
+      outline: 2px solid rgba(49, 144, 136, 0.45);
+      background: rgba(49, 144, 136, 0.08);
+      transition: background 220ms ease, outline-color 220ms ease;
+    }
+    .sl-deep-pulse {
+      outline: 2px solid rgba(49, 144, 136, 0.45);
+      background: rgba(49, 144, 136, 0.08);
+      transition: background 220ms ease, outline-color 220ms ease;
+    }
+    .sl-fine-panel {
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background:
+        radial-gradient(circle at 100% 0%, rgba(20, 184, 166, 0.1), transparent 45%),
+        linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(248, 250, 252, 1));
+    }
+    .sl-fine-hero {
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(17, 94, 89, 0.92));
+      color: #fff;
+    }
+    .sl-fine-metric {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(4px);
+    }
+    .sl-fine-item {
+      border: 1px solid rgba(148, 163, 184, 0.32);
+      background: rgba(255, 255, 255, 0.88);
+    }
+    .sl-fine-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .sl-fine-filter {
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      padding: 0.4rem 0.75rem;
+      font-size: 0.72rem;
+      font-weight: 800;
+      line-height: 1;
+      color: #334155;
+      transition: all 180ms ease;
+    }
+    .sl-fine-filter:hover {
+      border-color: rgba(20, 184, 166, 0.6);
+      color: #0f766e;
+      transform: translateY(-1px);
+    }
+    .sl-fine-filter.is-active {
+      border-color: rgba(20, 184, 166, 0.8);
+      background: rgba(20, 184, 166, 0.14);
+      color: #0f766e;
+      box-shadow: 0 8px 22px rgba(20, 184, 166, 0.14);
+    }
+    .sl-fine-item.is-hidden {
+      display: none;
+    }
+    @media (prefers-color-scheme: dark) {
+      .sl-fine-panel {
+        border-color: rgba(51, 65, 85, 0.9);
+        background:
+          radial-gradient(circle at 100% 0%, rgba(20, 184, 166, 0.16), transparent 45%),
+          linear-gradient(180deg, rgba(2, 6, 23, 1), rgba(15, 23, 42, 0.96));
+      }
+      .sl-fine-item {
+        border-color: rgba(51, 65, 85, 0.95);
+        background: rgba(2, 6, 23, 0.7);
+      }
+      .sl-fine-filter {
+        border-color: rgba(71, 85, 105, 0.9);
+        background: rgba(15, 23, 42, 0.78);
+        color: rgba(226, 232, 240, 0.95);
+      }
+      .sl-fine-filter:hover {
+        border-color: rgba(45, 212, 191, 0.85);
+        color: rgba(153, 246, 228, 1);
+      }
+      .sl-fine-filter.is-active {
+        border-color: rgba(45, 212, 191, 0.9);
+        background: rgba(20, 184, 166, 0.18);
+        color: rgba(153, 246, 228, 1);
+      }
+    }
   </style>
 
   {% if messages %}
@@ -356,6 +448,59 @@
                 btnPwd.classList.remove('hidden');
               });
             }
+
+            // Auto-focus portal sections/items from query params in notification deep-links.
+            const params = new URLSearchParams(window.location.search || '');
+            const focus = (params.get('focus') || '').toLowerCase();
+            const loanId = (params.get('loan_id') || '').trim();
+            const fineId = (params.get('fine_id') || '').trim();
+            const reservationId = (params.get('reservation_id') || '').trim();
+
+            let targetId = '';
+            if (focus === 'loans') {
+              targetId = loanId ? `loan-${loanId}` : 'member-active-loans';
+            } else if (focus === 'fines') {
+              targetId = fineId ? `fine-${fineId}` : 'member-fines';
+            } else if (focus === 'reservations') {
+              targetId = reservationId ? `reservation-${reservationId}` : 'member-reservations';
+            }
+
+            if (!targetId) return;
+            const target = document.getElementById(targetId) || document.getElementById(`member-${focus}`);
+            if (!target) return;
+
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            target.classList.add('sl-deep-pulse');
+            window.setTimeout(() => target.classList.remove('sl-deep-pulse'), 2200);
+
+            // Clean query params after navigation so shared URL stays neat.
+            const cleanUrl = new URL(window.location.href);
+            ['focus', 'loan_id', 'fine_id', 'reservation_id'].forEach((k) => cleanUrl.searchParams.delete(k));
+            cleanUrl.hash = '';
+            const nextUrl = `${cleanUrl.pathname}${cleanUrl.search}`;
+            window.setTimeout(() => window.history.replaceState({}, '', nextUrl), 260);
+
+            // Premium quick filters for fines list.
+            const fineFilters = Array.from(document.querySelectorAll('[data-fine-filter]'));
+            const fineItems = Array.from(document.querySelectorAll('[data-fine-item]'));
+            if (fineFilters.length && fineItems.length) {
+              const applyFineFilter = (status) => {
+                fineItems.forEach((el) => {
+                  const itemStatus = (el.dataset.fineStatus || '').toUpperCase();
+                  const show = status === 'ALL' || itemStatus === status;
+                  el.classList.toggle('is-hidden', !show);
+                });
+                fineFilters.forEach((btn) => {
+                  const active = (btn.dataset.fineFilter || '').toUpperCase() === status;
+                  btn.classList.toggle('is-active', active);
+                  btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+                });
+              };
+              fineFilters.forEach((btn) => {
+                btn.addEventListener('click', () => applyFineFilter((btn.dataset.fineFilter || 'ALL').toUpperCase()));
+              });
+              applyFineFilter('ALL');
+            }
           })();
         </script>
 
@@ -394,7 +539,7 @@
           </div>
         </div>
 
-        <div class="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div id="member-active-loans" class="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
           <div class="text-sm font-extrabold">Huazimet aktive</div>
           <div class="sl-loans-scroll-hint">Rrëshqit majtas-djathtas per kolonat</div>
           <div class="sl-loans-table-wrap mt-4 rounded-3xl border border-slate-200 dark:border-slate-800">
@@ -411,7 +556,7 @@
                 </thead>
                 <tbody class="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-950">
                   {% for row in active_rows %}
-                    <tr>
+                    <tr id="loan-{{ row.loan.id }}" class="sl-deep-target">
                       <td class="px-4 py-3 font-extrabold">{{ row.loan.copy.book.title }}</td>
                       <td class="px-4 py-3">{{ row.loan.copy.barcode }}</td>
                       <td class="px-4 py-3">{{ row.loan.due_at|date:"Y-m-d" }}</td>
@@ -437,7 +582,7 @@
           </div>
         </div>
 
-        <div class="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div id="member-reservations" class="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sl-deep-target">
           <div class="flex items-start justify-between gap-3">
             <div>
               <div class="text-sm font-extrabold">Kërkesat e mia për rezervim</div>
@@ -580,7 +725,7 @@
       </div>
 
       <aside class="lg:col-span-4">
-        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div id="member-ready-pickup" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
           <div class="text-sm font-extrabold">Gati për tërheqje</div>
           <div class="mt-2 text-xs text-slate-500 dark:text-slate-400">
             Shko në bibliotekë me kartën e anëtarit. Titujt më poshtë janë gati për tërheqje deri në afatin e shënuar.
@@ -607,33 +752,104 @@
           </div>
         </div>
 
-        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
-          <div class="text-sm font-extrabold">Gjoba</div>
-          <div class="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            Totali i papaguar: <span class="font-extrabold">{{ unpaid_total }}</span>
+        <div id="member-fines" class="sl-fine-panel mt-6 rounded-3xl p-5 shadow-sm sl-deep-target">
+          <div class="sl-fine-hero rounded-3xl p-4">
+            <div class="text-sm font-extrabold tracking-wide">Gjoba & Pagesa</div>
+            <div class="mt-1 text-xs text-white/85">
+              Pamje e qartë e detyrimeve dhe pagesave të regjistruara.
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-2">
+              <div class="sl-fine-metric rounded-2xl px-3 py-2">
+                <div class="text-[11px] font-semibold text-white/75">Totali i papaguar</div>
+                <div class="mt-0.5 text-base font-extrabold">{{ unpaid_total|floatformat:2 }} €</div>
+              </div>
+              <div class="sl-fine-metric rounded-2xl px-3 py-2">
+                <div class="text-[11px] font-semibold text-white/75">Totali i paguar</div>
+                <div class="mt-0.5 text-base font-extrabold">{{ paid_total|floatformat:2 }} €</div>
+              </div>
+              <div class="sl-fine-metric rounded-2xl px-3 py-2">
+                <div class="text-[11px] font-semibold text-white/75">Gjoba aktive</div>
+                <div class="mt-0.5 text-base font-extrabold">{{ unpaid_fines_count }}</div>
+              </div>
+              <div class="sl-fine-metric rounded-2xl px-3 py-2">
+                <div class="text-[11px] font-semibold text-white/75">Gjoba të mbyllura</div>
+                <div class="mt-0.5 text-base font-extrabold">{{ paid_fines_count }}</div>
+              </div>
+            </div>
           </div>
+
           <div class="mt-4 space-y-3">
+            <div class="sl-fine-filters" role="group" aria-label="Filtri i gjobave">
+              <button type="button" class="sl-fine-filter is-active" data-fine-filter="ALL" aria-pressed="true">Të gjitha</button>
+              <button type="button" class="sl-fine-filter" data-fine-filter="UNPAID" aria-pressed="false">Të papaguara</button>
+              <button type="button" class="sl-fine-filter" data-fine-filter="PAID" aria-pressed="false">Të paguara</button>
+              <button type="button" class="sl-fine-filter" data-fine-filter="WAIVED" aria-pressed="false">Të falura</button>
+            </div>
             {% for f in fines %}
-              <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+              <div
+                id="fine-{{ f.id }}"
+                class="sl-fine-item rounded-2xl p-4 sl-deep-target"
+                data-fine-item
+                data-fine-status="{{ f.status }}"
+              >
                 <div class="flex items-start justify-between gap-3">
                   <div class="min-w-0">
-                    <div class="text-sm font-extrabold">{{ f.amount }}</div>
-                    <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ f.created_at|date:"Y-m-d" }} • {{ f.reason }}</div>
+                    <div class="text-sm font-extrabold">Gjoba #{{ f.id }} • {{ f.amount|floatformat:2 }} €</div>
+                    <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      Krijuar: {{ f.created_at|date:"Y-m-d" }} • Arsye: {{ f.reason|default:"—" }}
+                    </div>
                   </div>
                   {% if f.status == "UNPAID" %}
                     <span class="rounded-full bg-amber-500/10 px-2 py-1 text-xs font-extrabold text-amber-700 dark:text-amber-300">E papaguar</span>
                   {% elif f.status == "PAID" %}
-                    <span class="rounded-full bg-brand-100 px-2 py-1 text-xs font-extrabold text-brand-800 dark:bg-brand-900/40 dark:text-brand-100">E paguar</span>
+                    <span class="rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-extrabold text-emerald-700 dark:text-emerald-300">E paguar</span>
                   {% else %}
                     <span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-extrabold text-slate-800 dark:bg-slate-900/40 dark:text-slate-100">E falur</span>
                   {% endif %}
                 </div>
+
+                {% if f.portal_payments %}
+                  <div class="mt-3 rounded-2xl bg-slate-100/70 p-3 dark:bg-slate-900/45">
+                    <div class="text-[11px] font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                      Pagesa të regjistruara
+                    </div>
+                    <div class="mt-2 space-y-1.5 text-xs">
+                      {% for p in f.portal_payments|slice:":2" %}
+                        <div class="flex items-center justify-between gap-3">
+                          <span class="font-semibold text-slate-700 dark:text-slate-200">{{ p.created_at|date:"Y-m-d H:i" }}</span>
+                          <span class="font-extrabold text-slate-900 dark:text-white">{{ p.amount|floatformat:2 }} € • {{ p.get_method_display }}</span>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% elif f.status == "UNPAID" %}
+                  <div class="mt-3 rounded-2xl bg-amber-500/10 px-3 py-2 text-xs font-semibold text-amber-800 dark:text-amber-200">
+                    Për pagesë, paraqitu në sportelin e bibliotekës me kartën e anëtarit.
+                  </div>
+                {% endif %}
               </div>
             {% empty %}
               <div class="rounded-2xl border border-slate-200 p-4 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
-                S’ka gjoba.
+                S’ka gjoba të regjistruara për momentin.
               </div>
             {% endfor %}
+          </div>
+
+          <div class="mt-4 rounded-2xl border border-slate-200 bg-white/70 p-3 dark:border-slate-800 dark:bg-slate-950/45">
+            <div class="text-xs font-extrabold text-slate-700 dark:text-slate-200">Pagesat e fundit</div>
+            <div class="mt-2 space-y-1.5">
+              {% for p in latest_payments %}
+                <div class="flex items-start justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2 text-xs dark:bg-slate-900/50">
+                  <div class="min-w-0">
+                    <div class="font-semibold text-slate-700 dark:text-slate-200">{{ p.created_at|date:"Y-m-d H:i" }}</div>
+                    <div class="truncate text-slate-500 dark:text-slate-400">Gjoba #{{ p.fine_id }} • {{ p.get_method_display }}</div>
+                  </div>
+                  <div class="font-extrabold text-slate-900 dark:text-white">{{ p.amount|floatformat:2 }} €</div>
+                </div>
+              {% empty %}
+                <div class="text-xs text-slate-500 dark:text-slate-400">Ende nuk ka pagesa të regjistruara.</div>
+              {% endfor %}
+            </div>
           </div>
         </div>
       </aside>

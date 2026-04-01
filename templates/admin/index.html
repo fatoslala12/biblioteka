@@ -402,6 +402,7 @@
       border-bottom: 1px solid rgba(148,163,184,.18) !important;
     }
     .sl-dashboard .sl-exec-row { margin-top: 1.25rem; }
+    .sl-dashboard .sl-exec-row.sl-exec-after-analytics { margin-top: 0.35rem; }
     .sl-dashboard .sl-exec-card .card-body { padding: 1rem 1rem !important; text-align: left !important; }
     .sl-dashboard .sl-exec-card {
       border-left: 4px solid rgba(148,163,184,.35);
@@ -930,10 +931,10 @@
 
     <div class="row sl-section-title-row">
       <div class="col-12">
-        <h5 class="sl-section-title">Executive Overview</h5>
+        <h5 class="sl-section-title">Përmbledhje ekzekutive</h5>
       </div>
     </div>
-    <div class="row sl-exec-row g-3">
+    <div class="row sl-exec-row sl-exec-after-analytics g-3">
       {% for m in executive_overview.metrics %}
       <div class="col-xl-3 col-lg-6 col-md-6 col-12">
         <a href="{{ m.url }}" class="text-decoration-none">
@@ -952,7 +953,7 @@
                 {% endif %}
               </div>
               <div class="sl-exec-value mt-1">{{ m.value }}</div>
-              <div class="sl-exec-threshold">Threshold: {{ m.threshold }}</div>
+              <div class="sl-exec-threshold">Pragu: {{ m.threshold }}</div>
               <div class="sl-sparkline-wrap">
                 <div class="sl-spark-tooltip" aria-hidden="true"></div>
                 <div class="sl-sparkline" aria-label="7 ditët e fundit">
@@ -969,7 +970,7 @@
                 </div>
               </div>
               <div class="sl-spark-meta">
-                <span>7d trend</span>
+                <span>Trend 7d</span>
                 <span>Δ {{ m.trend_delta }}</span>
               </div>
             </div>
@@ -977,24 +978,6 @@
         </a>
       </div>
       {% endfor %}
-      <div class="col-12">
-        <div class="card sl-exec-actions-card">
-          <div class="card-header">
-            <h5 class="m-0 font-weight-bold">Action Needed Today</h5>
-          </div>
-          <div class="card-body">
-            {% if executive_overview.actions %}
-              <ul class="sl-exec-actions-list">
-                {% for action in executive_overview.actions %}
-                  <li>{{ action }}</li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <div class="text-muted font-weight-bold text-center">Gjithçka është në kontroll për momentin.</div>
-            {% endif %}
-          </div>
-        </div>
-      </div>
     </div>
 
     <div class="row sl-section-title-row">
@@ -1249,6 +1232,27 @@
           </div>
         </div>
     </div>
+    </div>
+
+    <div class="row sl-exec-row g-3">
+      <div class="col-12">
+        <div class="card sl-exec-actions-card">
+          <div class="card-header">
+            <h5 class="m-0 font-weight-bold">Veprime prioritare sot</h5>
+          </div>
+          <div class="card-body">
+            {% if executive_overview.actions %}
+              <ul class="sl-exec-actions-list">
+                {% for action in executive_overview.actions %}
+                  <li>{{ action }}</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <div class="text-muted font-weight-bold text-center">Gjithçka është në kontroll për momentin.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>

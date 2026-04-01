@@ -1,0 +1,195 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <style>
+    .app-circulation.model-loan.change-form .sl-loan-shell {
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 20px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 100% 0, rgba(20, 184, 166, 0.12), transparent 44%),
+        linear-gradient(180deg, #ffffff, #f8fbff);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.09);
+    }
+    .app-circulation.model-loan.change-form .sl-loan-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(15, 118, 110, 0.9));
+      border-bottom: 1px solid rgba(148, 163, 184, 0.28);
+      color: #fff;
+    }
+    .app-circulation.model-loan.change-form .sl-loan-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.2;
+      color: #fff;
+    }
+    .app-circulation.model-loan.change-form .sl-loan-sub {
+      margin-top: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.86);
+    }
+    .app-circulation.model-loan.change-form .sl-loan-chip {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 900;
+      color: #0f172a;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      white-space: nowrap;
+    }
+    .app-circulation.model-loan.change-form .sl-loan-body {
+      padding: 14px 16px 8px;
+    }
+    .app-circulation.model-loan.change-form .sl-loan-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .app-circulation.model-loan.change-form .sl-loan-kpi {
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px 10px;
+    }
+    .app-circulation.model-loan.change-form .sl-loan-kpi-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .app-circulation.model-loan.change-form .sl-loan-kpi-value {
+      margin-top: 2px;
+      font-size: 14px;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.2;
+      word-break: break-word;
+    }
+    .app-circulation.model-loan.change-form .sl-loan-kpi--active .sl-loan-kpi-value { color: #0f766e; }
+    .app-circulation.model-loan.change-form .sl-loan-kpi--returned .sl-loan-kpi-value { color: #166534; }
+    .app-circulation.model-loan.change-form .sl-loan-kpi--late .sl-loan-kpi-value { color: #b45309; }
+    .app-circulation.model-loan.change-form .sl-loan-kpi--normal .sl-loan-kpi-value { color: #0f172a; }
+    .app-circulation.model-loan.change-form .sl-loan-actions {
+      margin-top: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+      padding: 10px 12px;
+    }
+    .app-circulation.model-loan.change-form .card {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 16px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+    .app-circulation.model-loan.change-form .nav-tabs {
+      border-bottom-color: rgba(148, 163, 184, 0.32);
+      background: linear-gradient(180deg, rgba(248, 250, 252, 0.9), rgba(255, 255, 255, 0.82));
+    }
+    .app-circulation.model-loan.change-form .nav-tabs .nav-link {
+      border-radius: 999px;
+      margin: 8px 4px 8px 0;
+      font-weight: 800;
+      color: #0f172a;
+      border: 1px solid transparent;
+      padding: 7px 12px;
+    }
+    .app-circulation.model-loan.change-form .nav-tabs .nav-link.active {
+      border-color: rgba(13, 148, 136, 0.24);
+      color: #0f766e;
+      background: rgba(20, 184, 166, 0.12);
+      box-shadow: 0 10px 24px rgba(20, 184, 166, 0.12);
+    }
+    .app-circulation.model-loan.change-form .card-body .form-group {
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(248, 250, 252, 0.62);
+      margin-bottom: 10px;
+    }
+    .app-circulation.model-loan.change-form .card-body .form-group label {
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+    .app-circulation.model-loan.change-form .submit-row {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at 20% 0, rgba(20, 184, 166, 0.12), transparent 42%),
+        #ffffff;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      padding: 12px !important;
+    }
+    .app-circulation.model-loan.change-form .submit-row input,
+    .app-circulation.model-loan.change-form .submit-row .deletelink {
+      border-radius: 999px !important;
+      font-weight: 800 !important;
+    }
+    @media (max-width: 991.98px) {
+      .app-circulation.model-loan.change-form .sl-loan-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .app-circulation.model-loan.change-form .sl-loan-title {
+        font-size: 17px;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block field_sets %}
+  <div class="col-12 col-xl-10">
+    <div class="sl-loan-shell">
+      <div class="sl-loan-head">
+        <div>
+          <h2 class="sl-loan-title">{% if add %}Shto huazim të ri{% else %}Detajet e huazimit{% endif %}</h2>
+          <div class="sl-loan-sub">Pamje premium për menaxhimin e statusit, afatit dhe auditimit të huazimit.</div>
+        </div>
+        <span class="sl-loan-chip">{% if add %}Regjistrim i ri{% else %}Huazim #{{ original.id }}{% endif %}</span>
+      </div>
+      <div class="sl-loan-body">
+        {% if not add and original %}
+          <div class="sl-loan-kpis">
+            <div class="sl-loan-kpi">
+              <div class="sl-loan-kpi-label">Anëtari</div>
+              <div class="sl-loan-kpi-value">{{ original.member.full_name|default:original.member.member_no }}</div>
+            </div>
+            <div class="sl-loan-kpi">
+              <div class="sl-loan-kpi-label">Kopja / libri</div>
+              <div class="sl-loan-kpi-value">{{ original.copy.barcode }} — {{ original.copy.book.title }}</div>
+            </div>
+            <div class="sl-loan-kpi {% if original.status == 'RETURNED' %}sl-loan-kpi--returned{% elif original.status == 'ACTIVE' %}sl-loan-kpi--active{% else %}sl-loan-kpi--normal{% endif %}">
+              <div class="sl-loan-kpi-label">Statusi</div>
+              <div class="sl-loan-kpi-value">{{ original.get_status_display }}</div>
+            </div>
+            <div class="sl-loan-kpi {% if original.status == 'ACTIVE' %}sl-loan-kpi--late{% else %}sl-loan-kpi--normal{% endif %}">
+              <div class="sl-loan-kpi-label">Afati i kthimit</div>
+              <div class="sl-loan-kpi-value">{{ original.due_at|date:"d/m/Y H:i" }}</div>
+            </div>
+          </div>
+        {% endif %}
+        {{ block.super }}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block submit_buttons_bottom %}
+  <div class="sl-loan-actions">
+    {{ block.super }}
+  </div>
+{% endblock %}
+

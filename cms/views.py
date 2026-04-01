@@ -96,6 +96,9 @@ def home(request):
         )
         .order_by("-available_copies", "-created_at")[:6]
     )
+    book_of_week = featured[0] if featured else None
+    top_announcement = announcements_data[0] if announcements_data else None
+    today_event = home_events[0] if home_events else None
 
     recent = Book.objects.filter(is_deleted=False).order_by("-created_at")[:6]
 
@@ -136,6 +139,9 @@ def home(request):
             "announcements": announcements_data,
             "home_events": home_events,
             "home_videos": home_videos,
+            "book_of_week": book_of_week,
+            "top_announcement": top_announcement,
+            "today_event": today_event,
         },
     )
 

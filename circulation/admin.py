@@ -139,6 +139,7 @@ class HoldAdminForm(forms.ModelForm):
 @admin.register(Loan)
 class LoanAdmin(admin.ModelAdmin):
     change_list_template = "admin/circulation/loan/change_list.html"
+    change_form_template = "admin/circulation/loan/change_form.html"
     list_display = (
         "loan_id_display",
         "member_display",

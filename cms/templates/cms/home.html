@@ -25,17 +25,15 @@
           <p class="mt-2 flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
             <span>📍</span> Qendër kulturore dhe edukative për komunitetin e Kamzës.
           </p>
-          <div class="sl-hero-head mt-4 rounded-2xl border border-brand-200/60 bg-white/75 p-3 dark:border-brand-900/40 dark:bg-slate-900/50">
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-              <div class="flex w-full flex-col justify-end gap-2 sm:w-auto sm:flex-row">
-                <a href="/catalog/" class="sl-hero-btn sl-hero-btn-primary min-h-[42px] rounded-xl bg-brand-600 px-4 py-2.5 text-center text-sm font-extrabold text-white shadow-md hover:bg-brand-700 active:bg-brand-800">Shfleto katalogun</a>
-                <a href="/regjistrohu/" class="sl-hero-btn sl-hero-btn-secondary min-h-[42px] rounded-xl border border-brand-300 bg-white px-4 py-2.5 text-center text-sm font-extrabold text-brand-800 shadow-sm hover:bg-brand-50 active:bg-brand-100 dark:border-brand-800/40 dark:bg-slate-900 dark:text-brand-100">Bëhu anëtar</a>
-              </div>
+          <div class="sl-hero-head sl-hero-cta-bar mt-4 flex justify-center rounded-2xl border border-brand-200/60 bg-gradient-to-b from-white/95 to-brand-50/40 p-4 dark:border-brand-900/40 dark:from-slate-900/80 dark:to-slate-900/50 sm:p-5">
+            <div class="flex w-full max-w-lg flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:justify-center sm:gap-4">
+              <a href="/catalog/" class="sl-hero-btn sl-hero-btn-primary min-h-[48px] flex flex-1 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 px-6 py-3 text-center text-sm font-extrabold tracking-tight text-white shadow-lg shadow-brand-600/35 ring-2 ring-brand-400/30 ring-offset-2 ring-offset-white/80 hover:from-brand-600 hover:to-brand-800 hover:shadow-xl hover:shadow-brand-600/40 active:scale-[0.98] dark:ring-offset-slate-900/80 sm:flex-initial sm:min-w-[200px]">Shfleto katalogun</a>
+              <a href="/regjistrohu/" class="sl-hero-btn sl-hero-btn-secondary min-h-[48px] flex flex-1 items-center justify-center rounded-2xl border-2 border-brand-400/50 bg-white/95 px-6 py-3 text-center text-sm font-extrabold tracking-tight text-brand-800 shadow-md shadow-brand-900/5 ring-2 ring-brand-200/40 ring-offset-2 ring-offset-brand-50/90 hover:border-brand-500 hover:bg-white hover:shadow-lg active:scale-[0.98] dark:border-brand-600/50 dark:bg-slate-900/90 dark:text-brand-100 dark:ring-brand-800/40 dark:ring-offset-slate-900 sm:flex-initial sm:min-w-[200px]">Bëhu anëtar</a>
             </div>
           </div>
         </div>
-        <div class="sl-hero-photo-wrap relative min-h-[200px] w-full overflow-hidden rounded-b-2xl bg-slate-100 dark:bg-slate-900/50 lg:col-span-5 lg:min-h-[280px] lg:rounded-b-none lg:rounded-r-2xl">
-          <img src="{% static hero_library_image %}" alt="Biblioteka Kamëz" width="960" height="720" sizes="(max-width:1024px) 100vw, 41vw" class="sl-hero-photo h-56 w-full object-cover sm:h-64 lg:h-full lg:min-h-[280px]" loading="eager" decoding="async" fetchpriority="high" />
+        <div class="sl-hero-photo-wrap sl-hero-photo-premium relative min-h-[200px] w-full overflow-hidden rounded-b-2xl bg-slate-100 dark:bg-slate-900/50 lg:col-span-5 lg:min-h-[280px] lg:rounded-b-none lg:rounded-r-2xl">
+          <img src="{% static hero_library_image %}" alt="Biblioteka Kamëz" width="960" height="720" sizes="(max-width:1024px) 100vw, 41vw" class="sl-hero-photo relative z-[1] h-56 w-full object-cover sm:h-64 lg:h-full lg:min-h-[280px]" loading="eager" decoding="async" fetchpriority="high" />
         </div>
       </div>
     </div>
@@ -190,9 +188,9 @@
         <div class="text-center text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 sm:text-xs">Pamje nga biblioteka</div>
         <div class="mt-2 grid grid-cols-2 gap-2 sm:mt-3 sm:grid-cols-4 sm:gap-3">
           {% for item in home_gallery %}
-          <div class="group relative min-w-0 overflow-hidden rounded-lg border border-slate-200/80 bg-white shadow-sm dark:border-slate-700 sm:rounded-xl">
-            <img src="{% static item.path %}" alt="{{ item.caption }}" width="420" height="280" sizes="(max-width:640px) 50vw, 25vw" class="h-24 w-full min-w-0 object-cover sm:h-28 md:h-32" loading="lazy" decoding="async" data-sl-skip-skeleton="1" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 120%22 fill=%22%23e2e8f0%22><text x=%2250%25%22 y=%2255%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%2294a3b8%22 font-size=%2212%22 font-family=%22sans-serif%22>Foto</text></svg>';" />
-            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-2 py-2">
+          <div class="sl-premium-img-cell group relative min-w-0 overflow-hidden rounded-lg border border-slate-200/80 bg-white shadow-sm dark:border-slate-700 sm:rounded-xl">
+            <img src="{% static item.path %}" alt="{{ item.caption }}" width="420" height="280" sizes="(max-width:640px) 50vw, 25vw" class="relative z-[1] h-24 w-full min-w-0 object-cover transition duration-500 group-hover:scale-[1.03] sm:h-28 md:h-32" loading="lazy" decoding="async" data-sl-skip-skeleton="1" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 120%22 fill=%22%23e2e8f0%22><text x=%2250%25%22 y=%2255%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%2294a3b8%22 font-size=%2212%22 font-family=%22sans-serif%22>Foto</text></svg>';" />
+            <div class="absolute inset-x-0 bottom-0 z-[3] bg-gradient-to-t from-black/60 to-transparent px-2 py-2">
               <span class="text-xs font-semibold text-white drop-shadow">{{ item.caption }}</span>
             </div>
           </div>
@@ -371,6 +369,93 @@
         transform: scale(1);
       }
     }
+    /* Korniza e fotos hero: hije + shkëlqim që lëviz vazhdimisht */
+    @keyframes sl-hero-frame-glow {
+      0%, 100% {
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+          0 14px 44px -10px rgba(49, 145, 137, 0.35),
+          0 4px 16px rgba(15, 23, 42, 0.08);
+      }
+      50% {
+        box-shadow:
+          inset 0 0 0 2px rgba(255, 255, 255, 0.38),
+          0 24px 64px -6px rgba(49, 145, 137, 0.55),
+          0 8px 24px rgba(15, 23, 42, 0.12);
+      }
+    }
+    @keyframes sl-hero-frame-glow-dark {
+      0%, 100% {
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+          0 16px 48px -12px rgba(49, 145, 137, 0.28),
+          0 6px 20px rgba(0, 0, 0, 0.35);
+      }
+      50% {
+        box-shadow:
+          inset 0 0 0 2px rgba(255, 255, 255, 0.14),
+          0 28px 72px -8px rgba(72, 209, 204, 0.35),
+          0 10px 28px rgba(0, 0, 0, 0.45);
+      }
+    }
+    .sl-hero-photo-premium {
+      animation: sl-hero-frame-glow 4.2s ease-in-out infinite;
+    }
+    .dark .sl-hero-photo-premium {
+      animation-name: sl-hero-frame-glow-dark;
+    }
+    .sl-hero-photo-premium::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: linear-gradient(
+        115deg,
+        transparent 35%,
+        rgba(255, 255, 255, 0.18) 48%,
+        rgba(255, 255, 255, 0.28) 50%,
+        rgba(255, 255, 255, 0.16) 52%,
+        transparent 65%
+      );
+      background-size: 220% 100%;
+      animation: sl-hero-shimmer 7s ease-in-out infinite;
+      mix-blend-mode: overlay;
+    }
+    .dark .sl-hero-photo-premium::after {
+      background: linear-gradient(
+        115deg,
+        transparent 38%,
+        rgba(255, 255, 255, 0.06) 50%,
+        transparent 62%
+      );
+      background-size: 220% 100%;
+      mix-blend-mode: soft-light;
+    }
+    @keyframes sl-hero-shimmer {
+      0% { background-position: 120% 0; opacity: 0.65; }
+      50% { opacity: 1; }
+      100% { background-position: -120% 0; opacity: 0.65; }
+    }
+    /* Galeri: hije pulsuese rreth çdo fotoje */
+    @keyframes sl-img-cell-glow {
+      0%, 100% {
+        box-shadow:
+          0 2px 8px rgba(15, 23, 42, 0.06),
+          0 0 0 1px rgba(49, 145, 137, 0.08);
+      }
+      50% {
+        box-shadow:
+          0 10px 28px -4px rgba(49, 145, 137, 0.22),
+          0 0 0 1px rgba(49, 145, 137, 0.2);
+      }
+    }
+    .sl-premium-img-cell {
+      animation: sl-img-cell-glow 5.5s ease-in-out infinite;
+    }
+    .sl-premium-img-cell:nth-child(2) { animation-delay: -1.2s; }
+    .sl-premium-img-cell:nth-child(3) { animation-delay: -2.4s; }
+    .sl-premium-img-cell:nth-child(4) { animation-delay: -3.6s; }
 
     /* Orbe ambient — lëvizje e butë */
     @keyframes sl-home-orb-drift-a {
@@ -393,14 +478,14 @@
     @keyframes sl-premium-glow-light {
       0%, 100% {
         box-shadow:
-          0 4px 14px rgba(15, 23, 42, 0.06),
-          0 14px 36px -10px rgba(49, 145, 137, 0.16),
-          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+          0 6px 18px rgba(15, 23, 42, 0.07),
+          0 16px 42px -10px rgba(49, 145, 137, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.92);
       }
       50% {
         box-shadow:
-          0 10px 28px rgba(15, 23, 42, 0.1),
-          0 26px 52px -8px rgba(49, 145, 137, 0.3),
+          0 12px 32px rgba(15, 23, 42, 0.11),
+          0 30px 60px -6px rgba(49, 145, 137, 0.38),
           inset 0 1px 0 rgba(255, 255, 255, 1);
       }
     }
@@ -467,6 +552,9 @@
         opacity: 1 !important;
         transform: none !important;
       }
+      .sl-hero-photo-premium { animation: none !important; }
+      .sl-hero-photo-premium::after { animation: none !important; opacity: 0; }
+      .sl-premium-img-cell { animation: none !important; }
       .sl-home-orb-a,
       .sl-home-orb-b,
       .sl-home-orb-c { animation: none !important; opacity: 0.7; transform: none !important; }

@@ -5,10 +5,15 @@
 
 {% block content %}
   <!-- Mirë se vini + foto kryesore + galeri foto të vogla (hyrja e parë) -->
-  <section class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-    <div class="min-w-0 overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800/40">
+  <section class="relative mx-auto w-full max-w-7xl px-3 pb-6 pt-4 sm:px-6 sm:pb-8 sm:pt-6 lg:px-8">
+    <div class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[min(92vw,520px)] overflow-hidden sm:h-[480px]" aria-hidden="true">
+      <div class="sl-home-orb sl-home-orb-a absolute -left-[20%] top-[-18%] h-[min(85vw,380px)] w-[min(85vw,380px)] rounded-full bg-brand-400/30 blur-3xl dark:bg-brand-500/25"></div>
+      <div class="sl-home-orb sl-home-orb-b absolute -right-[12%] top-[8%] h-[min(70vw,320px)] w-[min(70vw,320px)] rounded-full bg-cyan-200/35 blur-3xl dark:bg-slate-600/25"></div>
+      <div class="sl-home-orb sl-home-orb-c absolute left-[20%] bottom-[-30%] h-[min(60vw,280px)] w-[min(60vw,280px)] rounded-full bg-emerald-200/25 blur-3xl dark:bg-emerald-900/20"></div>
+    </div>
+    <div class="sl-premium-surface sl-premium-hero min-w-0 overflow-hidden rounded-2xl border border-slate-200/90 bg-white/95 shadow-md ring-1 ring-white/70 backdrop-blur-sm dark:border-slate-600/50 dark:bg-slate-800/55 dark:ring-white/5 sm:rounded-3xl">
       <div class="grid grid-cols-1 gap-0 lg:grid-cols-12">
-        <div class="min-w-0 p-4 sm:p-6 lg:col-span-7 lg:p-8">
+        <div class="sl-hero-enter min-w-0 p-4 sm:p-6 lg:col-span-7 lg:p-8">
           <div class="flex min-w-0 flex-row flex-wrap items-center gap-3 sm:gap-4">
             <img src="{% static 'img/logo_kamez.png' %}" alt="Bashkia Kamëz" width="64" height="80" class="h-11 w-auto max-h-11 shrink-0 object-contain object-left sm:h-12 sm:max-h-12" loading="eager" decoding="async" fetchpriority="high" />
             <div class="inline-flex min-w-0 items-center rounded-full bg-brand-100 px-2.5 py-1 text-xs font-extrabold leading-none text-brand-800 dark:bg-brand-900/50 dark:text-brand-100">Bashkia Kamëz</div>
@@ -39,14 +44,14 @@
   <!-- Hero premium + CTA + What happens today -->
   <section class="relative">
     <div class="pointer-events-none absolute inset-0 overflow-hidden">
-      <div class="absolute -top-12 left-0 right-0 h-48 bg-gradient-to-r from-brand-200/50 via-white to-brand-100/50 blur-2xl"></div>
+      <div class="sl-premium-bg-drift absolute -top-12 left-0 right-0 h-52 bg-gradient-to-r from-brand-200/55 via-white to-brand-100/55 blur-2xl dark:from-brand-900/30 dark:via-slate-900/40 dark:to-brand-800/25"></div>
     </div>
 
-    <div class="relative mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 sm:py-7 lg:px-8">
+    <div class="relative mx-auto w-full max-w-7xl px-3 py-5 sm:px-6 sm:py-7 lg:px-8">
       <div class="mt-2 grid grid-cols-1 items-stretch gap-4 sm:gap-6 lg:grid-cols-12 lg:gap-8">
         <!-- Kolona e majte: mesazh i paster + CTA ne qender -->
         <div class="lg:col-span-7">
-          <div class="sl-quote-card h-full min-h-[320px] rounded-2xl border border-slate-200/80 bg-white/90 p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:p-6">
+          <div class="sl-quote-card sl-premium-surface sl-premium-surface-slow h-full min-h-[280px] rounded-2xl border border-slate-200/80 bg-white/90 p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:min-h-[320px] sm:rounded-3xl sm:p-6">
             <div class="flex h-full flex-col text-left">
               <p class="mx-auto mt-3 max-w-xl text-center text-xl font-black leading-tight tracking-tight text-slate-900 dark:text-white sm:text-3xl">
                 ✨ “Fillo me një faqe sot. Nesër mund të jetë një jetë tjetër.” 🌙📖
@@ -109,7 +114,7 @@
 
         <!-- Kolona e djathte: cfare po ndodh sot -->
         <div class="lg:col-span-5">
-          <div class="h-full min-h-[320px] min-w-0 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:p-5">
+          <div class="sl-premium-surface sl-premium-surface-slow h-full min-h-[280px] min-w-0 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:min-h-[320px] sm:rounded-3xl sm:p-5">
             <div class="text-sm font-extrabold text-slate-800 dark:text-white">Çfarë po ndodh sot</div>
             <div class="mt-3 space-y-3">
               <div class="rounded-xl border border-brand-200/70 bg-brand-50/70 p-3 dark:border-brand-900/40 dark:bg-brand-900/20">
@@ -149,14 +154,14 @@
       </div>
 
       <!-- Tituj te rekomanduar: carousel horizontal me cover -->
-      <div class="mt-6 min-w-0 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:p-5">
+      <div class="sl-premium-surface sl-premium-surface-slow mt-6 min-w-0 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:rounded-3xl sm:p-5">
         <div class="flex items-center justify-between gap-2">
           <span class="text-sm font-extrabold text-slate-800 dark:text-white">Tituj të rekomanduar</span>
           <a class="text-xs font-bold text-brand-600 hover:text-brand-700 dark:text-brand-400" href="/catalog/">Të gjitha →</a>
         </div>
         <div class="mt-3 flex gap-3 overflow-x-auto pb-1 snap-x snap-mandatory">
           {% for b in featured %}
-            <a href="/books/{{ b.id }}/" class="snap-start shrink-0 w-52 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-900/40">
+            <a href="/books/{{ b.id }}/" class="snap-start shrink-0 w-[min(100%,13.5rem)] max-w-[13.5rem] rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] dark:border-slate-700 dark:bg-slate-900/40 sm:w-52">
               <div class="relative h-44 overflow-hidden rounded-xl border border-slate-200 bg-gradient-to-br from-brand-100 to-brand-50 dark:border-slate-700 dark:from-slate-800 dark:to-slate-900">
                 <img
                   src="https://covers.openlibrary.org/b/isbn/{{ b.isbn }}-M.jpg?default=false"
@@ -181,7 +186,7 @@
       </div>
 
       {% if home_gallery %}
-      <div class="mt-4 min-w-0 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:p-5" style="content-visibility:auto; contain-intrinsic-size: 1px 220px;">
+      <div class="sl-premium-surface sl-premium-surface-slow mt-4 min-w-0 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:rounded-3xl sm:p-5" style="content-visibility:auto; contain-intrinsic-size: 1px 220px;">
         <div class="text-center text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 sm:text-xs">Pamje nga biblioteka</div>
         <div class="mt-2 grid grid-cols-2 gap-2 sm:mt-3 sm:grid-cols-4 sm:gap-3">
           {% for item in home_gallery %}
@@ -354,9 +359,6 @@
       0%, 100% { transform: translateY(0) scale(1); }
       50% { transform: translateY(-1px) scale(1.03); }
     }
-    @media (prefers-reduced-motion: reduce) {
-      .sl-book-icon { animation: none; }
-    }
     /* Foto hero: hyrje me fade + lehtë zhvendim */
     .sl-hero-photo-wrap .sl-hero-photo {
       opacity: 0;
@@ -369,11 +371,121 @@
         transform: scale(1);
       }
     }
+
+    /* Orbe ambient — lëvizje e butë */
+    @keyframes sl-home-orb-drift-a {
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.95; }
+      50% { transform: translate(8%, 6%) scale(1.1); opacity: 0.75; }
+    }
+    @keyframes sl-home-orb-drift-b {
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.9; }
+      50% { transform: translate(-7%, 5%) scale(1.07); opacity: 0.7; }
+    }
+    @keyframes sl-home-orb-drift-c {
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.85; }
+      50% { transform: translate(5%, -6%) scale(1.12); opacity: 0.65; }
+    }
+    .sl-home-orb-a { animation: sl-home-orb-drift-a 22s ease-in-out infinite; }
+    .sl-home-orb-b { animation: sl-home-orb-drift-b 26s ease-in-out infinite -3s; }
+    .sl-home-orb-c { animation: sl-home-orb-drift-c 30s ease-in-out infinite -6s; }
+
+    /* Hije që “lëviz” — premium cards */
+    @keyframes sl-premium-glow-light {
+      0%, 100% {
+        box-shadow:
+          0 4px 14px rgba(15, 23, 42, 0.06),
+          0 14px 36px -10px rgba(49, 145, 137, 0.16),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      }
+      50% {
+        box-shadow:
+          0 10px 28px rgba(15, 23, 42, 0.1),
+          0 26px 52px -8px rgba(49, 145, 137, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 1);
+      }
+    }
+    @keyframes sl-premium-glow-dark {
+      0%, 100% {
+        box-shadow:
+          0 4px 18px rgba(0, 0, 0, 0.45),
+          0 16px 40px -12px rgba(49, 145, 137, 0.22),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      }
+      50% {
+        box-shadow:
+          0 12px 36px rgba(0, 0, 0, 0.55),
+          0 28px 64px -10px rgba(72, 209, 204, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      }
+    }
+    .sl-premium-surface {
+      animation: sl-premium-glow-light 6.8s ease-in-out infinite;
+    }
+    .dark .sl-premium-surface {
+      animation-name: sl-premium-glow-dark;
+    }
+    .sl-premium-surface-slow {
+      animation-duration: 11.5s;
+      animation-delay: -2s;
+    }
+    .sl-premium-hero {
+      animation-duration: 5.8s;
+    }
+
+    /* Sfond blur i seksionit të dytë — pulsim i lehtë */
+    @keyframes sl-premium-bg-drift {
+      0% { opacity: 0.45; transform: scaleX(0.94) translateX(-2%); }
+      100% { opacity: 0.82; transform: scaleX(1.05) translateX(2%); }
+    }
+    .sl-premium-bg-drift {
+      transform-origin: center;
+      animation: sl-premium-bg-drift 16s ease-in-out infinite alternate;
+    }
+    .dark .sl-premium-bg-drift {
+      animation-duration: 18s;
+    }
+
+    /* Hyrje e përmbajtjes së majtë të hero */
+    @keyframes sl-fade-up-soft {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .sl-hero-enter > * {
+      opacity: 0;
+      animation: sl-fade-up-soft 0.72s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .sl-hero-enter > *:nth-child(1) { animation-delay: 0.04s; }
+    .sl-hero-enter > *:nth-child(2) { animation-delay: 0.1s; }
+    .sl-hero-enter > *:nth-child(3) { animation-delay: 0.16s; }
+    .sl-hero-enter > *:nth-child(4) { animation-delay: 0.22s; }
+    .sl-hero-enter > *:nth-child(5) { animation-delay: 0.28s; }
+
     @media (prefers-reduced-motion: reduce) {
+      .sl-book-icon { animation: none !important; }
       .sl-hero-photo-wrap .sl-hero-photo {
-        animation: none;
-        opacity: 1;
-        transform: none;
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .sl-home-orb-a,
+      .sl-home-orb-b,
+      .sl-home-orb-c { animation: none !important; opacity: 0.7; transform: none !important; }
+      .sl-premium-surface,
+      .sl-premium-surface-slow,
+      .sl-premium-hero {
+        animation: none !important;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+      }
+      .dark .sl-premium-surface,
+      .dark .sl-premium-surface-slow,
+      .dark .sl-premium-hero {
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+      }
+      .sl-premium-bg-drift { animation: none !important; opacity: 0.65; transform: none !important; }
+      .sl-hero-enter > * {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
       }
     }
   </style>

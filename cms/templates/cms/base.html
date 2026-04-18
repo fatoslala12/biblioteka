@@ -76,9 +76,6 @@
       body { overflow-x: hidden; }
       #sl-ajax-container { min-width: 0; overflow-x: hidden; }
       #sl-ajax-container img { max-width: 100%; height: auto; }
-      @media (max-width: 640px) {
-        .site-header .leading-tight .text-xs { display: none; }
-      }
     </style>
   </head>
   <body class="h-full bg-brand-50 font-sans text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
@@ -90,9 +87,6 @@
           <div class="flex h-16 items-center justify-between gap-3">
             <a href="/" class="group flex min-w-0 items-center gap-2">
               <img src="{% static 'img/logo_biblioteka.png' %}" alt="Biblioteka Kamëz" width="200" height="48" class="h-9 w-auto max-w-[min(52vw,200px)] object-contain object-left sm:h-10 sm:max-w-[220px]" decoding="async" />
-              <div class="hidden min-w-0 leading-tight sm:block">
-                <div class="text-xs text-white/80">Katalog • Rezervime • Menaxhim</div>
-              </div>
             </a>
 
             <button id="sl-mobile-menu-btn" type="button" class="md:hidden rounded-xl p-2 text-white hover:bg-white/10 aria-expanded=false" aria-label="Hap menunë">
@@ -308,6 +302,7 @@
         /* Image skeleton: show shimmer until loaded */
         document.querySelectorAll('img[loading="lazy"]').forEach(function (img) {
           if (img.closest('.sl-img-skeleton')) return;
+          if (img.getAttribute('data-sl-skip-skeleton') === '1') return;
           var w = document.createElement('div');
           w.className = 'sl-img-skeleton';
           img.parentNode.insertBefore(w, img);

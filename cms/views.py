@@ -1,3 +1,6 @@
+from pathlib import Path
+
+from django.conf import settings
 from django.contrib import messages
 from django.core.mail import EmailMultiAlternatives
 from django.core.paginator import Paginator
@@ -18,6 +21,55 @@ from cms.models import Announcement, Event, Video
 
 def _is_ajax(request):
     return request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+
+def _static_img_dir() -> Path:
+    return Path(settings.BASE_DIR) / "static" / "img"
+
+
+def _first_existing_img_path(candidates: list[str], fallback: str) -> str:
+    """Kthen rrugën relative `img/...` për static; përdor skedarin e parë që ekziston në disk."""
+    img_dir = _static_img_dir()
+    for rel in candidates:
+        tail = rel[4:] if rel.startswith("img/") else rel
+        if (img_dir / tail).is_file():
+            return f"img/{tail}"
+    fb = fallback[4:] if fallback.startswith("img/") else fallback
+    return f"img/{fb}"
+
+
+def _home_gallery_entries():
+    """Preferon *_thumb.webp / *_thumb.jpg për ngarkim më të shpejtë (krijo me scripts/build_image_thumbs.py)."""
+    captions = ["Salla e leximit", "Hapësira", "Katalogu", "Evente"]
+    out = []
+    for i, caption in enumerate(captions, start=1):
+        stem = str(i)
+        path = _first_existing_img_path(
+            [
+                f"img/home-gallery/{stem}_thumb.webp",
+                f"img/home-gallery/{stem}_thumb.jpg",
+                f"img/home-gallery/{stem}.webp",
+                f"img/home-gallery/{stem}.jpg",
+                f"img/home-gallery/{stem}.jpeg",
+                f"img/home-gallery/{stem}.png",
+            ],
+            f"img/home-gallery/{stem}.jpg",
+        )
+        out.append({"path": path, "caption": caption})
+    return out
+
+
+def _hero_library_static_path() -> str:
+    return _first_existing_img_path(
+        [
+            "img/kamez-library_thumb.webp",
+            "img/kamez-library_thumb.jpg",
+            "img/kamez-library.webp",
+            "img/kamez-library.jpg",
+            "img/kamez-library.png",
+        ],
+        "img/kamez-library.png",
+    )
 
 
 def healthz(request):
@@ -107,18 +159,14 @@ def home(request):
         .filter(book_count__gt=0)
         .order_by("-book_count", "name")[:5]
     )
-    # Foto të vogla për faqen kryesore (vendosni 1.jpg, 2.jpg, 3.jpg, 4.jpg në static/img/home-gallery/)
-    home_gallery = [
-        {"path": "img/home-gallery/1.jpg", "caption": "Salla e leximit"},
-        {"path": "img/home-gallery/2.jpg", "caption": "Hapësira"},
-        {"path": "img/home-gallery/3.jpg", "caption": "Katalogu"},
-        {"path": "img/home-gallery/4.jpg", "caption": "Evente"},
-    ]
+    home_gallery = _home_gallery_entries()
+    hero_library_image = _hero_library_static_path()
     return render(
         request,
         "cms/home.html",
         {
             "home_gallery": home_gallery,
+            "hero_library_image": hero_library_image,
             "top_publishers": top_publishers,
             "books_count": books_count,
             "copies_total": copies_total,

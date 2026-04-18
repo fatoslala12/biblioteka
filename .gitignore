@@ -2,6 +2,7 @@
 __pycache__/
 *.pyc
 .env
+kredencialet.txt
 db.sqlite3
 *.sqlite3
 .DS_Store

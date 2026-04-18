@@ -4,8 +4,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% block title %}Smart Library{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}Smart Library — katalog, rezervime dhe menaxhim modern biblioteke.{% endblock %}" />
+    <title>{% block title %}Biblioteka Kamëz{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Biblioteka Kamëz — katalog, rezervime dhe menaxhim modern biblioteke.{% endblock %}" />
     <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -88,16 +88,9 @@
       <header class="site-header sticky top-0 z-40 border-b border-white/15 bg-brand-600/95 backdrop-blur dark:border-brand-500/30">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div class="flex h-16 items-center justify-between gap-3">
-            <a href="/" class="group flex items-center gap-2">
-              <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 text-white shadow-sm ring-1 ring-white/20">
-                <!-- book icon -->
-                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
-                </svg>
-              </span>
-              <div class="leading-tight">
-                <div class="text-sm font-semibold tracking-tight text-white group-hover:opacity-95">Smart Library</div>
+            <a href="/" class="group flex min-w-0 items-center gap-2">
+              <img src="{% static 'img/logo_biblioteka.png' %}" alt="Biblioteka Kamëz" width="200" height="48" class="h-9 w-auto max-w-[min(52vw,200px)] object-contain object-left sm:h-10 sm:max-w-[220px]" decoding="async" />
+              <div class="hidden min-w-0 leading-tight sm:block">
                 <div class="text-xs text-white/80">Katalog • Rezervime • Menaxhim</div>
               </div>
             </a>
@@ -218,7 +211,7 @@
 
           <div class="mt-8 grid gap-8 md:grid-cols-12">
             <div class="md:col-span-5">
-              <div class="text-base font-extrabold tracking-tight">Smart Library</div>
+              <div class="text-base font-extrabold tracking-tight">Biblioteka Kamëz</div>
               <p class="mt-3 max-w-md text-sm leading-6 text-white/80">
                 Platformë moderne për menaxhim biblioteke: katalog, kopje, huazime, rezervime dhe gjoba.
                 Ndërtuar për staf të shpejtë dhe eksperiencë të qartë për anëtarët.
@@ -264,7 +257,7 @@
 
           <div class="mt-8 border-t border-white/15 pt-4">
             <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-white/70">
-              <div>© {% now "Y" %} Smart Library — Të gjitha të drejtat e rezervuara.</div>
+              <div>© {% now "Y" %} Biblioteka Kamëz — Të gjitha të drejtat e rezervuara.</div>
               <div class="text-white/60">Projektuar me fokus te përdorshmëria dhe shpejtësia.</div>
             </div>
           </div>

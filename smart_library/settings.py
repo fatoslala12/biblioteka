@@ -55,6 +55,9 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
+# Seancë: rinovohet në çdo kërkesë → skadon pas ~SESSION_COOKIE_AGE sekondash pa aktivitet (idle).
+SESSION_COOKIE_AGE = env.int("SESSION_COOKIE_AGE", default=3600)
+SESSION_SAVE_EVERY_REQUEST = True
 
 # Application definition
 

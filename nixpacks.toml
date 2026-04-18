@@ -1,3 +1,4 @@
 # Nixpacks (Dokploy / Railway): bind publik brenda kontejnerit për Traefik.
+# collectstatic: krijon STATIC_ROOT (/app/staticfiles) për WhiteNoise (CSS/JS në prodhim).
 [start]
-cmd = "python manage.py migrate --noinput && gunicorn smart_library.wsgi:application --bind 0.0.0.0:8000"
+cmd = "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn smart_library.wsgi:application --bind 0.0.0.0:8000"

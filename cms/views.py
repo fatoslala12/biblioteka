@@ -142,18 +142,22 @@ def home(request):
             "title": curated_book.title,
             "author": curated_book.author,
             "excerpt": curated_book.excerpt,
+            "date": curated_book.published_at.strftime("%d/%m/%Y"),
             "image_url": (curated_book.image.url if curated_book.image else ""),
-            "url": (curated_book.cta_url or "").strip() or "/catalog/",
+            "url": (curated_book.cta_url or "").strip() or "/libri-i-javes/",
             "cta_label": (curated_book.cta_label or "").strip() or "Shiko më shumë",
+            "badge": "Libri i javës",
         }
     elif fallback_book:
         book_of_week = {
             "title": fallback_book.title,
             "author": ", ".join(a.name for a in fallback_book.authors.all()) or "Titull i rekomanduar",
             "excerpt": "",
+            "date": now.strftime("%d/%m/%Y"),
             "image_url": f"https://covers.openlibrary.org/b/isbn/{fallback_book.isbn}-M.jpg?default=false",
             "url": f"/books/{fallback_book.id}/",
             "cta_label": "Shiko më shumë",
+            "badge": "Sugjerim",
         }
     else:
         book_of_week = None

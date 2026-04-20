@@ -28,7 +28,9 @@
           <div class="sl-hero-head sl-hero-cta-bar mt-4 flex justify-center rounded-2xl border border-brand-200/60 bg-gradient-to-b from-white/95 to-brand-50/40 p-4 dark:border-brand-900/40 dark:from-slate-900/80 dark:to-slate-900/50 sm:p-5">
             <div class="flex w-full max-w-lg flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:justify-center sm:gap-4">
               <a href="/catalog/" class="sl-hero-btn sl-hero-btn-primary min-h-[48px] flex flex-1 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 px-6 py-3 text-center text-sm font-extrabold tracking-tight text-white shadow-lg shadow-brand-600/35 ring-2 ring-brand-400/30 ring-offset-2 ring-offset-white/80 hover:from-brand-600 hover:to-brand-800 hover:shadow-xl hover:shadow-brand-600/40 active:scale-[0.98] dark:ring-offset-slate-900/80 sm:flex-initial sm:min-w-[200px]">Shfleto katalogun</a>
-              <a href="/regjistrohu/" class="sl-hero-btn sl-hero-btn-secondary min-h-[48px] flex flex-1 items-center justify-center rounded-2xl border-2 border-brand-400/50 bg-white/95 px-6 py-3 text-center text-sm font-extrabold tracking-tight text-brand-800 shadow-md shadow-brand-900/5 ring-2 ring-brand-200/40 ring-offset-2 ring-offset-brand-50/90 hover:border-brand-500 hover:bg-white hover:shadow-lg active:scale-[0.98] dark:border-brand-600/50 dark:bg-slate-900/90 dark:text-brand-100 dark:ring-brand-800/40 dark:ring-offset-slate-900 sm:flex-initial sm:min-w-[200px]">Bëhu anëtar</a>
+              {% if not user.is_authenticated %}
+              <a href="{% url 'cms:sign_up' %}" class="sl-hero-btn sl-hero-btn-secondary min-h-[48px] flex flex-1 items-center justify-center rounded-2xl border-2 border-brand-400/50 bg-white/95 px-6 py-3 text-center text-sm font-extrabold tracking-tight text-brand-800 shadow-md shadow-brand-900/5 ring-2 ring-brand-200/40 ring-offset-2 ring-offset-brand-50/90 hover:border-brand-500 hover:bg-white hover:shadow-lg active:scale-[0.98] dark:border-brand-600/50 dark:bg-slate-900/90 dark:text-brand-100 dark:ring-brand-800/40 dark:ring-offset-slate-900 sm:flex-initial sm:min-w-[200px]">Bëhu anëtar</a>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -115,33 +117,42 @@
           <div class="sl-premium-surface sl-premium-surface-slow h-full min-h-[280px] min-w-0 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:min-h-[320px] sm:rounded-3xl sm:p-5">
             <div class="text-sm font-extrabold text-slate-800 dark:text-white">Çfarë po ndodh sot</div>
             <div class="mt-3 space-y-3">
+              {% if today_event %}
+              <a href="{{ today_event.detail_url }}" class="block rounded-xl border border-brand-200/70 bg-brand-50/70 p-3 transition hover:border-brand-300 hover:bg-brand-50 dark:border-brand-900/40 dark:bg-brand-900/20 dark:hover:border-brand-700/50">
+                <div class="text-[11px] font-extrabold uppercase tracking-wide text-brand-700 dark:text-brand-200">Eventi i radhës</div>
+                <div class="mt-1 text-sm font-extrabold text-slate-900 dark:text-white">{{ today_event.title }}</div>
+                <div class="mt-1 text-xs font-semibold text-slate-600 dark:text-slate-300">{{ today_event.date }}</div>
+              </a>
+              {% else %}
               <div class="rounded-xl border border-brand-200/70 bg-brand-50/70 p-3 dark:border-brand-900/40 dark:bg-brand-900/20">
                 <div class="text-[11px] font-extrabold uppercase tracking-wide text-brand-700 dark:text-brand-200">Eventi i radhës</div>
-                {% if today_event %}
-                  <div class="mt-1 text-sm font-extrabold text-slate-900 dark:text-white">{{ today_event.title }}</div>
-                  <div class="mt-1 text-xs font-semibold text-slate-600 dark:text-slate-300">{{ today_event.date }}</div>
-                {% else %}
-                  <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">Nuk ka event të publikuar për momentin.</div>
-                {% endif %}
+                <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">Nuk ka event të publikuar për momentin.</div>
               </div>
+              {% endif %}
+              {% if top_announcement %}
+              <a href="{{ top_announcement.detail_url }}" class="block rounded-xl border border-slate-200 bg-white p-3 transition hover:border-brand-200 hover:bg-brand-50/50 dark:border-slate-700 dark:bg-slate-900/30 dark:hover:border-brand-800/40">
+                <div class="text-[11px] font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-300">Njoftimi kryesor</div>
+                <div class="mt-1 text-sm font-extrabold text-slate-900 dark:text-white">{{ top_announcement.title }}</div>
+                <div class="mt-1 text-xs text-slate-600 dark:text-slate-300">{{ top_announcement.excerpt|truncatewords:16 }}</div>
+              </a>
+              {% else %}
               <div class="rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/30">
                 <div class="text-[11px] font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-300">Njoftimi kryesor</div>
-                {% if top_announcement %}
-                  <div class="mt-1 text-sm font-extrabold text-slate-900 dark:text-white">{{ top_announcement.title }}</div>
-                  <div class="mt-1 text-xs text-slate-600 dark:text-slate-300">{{ top_announcement.excerpt|truncatewords:16 }}</div>
-                {% else %}
-                  <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">S’ka njoftime të reja.</div>
-                {% endif %}
+                <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">S’ka njoftime të reja.</div>
               </div>
+              {% endif %}
+              {% if book_of_week %}
+              <a href="{{ book_of_week.detail_url }}" class="block rounded-xl border border-slate-200 bg-white p-3 transition hover:border-brand-200 hover:bg-brand-50/50 dark:border-slate-700 dark:bg-slate-900/30 dark:hover:border-brand-800/40">
+                <div class="text-[11px] font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-300">Libri i javës</div>
+                <div class="mt-1 text-sm font-extrabold text-brand-700 dark:text-brand-200">{{ book_of_week.title }}</div>
+                <div class="mt-1 text-xs font-semibold text-slate-600 dark:text-slate-300">{{ book_of_week.author }}</div>
+              </a>
+              {% else %}
               <div class="rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/30">
                 <div class="text-[11px] font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-300">Libri i javës</div>
-                {% if book_of_week %}
-                  <a href="{{ book_of_week.url }}" class="mt-1 block text-sm font-extrabold text-brand-700 hover:text-brand-800 dark:text-brand-300 dark:hover:text-brand-200">{{ book_of_week.title }}</a>
-                  <div class="mt-1 text-xs font-semibold text-slate-600 dark:text-slate-300">{{ book_of_week.author }}</div>
-                {% else %}
-                  <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">S’ka tituj të disponueshëm aktualisht.</div>
-                {% endif %}
+                <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">S’ka tituj të disponueshëm aktualisht.</div>
               </div>
+              {% endif %}
             </div>
             <div class="mt-4 grid grid-cols-2 gap-2">
               <a href="/evente/" class="min-h-[44px] flex items-center justify-center rounded-xl bg-slate-900 py-3 text-center text-sm font-bold text-white hover:bg-slate-800 active:bg-slate-700 dark:bg-white dark:text-slate-900 dark:active:bg-slate-100">Shiko eventet</a>
@@ -280,7 +291,7 @@
         </div>
         <div class="space-y-2.5">
           {% for n in announcements|slice:":3" %}
-            <a href="/njoftime/" class="flex items-start gap-3 rounded-xl border border-slate-100 p-3 transition hover:border-brand-200 hover:bg-brand-50/40 dark:border-slate-700 dark:hover:bg-slate-700/30">
+            <a href="{{ n.detail_url }}" class="flex items-start gap-3 rounded-xl border border-slate-100 p-3 transition hover:border-brand-200 hover:bg-brand-50/40 dark:border-slate-700 dark:hover:bg-slate-700/30">
               {% if n.image_url %}
                 <img src="{{ n.image_url }}" alt="{{ n.title }}" class="sl-section-media h-16 w-11 shrink-0 rounded-lg object-cover object-top" loading="lazy" decoding="async" onerror="this.onerror=null; this.style.display='none';" />
               {% else %}
@@ -307,7 +318,7 @@
           <a href="/libri-i-javes/" class="text-xs font-bold text-brand-700 hover:text-brand-800 dark:text-brand-300">Shiko të gjitha →</a>
         </div>
         {% if book_of_week %}
-          <a href="{{ book_of_week.url }}" class="group block rounded-xl border border-slate-100 p-3 transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md dark:border-slate-700 dark:hover:bg-slate-700/30">
+          <a href="{{ book_of_week.detail_url }}" class="group block rounded-xl border border-slate-100 p-3 transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md dark:border-slate-700 dark:hover:bg-slate-700/30">
             <div class="relative overflow-hidden rounded-lg border border-slate-200/80 dark:border-slate-700">
               <img src="{% if book_of_week.image_url %}{{ book_of_week.image_url }}{% else %}{% static 'img/library-hero.svg' %}{% endif %}" alt="{{ book_of_week.title }}" class="sl-section-media h-44 w-full object-cover object-top transition duration-500 group-hover:scale-[1.02]" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='{% static 'img/library-hero.svg' %}';" />
               <span class="sl-shimmer-badge absolute left-2 top-2 rounded-md bg-slate-900/75 px-2 py-1 text-[10px] font-bold text-white">{{ book_of_week.badge|default:"Libri i javës" }}</span>

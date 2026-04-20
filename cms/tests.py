@@ -12,6 +12,8 @@ from circulation.models import Loan, LoanStatus, ReservationRequest, Reservation
 from fines.models import Fine, FineStatus, Payment, PaymentMethod
 from policies.models import LibraryPolicy
 
+from cms.models import Announcement, Event, WeeklyBook
+
 User = get_user_model()
 
 
@@ -396,3 +398,65 @@ class AdminExecutiveDashboardSmokeTests(TestCase):
         self.assertContains(resp, "Përmbledhje ekzekutive")
         self.assertContains(resp, "Veprime prioritare sot")
         self.assertContains(resp, "Trend 7d")
+
+
+class HomeCtaAndCmsDetailTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.now = timezone.now()
+
+    def test_home_hides_become_member_when_authenticated(self):
+        u = User.objects.create_user(
+            username="member_cta@test.com",
+            email="member_cta@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+        )
+        self.client.force_login(u)
+        r = self.client.get("/")
+        self.assertEqual(r.status_code, 200)
+        self.assertNotContains(r, "Bëhu anëtar")
+
+    def test_home_shows_become_member_when_anonymous(self):
+        r = self.client.get("/")
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "Bëhu anëtar")
+
+    def test_cms_detail_pages_ok(self):
+        ann = Announcement.objects.create(
+            title="Njoftim test",
+            excerpt="Hyrje",
+            content="Teksti i plotë.",
+            published_at=self.now,
+            is_published=True,
+        )
+        ev = Event.objects.create(
+            title="Event test",
+            excerpt="Përshkrim",
+            content="Detaje eventi.",
+            published_at=self.now,
+            is_published=True,
+            location="Biblioteka",
+        )
+        wb = WeeklyBook.objects.create(
+            title="Libër jave test",
+            excerpt="Shkurt",
+            content="Përmbajtje.",
+            author="Autor X",
+            published_at=self.now,
+            is_published=True,
+        )
+        for url in (f"/njoftime/{ann.id}/", f"/evente/{ev.id}/", f"/libri-i-javes/{wb.id}/"):
+            resp = self.client.get(url)
+            self.assertEqual(resp.status_code, 200, msg=url)
+            self.assertContains(resp, "Kthehu")
+
+    def test_cms_detail_404_when_unpublished(self):
+        ann = Announcement.objects.create(
+            title="Draft",
+            excerpt="",
+            content="",
+            published_at=self.now,
+            is_published=False,
+        )
+        r = self.client.get(f"/njoftime/{ann.id}/")
+        self.assertEqual(r.status_code, 404)

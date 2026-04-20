@@ -7,6 +7,7 @@ from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.template.loader import render_to_string
 from django.utils import timezone
 
@@ -99,6 +100,8 @@ def home(request):
     announcements_qs = Announcement.objects.filter(is_published=True, published_at__lte=now).order_by("-published_at")[:4]
     announcements_data = [
         {
+            "id": a.id,
+            "detail_url": reverse("cms:announcement_detail", kwargs={"pk": a.id}),
             "title": a.title,
             "date": a.published_at.strftime("%d/%m/%Y"),
             "time": a.published_at.strftime("%H:%M"),
@@ -111,6 +114,8 @@ def home(request):
     home_events_qs = Event.objects.filter(is_published=True, published_at__lte=now).order_by("-published_at")[:3]
     home_events = [
         {
+            "id": e.id,
+            "detail_url": reverse("cms:event_detail", kwargs={"pk": e.id}),
             "title": e.title,
             "date": e.published_at.strftime("%d/%m/%Y"),
             "time": (e.starts_at.strftime("%H:%M") if e.starts_at else e.published_at.strftime("%H:%M")),
@@ -141,24 +146,28 @@ def home(request):
     )
     fallback_book = featured[0] if featured else None
     if curated_book:
+        detail_wb = reverse("cms:weekly_book_detail", kwargs={"pk": curated_book.id})
         book_of_week = {
             "title": curated_book.title,
             "author": curated_book.author,
             "excerpt": curated_book.excerpt,
             "date": curated_book.published_at.strftime("%d/%m/%Y"),
             "image_url": (curated_book.image.url if curated_book.image else ""),
-            "url": (curated_book.cta_url or "").strip() or "/libri-i-javes/",
+            "detail_url": detail_wb,
+            "url": (curated_book.cta_url or "").strip() or detail_wb,
             "cta_label": (curated_book.cta_label or "").strip() or "Shiko më shumë",
             "badge": "Libri i javës",
         }
     elif fallback_book:
+        detail_fb = reverse("cms:book_detail", kwargs={"pk": fallback_book.id})
         book_of_week = {
             "title": fallback_book.title,
             "author": ", ".join(a.name for a in fallback_book.authors.all()) or "Titull i rekomanduar",
             "excerpt": "",
             "date": now.strftime("%d/%m/%Y"),
             "image_url": f"https://covers.openlibrary.org/b/isbn/{fallback_book.isbn}-M.jpg?default=false",
-            "url": f"/books/{fallback_book.id}/",
+            "detail_url": detail_fb,
+            "url": detail_fb,
             "cta_label": "Shiko më shumë",
             "badge": "Sugjerim",
         }
@@ -404,6 +413,83 @@ def videos(request):
         html = render_to_string("cms/_section_list_content.html", ctx, request=request)
         return JsonResponse({"html": html, "title": "Libri i javës — Smart Library"})
     return render(request, "cms/section_list.html", ctx)
+
+
+def _published_cms_qs(model_cls):
+    now = timezone.now()
+    return model_cls.objects.filter(is_published=True, published_at__lte=now)
+
+
+def announcement_detail(request, pk):
+    obj = get_object_or_404(_published_cms_qs(Announcement), pk=pk)
+    body = (obj.content or obj.excerpt or "").strip()
+    return render(
+        request,
+        "cms/publishable_detail.html",
+        {
+            "page_title": obj.title,
+            "badge": obj.badge or "Info",
+            "subtitle": "",
+            "meta_line": obj.published_at.strftime("%d/%m/%Y %H:%M"),
+            "image_url": (obj.image.url if obj.image else ""),
+            "body": body,
+            "back_url": reverse("cms:announcements"),
+            "back_label": "← Kthehu te njoftimet",
+            "cta_url": "",
+            "cta_label": "",
+        },
+    )
+
+
+def event_detail(request, pk):
+    obj = get_object_or_404(_published_cms_qs(Event), pk=pk)
+    body = (obj.content or obj.excerpt or "").strip()
+    starts = obj.starts_at.strftime("%d/%m/%Y %H:%M") if obj.starts_at else ""
+    ends = obj.ends_at.strftime("%d/%m/%Y %H:%M") if obj.ends_at else ""
+    meta_bits = [obj.published_at.strftime("%d/%m/%Y")]
+    if starts:
+        meta_bits.append(f"Fillimi: {starts}")
+    if ends:
+        meta_bits.append(f"Mbarimi: {ends}")
+    return render(
+        request,
+        "cms/publishable_detail.html",
+        {
+            "page_title": obj.title,
+            "badge": obj.badge or "Event",
+            "subtitle": obj.location or "",
+            "meta_line": " · ".join(meta_bits),
+            "image_url": (obj.image.url if obj.image else ""),
+            "body": body,
+            "back_url": reverse("cms:events"),
+            "back_label": "← Kthehu te eventet",
+            "cta_url": "",
+            "cta_label": "",
+        },
+    )
+
+
+def weekly_book_detail(request, pk):
+    obj = get_object_or_404(_published_cms_qs(WeeklyBook), pk=pk)
+    body = (obj.content or obj.excerpt or "").strip()
+    cta_url = (obj.cta_url or "").strip()
+    cta_label = (obj.cta_label or "").strip() or "Shiko më shumë"
+    return render(
+        request,
+        "cms/publishable_detail.html",
+        {
+            "page_title": obj.title,
+            "badge": "Libri i javës",
+            "subtitle": (obj.author or "").strip(),
+            "meta_line": obj.published_at.strftime("%d/%m/%Y"),
+            "image_url": (obj.image.url if obj.image else ""),
+            "body": body,
+            "back_url": reverse("cms:weekly_books"),
+            "back_label": "← Kthehu te librat e javës",
+            "cta_url": cta_url,
+            "cta_label": cta_label,
+        },
+    )
 
 
 def contact(request):

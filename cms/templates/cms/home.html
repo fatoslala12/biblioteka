@@ -4,169 +4,282 @@
 {% block title %}Biblioteka Kamëz{% endblock %}
 
 {% block content %}
+  <!-- Mirë se vini + foto kryesore + galeri foto të vogla (hyrja e parë) -->
   <section class="relative mx-auto w-full max-w-7xl px-3 pb-6 pt-4 sm:px-6 sm:pb-8 sm:pt-6 lg:px-8">
     <div class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[min(92vw,520px)] overflow-hidden sm:h-[480px]" aria-hidden="true">
       <div class="sl-home-orb sl-home-orb-a absolute -left-[20%] top-[-18%] h-[min(85vw,380px)] w-[min(85vw,380px)] rounded-full bg-brand-400/30 blur-3xl dark:bg-brand-500/25"></div>
       <div class="sl-home-orb sl-home-orb-b absolute -right-[12%] top-[8%] h-[min(70vw,320px)] w-[min(70vw,320px)] rounded-full bg-cyan-200/35 blur-3xl dark:bg-slate-600/25"></div>
-      <div class="sl-home-orb sl-home-orb-c absolute left-[20%] bottom-[-30%] h-[min(60vw,280px)] w-[min(60vw,280px)] rounded-full bg-amber-200/25 blur-3xl dark:bg-amber-900/20"></div>
+      <div class="sl-home-orb sl-home-orb-c absolute left-[20%] bottom-[-30%] h-[min(60vw,280px)] w-[min(60vw,280px)] rounded-full bg-emerald-200/25 blur-3xl dark:bg-emerald-900/20"></div>
     </div>
-
-    <div class="sl-premium-surface sl-premium-hero overflow-hidden rounded-3xl border border-slate-200/90 bg-white/95 shadow-md ring-1 ring-white/70 backdrop-blur-sm dark:border-slate-600/50 dark:bg-slate-800/55 dark:ring-white/5">
-      <div class="grid grid-cols-1 lg:grid-cols-12">
-        <div class="sl-hero-enter p-5 sm:p-7 lg:col-span-6 lg:p-9">
-          <div class="inline-flex items-center gap-2 rounded-full bg-brand-100 px-3 py-1 text-xs font-bold text-brand-800 dark:bg-brand-900/40 dark:text-brand-100">
-            <img src="{% static 'img/logo_kamez.png' %}" alt="Bashkia Kamëz" class="h-6 w-auto" />
-            Bashkia Kamëz
+    <div class="sl-premium-surface sl-premium-hero min-w-0 overflow-hidden rounded-2xl border border-slate-200/90 bg-white/95 shadow-md ring-1 ring-white/70 backdrop-blur-sm dark:border-slate-600/50 dark:bg-slate-800/55 dark:ring-white/5 sm:rounded-3xl">
+      <div class="grid grid-cols-1 gap-0 lg:grid-cols-12">
+        <div class="sl-hero-enter min-w-0 p-4 sm:p-6 lg:col-span-7 lg:p-8">
+          <div class="flex min-w-0 flex-row flex-wrap items-center gap-3 sm:gap-4">
+            <img src="{% static 'img/logo_kamez.png' %}" alt="Bashkia Kamëz" width="64" height="80" class="h-11 w-auto max-h-11 shrink-0 object-contain object-left sm:h-12 sm:max-h-12" loading="eager" decoding="async" fetchpriority="high" />
+            <div class="inline-flex min-w-0 items-center rounded-full bg-brand-100 px-2.5 py-1 text-xs font-extrabold leading-none text-brand-800 dark:bg-brand-900/50 dark:text-brand-100">Bashkia Kamëz</div>
           </div>
-          <h1 class="sl-display mt-4 text-3xl font-black leading-tight tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-            Mirë se vini në Bibliotekën e Bashkisë Kamëz
-          </h1>
-          <p class="mt-4 max-w-2xl text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
-            Kërko libra, rezervo online, ndiq aktivitetet dhe menaxho bibliotekën në një platformë të vetme moderne.
+          <h2 class="mt-2 text-xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:mt-3 sm:text-2xl md:text-3xl">Mirë se vini në Bibliotekën Kamëz</h2>
+          <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300 sm:mt-3">
+            Biblioteka Kamëz është një hapësirë e dedikuar dijes, kulturës dhe zhvillimit të komunitetit. Ajo shërben si një urë lidhëse mes brezave, duke ofruar libra, informacion dhe mundësi studimi për të gjitha moshat. Në këtë ambient të qetë dhe mikpritës, çdo lexues gjen një botë të re për të zbuluar dhe një mundësi për t’u rritur personalisht e profesionalisht.
           </p>
-
-          <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <a href="/catalog/" class="sl-hero-btn min-h-[50px] rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 px-6 py-3 text-center text-sm font-extrabold text-white shadow-lg shadow-brand-600/35 ring-2 ring-brand-400/25">
-              Shfleto katalogun
-            </a>
-            <a href="/regjistrohu/" class="sl-hero-btn min-h-[50px] rounded-2xl border-2 border-brand-300 bg-white px-6 py-3 text-center text-sm font-extrabold text-brand-800 shadow-sm hover:bg-brand-50 dark:border-brand-700 dark:bg-slate-900 dark:text-brand-100">
-              Bëhu anëtar
-            </a>
-          </div>
-
-          <div class="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-3">
-            <div class="rounded-2xl border border-slate-200/80 bg-white/85 px-3 py-2 text-xs font-semibold text-slate-600 dark:border-slate-700 dark:bg-slate-900/45 dark:text-slate-200">📚 Katalog i pasur</div>
-            <div class="rounded-2xl border border-slate-200/80 bg-white/85 px-3 py-2 text-xs font-semibold text-slate-600 dark:border-slate-700 dark:bg-slate-900/45 dark:text-slate-200">🗓 Rezervim online</div>
-            <div class="rounded-2xl border border-slate-200/80 bg-white/85 px-3 py-2 text-xs font-semibold text-slate-600 dark:border-slate-700 dark:bg-slate-900/45 dark:text-slate-200">🎭 Aktivitete kulturore</div>
+          <p class="mt-2 flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <span>📍</span> Qendër kulturore dhe edukative për komunitetin e Kamzës.
+          </p>
+          <div class="sl-hero-head sl-hero-cta-bar mt-4 flex justify-center rounded-2xl border border-brand-200/60 bg-gradient-to-b from-white/95 to-brand-50/40 p-4 dark:border-brand-900/40 dark:from-slate-900/80 dark:to-slate-900/50 sm:p-5">
+            <div class="flex w-full max-w-lg flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:justify-center sm:gap-4">
+              <a href="/catalog/" class="sl-hero-btn sl-hero-btn-primary min-h-[48px] flex flex-1 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 px-6 py-3 text-center text-sm font-extrabold tracking-tight text-white shadow-lg shadow-brand-600/35 ring-2 ring-brand-400/30 ring-offset-2 ring-offset-white/80 hover:from-brand-600 hover:to-brand-800 hover:shadow-xl hover:shadow-brand-600/40 active:scale-[0.98] dark:ring-offset-slate-900/80 sm:flex-initial sm:min-w-[200px]">Shfleto katalogun</a>
+              <a href="/regjistrohu/" class="sl-hero-btn sl-hero-btn-secondary min-h-[48px] flex flex-1 items-center justify-center rounded-2xl border-2 border-brand-400/50 bg-white/95 px-6 py-3 text-center text-sm font-extrabold tracking-tight text-brand-800 shadow-md shadow-brand-900/5 ring-2 ring-brand-200/40 ring-offset-2 ring-offset-brand-50/90 hover:border-brand-500 hover:bg-white hover:shadow-lg active:scale-[0.98] dark:border-brand-600/50 dark:bg-slate-900/90 dark:text-brand-100 dark:ring-brand-800/40 dark:ring-offset-slate-900 sm:flex-initial sm:min-w-[200px]">Bëhu anëtar</a>
+            </div>
           </div>
         </div>
-
-        <div class="sl-hero-photo-wrap sl-hero-photo-premium relative min-h-[250px] overflow-hidden bg-slate-100 dark:bg-slate-900/50 lg:col-span-6">
-          <img src="{% static hero_library_image %}" alt="Biblioteka Kamëz" class="sl-hero-photo h-full w-full object-cover" loading="eager" fetchpriority="high" />
-          <div class="absolute bottom-4 left-4 right-4 z-[3] rounded-2xl border border-white/30 bg-slate-900/50 p-4 text-white backdrop-blur-md">
-            <div class="text-xs font-bold uppercase tracking-wide text-white/80">Orari i sotëm</div>
-            <div class="mt-1 text-sm font-semibold">E Hënë - E Premte: 08:00 - 20:00</div>
-            <div class="text-xs text-white/85">E Shtunë: 09:00 - 14:00</div>
-          </div>
+        <div class="sl-hero-photo-wrap sl-hero-photo-premium relative min-h-[200px] w-full overflow-hidden rounded-b-2xl bg-slate-100 dark:bg-slate-900/50 lg:col-span-5 lg:min-h-[280px] lg:rounded-b-none lg:rounded-r-2xl">
+          <img src="{% static hero_library_image %}" alt="Biblioteka Kamëz" width="960" height="720" sizes="(max-width:1024px) 100vw, 41vw" class="sl-hero-photo relative z-[1] h-56 w-full object-cover sm:h-64 lg:h-full lg:min-h-[280px]" loading="eager" decoding="async" fetchpriority="high" />
         </div>
       </div>
     </div>
   </section>
 
-  <section class="mx-auto w-full max-w-7xl px-3 py-2 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-      <div class="sl-premium-surface rounded-3xl border border-slate-200/80 bg-white/95 p-4 dark:border-slate-700 dark:bg-slate-800/55">
-        <div class="text-xs font-bold uppercase tracking-wide text-brand-700">📚 Tituj në katalog</div>
-        <div class="mt-2 text-3xl font-black text-slate-900 dark:text-white">{{ books_count }}</div>
-      </div>
-      <div class="sl-premium-surface rounded-3xl border border-slate-200/80 bg-white/95 p-4 dark:border-slate-700 dark:bg-slate-800/55">
-        <div class="text-xs font-bold uppercase tracking-wide text-brand-700">📖 Kopje aktive</div>
-        <div class="mt-2 text-3xl font-black text-slate-900 dark:text-white">{{ copies_total }}</div>
-      </div>
-      <div class="sl-premium-surface rounded-3xl border border-slate-200/80 bg-white/95 p-4 dark:border-slate-700 dark:bg-slate-800/55">
-        <div class="text-xs font-bold uppercase tracking-wide text-brand-700">✅ Kopje të lira</div>
-        <div class="mt-2 text-3xl font-black text-slate-900 dark:text-white">{{ copies_available }}</div>
-      </div>
-      <div class="sl-premium-surface rounded-3xl border border-slate-200/80 bg-white/95 p-4 dark:border-slate-700 dark:bg-slate-800/55">
-        <div class="text-xs font-bold uppercase tracking-wide text-brand-700">⏱ Afati standard</div>
-        <div class="mt-2 text-3xl font-black text-slate-900 dark:text-white">48h</div>
-      </div>
+  <!-- Hero premium + CTA + What happens today -->
+  <section class="relative">
+    <div class="pointer-events-none absolute inset-0 overflow-hidden">
+      <div class="sl-premium-bg-drift absolute -top-12 left-0 right-0 h-52 bg-gradient-to-r from-brand-200/55 via-white to-brand-100/55 blur-2xl dark:from-brand-900/30 dark:via-slate-900/40 dark:to-brand-800/25"></div>
     </div>
-  </section>
 
-  <section class="mx-auto w-full max-w-7xl px-3 py-6 sm:px-6 lg:px-8">
-    <div class="sl-premium-surface rounded-3xl border border-slate-200/80 bg-white/95 p-5 dark:border-slate-700 dark:bg-slate-800/55 sm:p-7">
-      <div class="text-center">
-        <h2 class="sl-display text-2xl font-black tracking-tight text-slate-900 dark:text-white sm:text-3xl">Çfarë ofrojmë</h2>
-        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Gjithçka që ju nevojitet në një vend të vetëm.</p>
-      </div>
-      <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <a href="/catalog/" class="group rounded-3xl border border-slate-200/80 bg-white p-4 transition hover:-translate-y-0.5 hover:shadow-lg dark:border-slate-700 dark:bg-slate-900/45">
-          <div class="text-2xl">🔎</div>
-          <div class="mt-2 text-sm font-extrabold text-slate-900 dark:text-white">Katalog i pasur</div>
-          <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">Kërkim i shpejtë me filtra.</div>
-        </a>
-        <a href="/regjistrohu/" class="group rounded-3xl border border-slate-200/80 bg-white p-4 transition hover:-translate-y-0.5 hover:shadow-lg dark:border-slate-700 dark:bg-slate-900/45">
-          <div class="text-2xl">👤</div>
-          <div class="mt-2 text-sm font-extrabold text-slate-900 dark:text-white">Anëtarësim</div>
-          <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">Regjistrim i thjeshtë online.</div>
-        </a>
-        <a href="/evente/" class="group rounded-3xl border border-slate-200/80 bg-white p-4 transition hover:-translate-y-0.5 hover:shadow-lg dark:border-slate-700 dark:bg-slate-900/45">
-          <div class="text-2xl">🎭</div>
-          <div class="mt-2 text-sm font-extrabold text-slate-900 dark:text-white">Aktivitete kulturore</div>
-          <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">Evente për të gjitha moshat.</div>
-        </a>
-        <a href="/admin/" class="group rounded-3xl border border-slate-200/80 bg-white p-4 transition hover:-translate-y-0.5 hover:shadow-lg dark:border-slate-700 dark:bg-slate-900/45">
-          <div class="text-2xl">🛠</div>
-          <div class="mt-2 text-sm font-extrabold text-slate-900 dark:text-white">Panel për stafin</div>
-          <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">Menaxhim profesional i bibliotekës.</div>
-        </a>
-      </div>
-    </div>
-  </section>
+    <div class="relative mx-auto w-full max-w-7xl px-3 py-5 sm:px-6 sm:py-7 lg:px-8">
+      <div class="mt-2 grid grid-cols-1 items-stretch gap-4 sm:gap-6 lg:grid-cols-12 lg:gap-8">
+        <!-- Kolona e majte: mesazh i paster + CTA ne qender -->
+        <div class="lg:col-span-7">
+          <div class="sl-quote-card sl-premium-surface sl-premium-surface-slow h-full min-h-[280px] rounded-2xl border border-slate-200/80 bg-white/90 p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:min-h-[320px] sm:rounded-3xl sm:p-6">
+            <div class="flex h-full flex-col text-left">
+              <p class="mx-auto mt-3 max-w-xl text-center text-xl font-black leading-tight tracking-tight text-slate-900 dark:text-white sm:text-3xl">
+                ✨ “Fillo me një faqe sot. Nesër mund të jetë një jetë tjetër.” 🌙📖
+              </p>
 
-  <section class="mx-auto w-full max-w-7xl px-3 py-2 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-12">
-      <div class="sl-premium-surface rounded-3xl border border-slate-200/80 bg-white/95 p-5 dark:border-slate-700 dark:bg-slate-800/55 lg:col-span-5">
-        <div class="flex items-center justify-between">
-          <h3 class="sl-display text-lg font-black text-slate-900 dark:text-white">Eventi i radhës</h3>
-          <a href="/evente/" class="text-xs font-bold text-brand-700 hover:underline">Shiko të gjitha</a>
-        </div>
-        {% if today_event %}
-          <div class="mt-3 rounded-2xl border border-slate-200/80 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/40">
-            <div class="text-sm font-extrabold text-slate-900 dark:text-white">{{ today_event.title }}</div>
-            <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ today_event.date }}</div>
-            <p class="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-300">{{ today_event.excerpt|truncatewords:20 }}</p>
+              <div class="mt-4 grid grid-cols-3 gap-2 sm:mt-5 sm:gap-3 text-left">
+                <div class="min-w-0 rounded-xl border border-slate-200/80 bg-white p-2.5 shadow-sm dark:border-slate-700 dark:bg-slate-800/50 sm:p-3">
+                  <div class="text-lg font-extrabold text-slate-900 dark:text-white sm:text-xl">{{ books_count }}</div>
+                  <div class="mt-0.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 sm:text-xs">Tituj</div>
+                </div>
+                <div class="min-w-0 rounded-xl border border-slate-200/80 bg-white p-2.5 shadow-sm dark:border-slate-700 dark:bg-slate-800/50 sm:p-3">
+                  <div class="text-lg font-extrabold text-slate-900 dark:text-white sm:text-xl">{{ copies_available }}</div>
+                  <div class="mt-0.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 sm:text-xs">Kopje të lira</div>
+                </div>
+                <div class="min-w-0 rounded-xl border border-slate-200/80 bg-white p-2.5 shadow-sm dark:border-slate-700 dark:bg-slate-800/50 sm:p-3">
+                  <div class="text-lg font-extrabold text-slate-900 dark:text-white sm:text-xl">48h</div>
+                  <div class="mt-0.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 sm:text-xs">Afat marrje</div>
+                </div>
+              </div>
+
+              <div class="mt-3 min-w-0 rounded-2xl border border-slate-200/80 bg-white/90 p-3 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:mt-4 sm:p-4 text-left">
+                <div class="flex flex-wrap items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-300">
+                  <span>Statuset e kopjeve</span>
+                  <span class="rounded-full bg-slate-100 px-2 py-0.5 dark:bg-slate-700">{{ copies_total }} gjithsej</span>
+                </div>
+                <div class="mt-2 h-2 w-full min-w-0 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
+                    {% with total=copies_total|add:0 %}
+                      {% if total %}
+                        <div class="h-full bg-brand-600" style="width: {% widthratio copies_available total 100 %}%; float:left;"></div>
+                        <div class="h-full bg-slate-400" style="width: {% widthratio copies_on_loan total 100 %}%; float:left;"></div>
+                        <div class="h-full bg-amber-400" style="width: {% widthratio copies_on_hold total 100 %}%; float:left;"></div>
+                      {% endif %}
+                    {% endwith %}
+                  </div>
+                <div class="mt-2 flex flex-wrap gap-x-3 gap-y-1.5 text-xs">
+                  <span class="inline-flex min-w-0 items-center gap-1.5"><span class="h-2 w-2 shrink-0 rounded-full bg-brand-600"></span><span class="truncate">Të lira: {{ copies_available }}</span></span>
+                  <span class="inline-flex min-w-0 items-center gap-1.5"><span class="h-2 w-2 shrink-0 rounded-full bg-slate-400"></span><span class="truncate">Në huazim: {{ copies_on_loan }}</span></span>
+                  <span class="inline-flex min-w-0 items-center gap-1.5"><span class="h-2 w-2 shrink-0 rounded-full bg-amber-400"></span><span class="truncate">Në pritje: {{ copies_on_hold }}</span></span>
+                </div>
+                <div class="mt-3 flex gap-2">
+                  <button type="button" data-tab="katalog" class="dashTab min-h-[44px] min-w-[44px] flex-1 rounded-lg bg-brand-100 px-3 py-2.5 text-xs font-bold text-brand-800 active:bg-brand-200 dark:bg-brand-900/50 dark:text-brand-100 sm:flex-none sm:py-1.5">Katalog</button>
+                  <button type="button" data-tab="qarkullim" class="dashTab min-h-[44px] min-w-[44px] flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-xs font-bold text-slate-600 active:bg-slate-100 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 sm:flex-none sm:py-1.5">Qarkullim</button>
+                </div>
+                <div id="tab-katalog" class="mt-3 grid grid-cols-2 gap-2 text-center sm:grid-cols-4">
+                  <div class="rounded-lg bg-brand-50/80 py-2 dark:bg-slate-700/50"><span class="font-extrabold">{{ authors_count }}</span><div class="text-[10px] font-semibold text-slate-500">Autorë</div></div>
+                  <div class="rounded-lg bg-brand-50/80 py-2 dark:bg-slate-700/50"><span class="font-extrabold">{{ publishers_count }}</span><div class="text-[10px] font-semibold text-slate-500">Botues</div></div>
+                  <div class="rounded-lg bg-brand-50/80 py-2 dark:bg-slate-700/50"><span class="font-extrabold">{{ genres_count }}</span><div class="text-[10px] font-semibold text-slate-500">Zhanre</div></div>
+                  <div class="rounded-lg bg-brand-50/80 py-2 dark:bg-slate-700/50"><span class="font-extrabold">{{ tags_count }}</span><div class="text-[10px] font-semibold text-slate-500">Etiketa</div></div>
+                </div>
+                <div id="tab-qarkullim" class="mt-3 hidden grid grid-cols-2 gap-2 text-center sm:grid-cols-4">
+                  <div class="rounded-lg bg-brand-50/80 py-2 dark:bg-slate-700/50"><span class="font-extrabold">{{ active_loans }}</span><div class="text-[10px] font-semibold text-slate-500">Aktive</div></div>
+                  <div class="rounded-lg bg-amber-50 py-2 dark:bg-amber-900/20"><span class="font-extrabold text-amber-700 dark:text-amber-300">{{ overdue_loans }}</span><div class="text-[10px] font-semibold text-amber-600">Overdue</div></div>
+                  <div class="rounded-lg bg-brand-50/80 py-2 dark:bg-slate-700/50"><span class="font-extrabold">{{ holds_waiting }}</span><div class="text-[10px] font-semibold text-slate-500">Në radhë</div></div>
+                  <div class="rounded-lg bg-brand-50/80 py-2 dark:bg-slate-700/50"><span class="font-extrabold">{{ holds_ready }}</span><div class="text-[10px] font-semibold text-slate-500">Gati</div></div>
+                </div>
+              </div>
+            </div>
           </div>
-        {% else %}
-          <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">Nuk ka event të publikuar për momentin.</p>
-        {% endif %}
+        </div>
+
+        <!-- Kolona e djathte: cfare po ndodh sot -->
+        <div class="lg:col-span-5">
+          <div class="sl-premium-surface sl-premium-surface-slow h-full min-h-[280px] min-w-0 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:min-h-[320px] sm:rounded-3xl sm:p-5">
+            <div class="text-sm font-extrabold text-slate-800 dark:text-white">Çfarë po ndodh sot</div>
+            <div class="mt-3 space-y-3">
+              <div class="rounded-xl border border-brand-200/70 bg-brand-50/70 p-3 dark:border-brand-900/40 dark:bg-brand-900/20">
+                <div class="text-[11px] font-extrabold uppercase tracking-wide text-brand-700 dark:text-brand-200">Eventi i radhës</div>
+                {% if today_event %}
+                  <div class="mt-1 text-sm font-extrabold text-slate-900 dark:text-white">{{ today_event.title }}</div>
+                  <div class="mt-1 text-xs font-semibold text-slate-600 dark:text-slate-300">{{ today_event.date }}</div>
+                {% else %}
+                  <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">Nuk ka event të publikuar për momentin.</div>
+                {% endif %}
+              </div>
+              <div class="rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/30">
+                <div class="text-[11px] font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-300">Njoftimi kryesor</div>
+                {% if top_announcement %}
+                  <div class="mt-1 text-sm font-extrabold text-slate-900 dark:text-white">{{ top_announcement.title }}</div>
+                  <div class="mt-1 text-xs text-slate-600 dark:text-slate-300">{{ top_announcement.excerpt|truncatewords:16 }}</div>
+                {% else %}
+                  <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">S’ka njoftime të reja.</div>
+                {% endif %}
+              </div>
+              <div class="rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/30">
+                <div class="text-[11px] font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-300">Libri i javës</div>
+                {% if book_of_week %}
+                  <a href="/books/{{ book_of_week.id }}/" class="mt-1 block text-sm font-extrabold text-brand-700 hover:text-brand-800 dark:text-brand-300 dark:hover:text-brand-200">{{ book_of_week.title }}</a>
+                  <div class="mt-1 text-xs font-semibold text-slate-600 dark:text-slate-300">{{ book_of_week.available_copies }} kopje të lira</div>
+                {% else %}
+                  <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">S’ka tituj të disponueshëm aktualisht.</div>
+                {% endif %}
+              </div>
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-2">
+              <a href="/evente/" class="min-h-[44px] flex items-center justify-center rounded-xl bg-slate-900 py-3 text-center text-sm font-bold text-white hover:bg-slate-800 active:bg-slate-700 dark:bg-white dark:text-slate-900 dark:active:bg-slate-100">Shiko eventet</a>
+              <a href="/njoftime/" class="min-h-[44px] flex items-center justify-center rounded-xl border border-slate-200 py-3 text-center text-sm font-bold text-brand-700 hover:bg-brand-50 active:bg-brand-100 dark:border-slate-600 dark:text-brand-300">Shiko njoftimet</a>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="sl-premium-surface rounded-3xl border border-slate-200/80 bg-white/95 p-5 dark:border-slate-700 dark:bg-slate-800/55 lg:col-span-4">
-        <div class="flex items-center justify-between">
-          <h3 class="sl-display text-lg font-black text-slate-900 dark:text-white">Njoftime</h3>
-          <a href="/njoftime/" class="text-xs font-bold text-brand-700 hover:underline">Shiko të gjitha</a>
+      <!-- Tituj te rekomanduar: carousel horizontal me cover -->
+      <div class="sl-premium-surface sl-premium-surface-slow mt-6 min-w-0 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:rounded-3xl sm:p-5">
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-sm font-extrabold text-slate-800 dark:text-white">Tituj të rekomanduar</span>
+          <a class="text-xs font-bold text-brand-600 hover:text-brand-700 dark:text-brand-400" href="/catalog/">Të gjitha →</a>
         </div>
-        <div class="mt-3 space-y-2">
-          {% for n in announcements|slice:":2" %}
-            <a href="/njoftime/" class="block rounded-2xl border border-slate-200/80 p-3 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-900/45">
-              <div class="text-sm font-bold text-slate-900 dark:text-white">{{ n.title }}</div>
-              <div class="text-xs text-slate-500 dark:text-slate-400">{{ n.date }}</div>
+        <div class="mt-3 flex gap-3 overflow-x-auto pb-1 snap-x snap-mandatory">
+          {% for b in featured %}
+            <a href="/books/{{ b.id }}/" class="snap-start shrink-0 w-[min(100%,13.5rem)] max-w-[13.5rem] rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] dark:border-slate-700 dark:bg-slate-900/40 sm:w-52">
+              <div class="relative h-44 overflow-hidden rounded-xl border border-slate-200 bg-gradient-to-br from-brand-100 to-brand-50 dark:border-slate-700 dark:from-slate-800 dark:to-slate-900">
+                <img
+                  src="https://covers.openlibrary.org/b/isbn/{{ b.isbn }}-M.jpg?default=false"
+                  alt="{{ b.title }}"
+                  class="h-full w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  data-sl-skip-skeleton="1"
+                  onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+                />
+                <div class="hidden absolute inset-0 flex items-center justify-center bg-gradient-to-br from-brand-200 to-brand-100 text-brand-900 dark:from-slate-700 dark:to-slate-800 dark:text-white">
+                  <span class="px-3 text-center text-sm font-extrabold">{{ b.title|truncatechars:26 }}</span>
+                </div>
+              </div>
+              <div class="mt-2 text-sm font-extrabold text-slate-800 dark:text-white line-clamp-2">{{ b.title }}</div>
+              <div class="mt-1 text-xs font-semibold text-slate-500 dark:text-slate-300">{{ b.available_copies }} të lira</div>
             </a>
           {% empty %}
-            <p class="text-sm text-slate-500 dark:text-slate-400">S’ka njoftime të reja.</p>
+            <p class="py-4 text-sm text-slate-500">S’ka tituj ende. Shto nga paneli.</p>
           {% endfor %}
         </div>
       </div>
 
-      <div class="sl-premium-surface rounded-3xl border border-slate-200/80 bg-white/95 p-5 dark:border-slate-700 dark:bg-slate-800/55 lg:col-span-3">
-        <h3 class="sl-display text-lg font-black text-slate-900 dark:text-white">Libri i javës</h3>
-        {% if book_of_week %}
-          <a href="/books/{{ book_of_week.id }}/" class="mt-3 block rounded-2xl border border-slate-200/80 p-3 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-900/45">
-            <div class="text-sm font-extrabold text-slate-900 dark:text-white">{{ book_of_week.title }}</div>
-            <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ book_of_week.available_copies }} kopje të lira</div>
-          </a>
-        {% else %}
-          <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">S’ka tituj të disponueshëm aktualisht.</p>
-        {% endif %}
+      {% if home_gallery %}
+      <div class="sl-premium-surface sl-premium-surface-slow mt-4 min-w-0 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:rounded-3xl sm:p-5" style="content-visibility:auto; contain-intrinsic-size: 1px 220px;">
+        <div class="text-center text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 sm:text-xs">Pamje nga biblioteka</div>
+        <div class="mt-2 grid grid-cols-2 gap-2 sm:mt-3 sm:grid-cols-4 sm:gap-3">
+          {% for item in home_gallery %}
+          <div class="sl-premium-img-cell group relative min-w-0 overflow-hidden rounded-lg border border-slate-200/80 bg-white shadow-sm dark:border-slate-700 sm:rounded-xl">
+            <img src="{% static item.path %}" alt="{{ item.caption }}" width="420" height="280" sizes="(max-width:640px) 50vw, 25vw" class="relative z-[1] h-24 w-full min-w-0 object-cover transition duration-500 group-hover:scale-[1.03] sm:h-28 md:h-32" loading="lazy" decoding="async" data-sl-skip-skeleton="1" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 120%22 fill=%22%23e2e8f0%22><text x=%2250%25%22 y=%2255%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%2294a3b8%22 font-size=%2212%22 font-family=%22sans-serif%22>Foto</text></svg>';" />
+            <div class="absolute inset-x-0 bottom-0 z-[3] bg-gradient-to-t from-black/60 to-transparent px-2 py-2">
+              <span class="text-xs font-semibold text-white drop-shadow">{{ item.caption }}</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- Thënie — kompakt -->
+  <section class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+      <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40">
+        <div class="text-[10px] font-extrabold uppercase tracking-wider text-brand-600 dark:text-brand-400">Thënie</div>
+        <p class="mt-2 text-sm font-bold leading-snug text-slate-800 dark:text-white">“Sot një faqe, nesër një kapitull, pasnesër një sukses.”</p>
+        <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">— Motivim për lexim</p>
+      </div>
+      <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40">
+        <div class="text-[10px] font-extrabold uppercase tracking-wider text-brand-600 dark:text-brand-400">Thënie</div>
+        <p class="mt-2 text-sm font-bold leading-snug text-slate-800 dark:text-white">Leximi është investimi më i sigurt për të ardhmen.</p>
+        <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">— Dije & zhvillim</p>
+      </div>
+      <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40">
+        <div class="text-[10px] font-extrabold uppercase tracking-wider text-brand-600 dark:text-brand-400">Thënie</div>
+        <p class="mt-2 text-sm font-bold leading-snug text-slate-800 dark:text-white">“Një qytet që lexon është një qytet që rritet.”</p>
+        <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">— Komunitet</p>
+      </div>
+      <div class="rounded-2xl border border-brand-200 bg-brand-50 p-4 shadow-sm dark:border-brand-800 dark:bg-slate-800/60">
+        <div class="text-[10px] font-extrabold uppercase tracking-wider text-brand-700 dark:text-brand-300">Mirëseardhje</div>
+        <p class="mt-2 text-sm font-bold leading-snug text-slate-800 dark:text-white">“Dija është dritë, dhe libri është rruga që na çon drejt saj.”</p>
+        <p class="mt-2 text-xs font-semibold text-brand-800 dark:text-brand-200">Biblioteka Kamëz</p>
       </div>
     </div>
   </section>
 
-  <section class="mx-auto w-full max-w-7xl px-3 py-6 sm:px-6 lg:px-8">
-    <div class="sl-quote-banner rounded-3xl border border-brand-200/50 bg-gradient-to-r from-brand-700 to-brand-500 p-6 text-center text-white shadow-xl shadow-brand-900/20">
-      <div class="text-4xl leading-none text-white/70">“</div>
-      <p class="mx-auto max-w-3xl text-lg font-bold sm:text-xl">Çdo libër është një dritare e re për të parë botën.</p>
-      <div class="mt-2 text-sm text-white/85">— Fryma e leximit</div>
-    </div>
+  <!-- Njoftime, Evente, Video — një rresht, më pak hapësirë -->
+  <section class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
+      <div class="min-w-0 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:p-5">
+        <h3 class="text-sm font-extrabold text-brand-700 dark:text-brand-300">Njoftime</h3>
+        <div class="mt-3 space-y-3">
+          {% for n in announcements|slice:":3" %}
+            <a href="/njoftime/" class="block rounded-xl border border-slate-100 p-3 transition hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+              {% if n.image_url %}<img src="{{ n.image_url }}" alt="" class="mb-2 h-24 w-full rounded-lg object-cover" />{% endif %}
+              <div class="text-sm font-bold text-slate-800 dark:text-white">{{ n.title }}</div>
+              <div class="text-xs text-slate-500 dark:text-slate-400">{{ n.date }}</div>
+            </a>
+          {% empty %}
+            <p class="text-sm text-slate-500 dark:text-slate-400">S’ka njoftime ende.</p>
+          {% endfor %}
+            </div>
+          </div>
+      <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800/40">
+        <h3 class="text-sm font-extrabold text-brand-700 dark:text-brand-300">Evente</h3>
+        <div class="mt-3 space-y-3">
+          {% for e in home_events %}
+            <a href="/evente/" class="block rounded-xl border border-slate-100 p-3 transition hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+              {% if e.image_url %}<img src="{{ e.image_url }}" alt="" class="mb-2 h-24 w-full rounded-lg object-cover" />{% endif %}
+              <div class="text-sm font-bold text-slate-800 dark:text-white">{{ e.title }}</div>
+              <div class="text-xs text-slate-500 dark:text-slate-400">{{ e.date }}</div>
+            </a>
+          {% empty %}
+            <p class="text-sm text-slate-500 dark:text-slate-400">S’ka evente ende.</p>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="min-w-0 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:p-5">
+        <h3 class="text-sm font-extrabold text-brand-700 dark:text-brand-300">Video</h3>
+        <div class="mt-3 space-y-3">
+          {% for v in home_videos %}
+            <a href="/video/" class="block rounded-xl border border-slate-100 p-3 transition hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50">
+              {% if v.image_url %}<img src="{{ v.image_url }}" alt="" class="mb-2 h-24 w-full rounded-lg object-cover" />{% endif %}
+              <div class="text-sm font-bold text-slate-800 dark:text-white">{{ v.title }}</div>
+              <div class="text-xs text-slate-500 dark:text-slate-400">{{ v.date }}</div>
+              {% if v.url %}<span class="mt-2 inline-block rounded-lg bg-brand-600 px-2 py-1 text-[11px] font-bold text-white">Shiko</span>{% endif %}
+            </a>
+          {% empty %}
+            <p class="text-sm text-slate-500 dark:text-slate-400">S’ka video ende.</p>
+          {% endfor %}
+                  </div>
+                  </div>
+                </div>
   </section>
+
 {% endblock %}
 
 {% block extrahead %}
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap');
-    .sl-display { font-family: 'Plus Jakarta Sans', Inter, sans-serif; }
     .sl-quote-card {
       background:
         radial-gradient(circle at 0% 0%, rgba(49, 145, 137, 0.14), transparent 36%),
@@ -430,4 +543,26 @@
       }
     }
   </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const tabs = document.querySelectorAll('.dashTab');
+      const show = function (name) {
+        const a = document.getElementById('tab-katalog');
+        const b = document.getElementById('tab-qarkullim');
+        if (!a || !b) return;
+        a.classList.toggle('hidden', name !== 'katalog');
+        b.classList.toggle('hidden', name !== 'qarkullim');
+        tabs.forEach(function (t) {
+          const active = t.dataset.tab === name;
+          t.classList.toggle('bg-brand-100', active);
+          t.classList.toggle('text-brand-800', active);
+          t.classList.toggle('border', !active);
+          t.classList.toggle('bg-white', !active);
+          t.classList.toggle('border-slate-200', !active);
+        });
+      };
+      tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.dataset.tab); }); });
+      show('katalog');
+    });
+  </script>
 {% endblock %}

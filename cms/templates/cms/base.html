@@ -53,11 +53,6 @@
     <style>
       .glass { background: rgba(255,255,255,.72); backdrop-filter: blur(10px); }
       .dark .glass { background: rgba(2, 6, 23, .40); }
-      .site-header {
-        background: rgba(19, 126, 121, 0.82);
-        backdrop-filter: blur(14px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.18);
-      }
       .dark .site-header {
         background: linear-gradient(90deg, rgba(15, 23, 42, .96), rgba(30, 41, 59, .96));
         border-color: rgba(49, 145, 137, .32);
@@ -81,24 +76,6 @@
       body { overflow-x: hidden; }
       #sl-ajax-container { min-width: 0; overflow-x: hidden; }
       #sl-ajax-container img { max-width: 100%; height: auto; }
-      .sl-nav-link {
-        position: relative;
-      }
-      .sl-nav-link::after {
-        content: "";
-        position: absolute;
-        left: .75rem;
-        right: .75rem;
-        bottom: .25rem;
-        height: 2px;
-        border-radius: 999px;
-        background: linear-gradient(90deg, rgba(214,178,94,.92), rgba(255,255,255,.9));
-        transform: scaleX(0);
-        transform-origin: center;
-        transition: transform .22s ease;
-      }
-      .sl-nav-link:hover::after { transform: scaleX(1); }
-      .sl-nav-link.sl-nav-active::after { transform: scaleX(1); }
     </style>
   </head>
   <body class="h-full bg-brand-50 font-sans text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
@@ -109,22 +86,22 @@
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div class="flex h-16 items-center justify-between gap-3">
             <a href="/" class="group flex min-w-0 items-center gap-2">
-              <img src="{% static 'img/logo_biblioteka.png' %}" alt="Biblioteka Kamëz" width="232" height="60" class="h-10 w-auto max-w-[min(56vw,232px)] object-contain object-left sm:h-11 sm:max-w-[232px]" decoding="async" />
+              <img src="{% static 'img/logo_biblioteka.png' %}" alt="Biblioteka Kamëz" width="200" height="48" class="h-9 w-auto max-w-[min(52vw,200px)] object-contain object-left sm:h-10 sm:max-w-[220px]" decoding="async" />
             </a>
 
             <button id="sl-mobile-menu-btn" type="button" class="md:hidden rounded-xl p-2 text-white hover:bg-white/10 aria-expanded=false" aria-label="Hap menunë">
               <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
             <nav id="sl-desktop-nav" class="hidden items-center gap-1 md:flex">
-              <a href="/" data-nav="home" class="sl-nav-link {% if request.path == '/' %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:text-white dark:hover:bg-brand-500/20 {% if request.path == '/' %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/95{% endif %}">Kryefaqja</a>
-              <a href="/catalog/" data-nav="catalog" class="sl-nav-link {% if '/catalog/' in request.path or '/books/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:text-white dark:hover:bg-brand-500/20 {% if '/catalog/' in request.path or '/books/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/95{% endif %}">Katalog</a>
-              <a href="/njoftime/" data-nav="njoftime" class="sl-nav-link {% if '/njoftime/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:text-white dark:hover:bg-brand-500/20 {% if '/njoftime/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/95{% endif %}">Njoftime</a>
-              <a href="/evente/" data-nav="evente" class="sl-nav-link {% if '/evente/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:text-white dark:hover:bg-brand-500/20 {% if '/evente/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/95{% endif %}">Evente</a>
-              <a href="/video/" data-nav="video" class="sl-nav-link {% if '/video/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:text-white dark:hover:bg-brand-500/20 {% if '/video/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/95{% endif %}">Video</a>
-              <a href="/rreth-nesh/" data-nav="rreth-nesh" class="sl-nav-link {% if '/rreth-nesh/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:text-white dark:hover:bg-brand-500/20 {% if '/rreth-nesh/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/95{% endif %}">Rreth nesh</a>
-              <a href="/rregullore/" data-nav="rregullore" class="sl-nav-link {% if '/rregullore/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:text-white dark:hover:bg-brand-500/20 {% if '/rregullore/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/95{% endif %}">Rregullore</a>
-              <a href="/orar/" data-nav="orar" class="sl-nav-link {% if '/orar/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:text-white dark:hover:bg-brand-500/20 {% if '/orar/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/95{% endif %}">Orar</a>
-              <a href="/kontakt/" data-nav="kontakt" class="sl-nav-link {% if '/kontakt/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:text-white dark:hover:bg-brand-500/20 {% if '/kontakt/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/95{% endif %}">Kontakt</a>
+              <a href="/" data-nav="home" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if request.path == '/' %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Kryefaqja</a>
+              <a href="/catalog/" data-nav="catalog" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/catalog/' in request.path or '/books/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Katalog</a>
+              <a href="/njoftime/" data-nav="njoftime" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/njoftime/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Njoftime</a>
+              <a href="/evente/" data-nav="evente" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/evente/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Evente</a>
+              <a href="/video/" data-nav="video" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/video/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Video</a>
+              <a href="/rreth-nesh/" data-nav="rreth-nesh" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/rreth-nesh/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Rreth nesh</a>
+              <a href="/rregullore/" data-nav="rregullore" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/rregullore/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Rregullore</a>
+              <a href="/orar/" data-nav="orar" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/orar/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Orar</a>
+              <a href="/kontakt/" data-nav="kontakt" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/kontakt/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Kontakt</a>
             </nav>
 
             <div class="flex items-center gap-2">
@@ -334,7 +311,6 @@
             var path = pathname || window.location.pathname || '/';
             document.querySelectorAll('#sl-desktop-nav a[data-nav]').forEach(function (a) {
               var active = isActive(path, a.getAttribute('data-nav'));
-              a.classList.toggle('sl-nav-active', active);
               a.classList.toggle('bg-white/20', active);
               a.classList.toggle('text-white', active);
               a.classList.toggle('ring-1', active);

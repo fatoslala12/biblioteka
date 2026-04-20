@@ -72,9 +72,11 @@ class Book(TimestampedModel):
     title = models.CharField(max_length=255)
     isbn = models.CharField(max_length=32, blank=True, default="")
     description = models.TextField(blank=True, default="")
+    cover_image = models.ImageField(upload_to="catalog/books/covers/", null=True, blank=True, verbose_name="Foto kopertine")
     language = models.CharField(max_length=64, blank=True, default="")
     publication_year = models.PositiveIntegerField(null=True, blank=True)
     book_type = models.CharField(max_length=16, choices=BookType.choices, default=BookType.GENERAL)
+    is_recommended = models.BooleanField(default=False, verbose_name="Shto te librat e rekomanduar")
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Çmimi")
     purchase_method = models.CharField(
         max_length=20,

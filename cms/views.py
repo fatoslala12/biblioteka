@@ -120,7 +120,7 @@ def home(request):
         }
         for e in home_events_qs
     ]
-    featured = (
+    featured_base_qs = (
         Book.objects.filter(is_deleted=False)
         .annotate(
             available_copies=Count(
@@ -129,8 +129,11 @@ def home(request):
                 distinct=True,
             )
         )
-        .order_by("-available_copies", "-created_at")[:6]
+        .order_by("-available_copies", "-created_at")
     )
+    featured = list(featured_base_qs.filter(is_recommended=True)[:6])
+    if not featured:
+        featured = list(featured_base_qs[:6])
     curated_book = (
         WeeklyBook.objects.filter(is_published=True, published_at__lte=now, show_on_home=True)
         .order_by("-published_at")

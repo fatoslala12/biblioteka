@@ -90,18 +90,20 @@ class BookAdmin(admin.ModelAdmin):
             return queryset
 
     list_display = (
+        "cover_preview",
         "title_display",
         "author_display",
         "isbn_display",
         "publication_year_display",
         "book_type_display",
+        "is_recommended",
         "purchase_method_display",
         "price_display",
         "publisher_display",
         "total_copies",
         "available_copies",
     )
-    list_filter = (AuthorFilter, PublisherFilter, PublicationYearFilter, GenreFilter, "purchase_method")
+    list_filter = (AuthorFilter, PublisherFilter, PublicationYearFilter, GenreFilter, "purchase_method", "is_recommended")
     search_fields = ("title", "isbn", "publisher__name", "authors__name")
     autocomplete_fields = ("publisher", "authors", "genres", "tags")
     actions = None
@@ -135,6 +137,8 @@ class BookAdmin(admin.ModelAdmin):
                     "fields": (
                         "title",
                         "isbn",
+                        "cover_image",
+                        "is_recommended",
                         "description",
                         ("language", "publication_year"),
                     )
@@ -185,6 +189,15 @@ class BookAdmin(admin.ModelAdmin):
     @admin.display(description="Titulli", ordering="title")
     def title_display(self, obj: Book):
         return obj.title
+
+    @admin.display(description="Kopertina")
+    def cover_preview(self, obj: Book):
+        if not obj.cover_image:
+            return "—"
+        return format_html(
+            '<img src="{}" style="width:38px;height:54px;border-radius:8px;object-fit:cover;border:1px solid rgba(15,23,42,.12);" />',
+            obj.cover_image.url,
+        )
 
     @admin.display(description="Autori")
     def author_display(self, obj: Book):

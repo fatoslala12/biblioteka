@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% block title %}Biblioteka Kamëz{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}Biblioteka Kamëz — katalog, rezervime dhe menaxhim modern biblioteke.{% endblock %}" />
-    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}" />
+    <link rel="icon" type="image/png" href="{% static 'img/logo_biblioteka.png' %}" sizes="any" />
+    <link rel="apple-touch-icon" href="{% static 'img/logo_biblioteka.png' %}" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -134,7 +135,9 @@
             <nav id="sl-desktop-nav" class="hidden items-center gap-1 md:flex">
               <a href="/" data-nav="home" class="sl-nav-link {% if request.path == '/' %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if request.path == '/' %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Kryefaqja</a>
               <a href="/catalog/" data-nav="catalog" class="sl-nav-link {% if '/catalog/' in request.path or '/books/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/catalog/' in request.path or '/books/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Katalog</a>
+              {% if '/panel/' not in request.path %}
               <a href="/njoftime/" data-nav="njoftime" class="sl-nav-link {% if '/njoftime/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/njoftime/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Njoftime</a>
+              {% endif %}
               <a href="/evente/" data-nav="evente" class="sl-nav-link {% if '/evente/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/evente/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Evente</a>
               <a href="/libri-i-javes/" data-nav="libri-i-javes" class="sl-nav-link {% if '/libri-i-javes/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/libri-i-javes/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Libri i javës</a>
               <a href="/rreth-nesh/" data-nav="rreth-nesh" class="sl-nav-link {% if '/rreth-nesh/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/rreth-nesh/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Rreth nesh</a>
@@ -145,6 +148,9 @@
 
             <div class="flex items-center gap-2">
               {% if request.user.is_authenticated %}
+                {% if sl_notif_list_url %}
+                  {% include "cms/includes/_member_notification_bell.html" %}
+                {% endif %}
                 <a href="/anetar/" class="hidden rounded-xl border border-white/25 bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white/15 sm:inline-flex">
                   {% with nm=request.user.get_full_name %}
                     {% if nm %}{{ nm }}{% else %}{{ request.user.username }}{% endif %}
@@ -184,7 +190,9 @@
           <nav class="flex flex-col gap-1 p-4">
             <a href="/" data-nav="home" class="rounded-xl px-3 py-2.5 text-sm font-medium {% if request.path == '/' %}bg-white/20 text-white ring-1 ring-white/30{% else %}text-white/95 hover:bg-white/10{% endif %}">Kryefaqja</a>
             <a href="/catalog/" data-nav="catalog" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Katalog</a>
+            {% if '/panel/' not in request.path %}
             <a href="/njoftime/" data-nav="njoftime" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Njoftime</a>
+            {% endif %}
             <a href="/evente/" data-nav="evente" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Evente</a>
             <a href="/libri-i-javes/" data-nav="libri-i-javes" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Libri i javës</a>
             <a href="/rreth-nesh/" data-nav="rreth-nesh" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Rreth nesh</a>
@@ -260,7 +268,9 @@
               <div class="text-sm font-semibold text-white">Navigim</div>
               <div class="mt-3 space-y-2 text-sm">
                 <a class="block text-white/80 transition hover:text-white" href="/catalog/">Katalog</a>
+                {% if '/panel/' not in request.path %}
                 <a class="block text-white/80 transition hover:text-white" href="/njoftime/">Njoftime</a>
+                {% endif %}
                 <a class="block text-white/80 transition hover:text-white" href="/evente/">Evente</a>
                 <a class="block text-white/80 transition hover:text-white" href="/libri-i-javes/">Libri i javës</a>
                 <a class="block text-white/80 transition hover:text-white" href="/kontakt/">Kontakt</a>

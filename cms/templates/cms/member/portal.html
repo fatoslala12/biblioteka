@@ -305,15 +305,6 @@
             </div>
           {% endif %}
         </div>
-        <div class="flex flex-wrap items-center gap-2">
-          {% include "cms/includes/_member_notification_bell.html" %}
-          <a href="/anetar/notifications/" class="inline-flex items-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-4 py-2.5 text-sm font-extrabold text-white shadow-sm backdrop-blur transition hover:bg-white/20">
-            Notifications
-            {% if sl_notif_unread %}
-              <span class="rounded-full bg-amber-400 px-2 py-0.5 text-xs font-black text-slate-900">{{ sl_notif_unread }}</span>
-            {% endif %}
-          </a>
-        </div>
       </div>
     </div>
   </section>

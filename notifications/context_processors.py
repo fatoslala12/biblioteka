@@ -11,10 +11,18 @@ def notification_bell(request):
     if not getattr(request, "user", None) or not request.user.is_authenticated:
         return empty
     path = getattr(request, "path", "") or ""
-    if not path.startswith("/anetar/"):
-        return empty
     user = request.user
-    if getattr(user, "role", None) != UserRole.MEMBER:
+    role = getattr(user, "role", None)
+
+    if path.startswith("/anetar/") and role == UserRole.MEMBER:
+        list_url = "/anetar/notifications/"
+    elif path.startswith("/panel/") and (
+        role in (UserRole.ADMIN, UserRole.STAFF)
+        or getattr(user, "is_superuser", False)
+        or getattr(user, "is_staff", False)
+    ):
+        list_url = "/panel/notifications/"
+    else:
         return empty
 
     unread = UserNotification.objects.filter(user=user, read_at__isnull=True).count()
@@ -22,5 +30,5 @@ def notification_bell(request):
     return {
         "sl_notif_unread": unread,
         "sl_notif_preview": preview,
-        "sl_notif_list_url": "/anetar/notifications/",
+        "sl_notif_list_url": list_url,
     }

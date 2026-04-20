@@ -140,6 +140,7 @@ class MemberPortalIntegrationTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Gjoba & Pagesa")
         self.assertContains(response, "Të papaguara")
+        self.assertContains(response, "slMemberNotifBellBtn")
 
     def test_member_notifications_list_loads(self):
         self.client.force_login(self.user)
@@ -174,8 +175,16 @@ class StaffPanelNotificationsTests(TestCase):
 
     def test_panel_notifications_loads(self):
         self.client.force_login(self.staff)
+        UserNotification.objects.create(
+            user=self.staff,
+            kind=NotificationKind.RESERVATION_NEW_STAFF,
+            title="Panel list item",
+            body="",
+        )
         r = self.client.get("/panel/notifications/")
         self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "slMemberNotifBellBtn")
+        self.assertContains(r, "Panel list item")
 
 
 class StaffNotificationBadgeTests(TestCase):

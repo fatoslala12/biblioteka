@@ -149,9 +149,15 @@ class MemberPortalIntegrationTests(TestCase):
             title="Test njoftim",
             body="Përmbajtje test.",
         )
-        r = self.client.get("/anetar/njoftime/")
+        r = self.client.get("/anetar/notifications/")
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "Test njoftim")
+
+    def test_member_notifications_legacy_redirects(self):
+        self.client.force_login(self.user)
+        r = self.client.get("/anetar/njoftime/", follow=False)
+        self.assertEqual(r.status_code, 302)
+        self.assertTrue(r["Location"].startswith("/anetar/notifications/"))
 
 
 class StaffPanelNotificationsTests(TestCase):
@@ -168,8 +174,47 @@ class StaffPanelNotificationsTests(TestCase):
 
     def test_panel_notifications_loads(self):
         self.client.force_login(self.staff)
-        r = self.client.get("/panel/njoftime/")
+        r = self.client.get("/panel/notifications/")
         self.assertEqual(r.status_code, 200)
+
+
+class StaffNotificationBadgeTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.member = User.objects.create_user(
+            username="badge_member",
+            email="badge_member@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.MEMBER,
+            is_staff=False,
+        )
+        self.staff_admin = User.objects.create_user(
+            username="badge_staff_admin",
+            email="badge_staff_admin@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.STAFF,
+            is_staff=True,
+        )
+
+    def test_badge_json_forbidden_for_member(self):
+        self.client.force_login(self.member)
+        r = self.client.get("/_staff-notif-badge/")
+        self.assertEqual(r.status_code, 403)
+
+    def test_badge_json_ok_for_is_staff_user(self):
+        self.client.force_login(self.staff_admin)
+        UserNotification.objects.create(
+            user=self.staff_admin,
+            kind=NotificationKind.RESERVATION_NEW_STAFF,
+            title="Staff ping",
+            body="Hello",
+        )
+        r = self.client.get("/_staff-notif-badge/")
+        self.assertEqual(r.status_code, 200)
+        data = r.json()
+        self.assertGreaterEqual(data.get("unread", 0), 1)
+        self.assertIn("admin_changelist", data)
+        self.assertTrue(any(p.get("title") == "Staff ping" for p in data.get("preview", [])))
 
 
 class DesignSystemCssTests(TestCase):
@@ -429,6 +474,19 @@ class AdminExecutiveDashboardSmokeTests(TestCase):
         self.assertContains(resp, "Përmbledhje ekzekutive")
         self.assertContains(resp, "Veprime prioritare sot")
         self.assertContains(resp, "Trend 7d")
+
+    def test_admin_dashboard_contains_in_app_notifications_card(self):
+        self.client.force_login(self.admin_user)
+        UserNotification.objects.create(
+            user=self.admin_user,
+            kind=NotificationKind.RESERVATION_NEW_STAFF,
+            title="Dash notif ping",
+            body="Test body",
+        )
+        resp = self.client.get("/admin/")
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "Njoftime për ju (në aplikacion)")
+        self.assertContains(resp, "Dash notif ping")
 
 
 class HomeCtaAndCmsDetailTests(TestCase):

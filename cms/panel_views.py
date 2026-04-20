@@ -286,7 +286,7 @@ def staff_notifications(request: HttpRequest):
     if request.method == "POST" and request.POST.get("action") == "mark_all_read":
         UserNotification.objects.filter(user=request.user, read_at__isnull=True).update(read_at=timezone.now())
         messages.success(request, "Të gjitha njoftimet u shënuan si të lexuara.")
-        return redirect("/panel/njoftime/")
+        return redirect("/panel/notifications/")
 
     paginator = Paginator(UserNotification.objects.filter(user=request.user).order_by("-created_at"), 24)
     page_obj = paginator.get_page(request.GET.get("page") or 1)

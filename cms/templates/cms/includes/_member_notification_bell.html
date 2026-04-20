@@ -1,6 +1,6 @@
 {% if request.user.is_authenticated %}
-<div class="relative shrink-0" id="slNotifBellWrap">
-  <button type="button" id="slNotifBellBtn" class="relative flex h-10 w-10 items-center justify-center rounded-2xl border border-white/25 bg-white/10 text-white shadow-sm ring-1 ring-white/10 transition hover:bg-white/15 hover:ring-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90" aria-expanded="false" aria-haspopup="true" aria-label="Njoftime">
+<div class="relative shrink-0" id="slMemberNotifBellWrap">
+  <button type="button" id="slMemberNotifBellBtn" class="relative flex h-10 w-10 items-center justify-center rounded-2xl border border-white/25 bg-white/10 text-white shadow-sm ring-1 ring-white/10 transition hover:bg-white/15 hover:ring-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90" aria-expanded="false" aria-haspopup="true" aria-label="Notifications">
     <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
       <path d="M14.5 18a2.5 2.5 0 0 1-5 0h5Z" stroke-linecap="round" stroke-linejoin="round"/>
       <path d="M6 15a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1H6v-1Z" stroke-linecap="round" stroke-linejoin="round"/>
@@ -10,12 +10,12 @@
       <span class="absolute -right-0.5 -top-0.5 flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 px-1 text-[10px] font-black leading-none text-slate-900 shadow-md ring-2 ring-white/90">{{ sl_notif_unread }}</span>
     {% endif %}
   </button>
-  <div id="slNotifPanel" class="sl-notif-panel pointer-events-none invisible absolute right-0 top-full z-[60] mt-2 w-[min(22rem,calc(100vw-2rem))] origin-top-right scale-95 opacity-0 transition duration-200 ease-out md:right-0" role="dialog" aria-label="Lista e njoftimeve">
+  <div id="slMemberNotifPanel" class="sl-notif-panel pointer-events-none invisible absolute right-0 top-full z-[60] mt-2 w-[min(22rem,calc(100vw-2rem))] origin-top-right scale-95 opacity-0 transition duration-200 ease-out md:right-0" role="dialog" aria-label="Notifications">
     <div class="overflow-hidden rounded-2xl border border-white/20 bg-white/95 shadow-2xl shadow-slate-900/25 ring-1 ring-slate-200/60 backdrop-blur-xl dark:border-slate-600/50 dark:bg-slate-900/95 dark:ring-slate-700/60">
       <div class="flex items-center justify-between gap-2 border-b border-slate-200/80 bg-gradient-to-r from-brand-600/10 via-white to-amber-400/10 px-4 py-3 dark:border-slate-700/80 dark:from-brand-500/15 dark:via-slate-900 dark:to-amber-500/10">
-        <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-200">Njoftime</span>
+        <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-200">Notifications</span>
         {% if sl_notif_unread %}
-          <span class="rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-black text-white">{{ sl_notif_unread }} të palexuara</span>
+          <span class="rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-black text-white">{{ sl_notif_unread }} unread</span>
         {% endif %}
       </div>
       <div class="max-h-[min(70vh,22rem)] overflow-y-auto">
@@ -25,7 +25,7 @@
               <div class="flex items-start justify-between gap-2">
                 <span class="min-w-0 text-sm font-extrabold leading-snug text-slate-900 dark:text-white">{{ n.title }}</span>
                 {% if not n.read_at %}
-                  <span class="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-brand-500 shadow-sm shadow-brand-500/50" title="E palexuar"></span>
+                  <span class="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-brand-500 shadow-sm shadow-brand-500/50" title="Unread"></span>
                 {% endif %}
               </div>
               {% if n.body %}
@@ -35,20 +35,20 @@
             </a>
           {% endfor %}
         {% else %}
-          <div class="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400">Nuk ka njoftime ende.</div>
+          <div class="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400">No notifications yet.</div>
         {% endif %}
       </div>
       <div class="border-t border-slate-200/80 bg-slate-50/80 p-2 dark:border-slate-700/80 dark:bg-slate-950/60">
-        <a href="{{ sl_notif_list_url }}" class="flex min-h-[44px] items-center justify-center rounded-xl bg-gradient-to-r from-brand-600 to-brand-700 px-3 py-2 text-center text-xs font-extrabold text-white shadow-md shadow-brand-700/25 transition hover:from-brand-700 hover:to-brand-800">Shiko të gjitha</a>
+        <a href="{{ sl_notif_list_url }}" class="flex min-h-[44px] items-center justify-center rounded-xl bg-gradient-to-r from-brand-600 to-brand-700 px-3 py-2 text-center text-xs font-extrabold text-white shadow-md shadow-brand-700/25 transition hover:from-brand-700 hover:to-brand-800">View all</a>
       </div>
     </div>
   </div>
 </div>
 <script>
   (function () {
-    var btn = document.getElementById('slNotifBellBtn');
-    var panel = document.getElementById('slNotifPanel');
-    var wrap = document.getElementById('slNotifBellWrap');
+    var btn = document.getElementById('slMemberNotifBellBtn');
+    var panel = document.getElementById('slMemberNotifPanel');
+    var wrap = document.getElementById('slMemberNotifBellWrap');
     if (!btn || !panel || !wrap) return;
     function openP() {
       panel.classList.remove('invisible', 'pointer-events-none', 'scale-95', 'opacity-0');

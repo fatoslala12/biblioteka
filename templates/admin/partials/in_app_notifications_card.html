@@ -1,0 +1,51 @@
+{% if show %}
+<div class="row sl-section-title-row">
+  <div class="col-12">
+    <h5 class="sl-section-title">Notifications</h5>
+  </div>
+</div>
+<div class="row sl-admin-inapp-notif-row mb-3">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <h5 class="m-0 font-weight-bold">Njoftime për ju (në aplikacion)</h5>
+        {% if unread_count %}
+          <span class="badge badge-warning font-weight-bold">{{ unread_count }} të palexuara</span>
+        {% else %}
+          <span class="text-muted small">Të gjitha të lexuara</span>
+        {% endif %}
+      </div>
+      <div class="card-body p-0">
+        {% if notifications %}
+          <ul class="list-group list-group-flush">
+            {% for n in notifications %}
+              <li class="list-group-item d-flex flex-column flex-md-row align-items-md-start justify-content-md-between gap-2">
+                <div class="min-w-0 flex-grow-1">
+                  <div class="font-weight-bold text-truncate">
+                    <a href="{% url 'admin:notifications_usernotification_change' n.pk %}">{{ n.title }}</a>
+                  </div>
+                  {% if n.body %}
+                    <small class="text-muted d-block mt-1" style="white-space: pre-wrap;">{{ n.body|truncatechars:140 }}</small>
+                  {% endif %}
+                  <small class="text-muted d-block mt-1">{{ n.created_at|date:"d/m/Y H:i" }}</small>
+                </div>
+                <div class="d-flex flex-shrink-0 align-items-center gap-2">
+                  {% if not n.read_at %}
+                    <span class="badge badge-primary">E re</span>
+                  {% endif %}
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="p-4 text-muted text-center small mb-0">Nuk ka njoftime ende për këtë përdorues.</div>
+        {% endif %}
+      </div>
+      <div class="card-footer bg-light d-flex flex-wrap gap-2 justify-content-between align-items-center">
+        <a href="{{ changelist_url }}" class="btn btn-sm btn-primary font-weight-bold">Hap listën në admin</a>
+        <a href="/panel/notifications/" class="btn btn-sm btn-outline-secondary font-weight-bold">Paneli i stafit</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

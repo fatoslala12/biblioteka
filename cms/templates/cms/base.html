@@ -144,7 +144,6 @@
             </nav>
 
             <div class="flex items-center gap-2">
-              {% include "cms/includes/_notification_bell.html" %}
               {% if request.user.is_authenticated %}
                 <a href="/anetar/" class="hidden rounded-xl border border-white/25 bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white/15 sm:inline-flex">
                   {% with nm=request.user.get_full_name %}
@@ -194,11 +193,6 @@
             <a href="/kontakt/" data-nav="kontakt" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Kontakt</a>
             <div class="my-2 border-t border-white/15"></div>
             {% if request.user.is_authenticated %}
-            {% if request.user.role == "MEMBER" %}
-            <a href="/anetar/njoftime/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Njoftime{% if sl_notif_unread %} ({{ sl_notif_unread }}){% endif %}</a>
-            {% else %}
-            <a href="/panel/njoftime/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Njoftime{% if sl_notif_unread %} ({{ sl_notif_unread }}){% endif %}</a>
-            {% endif %}
             <a href="/anetar/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Portali im</a>
             <a href="/dil/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Dil</a>
             {% else %}

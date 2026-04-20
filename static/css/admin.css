@@ -328,7 +328,7 @@ aside.main-sidebar::before,
   border-bottom: 1px solid rgba(255,255,255,.24) !important;
   background: linear-gradient(135deg, rgba(0,0,0,.14) 0%, rgba(0,0,0,.06) 100%) !important;
   box-shadow: 0 2px 12px rgba(0,0,0,.1) !important;
-  padding: .6rem 1rem !important;
+  padding: .45rem .85rem !important;
   min-height: auto !important;
 }
 .brand-link .brand-text {
@@ -337,13 +337,13 @@ aside.main-sidebar::before,
   font-size: 1rem !important;
 }
 .nav-sidebar .nav-link {
-  border-radius: 12px !important;
-  margin: 4.5px 10px !important;
-  padding: 8px 12px !important;
+  border-radius: 10px !important;
+  margin: 2px 8px !important;
+  padding: 5px 10px !important;
   transition: all .22s cubic-bezier(.4,0,.2,1) !important;
   border: 1px solid transparent !important;
   position: relative !important;
-  font-size: .925rem !important;
+  font-size: .875rem !important;
 }
 .nav-sidebar .nav-link:hover {
   background: linear-gradient(135deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,.06) 100%) !important;
@@ -358,12 +358,12 @@ aside.main-sidebar::before,
   border-left: 3px solid rgba(255,255,255,.7) !important;
 }
 #jazzy-sidebar .nav-link {
-  border-radius: 12px !important;
-  margin: 4.5px 10px !important;
-  padding: 8px 12px !important;
+  border-radius: 10px !important;
+  margin: 2px 8px !important;
+  padding: 5px 10px !important;
   transition: all .22s cubic-bezier(.4,0,.2,1) !important;
   border: 1px solid transparent !important;
-  font-size: .925rem !important;
+  font-size: .875rem !important;
 }
 #jazzy-sidebar .nav-link:hover {
   background: linear-gradient(135deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,.06) 100%) !important;
@@ -380,9 +380,9 @@ aside.main-sidebar::before,
 /* Nested menu items – compact, same hover/active feel */
 .nav-treeview .nav-link,
 #jazzy-sidebar .nav-treeview .nav-link {
-  border-radius: 10px !important;
-  margin: 3px 10px 3px 24px !important;
-  padding: 6px 10px !important;
+  border-radius: 9px !important;
+  margin: 1px 8px 1px 20px !important;
+  padding: 4px 9px !important;
   transition: all .22s cubic-bezier(.4,0,.2,1) !important;
   border: 1px solid transparent !important;
   font-size: .9rem !important;
@@ -405,8 +405,8 @@ aside.main-sidebar::before,
   font-weight: 700 !important;
   letter-spacing: .08em;
   text-transform: uppercase;
-  margin: 12px 14px 4px !important;
-  font-size: .7rem !important;
+  margin: 6px 12px 2px !important;
+  font-size: .68rem !important;
 }
 #jazzy-sidebar .nav-sidebar::before {
   padding: 8px 16px 6px !important;
@@ -2512,4 +2512,80 @@ body.app-accounts.model-user.change-form #content-main .card {
     padding: 4px 10px !important;
     font-size: 0.8rem !important;
   }
+}
+
+/* In-app notifications bell (Jazzmin top bar, JSON from /_staff-notif-badge/) */
+#slAdminNotifBellWrap {
+  position: relative !important;
+}
+#slAdminNotifBellBtn {
+  position: relative;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.92);
+  padding: 0.35rem 0.55rem !important;
+  border-radius: 10px;
+  line-height: 1;
+}
+#slAdminNotifBellBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+#slAdminNotifPanel {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 6px;
+  width: min(22rem, calc(100vw - 2rem));
+  max-height: min(70vh, 22rem);
+  z-index: 2000;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #fff;
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.22);
+}
+#slAdminNotifPanel.sl-open {
+  display: flex;
+}
+#slAdminNotifPanel .sl-admin-notif-scroll {
+  overflow-y: auto;
+  max-height: min(52vh, 18rem);
+}
+#slAdminNotifPanel .sl-admin-notif-row {
+  display: block;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+  text-decoration: none;
+  color: #0f172a;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+#slAdminNotifPanel .sl-admin-notif-row:hover {
+  background: rgba(49, 144, 136, 0.08);
+}
+#slAdminNotifPanel .sl-admin-notif-row small {
+  display: block;
+  margin-top: 4px;
+  font-weight: 500;
+  color: #64748b;
+  font-size: 0.75rem;
+}
+#slAdminNotifBadge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 1.1rem;
+  height: 1.1rem;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #fbbf24, #f97316);
+  color: #0f172a;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.1rem;
+  text-align: center;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85);
 }

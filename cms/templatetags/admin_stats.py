@@ -5,6 +5,7 @@ from django.conf import settings
 from django import template
 from django.db.models import Avg, Count, DurationField, ExpressionWrapper, F, Sum
 from django.db.models.functions import TruncMonth
+from django.urls import reverse
 from django.utils import timezone
 
 from accounts.models import MemberProfile
@@ -418,4 +419,26 @@ def dashboard_executive_overview():
             f"[{m['severity']}] {m['label']}: kontrollo menjëherë këtë listë."
         )
     return {"priority": priority, "metrics": metrics, "actions": actions}
+
+
+@register.inclusion_tag("admin/partials/in_app_notifications_card.html", takes_context=True)
+def in_app_notifications_card(context):
+    """In-app notifications preview on the admin index dashboard (/admin/)."""
+    request = context.get("request")
+    empty = {"show": False, "notifications": [], "unread_count": 0, "changelist_url": ""}
+    if not request or not getattr(request.user, "is_authenticated", False):
+        return empty
+    if not getattr(request.user, "is_staff", False):
+        return empty
+    from notifications.models import UserNotification
+
+    user = request.user
+    notifications = list(UserNotification.objects.filter(user=user).order_by("-created_at")[:8])
+    unread_count = UserNotification.objects.filter(user=user, read_at__isnull=True).count()
+    return {
+        "show": True,
+        "notifications": notifications,
+        "unread_count": unread_count,
+        "changelist_url": reverse("admin:notifications_usernotification_changelist"),
+    }
 

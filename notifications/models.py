@@ -38,8 +38,8 @@ class UserNotification(models.Model):
             models.Index(fields=["user", "-created_at"]),
             models.Index(fields=["user", "read_at"]),
         ]
-        verbose_name = "Njoftim përdoruesi"
-        verbose_name_plural = "Njoftime përdoruesish"
+        verbose_name = "Notification"
+        verbose_name_plural = "Notifications"
 
     def __str__(self) -> str:
         return f"{self.title} → {self.user_id}"

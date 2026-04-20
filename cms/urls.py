@@ -33,11 +33,13 @@ urlpatterns = [
     path("anetar/profil/", auth_views.member_update_profile, name="member_update_profile"),
     path("anetar/fjalekalim/", auth_views.member_change_password, name="member_change_password"),
     path("anetar/kerkesa/<int:request_id>/anulo/", auth_views.member_cancel_request, name="member_cancel_request"),
-    path("anetar/njoftime/", auth_views.member_notifications, name="member_notifications"),
+    path("anetar/notifications/", auth_views.member_notifications, name="member_notifications"),
+    path("anetar/njoftime/", views.redirect_anetar_inapp_notifications_legacy),
 
     # Staff portal (beautiful UI for inventory)
     path("panel/", panel_views.dashboard, name="panel_dashboard"),
-    path("panel/njoftime/", panel_views.staff_notifications, name="panel_notifications"),
+    path("panel/notifications/", panel_views.staff_notifications, name="panel_notifications"),
+    path("panel/njoftime/", views.redirect_panel_inapp_notifications_legacy),
     path("panel/books/", panel_views.books_list, name="panel_books_list"),
     path("panel/books/new/", panel_views.book_new, name="panel_book_new"),
     path("panel/books/<int:pk>/", panel_views.book_manage, name="panel_book_manage"),

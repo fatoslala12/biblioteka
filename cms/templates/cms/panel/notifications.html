@@ -1,11 +1,11 @@
 {% extends "cms/panel/base_panel.html" %}
 
-{% block panel_title %}Njoftime{% endblock %}
+{% block panel_title %}Notifications{% endblock %}
 {% block panel_subtitle %}Kërkesa të reja dhe veprime që kërkojnë vëmendje.{% endblock %}
 
 {% block panel_content %}
   {% if page_obj.paginator.count %}
-  <form method="post" action="/panel/njoftime/" class="mb-6">
+  <form method="post" action="/panel/notifications/" class="mb-6">
     {% csrf_token %}
     <input type="hidden" name="action" value="mark_all_read" />
     <button type="submit" class="rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-extrabold text-slate-800 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:hover:bg-slate-900">Shëno të gjitha si të lexuara</button>
@@ -27,7 +27,7 @@
               <a href="{{ n.link_url }}" class="rounded-2xl bg-slate-900 px-4 py-2 text-center text-xs font-extrabold text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100">Hap në admin</a>
             {% endif %}
             {% if not n.read_at %}
-              <a href="/panel/njoftime/?read={{ n.id }}" class="rounded-2xl border border-slate-200 px-4 py-2 text-center text-xs font-extrabold text-brand-700 hover:bg-brand-50 dark:border-slate-600 dark:text-brand-300 dark:hover:bg-slate-900">Shëno si të lexuar</a>
+              <a href="/panel/notifications/?read={{ n.id }}" class="rounded-2xl border border-slate-200 px-4 py-2 text-center text-xs font-extrabold text-brand-700 hover:bg-brand-50 dark:border-slate-600 dark:text-brand-300 dark:hover:bg-slate-900">Shëno si të lexuar</a>
             {% endif %}
           </div>
         </div>

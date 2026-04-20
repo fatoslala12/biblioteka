@@ -1,5 +1,5 @@
 {% extends "cms/base.html" %}
-{% block title %}Njoftime — Portali{% endblock %}
+{% block title %}Notifications — Portali{% endblock %}
 {% block flash_messages %}{% endblock %}
 
 {% block content %}
@@ -10,10 +10,10 @@
   </div>
   <div class="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
     <a href="/anetar/" class="inline-flex items-center gap-2 text-sm font-semibold text-white/85 hover:text-white">← Portali</a>
-    <h1 class="mt-4 text-3xl font-black tracking-tight sm:text-4xl">Njoftime për ju</h1>
+    <h1 class="mt-4 text-3xl font-black tracking-tight sm:text-4xl">Notifications</h1>
     <p class="mt-2 max-w-xl text-sm text-white/80">Kërkesa për rezervim, huazime, afate dhe njoftime nga biblioteka — të gjitha në një vend.</p>
     {% if page_obj.paginator.count %}
-    <form method="post" action="/anetar/njoftime/" class="mt-6">
+    <form method="post" action="/anetar/notifications/" class="mt-6">
       {% csrf_token %}
       <input type="hidden" name="action" value="mark_all_read" />
       <button type="submit" class="rounded-2xl border border-white/30 bg-white/10 px-4 py-2.5 text-xs font-extrabold text-white backdrop-blur transition hover:bg-white/20">Shëno të gjitha si të lexuara</button>
@@ -42,7 +42,7 @@
                   <a href="{{ n.link_url }}" class="rounded-xl bg-brand-600 px-3 py-2 text-center text-xs font-extrabold text-white shadow-sm hover:bg-brand-700">Hap lidhjen</a>
                 {% endif %}
                 {% if not n.read_at %}
-                  <a href="/anetar/njoftime/?read={{ n.id }}" class="rounded-xl border border-slate-200 px-3 py-2 text-center text-xs font-extrabold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800">Shëno si të lexuar</a>
+                  <a href="/anetar/notifications/?read={{ n.id }}" class="rounded-xl border border-slate-200 px-3 py-2 text-center text-xs font-extrabold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800">Shëno si të lexuar</a>
                 {% endif %}
               </div>
             </div>

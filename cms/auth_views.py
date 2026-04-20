@@ -354,7 +354,7 @@ def member_portal(request: HttpRequest):
 def member_notifications(request: HttpRequest):
     user = request.user
     if not user.is_authenticated:
-        return redirect(f"/hyr/?next=/anetar/njoftime/")
+        return redirect(f"/hyr/?next=/anetar/notifications/")
 
     member_profile = getattr(user, "member_profile", None)
     if getattr(user, "role", None) != UserRole.MEMBER or member_profile is None:
@@ -367,7 +367,7 @@ def member_notifications(request: HttpRequest):
     if request.method == "POST" and request.POST.get("action") == "mark_all_read":
         UserNotification.objects.filter(user=user, read_at__isnull=True).update(read_at=timezone.now())
         messages.success(request, "Të gjitha njoftimet u shënuan si të lexuara.")
-        return redirect("/anetar/njoftime/")
+        return redirect("/anetar/notifications/")
 
     paginator = Paginator(UserNotification.objects.filter(user=user).order_by("-created_at"), 24)
     page_obj = paginator.get_page(request.GET.get("page") or 1)

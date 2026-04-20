@@ -553,3 +553,13 @@ def page_not_found_view(request, exception=None):
 
 def server_error_view(request):
     return render(request, "500.html", status=500)
+
+
+def redirect_anetar_inapp_notifications_legacy(request):
+    suffix = ("?" + request.GET.urlencode()) if request.GET else ""
+    return redirect(f"/anetar/notifications/{suffix}")
+
+
+def redirect_panel_inapp_notifications_legacy(request):
+    suffix = ("?" + request.GET.urlencode()) if request.GET else ""
+    return redirect(f"/panel/notifications/{suffix}")

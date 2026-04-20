@@ -102,6 +102,7 @@ def home(request):
         {
             "title": a.title,
             "date": a.published_at.strftime("%d/%m/%Y"),
+            "time": a.published_at.strftime("%H:%M"),
             "excerpt": a.excerpt,
             "badge": a.badge or "Info",
             "image_url": (a.image.url if a.image else ""),
@@ -113,6 +114,7 @@ def home(request):
         {
             "title": e.title,
             "date": e.published_at.strftime("%d/%m/%Y"),
+            "time": (e.starts_at.strftime("%H:%M") if e.starts_at else e.published_at.strftime("%H:%M")),
             "excerpt": e.excerpt,
             "badge": e.badge or "Event",
             "image_url": (e.image.url if e.image else ""),
@@ -126,6 +128,7 @@ def home(request):
         {
             "title": v.title,
             "date": v.published_at.strftime("%d/%m/%Y"),
+            "time": v.published_at.strftime("%H:%M"),
             "excerpt": v.excerpt,
             "badge": v.badge or "Video",
             "url": v.video_url,

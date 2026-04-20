@@ -227,7 +227,7 @@
     </div>
   </section>
 
-  <!-- Evente + Njoftime + Video (stil i ri vizual, kartat klikueshme) -->
+  <!-- Evente + Njoftime + Libri i javës (stil vizual) -->
   <section class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-5">
       <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 lg:col-span-4 sm:p-5">
@@ -238,9 +238,7 @@
         {% if home_events %}
           {% with e=home_events.0 %}
           <a href="/evente/" class="block rounded-2xl border border-slate-200/80 p-3 transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:hover:bg-slate-700/30">
-            {% if e.image_url %}
-              <img src="{{ e.image_url }}" alt="{{ e.title }}" class="h-40 w-full rounded-xl object-cover" loading="lazy" decoding="async" />
-            {% endif %}
+            <img src="{% if e.image_url %}{{ e.image_url }}{% else %}{% static hero_library_image %}{% endif %}" alt="{{ e.title }}" class="h-40 w-full rounded-xl object-cover" loading="lazy" decoding="async" />
             <div class="mt-3 text-sm font-extrabold text-slate-900 dark:text-white">{{ e.title }}</div>
             <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ e.excerpt|truncatewords:14 }}</div>
             <div class="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">{{ e.date }}</div>
@@ -274,27 +272,21 @@
 
       <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 lg:col-span-4 sm:p-5">
         <div class="mb-3 flex items-center justify-between">
-          <h3 class="text-sm font-extrabold text-slate-800 dark:text-white">Video</h3>
-          <a href="/video/" class="text-xs font-bold text-brand-700 hover:text-brand-800 dark:text-brand-300">Shiko të gjitha →</a>
+          <h3 class="text-sm font-extrabold text-slate-800 dark:text-white">Libri i javës</h3>
+          <a href="/catalog/" class="text-xs font-bold text-brand-700 hover:text-brand-800 dark:text-brand-300">Shiko të gjitha →</a>
         </div>
-        <div class="space-y-2.5">
-          {% for v in home_videos|slice:":2" %}
-            <a href="/video/" class="flex items-start gap-3 rounded-xl border border-slate-100 p-3 transition hover:border-brand-200 hover:bg-brand-50/40 dark:border-slate-700 dark:hover:bg-slate-700/30">
-              {% if v.image_url %}
-                <img src="{{ v.image_url }}" alt="{{ v.title }}" class="h-24 w-16 shrink-0 rounded-lg object-cover" loading="lazy" decoding="async" />
-              {% else %}
-                <span class="inline-flex h-24 w-16 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xl dark:bg-slate-700">🎬</span>
-              {% endif %}
-              <span class="min-w-0 flex-1">
-                <span class="block text-sm font-bold text-slate-800 dark:text-white">{{ v.title }}</span>
-                <span class="mt-1 block text-xs text-slate-500 dark:text-slate-400">{{ v.date }}</span>
-                {% if v.url %}<span class="mt-2 inline-flex rounded-lg bg-brand-600 px-2 py-1 text-[11px] font-bold text-white">Shiko videon</span>{% endif %}
-              </span>
-            </a>
-          {% empty %}
-            <div class="rounded-xl border border-slate-100 p-3 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">S’ka video ende.</div>
-          {% endfor %}
-        </div>
+        {% if book_of_week %}
+          <a href="/books/{{ book_of_week.id }}/" class="flex items-start gap-3 rounded-xl border border-slate-100 p-3 transition hover:border-brand-200 hover:bg-brand-50/40 dark:border-slate-700 dark:hover:bg-slate-700/30">
+            <img src="https://covers.openlibrary.org/b/isbn/{{ book_of_week.isbn }}-M.jpg?default=false" alt="{{ book_of_week.title }}" class="h-24 w-16 shrink-0 rounded-lg object-cover" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='{% static 'img/library-hero.svg' %}';" />
+            <span class="min-w-0 flex-1">
+              <span class="block text-sm font-bold text-slate-800 dark:text-white">{{ book_of_week.title }}</span>
+              <span class="mt-1 block text-xs text-slate-600 dark:text-slate-300">{{ book_of_week.author }}</span>
+              <span class="mt-2 inline-flex rounded-lg border border-brand-300 px-3 py-1 text-[11px] font-bold text-brand-700 dark:border-brand-700 dark:text-brand-300">Shiko më shumë</span>
+            </span>
+          </a>
+        {% else %}
+          <div class="rounded-xl border border-slate-100 p-3 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">S’ka tituj të disponueshëm aktualisht.</div>
+        {% endif %}
       </div>
     </div>
   </section>

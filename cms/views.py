@@ -97,10 +97,7 @@ def home(request):
     holds_waiting = Hold.objects.filter(status=HoldStatus.WAITING).count()
     holds_ready = Hold.objects.filter(status=HoldStatus.READY_FOR_PICKUP).count()
 
-    announcements_qs = (
-        Announcement.objects.filter(is_published=True, show_on_home=True, published_at__lte=now)
-        .order_by("-published_at")[:4]
-    )
+    announcements_qs = Announcement.objects.filter(is_published=True, published_at__lte=now).order_by("-published_at")[:4]
     announcements_data = [
         {
             "title": a.title,

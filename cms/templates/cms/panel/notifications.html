@@ -1,0 +1,52 @@
+{% extends "cms/panel/base_panel.html" %}
+
+{% block panel_title %}Njoftime{% endblock %}
+{% block panel_subtitle %}Kërkesa të reja dhe veprime që kërkojnë vëmendje.{% endblock %}
+
+{% block panel_content %}
+  {% if page_obj.paginator.count %}
+  <form method="post" action="/panel/njoftime/" class="mb-6">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="mark_all_read" />
+    <button type="submit" class="rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-extrabold text-slate-800 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:hover:bg-slate-900">Shëno të gjitha si të lexuara</button>
+  </form>
+  {% endif %}
+
+  <div class="space-y-3">
+    {% for n in page_obj %}
+      <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md dark:border-slate-800 dark:bg-slate-950 {% if not n.read_at %}ring-2 ring-brand-400/30 dark:ring-brand-700/40{% endif %}">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div class="min-w-0">
+            <div class="text-xs font-extrabold uppercase tracking-wide text-brand-700 dark:text-brand-300">{{ n.get_kind_display }}</div>
+            <h2 class="mt-1 text-lg font-extrabold text-slate-900 dark:text-white">{{ n.title }}</h2>
+            {% if n.body %}<p class="mt-2 text-sm text-slate-600 dark:text-slate-300">{{ n.body }}</p>{% endif %}
+            <div class="mt-2 text-xs font-semibold text-slate-400">{{ n.created_at|date:"d/m/Y H:i" }}</div>
+          </div>
+          <div class="flex shrink-0 flex-col gap-2 sm:items-end">
+            {% if n.link_url %}
+              <a href="{{ n.link_url }}" class="rounded-2xl bg-slate-900 px-4 py-2 text-center text-xs font-extrabold text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100">Hap në admin</a>
+            {% endif %}
+            {% if not n.read_at %}
+              <a href="/panel/njoftime/?read={{ n.id }}" class="rounded-2xl border border-slate-200 px-4 py-2 text-center text-xs font-extrabold text-brand-700 hover:bg-brand-50 dark:border-slate-600 dark:text-brand-300 dark:hover:bg-slate-900">Shëno si të lexuar</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="rounded-3xl border border-slate-200 bg-white p-10 text-center text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
+        Nuk ka njoftime ende. Kur një anëtar dërgon kërkesë për rezervim ose anulon, do të shfaqet këtu.
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if page_obj.has_other_pages %}
+    <nav class="mt-8 flex justify-center gap-2 text-sm font-bold">
+      {% if page_obj.has_previous %}
+        <a class="rounded-xl border border-slate-200 px-4 py-2 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-900" href="?page={{ page_obj.previous_page_number }}">← Para</a>
+      {% endif %}
+      {% if page_obj.has_next %}
+        <a class="rounded-xl border border-slate-200 px-4 py-2 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-900" href="?page={{ page_obj.next_page_number }}">Pas →</a>
+      {% endif %}
+    </nav>
+  {% endif %}
+{% endblock %}

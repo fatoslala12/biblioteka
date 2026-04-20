@@ -15,6 +15,7 @@ from cms.decorators import staff_required
 from cms.forms import MemberProfileUpdateForm
 from cms.panel_forms import BookPanelForm, CopyPanelForm
 from fines.models import Fine, FineStatus
+from notifications.models import UserNotification
 
 
 def _base_ctx():
@@ -272,4 +273,29 @@ def member_profile_portal(request: HttpRequest, pk: int):
         }
     )
     return render(request, "cms/member/portal.html", ctx)
+
+
+@staff_required
+def staff_notifications(request: HttpRequest):
+    rid = (request.GET.get("read") or "").strip()
+    if rid.isdigit():
+        UserNotification.objects.filter(user=request.user, id=int(rid), read_at__isnull=True).update(
+            read_at=timezone.now()
+        )
+
+    if request.method == "POST" and request.POST.get("action") == "mark_all_read":
+        UserNotification.objects.filter(user=request.user, read_at__isnull=True).update(read_at=timezone.now())
+        messages.success(request, "Të gjitha njoftimet u shënuan si të lexuara.")
+        return redirect("/panel/njoftime/")
+
+    paginator = Paginator(UserNotification.objects.filter(user=request.user).order_by("-created_at"), 24)
+    page_obj = paginator.get_page(request.GET.get("page") or 1)
+    return render(
+        request,
+        "cms/panel/notifications.html",
+        {
+            **_base_ctx(),
+            "page_obj": page_obj,
+        },
+    )
 

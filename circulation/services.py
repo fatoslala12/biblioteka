@@ -201,6 +201,11 @@ def _assign_next_hold_to_copy(copy: Copy) -> Hold | None:
     copy.hold_expires_at = expires
     copy.save(update_fields=["status", "hold_for", "hold_expires_at", "updated_at"])
 
+    from catalog.models import Book
+    from notifications.services import notify_member_hold_ready
+
+    bt = Book.objects.filter(pk=next_hold.book_id).values_list("title", flat=True).first() or "Libri"
+    notify_member_hold_ready(next_hold.member, book_title=bt, expires_at=next_hold.expires_at)
     return next_hold
 
 
@@ -268,6 +273,9 @@ def checkout_copy(
             "book_id": copy.book_id,
         },
     )
+    from notifications.services import notify_member_loan_active
+
+    notify_member_loan_active(member, book_title=copy.book.title, due_at=loan.due_at)
     return loan
 
 
@@ -327,6 +335,9 @@ def return_copy(
             "copy_barcode": copy.barcode,
         },
     )
+    from notifications.services import notify_member_loan_returned
+
+    notify_member_loan_returned(loan.member, book_title=copy.book.title)
     return loan
 
 
@@ -378,6 +389,9 @@ def renew_loan(
             "new_due_at": loan.due_at.isoformat(),
         },
     )
+    from notifications.services import notify_member_loan_renewed
+
+    notify_member_loan_renewed(member, book_title=loan.copy.book.title, new_due_at=loan.due_at)
     return loan
 
 
@@ -424,6 +438,13 @@ def place_hold(*, member_no: str, book_id: int) -> Hold:
             copy.hold_expires_at = expires
             copy.save(update_fields=["status", "hold_for", "hold_expires_at", "updated_at"])
 
+    hold.refresh_from_db()
+    if hold.status == HoldStatus.READY_FOR_PICKUP:
+        from catalog.models import Book
+        from notifications.services import notify_member_hold_ready
+
+        bt = Book.objects.filter(pk=hold.book_id).values_list("title", flat=True).first() or "Libri"
+        notify_member_hold_ready(member, book_title=bt, expires_at=hold.expires_at)
     return hold
 
 
@@ -482,6 +503,10 @@ def create_reservation_request(
                 "return_date": return_date.isoformat(),
             },
         )
+        from notifications.services import notify_member_reservation_submitted, notify_staff_new_reservation_request
+
+        notify_staff_new_reservation_request(req)
+        notify_member_reservation_submitted(req)
         return req
     except IntegrityError:
         # Safety for concurrent requests (unique pending constraint).
@@ -544,6 +569,9 @@ def approve_reservation_request(
             reason=reason,
             metadata={"request_id": req.id},
         )
+        from notifications.services import notify_member_reservation_approved
+
+        notify_member_reservation_approved(req, reservation.id)
         return req
     except PolicyViolation as e:
         # If hold cannot be created, mark as rejected with reason.
@@ -560,6 +588,9 @@ def approve_reservation_request(
             reason=str(e),
             severity=AuditSeverity.INCIDENT,
         )
+        from notifications.services import notify_member_reservation_rejected
+
+        notify_member_reservation_rejected(req)
         return req
 
 
@@ -588,6 +619,9 @@ def reject_reservation_request(
         reason=req.decision_reason,
         severity=AuditSeverity.INCIDENT,
     )
+    from notifications.services import notify_member_reservation_rejected
+
+    notify_member_reservation_rejected(req)
     return req
 
 
@@ -638,6 +672,9 @@ def auto_expire_overdue_reservations(
             },
             severity=AuditSeverity.INCIDENT,
         )
+        from notifications.services import notify_member_reservation_expired
+
+        notify_member_reservation_expired(reservation.member, book_title=reservation.book.title)
     return count
 
 
@@ -714,6 +751,9 @@ def borrow_from_reservation(
         reason=reason,
         metadata={"reservation_id": reservation.id, "request_id": reservation.source_request_id},
     )
+    from notifications.services import notify_member_loan_active
+
+    notify_member_loan_active(member, book_title=reservation.book.title, due_at=loan.due_at)
     return loan
 
 
@@ -795,5 +835,8 @@ def quick_checkout_by_national_id(
             "return_date": return_date.isoformat(),
         },
     )
+    from notifications.services import notify_member_loan_active
+
+    notify_member_loan_active(member, book_title=copy.book.title, due_at=loan.due_at)
     return loan
 

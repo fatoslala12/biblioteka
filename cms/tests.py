@@ -13,6 +13,7 @@ from fines.models import Fine, FineStatus, Payment, PaymentMethod
 from policies.models import LibraryPolicy
 
 from cms.models import Announcement, Event, WeeklyBook
+from notifications.models import NotificationKind, UserNotification
 
 User = get_user_model()
 
@@ -139,6 +140,36 @@ class MemberPortalIntegrationTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Gjoba & Pagesa")
         self.assertContains(response, "Të papaguara")
+
+    def test_member_notifications_list_loads(self):
+        self.client.force_login(self.user)
+        UserNotification.objects.create(
+            user=self.user,
+            kind=NotificationKind.RESERVATION_SUBMITTED_MEMBER,
+            title="Test njoftim",
+            body="Përmbajtje test.",
+        )
+        r = self.client.get("/anetar/njoftime/")
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "Test njoftim")
+
+
+class StaffPanelNotificationsTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.staff = User.objects.create_user(
+            username="staff_notif_panel",
+            email="staff_notif_panel@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.STAFF,
+            is_staff=False,
+            is_superuser=False,
+        )
+
+    def test_panel_notifications_loads(self):
+        self.client.force_login(self.staff)
+        r = self.client.get("/panel/njoftime/")
+        self.assertEqual(r.status_code, 200)
 
 
 class DesignSystemCssTests(TestCase):

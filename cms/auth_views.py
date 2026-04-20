@@ -6,6 +6,7 @@ from django.utils import timezone
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout, update_session_auth_hash
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -25,6 +26,8 @@ from circulation.models import ReservationRequest, ReservationRequestStatus
 from circulation.services import create_reservation_request
 from cms.forms import MemberPasswordChangeForm, MemberProfileUpdateForm, MemberSignUpForm
 from fines.models import Fine, FineStatus, Payment
+from notifications.models import UserNotification
+from notifications.services import notify_staff_member_cancelled_request
 
 User = get_user_model()
 
@@ -348,6 +351,35 @@ def member_portal(request: HttpRequest):
     )
 
 
+def member_notifications(request: HttpRequest):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect(f"/hyr/?next=/anetar/njoftime/")
+
+    member_profile = getattr(user, "member_profile", None)
+    if getattr(user, "role", None) != UserRole.MEMBER or member_profile is None:
+        return redirect(_login_default_destination(user))
+
+    rid = (request.GET.get("read") or "").strip()
+    if rid.isdigit():
+        UserNotification.objects.filter(user=user, id=int(rid), read_at__isnull=True).update(read_at=timezone.now())
+
+    if request.method == "POST" and request.POST.get("action") == "mark_all_read":
+        UserNotification.objects.filter(user=user, read_at__isnull=True).update(read_at=timezone.now())
+        messages.success(request, "Të gjitha njoftimet u shënuan si të lexuara.")
+        return redirect("/anetar/njoftime/")
+
+    paginator = Paginator(UserNotification.objects.filter(user=user).order_by("-created_at"), 24)
+    page_obj = paginator.get_page(request.GET.get("page") or 1)
+    return render(
+        request,
+        "cms/member/notifications.html",
+        {
+            "page_obj": page_obj,
+        },
+    )
+
+
 @require_POST
 def member_place_hold(request: HttpRequest, book_id: int):
     user = request.user
@@ -492,6 +524,7 @@ def member_cancel_request(request: HttpRequest, request_id: int):
     req.decided_by = None
     req.decision_reason = "Anuluar nga anëtari."
     req.save(update_fields=["status", "decided_at", "decided_by", "decision_reason"])
+    notify_staff_member_cancelled_request(req)
     _audit_member_event(
         user=user,
         action_type="MEMBER_RESERVATION_REQUEST_CANCELLED",

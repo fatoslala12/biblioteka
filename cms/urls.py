@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.generic import RedirectView
 
 from . import views
 from . import auth_views
@@ -17,7 +18,7 @@ urlpatterns = [
     path("evente/", views.events, name="events"),
     path("libri-i-javes/<int:pk>/", views.weekly_book_detail, name="weekly_book_detail"),
     path("libri-i-javes/", views.videos, name="weekly_books"),
-    path("video/", views.videos, name="videos"),
+    path("video/", RedirectView.as_view(url="/libri-i-javes/", permanent=False), name="videos_redirect"),
     path("rreth-nesh/", views.about, name="about"),
     path("rregullore/", views.rules, name="rules"),
     path("orar/", views.hours, name="hours"),
@@ -32,9 +33,11 @@ urlpatterns = [
     path("anetar/profil/", auth_views.member_update_profile, name="member_update_profile"),
     path("anetar/fjalekalim/", auth_views.member_change_password, name="member_change_password"),
     path("anetar/kerkesa/<int:request_id>/anulo/", auth_views.member_cancel_request, name="member_cancel_request"),
+    path("anetar/njoftime/", auth_views.member_notifications, name="member_notifications"),
 
     # Staff portal (beautiful UI for inventory)
     path("panel/", panel_views.dashboard, name="panel_dashboard"),
+    path("panel/njoftime/", panel_views.staff_notifications, name="panel_notifications"),
     path("panel/books/", panel_views.books_list, name="panel_books_list"),
     path("panel/books/new/", panel_views.book_new, name="panel_book_new"),
     path("panel/books/<int:pk>/", panel_views.book_manage, name="panel_book_manage"),

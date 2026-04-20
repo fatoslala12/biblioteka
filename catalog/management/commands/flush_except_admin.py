@@ -12,6 +12,7 @@ from catalog.models import Author, Book, Copy, Genre, Publisher, Tag
 from circulation.models import Hold, Loan, Reservation, ReservationRequest
 from cms.models import Announcement, ContactMessage, Event, Video, WeeklyBook
 from fines.models import Fine, Payment
+from notifications.models import UserNotification
 from policies.models import LoanRule, LibraryPolicy
 
 
@@ -68,7 +69,8 @@ class Command(BaseCommand):
             Video.objects.all().delete()
             WeeklyBook.objects.all().delete()
 
-            # 8. Profile anëtarësh (fshijmë të gjitha)
+            # 8. Njoftime në-app dhe profile anëtarësh
+            UserNotification.objects.all().delete()
             MemberProfile.objects.all().delete()
 
             # 9. Politika (mund të kërkohet një 'default' më vonë)

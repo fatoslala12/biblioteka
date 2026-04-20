@@ -1,0 +1,71 @@
+{% extends "cms/base.html" %}
+{% block title %}Njoftime — Portali{% endblock %}
+{% block flash_messages %}{% endblock %}
+
+{% block content %}
+<section class="relative overflow-hidden bg-gradient-to-br from-brand-600 via-brand-700 to-slate-900 text-white">
+  <div class="pointer-events-none absolute inset-0 opacity-40" aria-hidden="true">
+    <div class="absolute -left-20 top-0 h-72 w-72 rounded-full bg-amber-400/30 blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-cyan-400/20 blur-3xl"></div>
+  </div>
+  <div class="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <a href="/anetar/" class="inline-flex items-center gap-2 text-sm font-semibold text-white/85 hover:text-white">← Portali</a>
+    <h1 class="mt-4 text-3xl font-black tracking-tight sm:text-4xl">Njoftime për ju</h1>
+    <p class="mt-2 max-w-xl text-sm text-white/80">Kërkesa për rezervim, huazime, afate dhe njoftime nga biblioteka — të gjitha në një vend.</p>
+    {% if page_obj.paginator.count %}
+    <form method="post" action="/anetar/njoftime/" class="mt-6">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="mark_all_read" />
+      <button type="submit" class="rounded-2xl border border-white/30 bg-white/10 px-4 py-2.5 text-xs font-extrabold text-white backdrop-blur transition hover:bg-white/20">Shëno të gjitha si të lexuara</button>
+    </form>
+    {% endif %}
+  </div>
+</section>
+
+<section class="mx-auto -mt-10 max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+  <div class="rounded-3xl border border-slate-200/80 bg-white/95 p-4 shadow-xl shadow-slate-900/10 ring-1 ring-slate-200/50 backdrop-blur dark:border-slate-700 dark:bg-slate-950/90 dark:ring-slate-800/60 sm:p-6">
+    {% if page_obj.object_list %}
+      <div class="space-y-3">
+        {% for n in page_obj %}
+          <article class="group relative overflow-hidden rounded-2xl border border-slate-200/90 bg-gradient-to-br from-white to-slate-50/80 p-4 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md dark:border-slate-800 dark:from-slate-950 dark:to-slate-900/80 dark:hover:border-brand-800 {% if not n.read_at %}ring-1 ring-brand-300/40 dark:ring-brand-700/40{% endif %}">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div class="min-w-0 flex-1">
+                <h2 class="text-base font-extrabold text-slate-900 dark:text-white">{{ n.title }}</h2>
+                {% if n.body %}<p class="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">{{ n.body }}</p>{% endif %}
+                <div class="mt-3 flex flex-wrap items-center gap-2 text-[11px] font-bold text-slate-400 dark:text-slate-500">
+                  <span>{{ n.created_at|date:"d/m/Y H:i" }}</span>
+                  {% if not n.read_at %}<span class="rounded-full bg-brand-100 px-2 py-0.5 text-brand-800 dark:bg-brand-900/50 dark:text-brand-100">E re</span>{% endif %}
+                </div>
+              </div>
+              <div class="flex shrink-0 flex-col gap-2 sm:items-end">
+                {% if n.link_url %}
+                  <a href="{{ n.link_url }}" class="rounded-xl bg-brand-600 px-3 py-2 text-center text-xs font-extrabold text-white shadow-sm hover:bg-brand-700">Hap lidhjen</a>
+                {% endif %}
+                {% if not n.read_at %}
+                  <a href="/anetar/njoftime/?read={{ n.id }}" class="rounded-xl border border-slate-200 px-3 py-2 text-center text-xs font-extrabold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800">Shëno si të lexuar</a>
+                {% endif %}
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+      {% if page_obj.has_other_pages %}
+        <nav class="mt-8 flex justify-center gap-2 text-sm font-bold">
+          {% if page_obj.has_previous %}
+            <a class="rounded-xl border border-slate-200 px-4 py-2 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-900" href="?page={{ page_obj.previous_page_number }}">← Para</a>
+          {% endif %}
+          {% if page_obj.has_next %}
+            <a class="rounded-xl border border-slate-200 px-4 py-2 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-900" href="?page={{ page_obj.next_page_number }}">Pas →</a>
+          {% endif %}
+        </nav>
+      {% endif %}
+    {% else %}
+      <div class="py-16 text-center">
+        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-2xl dark:bg-slate-800">🔔</div>
+        <p class="mt-4 text-sm font-semibold text-slate-600 dark:text-slate-300">Ende nuk ke njoftime.</p>
+        <a href="/catalog/" class="mt-4 inline-flex rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-extrabold text-white hover:bg-brand-700">Shfleto katalogun</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -3,7 +3,7 @@
  * Intercepts links to catalog, njoftime, evente, libri i javes
  */
 (function () {
-  var AJAX_PATHS = ['/catalog/', '/njoftime/', '/evente/', '/libri-i-javes/', '/video/'];
+  var AJAX_PATHS = ['/catalog/', '/njoftime/', '/evente/', '/libri-i-javes/'];
 
   function isAjaxPath(url) {
     try {

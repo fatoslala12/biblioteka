@@ -136,7 +136,7 @@
               <a href="/catalog/" data-nav="catalog" class="sl-nav-link {% if '/catalog/' in request.path or '/books/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/catalog/' in request.path or '/books/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Katalog</a>
               <a href="/njoftime/" data-nav="njoftime" class="sl-nav-link {% if '/njoftime/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/njoftime/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Njoftime</a>
               <a href="/evente/" data-nav="evente" class="sl-nav-link {% if '/evente/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/evente/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Evente</a>
-              <a href="/libri-i-javes/" data-nav="libri-i-javes" class="sl-nav-link {% if '/libri-i-javes/' in request.path or '/video/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/libri-i-javes/' in request.path or '/video/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Libri i javës</a>
+              <a href="/libri-i-javes/" data-nav="libri-i-javes" class="sl-nav-link {% if '/libri-i-javes/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/libri-i-javes/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Libri i javës</a>
               <a href="/rreth-nesh/" data-nav="rreth-nesh" class="sl-nav-link {% if '/rreth-nesh/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/rreth-nesh/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Rreth nesh</a>
               <a href="/rregullore/" data-nav="rregullore" class="sl-nav-link {% if '/rregullore/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/rregullore/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Rregullore</a>
               <a href="/orar/" data-nav="orar" class="sl-nav-link {% if '/orar/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/orar/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Orar</a>
@@ -144,6 +144,7 @@
             </nav>
 
             <div class="flex items-center gap-2">
+              {% include "cms/includes/_notification_bell.html" %}
               {% if request.user.is_authenticated %}
                 <a href="/anetar/" class="hidden rounded-xl border border-white/25 bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white/15 sm:inline-flex">
                   {% with nm=request.user.get_full_name %}
@@ -193,6 +194,11 @@
             <a href="/kontakt/" data-nav="kontakt" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Kontakt</a>
             <div class="my-2 border-t border-white/15"></div>
             {% if request.user.is_authenticated %}
+            {% if request.user.role == "MEMBER" %}
+            <a href="/anetar/njoftime/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Njoftime{% if sl_notif_unread %} ({{ sl_notif_unread }}){% endif %}</a>
+            {% else %}
+            <a href="/panel/njoftime/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Njoftime{% if sl_notif_unread %} ({{ sl_notif_unread }}){% endif %}</a>
+            {% endif %}
             <a href="/anetar/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Portali im</a>
             <a href="/dil/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Dil</a>
             {% else %}
@@ -344,7 +350,7 @@
           function isActive(path, key) {
             if (key === 'home') return path === '/';
             if (key === 'catalog') return path.indexOf('/catalog/') === 0 || path.indexOf('/books/') === 0;
-            if (key === 'libri-i-javes') return path.indexOf('/libri-i-javes/') === 0 || path.indexOf('/video/') === 0;
+            if (key === 'libri-i-javes') return path.indexOf('/libri-i-javes/') === 0;
             return path.indexOf('/' + key + '/') === 0;
           }
           function updateNav(pathname) {

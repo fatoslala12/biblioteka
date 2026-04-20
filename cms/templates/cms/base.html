@@ -71,6 +71,8 @@
       .sl-img-skeleton img.loaded { opacity:1; }
       .sl-img-skeleton::before { content:""; position:absolute; inset:0; background:linear-gradient(105deg,rgba(148,163,184,.18) 0%,rgba(148,163,184,.28) 50%,rgba(148,163,184,.18) 100%); animation:sl-shimmer 2s ease-in-out infinite; }
       .dark .sl-img-skeleton::before { background:linear-gradient(105deg,rgba(71,85,105,.3) 0%,rgba(71,85,105,.45) 50%,rgba(71,85,105,.3) 100%); }
+      /* Keep premium floating glow visible for animated media cards */
+      .sl-img-skeleton.sl-section-media-wrap { overflow: visible; border-radius: 0.75rem; }
       /* Responsive: parandalon rrëshqitje horizontale, imazhe elastike */
       html { overflow-x: hidden; }
       body { overflow-x: hidden; }
@@ -378,6 +380,9 @@
           if (img.getAttribute('data-sl-skip-skeleton') === '1') return;
           var w = document.createElement('div');
           w.className = 'sl-img-skeleton';
+          if (img.classList.contains('sl-section-media')) {
+            w.classList.add('sl-section-media-wrap');
+          }
           img.parentNode.insertBefore(w, img);
           w.appendChild(img);
           img.addEventListener('load', function () { img.classList.add('loaded'); });

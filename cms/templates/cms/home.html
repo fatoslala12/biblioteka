@@ -230,7 +230,7 @@
   <!-- Evente + Njoftime + Libri i javës (stil vizual) -->
   <section class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-5">
-      <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 lg:col-span-4 sm:p-5">
+      <div class="sl-premium-column sl-tilt-card sl-premium-hover-card rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 lg:col-span-4 sm:p-5">
         <div class="mb-3 flex items-center justify-between">
           <h3 class="text-sm font-extrabold text-slate-800 dark:text-white">Eventi i radhës</h3>
           <a href="/evente/" class="text-xs font-bold text-brand-700 hover:text-brand-800 dark:text-brand-300">Shiko të gjitha →</a>
@@ -255,7 +255,7 @@
         {% endif %}
       </div>
 
-      <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 lg:col-span-4 sm:p-5">
+      <div class="sl-premium-column sl-tilt-card sl-premium-hover-card rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 lg:col-span-4 sm:p-5">
         <div class="mb-3 flex items-center justify-between">
           <h3 class="text-sm font-extrabold text-slate-800 dark:text-white">Njoftime</h3>
           <a href="/njoftime/" class="text-xs font-bold text-brand-700 hover:text-brand-800 dark:text-brand-300">Shiko të gjitha →</a>
@@ -283,7 +283,7 @@
         </div>
       </div>
 
-      <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 lg:col-span-4 sm:p-5">
+      <div class="sl-premium-column sl-tilt-card sl-premium-hover-card rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 lg:col-span-4 sm:p-5">
         <div class="mb-3 flex items-center justify-between">
           <h3 class="text-sm font-extrabold text-slate-800 dark:text-white">Libri i javës</h3>
           <a href="/libri-i-javes/" class="text-xs font-bold text-brand-700 hover:text-brand-800 dark:text-brand-300">Shiko të gjitha →</a>
@@ -457,6 +457,42 @@
     .sl-premium-img-cell:nth-child(2) { animation-delay: -1.2s; }
     .sl-premium-img-cell:nth-child(3) { animation-delay: -2.4s; }
     .sl-premium-img-cell:nth-child(4) { animation-delay: -3.6s; }
+    @keyframes sl-premium-card-in {
+      from { opacity: 0; transform: translateY(14px) scale(0.992); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .sl-premium-column {
+      opacity: 0;
+      animation: sl-premium-card-in .72s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .sl-premium-column:nth-child(1) { animation-delay: .05s; }
+    .sl-premium-column:nth-child(2) { animation-delay: .13s; }
+    .sl-premium-column:nth-child(3) { animation-delay: .21s; }
+    .sl-premium-hover-card {
+      position: relative;
+      transition: transform .24s ease, box-shadow .28s ease, border-color .24s ease;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+    .sl-premium-hover-card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(120deg, rgba(214,178,94,.55), rgba(49,145,137,.36), rgba(214,178,94,.42));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity .26s ease;
+      pointer-events: none;
+    }
+    .sl-premium-hover-card:hover {
+      border-color: rgba(49,145,137,.35);
+      box-shadow: 0 20px 46px -22px rgba(15,23,42,.42), 0 18px 34px -20px rgba(49,145,137,.38);
+    }
+    .sl-premium-hover-card:hover::before { opacity: .95; }
 
     @keyframes sl-section-media-float {
       0%, 100% {
@@ -591,6 +627,16 @@
         opacity: 1 !important;
         transform: none !important;
       }
+      .sl-premium-column {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .sl-premium-hover-card,
+      .sl-premium-hover-card:hover {
+        transform: none !important;
+      }
+      .sl-premium-hover-card::before { display: none !important; }
       .sl-section-media { animation: none !important; transform: none !important; box-shadow: none !important; }
     }
   </style>
@@ -614,6 +660,22 @@
       };
       tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.dataset.tab); }); });
       show('katalog');
+
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelectorAll('.sl-tilt-card').forEach(function (card) {
+          card.addEventListener('mousemove', function (e) {
+            const r = card.getBoundingClientRect();
+            const px = (e.clientX - r.left) / r.width;
+            const py = (e.clientY - r.top) / r.height;
+            const rx = (0.5 - py) * 3.5;
+            const ry = (px - 0.5) * 4.2;
+            card.style.transform = 'perspective(1100px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg) translateY(-2px)';
+          });
+          card.addEventListener('mouseleave', function () {
+            card.style.transform = '';
+          });
+        });
+      }
     });
   </script>
 {% endblock %}

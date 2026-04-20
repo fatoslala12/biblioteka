@@ -92,6 +92,27 @@
       }
       .sl-nav-link:hover::after,
       .sl-nav-link.sl-nav-active::after { transform: scaleX(1); }
+      @keyframes sl-section-media-float {
+        0%, 100% {
+          transform: translateY(0);
+          box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(49, 145, 137, 0.08);
+        }
+        50% {
+          transform: translateY(-4px);
+          box-shadow: 0 16px 34px rgba(49, 145, 137, 0.22), 0 0 0 1px rgba(49, 145, 137, 0.16);
+        }
+      }
+      .sl-section-media {
+        animation: sl-section-media-float 4.8s ease-in-out infinite;
+        will-change: transform, box-shadow;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .sl-section-media {
+          animation: none !important;
+          transform: none !important;
+          box-shadow: none !important;
+        }
+      }
     </style>
   </head>
   <body class="h-full bg-brand-50 font-sans text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
@@ -113,7 +134,7 @@
               <a href="/catalog/" data-nav="catalog" class="sl-nav-link {% if '/catalog/' in request.path or '/books/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/catalog/' in request.path or '/books/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Katalog</a>
               <a href="/njoftime/" data-nav="njoftime" class="sl-nav-link {% if '/njoftime/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/njoftime/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Njoftime</a>
               <a href="/evente/" data-nav="evente" class="sl-nav-link {% if '/evente/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/evente/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Evente</a>
-              <a href="/video/" data-nav="video" class="sl-nav-link {% if '/video/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/video/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Video</a>
+              <a href="/libri-i-javes/" data-nav="libri-i-javes" class="sl-nav-link {% if '/libri-i-javes/' in request.path or '/video/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/libri-i-javes/' in request.path or '/video/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Libri i javës</a>
               <a href="/rreth-nesh/" data-nav="rreth-nesh" class="sl-nav-link {% if '/rreth-nesh/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/rreth-nesh/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Rreth nesh</a>
               <a href="/rregullore/" data-nav="rregullore" class="sl-nav-link {% if '/rregullore/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/rregullore/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Rregullore</a>
               <a href="/orar/" data-nav="orar" class="sl-nav-link {% if '/orar/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/orar/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Orar</a>
@@ -163,7 +184,7 @@
             <a href="/catalog/" data-nav="catalog" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Katalog</a>
             <a href="/njoftime/" data-nav="njoftime" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Njoftime</a>
             <a href="/evente/" data-nav="evente" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Evente</a>
-            <a href="/video/" data-nav="video" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Video</a>
+            <a href="/libri-i-javes/" data-nav="libri-i-javes" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Libri i javës</a>
             <a href="/rreth-nesh/" data-nav="rreth-nesh" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Rreth nesh</a>
             <a href="/rregullore/" data-nav="rregullore" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Rregullore</a>
             <a href="/orar/" data-nav="orar" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Orar</a>
@@ -239,7 +260,7 @@
                 <a class="block text-white/80 transition hover:text-white" href="/catalog/">Katalog</a>
                 <a class="block text-white/80 transition hover:text-white" href="/njoftime/">Njoftime</a>
                 <a class="block text-white/80 transition hover:text-white" href="/evente/">Evente</a>
-                <a class="block text-white/80 transition hover:text-white" href="/video/">Video</a>
+                <a class="block text-white/80 transition hover:text-white" href="/libri-i-javes/">Libri i javës</a>
                 <a class="block text-white/80 transition hover:text-white" href="/kontakt/">Kontakt</a>
               </div>
             </div>
@@ -321,6 +342,7 @@
           function isActive(path, key) {
             if (key === 'home') return path === '/';
             if (key === 'catalog') return path.indexOf('/catalog/') === 0 || path.indexOf('/books/') === 0;
+            if (key === 'libri-i-javes') return path.indexOf('/libri-i-javes/') === 0 || path.indexOf('/video/') === 0;
             return path.indexOf('/' + key + '/') === 0;
           }
           function updateNav(pathname) {

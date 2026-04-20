@@ -1,9 +1,9 @@
 /**
  * Smart Library — AJAX navigation with skeleton loading
- * Intercepts links to catalog, njoftime, evente, video
+ * Intercepts links to catalog, njoftime, evente, libri i javes
  */
 (function () {
-  var AJAX_PATHS = ['/catalog/', '/njoftime/', '/evente/', '/video/'];
+  var AJAX_PATHS = ['/catalog/', '/njoftime/', '/evente/', '/libri-i-javes/', '/video/'];
 
   function isAjaxPath(url) {
     try {
@@ -70,7 +70,7 @@
 
   function initAjaxLinks(root) {
     root = root || document;
-    var sel = 'a[href^="/catalog"], a[href^="/njoftime"], a[href^="/evente"], a[href^="/video"]';
+    var sel = 'a[href^="/catalog"], a[href^="/njoftime"], a[href^="/evente"], a[href^="/libri-i-javes"], a[href^="/video"]';
     try {
       root.querySelectorAll(sel).forEach(function (a) {
         if (a.target || a.download) return;
@@ -88,7 +88,7 @@
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a.sl-ajax-link');
     if (!a) {
-      a = e.target.closest('a[href^="/catalog"], a[href^="/njoftime"], a[href^="/evente"], a[href^="/video"], a[href^="?"]');
+      a = e.target.closest('a[href^="/catalog"], a[href^="/njoftime"], a[href^="/evente"], a[href^="/libri-i-javes"], a[href^="/video"], a[href^="?"]');
     }
     if (a && !a.target && !a.download) {
       var href = a.href;

@@ -84,3 +84,16 @@ class Video(PublishableBase):
         verbose_name = "Video"
         verbose_name_plural = "Video"
         ordering = ("-published_at", "-id")
+
+
+class WeeklyBook(PublishableBase):
+    author = models.CharField(max_length=180, blank=True, default="", verbose_name="Autori")
+    image = models.ImageField(upload_to="cms/weekly-books/", null=True, blank=True, verbose_name="Kopertina")
+    cta_url = models.CharField(max_length=300, blank=True, default="", verbose_name="Linku (opsional)")
+    cta_label = models.CharField(max_length=50, blank=True, default="Shiko më shumë", verbose_name="Teksti i butonit")
+    show_on_home = models.BooleanField(default=True, verbose_name="Shfaq në faqen kryesore")
+
+    class Meta:
+        verbose_name = "Libri i javës"
+        verbose_name_plural = "Libri i javës"
+        ordering = ("-published_at", "-id")

@@ -10,7 +10,7 @@ from accounts.models import MemberProfile, User
 from audit.models import AuditEntry
 from catalog.models import Author, Book, Copy, Genre, Publisher, Tag
 from circulation.models import Hold, Loan, Reservation, ReservationRequest
-from cms.models import Announcement, ContactMessage, Event, Video
+from cms.models import Announcement, ContactMessage, Event, Video, WeeklyBook
 from fines.models import Fine, Payment
 from policies.models import LoanRule, LibraryPolicy
 
@@ -66,6 +66,7 @@ class Command(BaseCommand):
             Announcement.objects.all().delete()
             Event.objects.all().delete()
             Video.objects.all().delete()
+            WeeklyBook.objects.all().delete()
 
             # 8. Profile anëtarësh (fshijmë të gjitha)
             MemberProfile.objects.all().delete()

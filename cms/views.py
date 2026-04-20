@@ -9,14 +9,13 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils import timezone
-from urllib.parse import urlparse
 
 from accounts.models import MemberProfile, UserRole
 from catalog.models import Author, Book, Copy, CopyStatus, Genre, Publisher, Tag
 from circulation.models import Hold, HoldStatus, Loan, LoanStatus
 from circulation.models import ReservationRequest, ReservationRequestStatus
 from cms.forms import ContactForm
-from cms.models import Announcement, Event, Video
+from cms.models import Announcement, Event, WeeklyBook
 
 
 def _is_ajax(request):
@@ -121,22 +120,6 @@ def home(request):
         }
         for e in home_events_qs
     ]
-    home_videos_qs = Video.objects.filter(is_published=True, published_at__lte=now, show_on_home=True).order_by(
-        "-published_at"
-    )[:3]
-    home_videos = [
-        {
-            "title": v.title,
-            "date": v.published_at.strftime("%d/%m/%Y"),
-            "time": v.published_at.strftime("%H:%M"),
-            "excerpt": v.excerpt,
-            "badge": v.badge or "Video",
-            "url": v.video_url,
-            "image_url": (v.image.url if getattr(v, "image", None) else ""),
-        }
-        for v in home_videos_qs
-    ]
-
     featured = (
         Book.objects.filter(is_deleted=False)
         .annotate(
@@ -148,7 +131,32 @@ def home(request):
         )
         .order_by("-available_copies", "-created_at")[:6]
     )
-    book_of_week = featured[0] if featured else None
+    curated_book = (
+        WeeklyBook.objects.filter(is_published=True, published_at__lte=now, show_on_home=True)
+        .order_by("-published_at")
+        .first()
+    )
+    fallback_book = featured[0] if featured else None
+    if curated_book:
+        book_of_week = {
+            "title": curated_book.title,
+            "author": curated_book.author,
+            "excerpt": curated_book.excerpt,
+            "image_url": (curated_book.image.url if curated_book.image else ""),
+            "url": (curated_book.cta_url or "").strip() or "/catalog/",
+            "cta_label": (curated_book.cta_label or "").strip() or "Shiko më shumë",
+        }
+    elif fallback_book:
+        book_of_week = {
+            "title": fallback_book.title,
+            "author": ", ".join(a.name for a in fallback_book.authors.all()) or "Titull i rekomanduar",
+            "excerpt": "",
+            "image_url": f"https://covers.openlibrary.org/b/isbn/{fallback_book.isbn}-M.jpg?default=false",
+            "url": f"/books/{fallback_book.id}/",
+            "cta_label": "Shiko më shumë",
+        }
+    else:
+        book_of_week = None
     top_announcement = announcements_data[0] if announcements_data else None
     today_event = home_events[0] if home_events else None
 
@@ -186,7 +194,6 @@ def home(request):
             "recent": recent,
             "announcements": announcements_data,
             "home_events": home_events,
-            "home_videos": home_videos,
             "book_of_week": book_of_week,
             "top_announcement": top_announcement,
             "today_event": today_event,
@@ -365,35 +372,30 @@ def events(request):
 
 def videos(request):
     now = timezone.now()
-    qs = Video.objects.filter(is_published=True, published_at__lte=now).order_by("-published_at")
+    qs = WeeklyBook.objects.filter(is_published=True, published_at__lte=now).order_by("-published_at")
     items = []
-    for v in qs:
-        host = ""
-        if v.video_url:
-            try:
-                host = (urlparse(v.video_url).netloc or "").replace("www.", "")
-            except Exception:
-                host = ""
-        duration = f" • Kohëzgjatja: {v.duration}" if v.duration else ""
+    for b in qs:
         items.append(
             {
-                "title": v.title,
-                "date": v.published_at.strftime("%d/%m/%Y"),
-                "excerpt": (v.excerpt or "") + duration,
-                "badge": v.badge or "Video",
-                "url": v.video_url,
-                "source_host": host,
+                "title": b.title,
+                "date": b.published_at.strftime("%d/%m/%Y"),
+                "excerpt": b.excerpt,
+                "badge": "Libri i javës",
+                "url": (b.cta_url or "").strip(),
+                "image_url": (b.image.url if b.image else ""),
+                "author": b.author,
+                "cta_label": (b.cta_label or "").strip() or "Shiko më shumë",
             }
         )
     ctx = {
-        "title": "Video",
-        "subtitle": "Udhëzues dhe materiale informative (placeholder për modul video).",
+        "title": "Libri i javës",
+        "subtitle": "Zgjedhjet javore me përshkrim, kopertinë dhe detaje nga paneli i admin.",
         "items": items,
-        "is_videos_page": True,
+        "is_books_page": True,
     }
     if _is_ajax(request):
         html = render_to_string("cms/_section_list_content.html", ctx, request=request)
-        return JsonResponse({"html": html, "title": "Video — Smart Library"})
+        return JsonResponse({"html": html, "title": "Libri i javës — Smart Library"})
     return render(request, "cms/section_list.html", ctx)
 
 

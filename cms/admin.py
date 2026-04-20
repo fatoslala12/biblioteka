@@ -14,7 +14,7 @@ from django.template.loader import render_to_string
 
 from audit.services import get_client_ip, log_audit_event
 
-from .models import Announcement, ContactMessage, Event, Video
+from .models import Announcement, ContactMessage, Event, Video, WeeklyBook
 
 
 class ReadStatusFilter(admin.SimpleListFilter):
@@ -290,3 +290,33 @@ class VideoAdmin(admin.ModelAdmin):
     @admin.display(description="Hap")
     def open_video(self, obj: Video):
         return format_html('<a class="btn btn-xs btn-outline-secondary" href="{}" target="_blank">Hap videon</a>', obj.video_url)
+
+
+@admin.register(WeeklyBook)
+class WeeklyBookAdmin(admin.ModelAdmin):
+    list_display = ("title", "author", "published_at", "show_on_home", "is_published", "image_preview")
+    list_filter = ("is_published", "show_on_home", "published_at")
+    search_fields = ("title", "author", "excerpt", "content")
+    ordering = ("-published_at",)
+    date_hierarchy = "published_at"
+    fields = (
+        "title",
+        "author",
+        "excerpt",
+        "content",
+        "image",
+        "cta_url",
+        "cta_label",
+        "published_at",
+        "show_on_home",
+        "is_published",
+    )
+
+    @admin.display(description="Kopertina")
+    def image_preview(self, obj: WeeklyBook):
+        if not obj.image:
+            return "—"
+        return format_html(
+            '<img src="{}" style="width:48px;height:64px;border-radius:8px;object-fit:cover;border:1px solid rgba(15,23,42,.12);" />',
+            obj.image.url,
+        )

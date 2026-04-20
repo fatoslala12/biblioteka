@@ -13,6 +13,7 @@ urlpatterns = [
     path("books/<int:pk>/", views.book_detail, name="book_detail"),
     path("njoftime/", views.announcements, name="announcements"),
     path("evente/", views.events, name="events"),
+    path("libri-i-javes/", views.videos, name="weekly_books"),
     path("video/", views.videos, name="videos"),
     path("rreth-nesh/", views.about, name="about"),
     path("rregullore/", views.rules, name="rules"),

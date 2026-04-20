@@ -12,6 +12,7 @@ class BookFilter(django_filters.FilterSet):
             "publication_year": ["exact", "gte", "lte"],
             "language": ["exact", "icontains"],
             "book_type": ["exact"],
+            "purchase_method": ["exact"],
             "publisher": ["exact"],
             "genres": ["exact"],
             "tags": ["exact"],

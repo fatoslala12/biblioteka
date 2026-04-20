@@ -59,6 +59,15 @@ class BookType(models.TextChoices):
     REFERENCE = "REFERENCE", "Referencë (vetëm në bibliotekë)"
 
 
+class PurchaseMethod(models.TextChoices):
+    DONATION = "DONATION", "Donacion"
+    GIFT = "GIFT", "Dhuratë"
+    FULL_PRICE = "FULL_PRICE", "Blerje me çmim të plotë"
+    DISCOUNTED = "DISCOUNTED", "Blerje me ulje"
+    EXCHANGE = "EXCHANGE", "Shkëmbim"
+    OTHER = "OTHER", "Tjetër"
+
+
 class Book(TimestampedModel):
     title = models.CharField(max_length=255)
     isbn = models.CharField(max_length=32, blank=True, default="")
@@ -66,6 +75,14 @@ class Book(TimestampedModel):
     language = models.CharField(max_length=64, blank=True, default="")
     publication_year = models.PositiveIntegerField(null=True, blank=True)
     book_type = models.CharField(max_length=16, choices=BookType.choices, default=BookType.GENERAL)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Çmimi")
+    purchase_method = models.CharField(
+        max_length=20,
+        choices=PurchaseMethod.choices,
+        default=PurchaseMethod.FULL_PRICE,
+        verbose_name="Mënyra e blerjes",
+    )
+    purchase_place = models.CharField(max_length=180, blank=True, default="", verbose_name="Vendi i blerjes")
 
     publisher = models.ForeignKey(Publisher, null=True, blank=True, on_delete=models.SET_NULL, related_name="books")
     authors = models.ManyToManyField(Author, blank=True, related_name="books")

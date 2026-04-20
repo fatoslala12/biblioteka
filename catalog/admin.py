@@ -95,11 +95,13 @@ class BookAdmin(admin.ModelAdmin):
         "isbn_display",
         "publication_year_display",
         "book_type_display",
+        "purchase_method_display",
+        "price_display",
         "publisher_display",
         "total_copies",
         "available_copies",
     )
-    list_filter = (AuthorFilter, PublisherFilter, PublicationYearFilter, GenreFilter)
+    list_filter = (AuthorFilter, PublisherFilter, PublicationYearFilter, GenreFilter, "purchase_method")
     search_fields = ("title", "isbn", "publisher__name", "authors__name")
     autocomplete_fields = ("publisher", "authors", "genres", "tags")
     actions = None
@@ -135,6 +137,15 @@ class BookAdmin(admin.ModelAdmin):
                         "isbn",
                         "description",
                         ("language", "publication_year"),
+                    )
+                },
+            ),
+            (
+                "Blerja",
+                {
+                    "fields": (
+                        ("price", "purchase_method"),
+                        "purchase_place",
                     )
                 },
             ),
@@ -196,6 +207,14 @@ class BookAdmin(admin.ModelAdmin):
     @admin.display(description="Lloji", ordering="book_type")
     def book_type_display(self, obj: Book):
         return obj.get_book_type_display() if obj.book_type else "—"
+
+    @admin.display(description="Mënyra e blerjes", ordering="purchase_method")
+    def purchase_method_display(self, obj: Book):
+        return obj.get_purchase_method_display() if obj.purchase_method else "—"
+
+    @admin.display(description="Çmimi", ordering="price")
+    def price_display(self, obj: Book):
+        return f"{obj.price:.2f}" if obj.price is not None else "—"
 
     @admin.display(description="Botuesi", ordering="publisher__name")
     def publisher_display(self, obj: Book):

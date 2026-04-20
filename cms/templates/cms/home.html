@@ -240,10 +240,10 @@
           <a href="/evente/" class="group block rounded-xl border border-slate-100 p-3 transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md dark:border-slate-700 dark:hover:bg-slate-700/30">
             <div class="relative overflow-hidden rounded-lg border border-slate-200/80 dark:border-slate-700">
               <img src="{% if e.image_url %}{{ e.image_url }}{% else %}{% static hero_library_image %}{% endif %}" alt="{{ e.title }}" class="sl-section-media h-44 w-full object-cover object-top transition duration-500 group-hover:scale-[1.02]" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='{% static hero_library_image %}';" />
-              <span class="absolute left-2 top-2 rounded-md bg-slate-900/75 px-2 py-1 text-[10px] font-bold text-white">{{ e.badge|default:"Event" }}</span>
+              <span class="sl-shimmer-badge absolute left-2 top-2 rounded-md bg-slate-900/75 px-2 py-1 text-[10px] font-bold text-white">{{ e.badge|default:"Event" }}</span>
             </div>
-            <div class="mt-3 text-base font-extrabold leading-tight text-slate-900 dark:text-white">{{ e.title }}</div>
-            <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">{{ e.excerpt|truncatewords:16 }}</div>
+            <div class="mt-3 text-base font-black leading-tight tracking-tight text-slate-900 dark:text-white">{{ e.title }}</div>
+            <div class="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{{ e.excerpt|truncatewords:16 }}</div>
             <div class="mt-3 flex items-center gap-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
               <span>📅 {{ e.date }}</span>
               <span>🕒 {{ e.time }}</span>
@@ -269,7 +269,7 @@
                 <span class="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm">📢</span>
               {% endif %}
               <span class="min-w-0 flex-1">
-                <span class="block text-sm font-bold text-slate-800 dark:text-white">{{ n.title }}</span>
+                <span class="block text-sm font-extrabold leading-tight tracking-tight text-slate-800 dark:text-white">{{ n.title }}</span>
                 <span class="mt-1 block text-xs text-slate-600 dark:text-slate-300">{{ n.excerpt|truncatewords:10 }}</span>
               </span>
               <span class="text-right text-[11px] font-semibold text-slate-400 dark:text-slate-500">
@@ -292,16 +292,16 @@
           <a href="{{ book_of_week.url }}" class="group block rounded-xl border border-slate-100 p-3 transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md dark:border-slate-700 dark:hover:bg-slate-700/30">
             <div class="relative overflow-hidden rounded-lg border border-slate-200/80 dark:border-slate-700">
               <img src="{% if book_of_week.image_url %}{{ book_of_week.image_url }}{% else %}{% static 'img/library-hero.svg' %}{% endif %}" alt="{{ book_of_week.title }}" class="sl-section-media h-44 w-full object-cover object-top transition duration-500 group-hover:scale-[1.02]" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='{% static 'img/library-hero.svg' %}';" />
-              <span class="absolute left-2 top-2 rounded-md bg-slate-900/75 px-2 py-1 text-[10px] font-bold text-white">{{ book_of_week.badge|default:"Libri i javës" }}</span>
+              <span class="sl-shimmer-badge absolute left-2 top-2 rounded-md bg-slate-900/75 px-2 py-1 text-[10px] font-bold text-white">{{ book_of_week.badge|default:"Libri i javës" }}</span>
             </div>
-            <div class="mt-3 text-base font-extrabold leading-tight text-slate-900 dark:text-white">{{ book_of_week.title }}</div>
+            <div class="mt-3 text-base font-black leading-tight tracking-tight text-slate-900 dark:text-white">{{ book_of_week.title }}</div>
             <div class="mt-1 text-xs font-semibold text-slate-600 dark:text-slate-300">✍️ {{ book_of_week.author|default:"Titull i rekomanduar" }}</div>
             {% if book_of_week.excerpt %}
-              <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">{{ book_of_week.excerpt|truncatewords:16 }}</div>
+              <div class="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{{ book_of_week.excerpt|truncatewords:16 }}</div>
             {% endif %}
             <div class="mt-3 flex items-center gap-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
               <span>📅 {{ book_of_week.date }}</span>
-              <span class="inline-flex rounded-lg border border-brand-300 px-3 py-1 text-[11px] font-bold text-brand-700 dark:border-brand-700 dark:text-brand-300">{{ book_of_week.cta_label }}</span>
+              <span class="sl-cta-pill inline-flex rounded-lg border border-brand-300 px-3 py-1 text-[11px] font-bold text-brand-700 dark:border-brand-700 dark:text-brand-300">{{ book_of_week.cta_label }}</span>
             </div>
           </a>
         {% else %}
@@ -462,12 +462,19 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
     .sl-premium-column {
+      opacity: 1;
+      transform: none;
+    }
+    .sl-motion-ready .sl-premium-column {
       opacity: 0;
+      transform: translateY(14px) scale(0.992);
+    }
+    .sl-motion-ready .sl-premium-column.is-visible {
       animation: sl-premium-card-in .72s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
-    .sl-premium-column:nth-child(1) { animation-delay: .05s; }
-    .sl-premium-column:nth-child(2) { animation-delay: .13s; }
-    .sl-premium-column:nth-child(3) { animation-delay: .21s; }
+    .sl-motion-ready .sl-premium-column:nth-child(1).is-visible { animation-delay: .05s; }
+    .sl-motion-ready .sl-premium-column:nth-child(2).is-visible { animation-delay: .13s; }
+    .sl-motion-ready .sl-premium-column:nth-child(3).is-visible { animation-delay: .21s; }
     .sl-premium-hover-card {
       position: relative;
       transition: transform .24s ease, box-shadow .28s ease, border-color .24s ease;
@@ -493,6 +500,28 @@
       box-shadow: 0 20px 46px -22px rgba(15,23,42,.42), 0 18px 34px -20px rgba(49,145,137,.38);
     }
     .sl-premium-hover-card:hover::before { opacity: .95; }
+    .sl-shimmer-badge,
+    .sl-cta-pill {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .sl-shimmer-badge::after,
+    .sl-cta-pill::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 36%, rgba(255,255,255,.48) 50%, transparent 64%);
+      transform: translateX(-120%);
+      animation: sl-shimmer-pass 4.8s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .sl-cta-pill::after { animation-duration: 5.6s; }
+    @keyframes sl-shimmer-pass {
+      0%, 62% { transform: translateX(-120%); opacity: 0; }
+      68% { opacity: .95; }
+      86%, 100% { transform: translateX(120%); opacity: 0; }
+    }
 
     @keyframes sl-section-media-float {
       0%, 100% {
@@ -632,6 +661,8 @@
         opacity: 1 !important;
         transform: none !important;
       }
+      .sl-shimmer-badge::after,
+      .sl-cta-pill::after { animation: none !important; display: none !important; }
       .sl-premium-hover-card,
       .sl-premium-hover-card:hover {
         transform: none !important;
@@ -661,7 +692,24 @@
       tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.dataset.tab); }); });
       show('katalog');
 
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!prefersReduced) {
+        document.documentElement.classList.add('sl-motion-ready');
+        const cols = document.querySelectorAll('.sl-premium-column');
+        if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver(function (entries, obs) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                obs.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.18, rootMargin: '0px 0px -40px 0px' });
+          cols.forEach(function (col) { io.observe(col); });
+        } else {
+          cols.forEach(function (col) { col.classList.add('is-visible'); });
+        }
+
         document.querySelectorAll('.sl-tilt-card').forEach(function (card) {
           card.addEventListener('mousemove', function (e) {
             const r = card.getBoundingClientRect();

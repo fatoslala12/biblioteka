@@ -40,6 +40,13 @@ class Loan(models.Model):
 
     renew_count = models.PositiveIntegerField(default=0, verbose_name="Nr. zgjatjeve")
 
+    due_soon_reminder_for = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="Kujtesë “afati nesër” dërguar për",
+        help_text="Data e afatit të kthimit për të cilën është dërguar tashmë njoftimi një ditë para.",
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -139,6 +146,13 @@ class Reservation(models.Model):
         on_delete=models.SET_NULL,
         related_name="from_reservation",
         verbose_name="Huazimi",
+    )
+
+    pickup_soon_reminder_for = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="Kujtesë “marrje nesër” dërguar për",
+        help_text="Data e marrjes për të cilën është dërguar tashmë njoftimi një ditë para.",
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

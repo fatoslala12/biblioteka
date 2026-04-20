@@ -375,7 +375,8 @@ def renew_loan(
     old_due_at = loan.due_at
     loan.renew_count += 1
     loan.due_at = loan.due_at + timedelta(days=policy_snapshot.loan_period_days)
-    loan.save(update_fields=["renew_count", "due_at", "updated_at"])
+    loan.due_soon_reminder_for = None
+    loan.save(update_fields=["renew_count", "due_at", "due_soon_reminder_for", "updated_at"])
     _try_log(
         target=loan,
         loan=loan,

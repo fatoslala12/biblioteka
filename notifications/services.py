@@ -220,6 +220,38 @@ def notify_member_loan_renewed(member, *, book_title: str, new_due_at) -> None:
     )
 
 
+def notify_member_loan_due_tomorrow(member, *, book_title: str, due_at) -> None:
+    u = getattr(member, "user", None)
+    if not u:
+        return
+    due = timezone.localtime(due_at).strftime("%d/%m/%Y %H:%M") if due_at else "—"
+    title = "Kujtesë: nesër është afati i kthimit"
+    body = f"“{book_title}” duhet të kthehet më {due}. Faleminderit që respektoni afatin."
+    notify_member_user(
+        u,
+        kind=NotificationKind.LOAN_DUE_TOMORROW_MEMBER,
+        title=title,
+        body=body,
+        link_url="/anetar/#member-active-loans",
+    )
+
+
+def notify_member_reservation_pickup_tomorrow(member, *, book_title: str, pickup_date) -> None:
+    u = getattr(member, "user", None)
+    if not u:
+        return
+    pd = pickup_date.strftime("%d/%m/%Y") if pickup_date else "—"
+    title = "Kujtesë: nesër merrni librin"
+    body = f"Keni rezervimin “{book_title}” — nesër ({pd}) është dita e marrjes në bibliotekë."
+    notify_member_user(
+        u,
+        kind=NotificationKind.RESERVATION_PICKUP_TOMORROW_MEMBER,
+        title=title,
+        body=body,
+        link_url="/anetar/#member-reservations",
+    )
+
+
 def notify_member_reservation_expired(member, *, book_title: str) -> None:
     u = getattr(member, "user", None)
     if not u:

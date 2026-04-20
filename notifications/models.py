@@ -12,6 +12,8 @@ class NotificationKind(models.TextChoices):
     LOAN_ACTIVE_MEMBER = "loan_active_member", "Huazim aktiv"
     LOAN_RETURNED_MEMBER = "loan_returned_member", "Libri u kthye"
     LOAN_RENEWED_MEMBER = "loan_renewed_member", "Afati u zgjat"
+    LOAN_DUE_TOMORROW_MEMBER = "loan_due_tomorrow_member", "Afati nesër (huazim)"
+    RESERVATION_PICKUP_TOMORROW_MEMBER = "reservation_pickup_tomorrow_member", "Marrje nesër (rezervim)"
     RESERVATION_EXPIRED_MEMBER = "reservation_expired_member", "Rezervimi skadoi"
 
 

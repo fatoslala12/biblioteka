@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, time, timedelta
 import io
 import json
 import tempfile
@@ -13,6 +13,7 @@ from accounts.models import MemberProfile, UserRole
 from audit.models import AuditEntry
 from catalog.models import Book, Copy, CopyStatus
 from circulation.models import Loan, LoanStatus, Reservation, ReservationRequest, ReservationRequestStatus, ReservationStatus
+from notifications.models import NotificationKind, UserNotification
 from circulation.services import auto_expire_overdue_reservations, create_reservation_request
 from circulation.exceptions import PolicyViolation
 from fines.models import Fine, FineStatus, Payment, PaymentMethod
@@ -529,3 +530,81 @@ class MemberNotificationsCommandTests(TestCase):
         call_command("notify_members", "--channels", "email")
         second_count = len(mail.outbox)
         self.assertEqual(first_count, second_count)
+
+
+class SendLibraryRemindersTests(TestCase):
+    """Komanda send_library_reminders — njoftime në-app një ditë para afatit / marrjes."""
+
+    def setUp(self):
+        self.member_user = User.objects.create_user(
+            username="reminder_member",
+            email="reminder_member@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.MEMBER,
+        )
+        self.staff = User.objects.create_user(
+            username="reminder_staff",
+            email="reminder_staff@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.STAFF,
+            is_staff=True,
+        )
+        self.member = MemberProfile.objects.create(
+            user=self.member_user,
+            full_name="Reminder Member",
+            phone="0682222222",
+            national_id="RMD999X",
+            place_of_birth="Tirane",
+            address="Rruga Reminder 1",
+        )
+        self.book = Book.objects.create(title="Reminder Book", isbn="9780000000998")
+        self.copy = Copy.objects.create(book=self.book, barcode="REM-CP-01", status=CopyStatus.ON_LOAN)
+
+    def test_sends_loan_due_tomorrow_once(self):
+        tomorrow = timezone.localdate() + timedelta(days=1)
+        due_at = timezone.make_aware(datetime.combine(tomorrow, time(23, 0)))
+        Loan.objects.create(
+            member=self.member,
+            copy=self.copy,
+            due_at=due_at,
+            status=LoanStatus.ACTIVE,
+        )
+        call_command("send_library_reminders")
+        self.assertEqual(
+            UserNotification.objects.filter(
+                user=self.member_user, kind=NotificationKind.LOAN_DUE_TOMORROW_MEMBER
+            ).count(),
+            1,
+        )
+        call_command("send_library_reminders")
+        self.assertEqual(
+            UserNotification.objects.filter(
+                user=self.member_user, kind=NotificationKind.LOAN_DUE_TOMORROW_MEMBER
+            ).count(),
+            1,
+        )
+
+    def test_sends_reservation_pickup_tomorrow_once(self):
+        tomorrow = timezone.localdate() + timedelta(days=1)
+        Reservation.objects.create(
+            member=self.member,
+            book=self.book,
+            pickup_date=tomorrow,
+            return_date=tomorrow + timedelta(days=7),
+            status=ReservationStatus.APPROVED,
+            created_by=self.staff,
+        )
+        call_command("send_library_reminders")
+        self.assertEqual(
+            UserNotification.objects.filter(
+                user=self.member_user, kind=NotificationKind.RESERVATION_PICKUP_TOMORROW_MEMBER
+            ).count(),
+            1,
+        )
+        call_command("send_library_reminders")
+        self.assertEqual(
+            UserNotification.objects.filter(
+                user=self.member_user, kind=NotificationKind.RESERVATION_PICKUP_TOMORROW_MEMBER
+            ).count(),
+            1,
+        )

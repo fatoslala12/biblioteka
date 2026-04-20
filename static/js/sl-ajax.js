@@ -57,6 +57,7 @@
           if (pushState) history.pushState({ path: path }, '', url);
           if (data.title) document.title = data.title;
           initAjaxLinks(c);
+          document.dispatchEvent(new CustomEvent('sl:navigation', { detail: { path: path } }));
         }
       })
       .catch(function () {

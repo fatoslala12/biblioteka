@@ -16,7 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.shortcuts import redirect
-from django.urls import include, path
+from django.urls import include, path, re_path
+from django.views.static import serve
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from django.conf import settings
@@ -39,5 +40,12 @@ urlpatterns = [
     path("", include("cms.urls")),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve uploaded media files in both dev and single-container production.
+# `django.conf.urls.static.static()` returns [] when DEBUG=False, so we add
+# an explicit route to keep admin-uploaded files reachable in production.
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.MEDIA_URL:
+    media_prefix = settings.MEDIA_URL.lstrip("/")
+    urlpatterns += [
+        re_path(rf"^{media_prefix}(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
+    ]

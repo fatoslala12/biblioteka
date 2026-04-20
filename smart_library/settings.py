@@ -176,7 +176,10 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+# Në VPS: vendos MEDIA_ROOT jashtë repo-s (p.sh. /var/lib/biblioteka/media) që të mos
+# humbasin ngarkimet pas git pull / git clean; nginx duhet të shërbejë të njëjtin path.
+_media_root_env = env("MEDIA_ROOT", default="").strip()
+MEDIA_ROOT = Path(_media_root_env) if _media_root_env else BASE_DIR / "media"
 
 if not DEBUG:
     STORAGES = {

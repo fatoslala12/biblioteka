@@ -7,11 +7,32 @@
   {{ block.super }}
   <script src="{% static 'jazzmin/js/ui_feedback.js' %}"></script>
   <style>
+    .app-catalog.model-book.change-form #content-main {
+      position: relative;
+    }
+    .app-catalog.model-book.change-form #content-main::before {
+      content: "";
+      position: absolute;
+      inset: -8px -8px auto -8px;
+      height: 210px;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 8% 12%, rgba(49,145,137,.2), transparent 42%),
+        radial-gradient(circle at 94% 18%, rgba(214,178,94,.2), transparent 38%),
+        linear-gradient(180deg, rgba(255,255,255,.78), rgba(246,252,251,.28));
+      filter: blur(0.2px);
+    }
+    .app-catalog.model-book.change-form #content-main > * {
+      position: relative;
+      z-index: 1;
+    }
     .app-catalog.model-book.change-form .sl-book-form-shell {
       background: linear-gradient(180deg, #fbfdff 0%, #f5fbfa 100%);
       border: 1px solid rgba(15,23,42,.08);
       border-radius: 18px;
-      box-shadow: 0 16px 38px rgba(15,23,42,.08);
+      box-shadow: 0 20px 46px rgba(15,23,42,.1), inset 0 1px 0 rgba(255,255,255,.82);
       overflow: hidden;
     }
     .app-catalog.model-book.change-form .sl-book-form-head {
@@ -38,6 +59,43 @@
     }
     .app-catalog.model-book.change-form .sl-book-form-body {
       padding: 14px 16px 6px;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-body .nav-tabs {
+      border-bottom: 0 !important;
+      gap: 8px;
+      margin-bottom: 12px !important;
+      padding: 6px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(15,23,42,.04), rgba(15,23,42,.02));
+      border: 1px solid rgba(148,163,184,.22);
+      overflow-x: auto;
+      overflow-y: hidden;
+      flex-wrap: nowrap !important;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-body .nav-tabs .nav-item {
+      margin-bottom: 0 !important;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-body .nav-tabs .nav-link {
+      border: 1px solid transparent !important;
+      border-radius: 999px !important;
+      background: rgba(255,255,255,.74) !important;
+      color: #334155 !important;
+      font-weight: 900 !important;
+      letter-spacing: .02em;
+      min-height: 34px;
+      padding: 6px 14px !important;
+      white-space: nowrap;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-body .nav-tabs .nav-link:hover {
+      transform: translateY(-1px);
+      background: #fff !important;
+      box-shadow: 0 8px 18px rgba(15,23,42,.12);
+    }
+    .app-catalog.model-book.change-form .sl-book-form-body .nav-tabs .nav-link.active {
+      background: linear-gradient(135deg, #319189, #2a7f78) !important;
+      color: #fff !important;
+      box-shadow: 0 10px 20px rgba(49,145,137,.34);
     }
     .app-catalog.model-book.change-form .sl-book-form-body .card {
       border-radius: 14px !important;
@@ -83,8 +141,18 @@
       border-radius: 12px !important;
       border: 1px solid rgba(15,23,42,.16) !important;
       color: #0f172a !important;
-      background: #fff !important;
+      background: linear-gradient(180deg, #ffffff, #f8fbff) !important;
       font-weight: 600;
+      transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-body input[type="text"]:focus,
+    .app-catalog.model-book.change-form .sl-book-form-body input[type="number"]:focus,
+    .app-catalog.model-book.change-form .sl-book-form-body input[type="date"]:focus,
+    .app-catalog.model-book.change-form .sl-book-form-body textarea:focus,
+    .app-catalog.model-book.change-form .sl-book-form-body select:focus {
+      border-color: rgba(49,145,137,.52) !important;
+      box-shadow: 0 0 0 3px rgba(49,145,137,.14), 0 8px 18px rgba(49,145,137,.14) !important;
+      background: #fff !important;
     }
     .app-catalog.model-book.change-form .select2-container {
       min-width: 280px;
@@ -138,8 +206,12 @@
       margin-top: 12px;
       border-radius: 14px;
       border: 1px solid rgba(15,23,42,.08);
-      background: #fff;
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(247,251,255,.94));
       padding: 10px 12px;
+      box-shadow: 0 12px 26px rgba(15,23,42,.08);
+      position: sticky;
+      bottom: 10px;
+      z-index: 3;
     }
     .app-catalog.model-book.change-form .sl-book-form-actions .btn,
     .app-catalog.model-book.change-form .sl-book-form-actions input[type="submit"] {
@@ -147,6 +219,19 @@
       font-weight: 800 !important;
       min-height: 34px !important;
       padding: 6px 14px !important;
+      transition: transform .16s ease, box-shadow .2s ease;
+    }
+    .app-catalog.model-book.change-form .sl-book-form-actions input.default,
+    .app-catalog.model-book.change-form .sl-book-form-actions .btn-primary {
+      background: linear-gradient(135deg, #319189, #2a7f78) !important;
+      border-color: transparent !important;
+      color: #fff !important;
+      box-shadow: 0 10px 18px rgba(49,145,137,.28);
+    }
+    .app-catalog.model-book.change-form .sl-book-form-actions .btn:hover,
+    .app-catalog.model-book.change-form .sl-book-form-actions input[type="submit"]:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 20px rgba(15,23,42,.16);
     }
     .sl-related-modal .modal-content {
       border-radius: 14px;
@@ -295,6 +380,15 @@
       .app-catalog.model-book.change-form .sl-book-form-body {
         padding: 10px 10px 4px !important;
       }
+      .app-catalog.model-book.change-form .sl-book-form-body .nav-tabs {
+        padding: 4px;
+        gap: 6px;
+      }
+      .app-catalog.model-book.change-form .sl-book-form-body .nav-tabs .nav-link {
+        min-height: 30px;
+        padding: 4px 11px !important;
+        font-size: .78rem;
+      }
       .app-catalog.model-book.change-form .sl-book-view-head {
         flex-direction: column !important;
       }
@@ -339,6 +433,9 @@
       }
       .app-catalog.model-book.change-form .sl-book-stat-value {
         font-size: 1.35rem !important;
+      }
+      .app-catalog.model-book.change-form .sl-book-form-actions {
+        position: static;
       }
     }
   </style>

@@ -1,13 +1,14 @@
 """Import libra nga Excel/CSV."""
 import csv
 import io
+from decimal import Decimal, InvalidOperation
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from openpyxl import load_workbook
 
-from catalog.models import Author, Book, BookType, Copy, CopyStatus, Genre, Publisher, Tag
+from catalog.models import Author, Book, BookType, Copy, CopyStatus, Genre, Publisher, PurchaseMethod, Tag
 
 
 def _norm(s):
@@ -71,6 +72,23 @@ def _get_val(row, keys, default=""):
     return default
 
 
+def _parse_purchase_method(raw):
+    v = _norm(str(raw or "")).lower()
+    if not v:
+        return PurchaseMethod.FULL_PRICE
+    if "donacion" in v:
+        return PurchaseMethod.DONATION
+    if "dhurat" in v:
+        return PurchaseMethod.GIFT
+    if "ulje" in v or "discount" in v:
+        return PurchaseMethod.DISCOUNTED
+    if "shkemb" in v or "këmbim" in v:
+        return PurchaseMethod.EXCHANGE
+    if "plot" in v or "full" in v or "cmim" in v or "çmim" in v:
+        return PurchaseMethod.FULL_PRICE
+    return PurchaseMethod.OTHER
+
+
 def _import_row(row, is_excel=False):
     """Import one row. row is dict with keys."""
     if is_excel:
@@ -87,6 +105,9 @@ def _import_row(row, is_excel=False):
         nr_kopjeve = _get_val(row, ["nr_kopjeve", "nr_kopjesh", "kopje"])
         lokacioni = _norm(_get_val(row, ["lokacioni", "location", "vendndodhja"]))
         rafti = _norm(_get_val(row, ["rafti", "shelf", "rafte"]))
+        cmimi = _get_val(row, ["cmimi", "çmimi", "price", "cmim"])
+        menyra_blerjes = _get_val(row, ["menyra_blerjes", "mënyra_blerjes", "menyra_e_blerjes"])
+        vendi_blerjes = _norm(_get_val(row, ["vendi_blerjes", "vendi_i_blerjes", "vendi"]))
     else:
         titulli = _norm(row.get("titulli", ""))
         isbn = _norm(row.get("isbn", ""))
@@ -101,6 +122,9 @@ def _import_row(row, is_excel=False):
         nr_kopjeve = row.get("nr_kopjeve") or row.get("nr_kopjesh") or row.get("kopje")
         lokacioni = _norm(row.get("lokacioni", "") or row.get("location", ""))
         rafti = _norm(row.get("rafti", "") or row.get("shelf", ""))
+        cmimi = row.get("cmimi") or row.get("çmimi") or row.get("price") or row.get("cmim")
+        menyra_blerjes = row.get("menyra_blerjes") or row.get("mënyra_blerjes") or row.get("menyra_e_blerjes")
+        vendi_blerjes = _norm(row.get("vendi_blerjes", "") or row.get("vendi_i_blerjes", "") or row.get("vendi", ""))
 
     if not titulli:
         return None, "Titulli zbrazët"
@@ -109,8 +133,14 @@ def _import_row(row, is_excel=False):
         viti_int = int(viti) if viti and str(viti).strip().isdigit() else None
     except (ValueError, TypeError):
         viti_int = None
+    try:
+        cmimi_val = str(cmimi or "").strip().replace(",", ".")
+        price_decimal = Decimal(cmimi_val) if cmimi_val else None
+    except (InvalidOperation, TypeError):
+        price_decimal = None
 
     book_type = BookType.REFERENCE if lloji and "referenc" in lloji.lower() else BookType.GENERAL
+    purchase_method = _parse_purchase_method(menyra_blerjes)
     publisher = _get_or_create_publisher(botuesi) if botuesi else None
 
     book = None
@@ -126,6 +156,9 @@ def _import_row(row, is_excel=False):
         book.language = gjuha or ""
         book.publication_year = viti_int
         book.book_type = book_type
+        book.price = price_decimal
+        book.purchase_method = purchase_method
+        book.purchase_place = vendi_blerjes or ""
         book.publisher = publisher
         book.save()
         created = False
@@ -137,6 +170,9 @@ def _import_row(row, is_excel=False):
             language=gjuha or "",
             publication_year=viti_int,
             book_type=book_type,
+            price=price_decimal,
+            purchase_method=purchase_method,
+            purchase_place=vendi_blerjes or "",
             publisher=publisher,
         )
         created = True
@@ -259,6 +295,9 @@ def book_import_sample(request):
         "nr_kopjeve",
         "lokacioni",
         "rafti",
+        "cmimi",
+        "menyra_blerjes",
+        "vendi_blerjes",
     ]
     for c, h in enumerate(headers, 1):
         cell = ws.cell(row=1, column=c, value=h)
@@ -280,6 +319,9 @@ def book_import_sample(request):
             3,
             "Raft A1",
             "A1-120",
+            1200,
+            "Blerje me çmim të plotë",
+            "Toena Bookstore",
         ],
         [
             "Algoritmet dhe Strukturat e të Dhënave",
@@ -295,6 +337,9 @@ def book_import_sample(request):
             2,
             "Raft B2",
             "B2-045",
+            850,
+            "Blerje me ulje",
+            "Panairi i Librit, Tiranë",
         ],
         [
             "Enciklopedia e Vogël",
@@ -310,6 +355,9 @@ def book_import_sample(request):
             1,
             "Sektori referencë",
             "REF-01",
+            0,
+            "Donacion",
+            "Bashkia Kamëz",
         ],
         [
             "Rreth botës në 80 ditë",
@@ -325,13 +373,16 @@ def book_import_sample(request):
             5,
             "Raft C3",
             "C3-200",
+            0,
+            "Dhuratë",
+            "Fondacion kulturor",
         ],
     ]
     for r, row in enumerate(sample_rows, 2):
         for c, val in enumerate(row, 1):
             ws.cell(row=r, column=c, value=val)
 
-    col_widths = [28, 18, 45, 10, 8, 22, 18, 25, 18, 18, 12, 15, 12]
+    col_widths = [28, 18, 45, 10, 8, 22, 18, 25, 18, 18, 12, 15, 12, 11, 20, 20]
     for i, w in enumerate(col_widths, 1):
         from openpyxl.utils import get_column_letter
         ws.column_dimensions[get_column_letter(i)].width = w
@@ -344,10 +395,17 @@ def book_import_sample(request):
         "autoret, zhanret, etiketa: ndani me presje (p.sh. Autor1, Autor2)",
         "nr_kopjeve: numri i kopjeve që do të krijohen (barkodet gjenerohen automatikisht)",
         "lokacioni, rafti: vendndodhja e kopjeve (opsionale)",
+        "cmimi: numër (p.sh. 1200 ose 1200.50) | menyra_blerjes: Dhuratë, Donacion, Blerje me çmim të plotë, Blerje me ulje, Shkëmbim, Tjetër",
+        "vendi_blerjes: dyqan/institucion/vend ku është siguruar libri",
     ]
     for i, tip in enumerate(tips, 1):
         ws.cell(row=len(sample_rows) + 2 + i, column=1, value=tip)
-        ws.merge_cells(start_row=len(sample_rows) + 2 + i, start_column=1, end_row=len(sample_rows) + 2 + i, end_column=5)
+        ws.merge_cells(
+            start_row=len(sample_rows) + 2 + i,
+            start_column=1,
+            end_row=len(sample_rows) + 2 + i,
+            end_column=len(headers),
+        )
 
     response = HttpResponse(
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"

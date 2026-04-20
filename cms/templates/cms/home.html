@@ -185,7 +185,13 @@
 
       {% if home_gallery %}
       <div class="sl-gallery-shell sl-premium-surface sl-premium-surface-slow mt-4 min-w-0 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 sm:rounded-3xl sm:p-5" style="content-visibility:auto; contain-intrinsic-size: 1px 220px;">
-        <div class="text-center text-[11px] font-extrabold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 sm:text-xs">Pamje nga biblioteka</div>
+        <div class="mb-2 flex items-center justify-between gap-3">
+          <div class="inline-flex items-center gap-2 rounded-full border border-brand-200/70 bg-white/80 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.2em] text-brand-700 dark:border-brand-700/50 dark:bg-slate-900/55 dark:text-brand-200">
+            <span class="h-1.5 w-1.5 rounded-full bg-brand-500"></span>
+            Pamje nga biblioteka
+          </div>
+          <div class="hidden text-[11px] font-semibold text-slate-500 dark:text-slate-400 sm:block">Ambient modern dhe i qetë për lexim</div>
+        </div>
         <div class="mt-2 grid grid-cols-2 gap-2 sm:mt-3 sm:grid-cols-4 sm:gap-3">
           {% for item in home_gallery %}
           <div class="sl-premium-img-cell sl-gallery-card group relative min-w-0 overflow-hidden rounded-lg border border-slate-200/80 bg-white shadow-sm dark:border-slate-700 sm:rounded-xl">
@@ -205,23 +211,35 @@
   <section class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
       <div class="sl-quote-v2 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40">
-        <div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">Thënie</div>
-        <p class="mt-2 text-sm font-extrabold leading-snug text-slate-800 dark:text-white">“Sot një faqe, nesër një kapitull, pasnesër një sukses.”</p>
+        <div class="flex items-center justify-between gap-2">
+          <div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">Thënie</div>
+          <span class="text-sm text-brand-300">❝</span>
+        </div>
+        <p class="mt-2 text-sm font-black leading-snug text-slate-800 dark:text-white">“Sot një faqe, nesër një kapitull, pasnesër një sukses.”</p>
         <p class="mt-2 text-xs font-medium text-slate-500 dark:text-slate-400">— Motivim për lexim</p>
       </div>
       <div class="sl-quote-v2 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40">
-        <div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">Thënie</div>
-        <p class="mt-2 text-sm font-extrabold leading-snug text-slate-800 dark:text-white">Leximi është investimi më i sigurt për të ardhmen.</p>
+        <div class="flex items-center justify-between gap-2">
+          <div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">Thënie</div>
+          <span class="text-sm text-brand-300">❝</span>
+        </div>
+        <p class="mt-2 text-sm font-black leading-snug text-slate-800 dark:text-white">Leximi është investimi më i sigurt për të ardhmen.</p>
         <p class="mt-2 text-xs font-medium text-slate-500 dark:text-slate-400">— Dije & zhvillim</p>
       </div>
       <div class="sl-quote-v2 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40">
-        <div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">Thënie</div>
-        <p class="mt-2 text-sm font-extrabold leading-snug text-slate-800 dark:text-white">“Një qytet që lexon është një qytet që rritet.”</p>
+        <div class="flex items-center justify-between gap-2">
+          <div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">Thënie</div>
+          <span class="text-sm text-brand-300">❝</span>
+        </div>
+        <p class="mt-2 text-sm font-black leading-snug text-slate-800 dark:text-white">“Një qytet që lexon është një qytet që rritet.”</p>
         <p class="mt-2 text-xs font-medium text-slate-500 dark:text-slate-400">— Komunitet</p>
       </div>
       <div class="sl-quote-v2 sl-quote-v2-accent rounded-2xl border border-brand-200 bg-brand-50 p-4 shadow-sm dark:border-brand-800 dark:bg-slate-800/60">
-        <div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand-700 dark:text-brand-300">Mirëseardhje</div>
-        <p class="mt-2 text-sm font-extrabold leading-snug text-slate-800 dark:text-white">“Dija është dritë, dhe libri është rruga që na çon drejt saj.”</p>
+        <div class="flex items-center justify-between gap-2">
+          <div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand-700 dark:text-brand-300">Mirëseardhje</div>
+          <span class="text-sm text-brand-400">✦</span>
+        </div>
+        <p class="mt-2 text-sm font-black leading-snug text-slate-800 dark:text-white">“Dija është dritë, dhe libri është rruga që na çon drejt saj.”</p>
         <p class="mt-2 text-xs font-semibold text-brand-800 dark:text-brand-200">Biblioteka Kamëz</p>
       </div>
     </div>
@@ -462,6 +480,9 @@
         radial-gradient(circle at 15% 0%, rgba(49, 145, 137, 0.12), transparent 34%),
         radial-gradient(circle at 100% 100%, rgba(214, 178, 94, 0.1), transparent 30%),
         linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,252,252,.92));
+      box-shadow:
+        0 18px 36px -26px rgba(15, 23, 42, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.92);
     }
     .dark .sl-gallery-shell {
       background:
@@ -479,7 +500,19 @@
       transform: translateX(-140%);
       transition: transform .9s cubic-bezier(.22,1,.36,1);
     }
+    .sl-gallery-card::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      z-index: 2;
+      border-radius: inherit;
+      pointer-events: none;
+      border: 1px solid rgba(255,255,255,.28);
+      opacity: .65;
+      transition: opacity .3s ease;
+    }
     .sl-gallery-card:hover::before { transform: translateX(140%); }
+    .sl-gallery-card:hover::after { opacity: 1; }
     .sl-quote-v2 {
       position: relative;
       overflow: hidden;
@@ -494,11 +527,22 @@
       background: radial-gradient(circle at 0% 0%, rgba(49,145,137,.16), transparent 42%);
       opacity: .75;
     }
+    .sl-quote-v2::after {
+      content: "";
+      position: absolute;
+      inset: auto 14px 0 14px;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(49,145,137,.38), rgba(214,178,94,.36));
+      opacity: .35;
+      transition: opacity .24s ease;
+    }
     .sl-quote-v2:hover {
       transform: translateY(-2px);
       border-color: rgba(49,145,137,.32);
       box-shadow: 0 16px 32px -20px rgba(49,145,137,.42);
     }
+    .sl-quote-v2:hover::after { opacity: .9; }
     .sl-quote-v2-accent::before {
       background:
         radial-gradient(circle at 0% 0%, rgba(214,178,94,.22), transparent 45%),

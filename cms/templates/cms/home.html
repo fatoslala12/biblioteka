@@ -235,23 +235,24 @@
           <h3 class="text-sm font-extrabold text-slate-800 dark:text-white">Eventi i radhës</h3>
           <a href="/evente/" class="text-xs font-bold text-brand-700 hover:text-brand-800 dark:text-brand-300">Shiko të gjitha →</a>
         </div>
-        <div class="space-y-2.5">
-          {% for e in home_events|slice:":3" %}
-            <a href="/evente/" class="flex items-start gap-3 rounded-xl border border-slate-100 p-3 transition hover:border-brand-200 hover:bg-brand-50/40 dark:border-slate-700 dark:hover:bg-slate-700/30">
-              <span class="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm">📅</span>
-              <span class="min-w-0 flex-1">
-                <span class="block text-sm font-bold text-slate-800 dark:text-white">{{ e.title }}</span>
-                <span class="mt-1 block text-xs text-slate-600 dark:text-slate-300">{{ e.excerpt|truncatewords:10 }}</span>
-              </span>
-              <span class="text-right text-[11px] font-semibold text-slate-400 dark:text-slate-500">
-                <span class="block">{{ e.date }}</span>
-                <span class="block">{{ e.time }}</span>
-              </span>
-            </a>
-          {% empty %}
-            <div class="rounded-xl border border-slate-100 p-3 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">Nuk ka event të publikuar për momentin.</div>
-          {% endfor %}
-        </div>
+        {% if home_events %}
+          {% with e=home_events.0 %}
+          <a href="/evente/" class="group block rounded-xl border border-slate-100 p-3 transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md dark:border-slate-700 dark:hover:bg-slate-700/30">
+            <div class="relative overflow-hidden rounded-lg border border-slate-200/80 dark:border-slate-700">
+              <img src="{% if e.image_url %}{{ e.image_url }}{% else %}{% static hero_library_image %}{% endif %}" alt="{{ e.title }}" class="h-44 w-full object-cover object-top transition duration-500 group-hover:scale-[1.02]" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='{% static hero_library_image %}';" />
+              <span class="absolute left-2 top-2 rounded-md bg-slate-900/75 px-2 py-1 text-[10px] font-bold text-white">{{ e.badge|default:"Event" }}</span>
+            </div>
+            <div class="mt-3 text-base font-extrabold leading-tight text-slate-900 dark:text-white">{{ e.title }}</div>
+            <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">{{ e.excerpt|truncatewords:16 }}</div>
+            <div class="mt-3 flex items-center gap-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <span>📅 {{ e.date }}</span>
+              <span>🕒 {{ e.time }}</span>
+            </div>
+          </a>
+          {% endwith %}
+        {% else %}
+          <div class="rounded-xl border border-slate-100 p-3 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">Nuk ka event të publikuar për momentin.</div>
+        {% endif %}
       </div>
 
       <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40 lg:col-span-4 sm:p-5">
@@ -263,7 +264,7 @@
           {% for n in announcements|slice:":3" %}
             <a href="/njoftime/" class="flex items-start gap-3 rounded-xl border border-slate-100 p-3 transition hover:border-brand-200 hover:bg-brand-50/40 dark:border-slate-700 dark:hover:bg-slate-700/30">
               {% if n.image_url %}
-                <img src="{{ n.image_url }}" alt="{{ n.title }}" class="h-16 w-11 shrink-0 rounded-lg object-cover object-top" loading="lazy" decoding="async" />
+                <img src="{{ n.image_url }}" alt="{{ n.title }}" class="h-16 w-11 shrink-0 rounded-lg object-cover object-top" loading="lazy" decoding="async" onerror="this.onerror=null; this.style.display='none';" />
               {% else %}
                 <span class="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm">📢</span>
               {% endif %}

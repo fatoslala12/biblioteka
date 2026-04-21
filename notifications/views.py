@@ -27,6 +27,7 @@ def staff_notification_badge_json(request):
                 "username": getattr(n.user, "username", "") or "",
                 "created_at": timezone.localtime(n.created_at).strftime("%d/%m/%Y %H:%M"),
                 "change_url": reverse("admin:notifications_usernotification_change", args=[n.pk]),
+                "mark_read_url": f"{reverse('admin:notifications_usernotification_change', args=[n.pk])}?mark_read=1",
             }
         )
 

@@ -204,6 +204,11 @@ class StaffNotificationBadgeTests(TestCase):
             role=UserRole.STAFF,
             is_staff=True,
         )
+        self.superadmin = User.objects.create_superuser(
+            username="badge_superadmin",
+            email="badge_superadmin@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+        )
 
     def test_badge_json_forbidden_for_member(self):
         self.client.force_login(self.member)
@@ -229,8 +234,22 @@ class StaffNotificationBadgeTests(TestCase):
         data = r.json()
         self.assertGreaterEqual(data.get("unread", 0), 1)
         self.assertIn("admin_changelist", data)
+        self.assertTrue(any("mark_read_url" in p for p in data.get("preview", [])))
         self.assertTrue(any(p.get("title") == "Member ping" for p in data.get("preview", [])))
         self.assertTrue(any(p.get("title") == "Staff ping" for p in data.get("preview", [])))
+
+    def test_admin_change_with_mark_read_marks_notification_read(self):
+        notif = UserNotification.objects.create(
+            user=self.member,
+            kind=NotificationKind.RESERVATION_SUBMITTED_MEMBER,
+            title="Will be read",
+            body="",
+        )
+        self.client.force_login(self.superadmin)
+        r = self.client.get(f"/admin/notifications/usernotification/{notif.id}/change/?mark_read=1")
+        self.assertEqual(r.status_code, 200)
+        notif.refresh_from_db()
+        self.assertIsNotNone(notif.read_at)
 
 
 class DesignSystemCssTests(TestCase):

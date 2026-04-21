@@ -84,6 +84,21 @@
     $li.append($btn).append($panel);
     $nav.prepend($li);
 
+    function renderUnreadBadge(unread) {
+      var $headUnread = $("#slAdminNotifUnreadHead");
+      var count = Number(unread || 0);
+      if (count > 0) {
+        var t = count > 99 ? "99+" : String(count);
+        $badge.text(t).show();
+        $headUnread.text(t + " unread").show();
+        $btn.attr("title", t + " unread notifications");
+      } else {
+        $badge.hide();
+        $headUnread.hide();
+        $btn.attr("title", "No unread notifications");
+      }
+    }
+
     function closePanel() {
       $panel.removeClass("sl-open");
       $btn.attr("aria-expanded", "false");
@@ -125,18 +140,8 @@
       })
       .then(function (data) {
         if (!data) return;
-        var unread = data.unread || 0;
-        var $headUnread = $("#slAdminNotifUnreadHead");
-        if (unread > 0) {
-          var t = unread > 99 ? "99+" : String(unread);
-          $badge.text(t).show();
-          $headUnread.text(t + " unread").show();
-          $btn.attr("title", t + " unread notifications");
-        } else {
-          $badge.hide();
-          $headUnread.hide();
-          $btn.attr("title", "No unread notifications");
-        }
+        var unread = Number(data.unread || 0);
+        renderUnreadBadge(unread);
 
         $("#slAdminNotifAllAdmin").attr("href", data.admin_changelist || "#");
 
@@ -149,7 +154,7 @@
           return;
         }
         rows.forEach(function (n) {
-          var href = escapeHtml(n.change_url || "#");
+          var href = escapeHtml(n.mark_read_url || n.change_url || "#");
           var title = escapeHtml(n.title || "");
           var body = escapeHtml((n.body || "").slice(0, 160));
           var kind = escapeHtml(n.kind || "");
@@ -170,6 +175,14 @@
             '<span class="sl-admin-notif-time">' + when + "</span>" +
             "</small></a>";
           $scroll.append(row);
+        });
+        $scroll.off("click.slMarkRead").on("click.slMarkRead", ".sl-admin-notif-row", function () {
+          var $row = $(this);
+          if (!$row.hasClass("sl-admin-notif-row-unread")) return;
+          $row.removeClass("sl-admin-notif-row-unread");
+          $row.find(".sl-admin-notif-dot").remove();
+          unread = Math.max(0, unread - 1);
+          renderUnreadBadge(unread);
         });
       })
       .catch(function () {

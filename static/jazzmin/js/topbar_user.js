@@ -22,6 +22,10 @@
       .replace(/"/g, "&quot;");
   }
 
+  function escapeAttr(s) {
+    return escapeHtml(s).replace(/'/g, "&#39;");
+  }
+
   function findAdminNotificationNavTarget() {
     var selectors = [
       "#jazzy-navbar ul.navbar-nav.ms-auto",
@@ -67,16 +71,13 @@
 
     var $panel = $("<div>").attr({ id: "slAdminNotifPanel", role: "dialog", "aria-label": "Notifications" });
     $panel.append(
-      '<div class="px-3 py-2 border-bottom bg-light small font-weight-bold text-uppercase text-muted">Notifications</div>'
+      '<div class="sl-admin-notif-head"><span>Notifications</span><span id="slAdminNotifUnreadHead" class="sl-admin-notif-unread-head" style="display:none;"></span></div>'
     );
     var $scroll = $("<div>").addClass("sl-admin-notif-scroll");
     $panel.append($scroll);
     var $footer = $('<div class="p-2 border-top bg-light small d-flex flex-column gap-1"></div>');
     $footer.append(
       '<a href="#" id="slAdminNotifAllAdmin" class="btn btn-sm btn-primary font-weight-bold">View all (admin)</a>'
-    );
-    $footer.append(
-      '<a href="#" id="slAdminNotifPanelLink" class="btn btn-sm btn-outline-secondary font-weight-bold">Staff panel list</a>'
     );
     $panel.append($footer);
 
@@ -125,15 +126,19 @@
       .then(function (data) {
         if (!data) return;
         var unread = data.unread || 0;
+        var $headUnread = $("#slAdminNotifUnreadHead");
         if (unread > 0) {
           var t = unread > 99 ? "99+" : String(unread);
           $badge.text(t).show();
+          $headUnread.text(t + " unread").show();
+          $btn.attr("title", t + " unread notifications");
         } else {
           $badge.hide();
+          $headUnread.hide();
+          $btn.attr("title", "No unread notifications");
         }
 
         $("#slAdminNotifAllAdmin").attr("href", data.admin_changelist || "#");
-        $("#slAdminNotifPanelLink").attr("href", data.panel_list_url || "/panel/notifications/");
 
         $scroll.empty();
         var rows = data.preview || [];
@@ -147,15 +152,22 @@
           var href = escapeHtml(n.change_url || "#");
           var title = escapeHtml(n.title || "");
           var body = escapeHtml((n.body || "").slice(0, 160));
+          var kind = escapeHtml(n.kind || "");
+          var who = escapeHtml(n.username || "");
+          var unreadClass = n.unread ? " sl-admin-notif-row-unread" : "";
+          var unreadDot = n.unread ? '<span class="sl-admin-notif-dot" title="Unread"></span>' : "";
           var when = escapeHtml(n.created_at || "");
+          var tooltip = escapeAttr(title + (who ? " - " + who : ""));
           var row =
-            '<a class="sl-admin-notif-row" href="' +
+            '<a class="sl-admin-notif-row' + unreadClass + '" href="' +
             href +
-            '">' +
-            title +
-            (body ? "<small>" + body + "</small>" : "") +
-            "<small>" +
-            when +
+            '" title="' + tooltip + '">' +
+            '<span class="sl-admin-notif-title-wrap">' + unreadDot + '<span class="sl-admin-notif-title">' + title + "</span></span>" +
+            (body ? '<small class="sl-admin-notif-body">' + body + "</small>" : "") +
+            '<small class="sl-admin-notif-meta">' +
+            (kind ? '<span class="sl-admin-notif-kind">' + kind + "</span>" : "") +
+            (who ? '<span class="sl-admin-notif-user">@' + who + "</span>" : "") +
+            '<span class="sl-admin-notif-time">' + when + "</span>" +
             "</small></a>";
           $scroll.append(row);
         });

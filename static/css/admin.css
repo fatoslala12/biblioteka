@@ -2528,8 +2528,15 @@ body.app-accounts.model-user.change-form #content-main .card {
   border-radius: 10px;
   line-height: 1;
 }
+#slAdminNotifBellBtn i {
+  font-size: 0.95rem;
+}
 #slAdminNotifBellBtn:hover {
   background: rgba(255, 255, 255, 0.12);
+}
+#slAdminNotifBellBtn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 2px;
 }
 #slAdminNotifPanel {
   position: absolute;
@@ -2550,28 +2557,97 @@ body.app-accounts.model-user.change-form #content-main .card {
 #slAdminNotifPanel.sl-open {
   display: flex;
 }
+#slAdminNotifPanel .sl-admin-notif-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+  background: linear-gradient(90deg, rgba(49, 144, 136, 0.08), rgba(255, 255, 255, 0.95));
+  color: #334155;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+#slAdminNotifPanel .sl-admin-notif-unread-head {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(49, 144, 136, 0.14);
+  color: #0f766e;
+  font-size: 0.66rem;
+  letter-spacing: 0.02em;
+}
 #slAdminNotifPanel .sl-admin-notif-scroll {
   overflow-y: auto;
   max-height: min(52vh, 18rem);
 }
 #slAdminNotifPanel .sl-admin-notif-row {
   display: block;
-  padding: 10px 14px;
+  padding: 11px 13px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.25);
   text-decoration: none;
   color: #0f172a;
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 600;
+  transition: background-color .2s ease, transform .15s ease;
 }
 #slAdminNotifPanel .sl-admin-notif-row:hover {
   background: rgba(49, 144, 136, 0.08);
+  transform: translateY(-1px);
 }
-#slAdminNotifPanel .sl-admin-notif-row small {
+#slAdminNotifPanel .sl-admin-notif-row-unread {
+  background: rgba(49, 144, 136, 0.05);
+}
+#slAdminNotifPanel .sl-admin-notif-row .sl-admin-notif-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+#slAdminNotifPanel .sl-admin-notif-row .sl-admin-notif-title {
   display: block;
-  margin-top: 4px;
+  line-height: 1.25;
+  font-weight: 800;
+}
+#slAdminNotifPanel .sl-admin-notif-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #0ea5a1;
+  box-shadow: 0 0 0 2px rgba(14, 165, 161, 0.18);
+  flex-shrink: 0;
+}
+#slAdminNotifPanel .sl-admin-notif-row .sl-admin-notif-body {
+  display: block;
+  margin-top: 5px;
   font-weight: 500;
   color: #64748b;
-  font-size: 0.75rem;
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+#slAdminNotifPanel .sl-admin-notif-row .sl-admin-notif-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+  font-size: 0.68rem;
+  color: #64748b;
+}
+#slAdminNotifPanel .sl-admin-notif-kind {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.2);
+  color: #475569;
+  font-weight: 700;
+}
+#slAdminNotifPanel .sl-admin-notif-time {
+  margin-left: auto;
+}
+#slAdminNotifPanel .sl-admin-notif-user {
+  font-weight: 700;
 }
 #slAdminNotifBadge {
   position: absolute;
@@ -2588,4 +2664,10 @@ body.app-accounts.model-user.change-form #content-main .card {
   line-height: 1.1rem;
   text-align: center;
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85);
+  z-index: 3;
+  animation: slNotifBadgePulse 1.8s ease-in-out infinite;
+}
+@keyframes slNotifBadgePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
 }

@@ -213,6 +213,12 @@ class StaffNotificationBadgeTests(TestCase):
     def test_badge_json_ok_for_is_staff_user(self):
         self.client.force_login(self.staff_admin)
         UserNotification.objects.create(
+            user=self.member,
+            kind=NotificationKind.RESERVATION_SUBMITTED_MEMBER,
+            title="Member ping",
+            body="Hello member",
+        )
+        UserNotification.objects.create(
             user=self.staff_admin,
             kind=NotificationKind.RESERVATION_NEW_STAFF,
             title="Staff ping",
@@ -223,6 +229,7 @@ class StaffNotificationBadgeTests(TestCase):
         data = r.json()
         self.assertGreaterEqual(data.get("unread", 0), 1)
         self.assertIn("admin_changelist", data)
+        self.assertTrue(any(p.get("title") == "Member ping" for p in data.get("preview", [])))
         self.assertTrue(any(p.get("title") == "Staff ping" for p in data.get("preview", [])))
 
 

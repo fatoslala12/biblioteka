@@ -2610,6 +2610,9 @@ body.app-accounts.model-user.change-form #content-main .card {
 #slAdminNotifPanel .sl-admin-notif-row-unread {
   background: rgba(49, 144, 136, 0.05);
 }
+#slAdminNotifPanel .sl-admin-notif-row-read {
+  background: rgba(255, 255, 255, 0.96);
+}
 #slAdminNotifPanel .sl-admin-notif-row .sl-admin-notif-title-wrap {
   display: flex;
   align-items: center;
@@ -2619,6 +2622,10 @@ body.app-accounts.model-user.change-form #content-main .card {
   display: block;
   line-height: 1.25;
   font-weight: 800;
+}
+#slAdminNotifPanel .sl-admin-notif-row-read .sl-admin-notif-title {
+  font-weight: 650;
+  color: #334155;
 }
 #slAdminNotifPanel .sl-admin-notif-dot {
   width: 8px;
@@ -2651,6 +2658,19 @@ body.app-accounts.model-user.change-form #content-main .card {
   background: rgba(148, 163, 184, 0.2);
   color: #475569;
   font-weight: 700;
+}
+#slAdminNotifPanel .sl-admin-notif-state {
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-weight: 800;
+}
+#slAdminNotifPanel .sl-admin-notif-state-unread {
+  background: rgba(34, 197, 94, 0.17);
+  color: #166534;
+}
+#slAdminNotifPanel .sl-admin-notif-state-read {
+  background: rgba(148, 163, 184, 0.22);
+  color: #334155;
 }
 #slAdminNotifPanel .sl-admin-notif-time {
   margin-left: auto;

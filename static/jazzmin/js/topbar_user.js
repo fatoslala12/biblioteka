@@ -62,7 +62,7 @@
       .attr({
         type: "button",
         id: "slAdminNotifBellBtn",
-        "aria-label": "Notifications",
+        "aria-label": "Njoftime",
         "aria-expanded": "false",
       })
       .html('<i class="fas fa-bell" aria-hidden="true"></i>');
@@ -71,13 +71,13 @@
 
     var $panel = $("<div>").attr({ id: "slAdminNotifPanel", role: "dialog", "aria-label": "Notifications" });
     $panel.append(
-      '<div class="sl-admin-notif-head"><span>Notifications</span><span id="slAdminNotifUnreadHead" class="sl-admin-notif-unread-head" style="display:none;"></span></div>'
+      '<div class="sl-admin-notif-head"><span>Njoftime</span><span id="slAdminNotifUnreadHead" class="sl-admin-notif-unread-head" style="display:none;"></span></div>'
     );
     var $scroll = $("<div>").addClass("sl-admin-notif-scroll");
     $panel.append($scroll);
     var $footer = $('<div class="p-2 border-top bg-light small d-flex flex-column gap-1"></div>');
     $footer.append(
-      '<a href="#" id="slAdminNotifAllAdmin" class="btn btn-sm btn-primary font-weight-bold">View all (admin)</a>'
+      '<a href="#" id="slAdminNotifAllAdmin" class="btn btn-sm btn-primary font-weight-bold">Shiko të gjitha (admin)</a>'
     );
     $panel.append($footer);
 
@@ -90,12 +90,12 @@
       if (count > 0) {
         var t = count > 99 ? "99+" : String(count);
         $badge.text(t).show();
-        $headUnread.text(t + " unread").show();
-        $btn.attr("title", t + " unread notifications");
+          $headUnread.text(t + " të palexuara").show();
+          $btn.attr("title", t + " njoftime të palexuara");
       } else {
         $badge.hide();
         $headUnread.hide();
-        $btn.attr("title", "No unread notifications");
+          $btn.attr("title", "Nuk ka njoftime të palexuara");
       }
     }
 
@@ -149,7 +149,7 @@
         var rows = data.preview || [];
         if (!rows.length) {
           $scroll.append(
-            '<div class="p-4 text-center text-muted small">No notifications yet.</div>'
+            '<div class="p-4 text-center text-muted small">Nuk ka njoftime për momentin.</div>'
           );
           return;
         }
@@ -159,8 +159,11 @@
           var body = escapeHtml((n.body || "").slice(0, 160));
           var kind = escapeHtml(n.kind || "");
           var who = escapeHtml(n.username || "");
-          var unreadClass = n.unread ? " sl-admin-notif-row-unread" : "";
-          var unreadDot = n.unread ? '<span class="sl-admin-notif-dot" title="Unread"></span>' : "";
+          var unreadClass = n.unread ? " sl-admin-notif-row-unread" : " sl-admin-notif-row-read";
+          var unreadDot = n.unread ? '<span class="sl-admin-notif-dot" title="E palexuar"></span>' : "";
+          var statusChip = n.unread
+            ? '<span class="sl-admin-notif-state sl-admin-notif-state-unread">E palexuar</span>'
+            : '<span class="sl-admin-notif-state sl-admin-notif-state-read">E lexuar</span>';
           var when = escapeHtml(n.created_at || "");
           var tooltip = escapeAttr(title + (who ? " - " + who : ""));
           var row =
@@ -171,6 +174,7 @@
             (body ? '<small class="sl-admin-notif-body">' + body + "</small>" : "") +
             '<small class="sl-admin-notif-meta">' +
             (kind ? '<span class="sl-admin-notif-kind">' + kind + "</span>" : "") +
+            statusChip +
             (who ? '<span class="sl-admin-notif-user">@' + who + "</span>" : "") +
             '<span class="sl-admin-notif-time">' + when + "</span>" +
             "</small></a>";

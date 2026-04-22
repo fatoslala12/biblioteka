@@ -19,7 +19,7 @@
     }
     .sl-glass-main { background: linear-gradient(160deg, rgba(255,255,255,.2), rgba(255,255,255,.11)); border: 1px solid rgba(255,255,255,.32); box-shadow: 0 16px 34px rgba(7, 47, 56, .2); animation: slCardIn .45s ease-out both; }
     .sl-terms-card { border: 1px solid rgba(255,255,255,.28); background: linear-gradient(135deg, rgba(15,23,42,.30), rgba(255,255,255,.10)); }
-    .sl-brand-logo { width: 72px; height: 72px; border-radius: 18px; object-fit: cover; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.42); box-shadow: 0 10px 20px rgba(3,30,34,.2); }
+    .sl-brand-logo { width: 92px; height: 92px; border-radius: 22px; object-fit: cover; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.42); box-shadow: 0 10px 20px rgba(3,30,34,.2); }
     .sl-glass-main input:not([type="checkbox"]), .sl-glass-main select, .sl-glass-main textarea {
       border: 1px solid rgba(255,255,255,.3) !important; background: rgba(255,255,255,.9) !important; color: #0f172a !important; font-weight: 600 !important;
       border-radius: 12px !important; padding-top: .58rem !important; padding-bottom: .58rem !important; font-size: .92rem !important;
@@ -40,12 +40,12 @@
     <div class="sl-float-b absolute -right-24 bottom-12 h-80 w-80 rounded-full bg-cyan-200/20 blur-3xl"></div>
 
     <div class="relative mx-auto w-full max-w-2xl text-center">
-      <div class="mx-auto inline-flex items-center gap-3">
+      <div class="mx-auto flex flex-col items-center">
+        <div class="inline-flex items-center gap-3">
         <img src="{% static 'img/logo_biblioteka.png' %}" alt="Logo Biblioteka" class="sl-brand-logo" />
         <img src="{% static 'img/Logo_kamez.png' %}" alt="Logo Bashkia Kamëz" class="sl-brand-logo" onerror="this.style.display='none';" />
-        <div class="text-left">
-          <div class="text-sm font-bold text-white/95">Sistemi i Menaxhimit të Bibliotekës</div>
         </div>
+        <div class="mt-2 text-sm font-bold text-white/95">Sistemi i Menaxhimit të Bibliotekës</div>
       </div>
 
       <h1 class="mt-5 text-3xl font-black tracking-tight sm:text-4xl">Krijo llogari anëtari</h1>

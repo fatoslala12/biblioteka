@@ -14,7 +14,7 @@
         linear-gradient(180deg, #1a9d9b 0%, #189392 100%);
     }
     .sl-brand-logo {
-      width: 72px; height: 72px; border-radius: 18px; object-fit: cover;
+      width: 92px; height: 92px; border-radius: 22px; object-fit: cover;
       border: 1px solid rgba(255,255,255,.42); box-shadow: 0 10px 20px rgba(3, 30, 34, .2);
     }
     .sl-auth-card {
@@ -36,8 +36,9 @@
       outline: none;
     }
     .sl-cta {
-      background: linear-gradient(90deg, #14b8a6 0%, #0d9488 100%);
-      box-shadow: 0 10px 24px rgba(13, 148, 136, .35);
+      background: rgba(255, 255, 255, .2);
+      box-shadow: 0 8px 18px rgba(7, 47, 56, .18);
+      border: 1px solid rgba(255, 255, 255, .28);
       transition: transform .15s ease, filter .2s ease;
     }
     .sl-cta:hover { transform: translateY(-1px); filter: brightness(1.04); }
@@ -51,12 +52,12 @@
   </style>
   <section class="sl-auth-shell relative flex min-h-screen items-center justify-center px-4 py-6 text-white sm:px-6">
     <div class="relative mx-auto w-full max-w-md text-center">
-      <div class="mx-auto inline-flex items-center gap-3">
+      <div class="mx-auto flex flex-col items-center">
+        <div class="inline-flex items-center gap-3">
         <img src="{% static 'img/logo_biblioteka.png' %}" alt="Logo Biblioteka" class="sl-brand-logo" />
         <img src="{% static 'img/Logo_kamez.png' %}" alt="Logo Bashkia Kamëz" class="sl-brand-logo" onerror="this.style.display='none';" />
-        <div class="text-left">
-          <div class="text-sm font-bold text-white/95">Sistemi i Menaxhimit të Bibliotekës</div>
         </div>
+        <div class="mt-2 text-sm font-bold text-white/95">Sistemi i Menaxhimit të Bibliotekës</div>
       </div>
 
       <div class="sl-auth-card mx-auto mt-6 rounded-[24px] p-5 text-left backdrop-blur sm:p-6">

@@ -1,0 +1,19 @@
+{% extends "cms/base.html" %}
+{% load static %}
+{% block title %}Mirëmbajtje Sistemi — Smart Library{% endblock %}
+{% block content %}
+<section class="relative flex min-h-[72vh] items-center justify-center px-4 py-14 text-white">
+  <div class="absolute inset-0 -z-10 bg-[linear-gradient(180deg,#1a9d9b_0%,#189392_100%)]"></div>
+  <div class="w-full max-w-xl rounded-3xl border border-white/30 bg-white/15 p-8 text-center shadow-2xl backdrop-blur">
+    <div class="mx-auto inline-flex items-center gap-3">
+      <img src="{% static 'img/logo_biblioteka.png' %}" alt="Logo Biblioteka" class="h-14 w-14 rounded-xl border border-white/40 object-cover" />
+      <img src="{% static 'img/Logo_kamez.png' %}" alt="Logo Bashkia Kamëz" class="h-14 w-14 rounded-xl border border-white/40 object-cover" onerror="this.style.display='none';" />
+    </div>
+    <h1 class="mt-5 text-3xl font-black tracking-tight">Po kryhen përditësime në sistem</h1>
+    <p class="mt-2 text-sm font-semibold text-white/95">Ju lutem provoni përsëri më vonë.</p>
+    <a href="/" class="mt-6 inline-flex items-center justify-center rounded-xl bg-white/20 px-5 py-2.5 text-sm font-extrabold text-white ring-1 ring-white/35 hover:bg-white/30">
+      Rifresko faqen
+    </a>
+  </div>
+</section>
+{% endblock %}

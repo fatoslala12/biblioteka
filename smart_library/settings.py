@@ -90,6 +90,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'cms.middleware.MaintenanceModeMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -248,6 +249,7 @@ NOTIFY_RESERVATION_EXPIRY_HOURS = env.int("NOTIFY_RESERVATION_EXPIRY_HOURS", def
 SMS_WEBHOOK_URL = env("SMS_WEBHOOK_URL", default="").strip()
 SMS_WEBHOOK_TOKEN = env("SMS_WEBHOOK_TOKEN", default="").strip()
 PUBLIC_BASE_URL = env("PUBLIC_BASE_URL", default="").strip()
+MAINTENANCE_MODE = env.bool("MAINTENANCE_MODE", default=False)
 
 # Use SMTP if configured; fallback to console for local dev.
 if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:

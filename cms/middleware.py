@@ -1,4 +1,6 @@
 from django.contrib import messages
+from django.conf import settings
+from django.shortcuts import render
 from django.shortcuts import redirect
 
 
@@ -22,3 +24,30 @@ class AdminAccessGuardMiddleware:
                     messages.warning(request, "Nuk keni të drejta për të hyrë në panelin e admin-it.")
                     return redirect("/anetar/")
         return self.get_response(request)
+
+
+class MaintenanceModeMiddleware:
+    """
+    Show a friendly maintenance page when MAINTENANCE_MODE is enabled.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if not getattr(settings, "MAINTENANCE_MODE", False):
+            return self.get_response(request)
+
+        path = request.path or ""
+        if (
+            path.startswith("/static/")
+            or path.startswith("/media/")
+            or path.startswith("/healthz/")
+        ):
+            return self.get_response(request)
+
+        user = getattr(request, "user", None)
+        if user and getattr(user, "is_authenticated", False) and getattr(user, "is_superuser", False):
+            return self.get_response(request)
+
+        return render(request, "503.html", status=503)

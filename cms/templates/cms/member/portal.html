@@ -10,6 +10,13 @@
       text-align: center;
       width: 100%;
     }
+    .sl-profile-shell {
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      background:
+        radial-gradient(circle at 90% 0%, rgba(49, 145, 137, 0.10), transparent 42%),
+        linear-gradient(180deg, #ffffff, #f8fbff);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+    }
     .sl-profile-id {
       display: flex;
       flex-direction: column;
@@ -29,6 +36,41 @@
       justify-content: center;
       gap: 0.5rem;
       margin-top: 0.8rem;
+    }
+    .sl-profile-avatar {
+      height: 96px;
+      width: 96px;
+      border-radius: 24px;
+      object-fit: cover;
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.18);
+      border: 2px solid rgba(255, 255, 255, 0.95);
+    }
+    .sl-profile-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .6rem;
+      margin-top: 1rem;
+    }
+    .sl-profile-kpi {
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      border-radius: 14px;
+      background: #f8fafc;
+      padding: .62rem .75rem;
+    }
+    .sl-profile-kpi .k {
+      font-size: .66rem;
+      font-weight: 800;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      color: #64748b;
+    }
+    .sl-profile-kpi .v {
+      margin-top: .18rem;
+      font-size: .82rem;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
     }
     .sl-member-content,
     .sl-member-content .grid,
@@ -94,6 +136,14 @@
       }
       #profileView {
         grid-template-columns: 1fr !important;
+      }
+      .sl-profile-avatar {
+        height: 112px;
+        width: 112px;
+        border-radius: 26px;
+      }
+      .sl-profile-kpi-grid {
+        grid-template-columns: 1fr;
       }
       #profileEdit .justify-end,
       #pwdForm .justify-end {
@@ -312,19 +362,19 @@
   <section class="sl-member-content mx-auto -mt-8 max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
     <div class="grid gap-6 lg:grid-cols-12">
       <div class="lg:col-span-8">
-        <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div class="sl-profile-shell rounded-3xl p-5 dark:border-slate-800 dark:bg-slate-950">
           <div class="sl-profile-center">
             <div class="sl-profile-id">
               {% if member.photo %}
-                <img src="{{ member.photo.url }}" alt="Foto profili" class="h-16 w-16 rounded-3xl object-cover ring-1 ring-slate-200 dark:ring-slate-800" />
+                <img src="{{ member.photo.url }}" alt="Foto profili" class="sl-profile-avatar ring-1 ring-slate-200 dark:ring-slate-800" />
               {% else %}
-                <div class="flex h-16 w-16 items-center justify-center rounded-3xl bg-brand-100 text-brand-800 dark:bg-brand-900/40 dark:text-brand-100">
-                  <span class="text-lg font-extrabold">{{ member.full_name|default:member.member_no|slice:":1" }}</span>
+                <div class="sl-profile-avatar flex items-center justify-center bg-brand-100 text-brand-800 dark:bg-brand-900/40 dark:text-brand-100">
+                  <span class="text-2xl font-black">{{ member.full_name|default:member.member_no|slice:":1" }}</span>
                 </div>
               {% endif %}
               <div class="sl-profile-copy">
-                <div class="text-sm font-extrabold">Profili im</div>
-                <div class="sl-profile-note mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                <div class="text-base font-black tracking-tight">Profili im</div>
+                <div class="sl-profile-note mt-0.5 text-xs font-semibold text-slate-500 dark:text-slate-400">
                   Të dhënat ndryshohen vetëm kur shtyp “Ndrysho”.
                 </div>
               </div>
@@ -337,6 +387,11 @@
                 Anulo
               </button>
             </div>
+          </div>
+
+          <div class="sl-profile-kpi-grid">
+            <div class="sl-profile-kpi"><div class="k">Anëtar Nr.</div><div class="v">{{ member.member_no|default:"—" }}</div></div>
+            <div class="sl-profile-kpi"><div class="k">Status</div><div class="v">{{ member.get_status_display|default:"Aktiv" }}</div></div>
           </div>
 
           <!-- View mode -->

@@ -9,40 +9,65 @@
 
 {% block content %}
   <style>
-    .sl-auth-shell { background: linear-gradient(135deg, #2d8f89 0%, #3ea6a0 52%, #2f7e89 100%); }
-    .sl-auth-overlay { background: radial-gradient(circle at 8% 10%, rgba(255,255,255,.24), transparent 36%), radial-gradient(circle at 87% 18%, rgba(186,230,253,.21), transparent 33%), radial-gradient(circle at 50% 115%, rgba(15,23,42,.25), transparent 42%); }
-    .sl-brand-logo { width: 48px; height: 48px; border-radius: 14px; object-fit: cover; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.3); box-shadow: 0 8px 24px rgba(15,23,42,.2); }
-    .sl-pro-chip { border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.15); }
-    .sl-form-glass { background: linear-gradient(155deg, rgba(255,255,255,.2), rgba(255,255,255,.1)); border: 1px solid rgba(255,255,255,.32); box-shadow: 0 22px 50px rgba(15,23,42,.22); }
-    .sl-auth-input { border: 1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.88); color: #0f172a; }
-    .sl-auth-input::placeholder { color: #64748b; }
+    .sl-auth-shell {
+      background:
+        linear-gradient(rgba(7, 57, 66, .78), rgba(7, 57, 66, .78)),
+        radial-gradient(circle at 20% 10%, rgba(125, 211, 252, .18), transparent 45%),
+        radial-gradient(circle at 80% 80%, rgba(45, 212, 191, .16), transparent 40%),
+        linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+    }
+    .sl-brand-logo {
+      width: 38px; height: 38px; border-radius: 11px; object-fit: cover;
+      border: 1px solid rgba(255,255,255,.28); box-shadow: 0 8px 18px rgba(0,0,0,.25);
+    }
+    .sl-auth-card {
+      background: linear-gradient(165deg, rgba(255,255,255,.14), rgba(255,255,255,.07));
+      border: 1px solid rgba(255,255,255,.24);
+      box-shadow: 0 20px 44px rgba(2, 8, 23, .32);
+      animation: slCardIn .45s ease-out both;
+    }
+    .sl-field {
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.95);
+      color: #0f172a;
+      border-radius: 13px;
+      transition: transform .15s ease, box-shadow .2s ease;
+    }
+    .sl-field:focus {
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 4px rgba(153, 246, 228, .28);
+      outline: none;
+    }
+    .sl-cta {
+      background: linear-gradient(90deg, #14b8a6 0%, #0d9488 100%);
+      box-shadow: 0 10px 24px rgba(13, 148, 136, .35);
+      transition: transform .15s ease, filter .2s ease;
+    }
+    .sl-cta:hover { transform: translateY(-1px); filter: brightness(1.04); }
+    .sl-cta::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.22) 50%, transparent 70%);
+      transform: translateX(-120%); animation: slShine 3.2s ease-in-out infinite;
+    }
+    @keyframes slCardIn { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes slShine { 0%, 72% { transform: translateX(-120%);} 100% { transform: translateX(120%);} }
   </style>
-  <section class="sl-auth-shell relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10 text-white sm:px-6 lg:px-8">
-    <div class="sl-auth-overlay absolute inset-0"></div>
-    <div class="absolute -left-24 top-16 h-72 w-72 rounded-full bg-cyan-100/35 blur-3xl"></div>
-    <div class="absolute -right-20 bottom-8 h-80 w-80 rounded-full bg-blue-100/20 blur-3xl"></div>
-
-    <div class="relative mx-auto w-full max-w-2xl text-center">
-      <div class="mx-auto inline-flex items-center gap-3">
+  <section class="sl-auth-shell relative flex min-h-screen items-center justify-center px-4 py-6 text-white sm:px-6">
+    <div class="relative mx-auto w-full max-w-md text-center">
+      <div class="mx-auto inline-flex items-center gap-2.5">
         <img src="{% static 'img/logo_biblioteka.png' %}" alt="Logo Biblioteka" class="sl-brand-logo" />
         <img src="{% static 'img/Logo_kamez.png' %}" alt="Logo Bashkia Kamëz" class="sl-brand-logo" onerror="this.style.display='none';" />
         <div class="text-left">
           <div class="text-2xl font-black tracking-tight">SMART LIBRARY</div>
-          <div class="text-sm font-bold text-white/90">Sistemi i Menaxhimit të Bibliotekës • Bashkia Kamëz</div>
+          <div class="text-xs font-bold text-white/90">Sistemi i Menaxhimit të Bibliotekës</div>
         </div>
       </div>
 
-      <h1 class="mt-8 text-6xl font-black tracking-tight sm:text-7xl">Mirë se vini! 👋</h1>
-      <p class="mt-3 text-base font-medium text-white/90 sm:text-lg">Hyni në panelin tuaj me siguri maksimale dhe eksperiencë premium.</p>
-      <div class="mt-5 flex flex-wrap items-center justify-center gap-2 text-xs font-bold text-white/95">
-        <span class="sl-pro-chip rounded-full px-3 py-1">🔐 Login i sigurt</span>
-        <span class="sl-pro-chip rounded-full px-3 py-1">⚡ Performancë e shpejtë</span>
-        <span class="sl-pro-chip rounded-full px-3 py-1">📚 Kontroll total i llogarisë</span>
-      </div>
-
-      <div class="sl-form-glass mx-auto mt-8 rounded-[30px] p-6 text-left backdrop-blur sm:p-8">
+      <div class="sl-auth-card mx-auto mt-6 rounded-[24px] p-5 text-left backdrop-blur sm:p-6">
+        <h1 class="text-center text-3xl font-black tracking-tight">Mirë se vini!</h1>
+        <p class="mt-1 text-center text-sm text-white/90">Identifikohuni për të vazhduar</p>
         {% if messages %}
-          <div class="mb-4 space-y-2">
+          <div class="mb-3 mt-3 space-y-2">
             {% for message in messages %}
               <div class="rounded-2xl border border-white/30 bg-white/15 px-4 py-3 text-sm font-semibold text-white">
                 {{ message }}
@@ -51,37 +76,37 @@
           </div>
         {% endif %}
 
-        <form method="post" class="space-y-4">
+        <form method="post" class="mt-5 space-y-3.5">
           {% csrf_token %}
           {% if next %}
             <input type="hidden" name="next" value="{{ next }}">
           {% endif %}
           <div>
             <label class="text-xs font-semibold uppercase tracking-wide text-white/95">Përdoruesi</label>
-            <input name="username" autocomplete="username" placeholder="Email ose përdoruesi" class="sl-auth-input mt-2 w-full rounded-2xl px-4 py-3 text-base font-medium outline-none focus:ring-4 focus:ring-white/35" />
+            <input name="username" autocomplete="username" placeholder="Email ose username" class="sl-field mt-1.5 w-full px-4 py-2.5 text-sm font-medium" />
           </div>
           <div>
             <label class="text-xs font-semibold uppercase tracking-wide text-white/95">Fjalëkalimi</label>
-            <input name="password" type="password" autocomplete="current-password" placeholder="********" class="sl-auth-input mt-2 w-full rounded-2xl px-4 py-3 text-base font-medium outline-none focus:ring-4 focus:ring-white/35" />
+            <input name="password" type="password" autocomplete="current-password" placeholder="Fjalëkalimi" class="sl-field mt-1.5 w-full px-4 py-2.5 text-sm font-medium" />
             <div class="mt-2 text-right">
-              <a href="{% url 'cms:forgot_password' %}" class="text-sm font-bold text-white underline decoration-white/45 underline-offset-2 hover:decoration-white">
-                Kam harruar fjalëkalimin
+              <a href="{% url 'cms:forgot_password' %}" class="text-xs font-bold text-white underline decoration-white/45 underline-offset-2 hover:decoration-white">
+                Keni harruar fjalëkalimin?
               </a>
             </div>
           </div>
-          <button class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white/25 px-4 py-3 text-base font-extrabold text-white ring-1 ring-white/35 transition hover:-translate-y-0.5 hover:bg-white/30">
-            Hyr tani 🚀
+          <button class="sl-cta relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl px-4 py-2.5 text-sm font-extrabold text-white">
+            Hyr tani
           </button>
         </form>
 
-        <p class="mt-5 text-center text-sm text-white/90">
-          <a href="{% url 'cms:sign_up' %}" class="text-base font-extrabold underline decoration-white/40 underline-offset-2 hover:decoration-white">
+        <p class="mt-4 text-center text-sm text-white/90">
+          <a href="{% url 'cms:sign_up' %}" class="text-sm font-extrabold underline decoration-white/40 underline-offset-2 hover:decoration-white">
             Krijo llogari të re
           </a>
         </p>
       </div>
 
-      <div class="mt-10 text-xs text-white/80">
+      <div class="mt-5 text-xs text-white/80">
         <a href="/" class="font-semibold underline decoration-white/30 hover:decoration-white">Kthehu te faqja</a>
       </div>
 

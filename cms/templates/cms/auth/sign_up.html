@@ -13,19 +13,34 @@
       margin: 0 !important; padding: 0 !important; opacity: 0 !important; pointer-events: none !important;
       overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; border: 0 !important; }
     .sl-auth-date-input { color-scheme: dark; }
-    .sl-glass-main { background: linear-gradient(160deg, rgba(255,255,255,.17), rgba(255,255,255,.08)); border: 1px solid rgba(255,255,255,.25); box-shadow: 0 24px 50px rgba(2,8,23,.22); }
+    .sl-auth-shell {
+      background:
+        linear-gradient(rgba(7, 57, 66, .78), rgba(7, 57, 66, .78)),
+        radial-gradient(circle at 20% 10%, rgba(125, 211, 252, .18), transparent 45%),
+        radial-gradient(circle at 80% 80%, rgba(45, 212, 191, .16), transparent 40%),
+        linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+    }
+    .sl-glass-main { background: linear-gradient(160deg, rgba(255,255,255,.14), rgba(255,255,255,.07)); border: 1px solid rgba(255,255,255,.24); box-shadow: 0 20px 44px rgba(2,8,23,.3); animation: slCardIn .45s ease-out both; }
     .sl-terms-card { border: 1px solid rgba(255,255,255,.28); background: linear-gradient(135deg, rgba(15,23,42,.30), rgba(255,255,255,.10)); }
-    .sl-prem-chip { border: 1px solid rgba(255,255,255,.28); background: rgba(255,255,255,.12); }
-    .sl-brand-logo { width: 50px; height: 50px; border-radius: 14px; object-fit: cover; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.28); box-shadow: 0 8px 20px rgba(2,8,23,.2); }
+    .sl-brand-logo { width: 36px; height: 36px; border-radius: 11px; object-fit: cover; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.28); box-shadow: 0 6px 16px rgba(2,8,23,.2); }
     .sl-glass-main input:not([type="checkbox"]), .sl-glass-main select, .sl-glass-main textarea {
       border: 1px solid rgba(255,255,255,.3) !important; background: rgba(255,255,255,.9) !important; color: #0f172a !important; font-weight: 600 !important;
+      border-radius: 12px !important; padding-top: .58rem !important; padding-bottom: .58rem !important; font-size: .92rem !important;
     }
     .sl-glass-main input::placeholder, .sl-glass-main textarea::placeholder { color: #64748b !important; }
+    .sl-float-a { animation: slFloatA 8s ease-in-out infinite; }
+    .sl-float-b { animation: slFloatB 10s ease-in-out infinite; }
+    .sl-shimmer-btn { position: relative; overflow: hidden; }
+    .sl-shimmer-btn::after { content: ""; position: absolute; inset: 0; transform: translateX(-120%); background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.22) 50%, transparent 70%); animation: slShimmer 3.2s ease-in-out infinite; }
+    @keyframes slFloatA { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+    @keyframes slFloatB { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(9px); } }
+    @keyframes slShimmer { 0%, 70% { transform: translateX(-120%); } 100% { transform: translateX(140%); } }
+    @keyframes slCardIn { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
   </style>
-  <section class="relative flex min-h-screen items-center justify-center overflow-hidden bg-brand-600 px-4 py-12 text-white sm:px-6 lg:px-8">
+  <section class="sl-auth-shell relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-6 text-white sm:px-6">
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(255,255,255,.16),transparent_40%),radial-gradient(circle_at_80%_30%,rgba(255,255,255,.14),transparent_38%)]"></div>
-    <div class="absolute -left-20 top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl"></div>
-    <div class="absolute -right-24 bottom-12 h-80 w-80 rounded-full bg-cyan-200/20 blur-3xl"></div>
+    <div class="sl-float-a absolute -left-20 top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl"></div>
+    <div class="sl-float-b absolute -right-24 bottom-12 h-80 w-80 rounded-full bg-cyan-200/20 blur-3xl"></div>
 
     <div class="relative mx-auto w-full max-w-2xl text-center">
       <div class="mx-auto inline-flex items-center gap-3">
@@ -33,18 +48,14 @@
         <img src="{% static 'img/Logo_kamez.png' %}" alt="Logo Bashkia Kamëz" class="sl-brand-logo" onerror="this.style.display='none';" />
         <div class="text-left">
           <div class="text-2xl font-black tracking-tight">SMART LIBRARY</div>
-          <div class="text-sm font-bold text-white/90">Sistemi i Menaxhimit të Bibliotekës • Bashkia Kamëz</div>
+          <div class="text-xs font-bold text-white/90">Sistemi i Menaxhimit të Bibliotekës</div>
         </div>
       </div>
 
-      <h1 class="mt-6 text-5xl font-black tracking-tight sm:text-6xl">Krijo llogari anëtari ✨</h1>
-      <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs font-bold text-white/95">
-        <span class="sl-prem-chip rounded-full px-3 py-1">🔐 Verifikim i sigurt</span>
-        <span class="sl-prem-chip rounded-full px-3 py-1">📚 Portal modern anëtari</span>
-        <span class="sl-prem-chip rounded-full px-3 py-1">⚡ Aktivizim i shpejtë</span>
-      </div>
+      <h1 class="mt-5 text-3xl font-black tracking-tight sm:text-4xl">Krijo llogari anëtari</h1>
+      <p class="mt-1 text-sm text-white/90">Regjistrim i shpejtë dhe i sigurt.</p>
 
-      <div class="sl-glass-main mx-auto mt-8 rounded-[28px] p-6 text-left backdrop-blur sm:p-7">
+      <div class="sl-glass-main mx-auto mt-5 rounded-[22px] p-5 text-left backdrop-blur sm:p-6">
         {% if messages %}
           <div class="mb-4 space-y-2">
             {% for message in messages %}
@@ -61,61 +72,61 @@
           </div>
         {% endif %}
 
-        <form method="post" class="space-y-4" novalidate>
+        <form method="post" class="space-y-2.5" novalidate>
           {% csrf_token %}
           {{ form.signup_ts }}
 
           <div class="fieldWrapper">
-            <label class="text-xs font-semibold text-white/90" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+            <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
             {{ form.email }}
           </div>
 
-          <div class="grid gap-4 sm:grid-cols-2">
+          <div class="grid gap-3 sm:grid-cols-2">
             <div>
-              <label class="text-xs font-semibold text-white/90" for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
+              <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
               {{ form.password1 }}
             </div>
             <div>
-              <label class="text-xs font-semibold text-white/90" for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
+              <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
               {{ form.password2 }}
             </div>
           </div>
 
           <div>
-            <label class="text-xs font-semibold text-white/90" for="{{ form.full_name.id_for_label }}">{{ form.full_name.label }}</label>
+            <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.full_name.id_for_label }}">{{ form.full_name.label }}</label>
             {{ form.full_name }}
           </div>
 
-          <div class="grid gap-4 sm:grid-cols-2">
+          <div class="grid gap-3 sm:grid-cols-2">
             <div>
-              <label class="text-xs font-semibold text-white/90" for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
+              <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
               {{ form.phone }}
             </div>
             <div>
-              <label class="text-xs font-semibold text-white/90" for="{{ form.date_of_birth.id_for_label }}">{{ form.date_of_birth.label }}</label>
+              <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.date_of_birth.id_for_label }}">{{ form.date_of_birth.label }}</label>
               {{ form.date_of_birth }}
             </div>
           </div>
 
-          <div class="grid gap-4 sm:grid-cols-2">
+          <div class="grid gap-3 sm:grid-cols-2">
             <div>
-              <label class="text-xs font-semibold text-white/90" for="{{ form.national_id.id_for_label }}">{{ form.national_id.label }}</label>
+              <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.national_id.id_for_label }}">{{ form.national_id.label }}</label>
               {{ form.national_id }}
             </div>
             <div>
-              <label class="text-xs font-semibold text-white/90" for="{{ form.place_of_birth.id_for_label }}">{{ form.place_of_birth.label }}</label>
+              <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.place_of_birth.id_for_label }}">{{ form.place_of_birth.label }}</label>
               {{ form.place_of_birth }}
             </div>
           </div>
 
           <div>
-            <label class="text-xs font-semibold text-white/90" for="{{ form.address.id_for_label }}">{{ form.address.label }}</label>
+            <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.address.id_for_label }}">{{ form.address.label }}</label>
             {{ form.address }}
           </div>
 
           <div class="sl-honeypot-field" aria-hidden="true">{{ form.trap_field }}</div>
 
-          <div class="sl-terms-card rounded-2xl p-4 shadow-sm">
+          <div class="sl-terms-card rounded-xl p-3 shadow-sm">
             <div class="flex items-start gap-3">
               <span class="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/15 ring-1 ring-white/30">
                 <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2">
@@ -124,28 +135,28 @@
                 </svg>
               </span>
               <div class="min-w-0">
-                <div class="text-sm font-extrabold text-white">Kushtet & Privatësia 🛡️</div>
-                <p class="mt-1 text-xs leading-relaxed text-white/85">
+                <div class="text-xs font-extrabold text-white">Kushtet & Privatësia 🛡️</div>
+                <p class="mt-1 text-[11px] leading-relaxed text-white/85">
                   Duke vazhduar, pranoni që të dhënat (përfshirë Nr. ID) përdoren vetëm për anëtarësim, verifikim,
                   huazim/rezervim dhe komunikim shërbimi nga biblioteka.
                 </p>
-                <button type="button" id="slTermsBtn" class="mt-2 text-xs font-extrabold underline decoration-white/40 underline-offset-2 hover:decoration-white">
+                <button type="button" id="slTermsBtn" class="mt-1.5 text-[11px] font-extrabold underline decoration-white/40 underline-offset-2 hover:decoration-white">
                   Lexo kushtet e plota 📄
                 </button>
               </div>
             </div>
-            <label for="{{ form.accept_terms.id_for_label }}" class="mt-3 flex items-start gap-2.5 text-xs font-semibold text-white/95">
+            <label for="{{ form.accept_terms.id_for_label }}" class="mt-2 flex items-start gap-2 text-[11px] font-semibold text-white/95">
               {{ form.accept_terms }}
               <span>{{ form.accept_terms.label }}</span>
             </label>
           </div>
 
-          <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white/20 px-4 py-3 text-sm font-extrabold text-white ring-1 ring-white/25 hover:bg-white/25">
-            Regjistrohu dhe hyr 🚀
+          <button type="submit" class="sl-shimmer-btn inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white/20 px-4 py-2.5 text-sm font-extrabold text-white ring-1 ring-white/25 hover:bg-white/25">
+            Regjistrohu dhe hyr
           </button>
         </form>
 
-        <p class="mt-5 text-center text-sm text-white/90">
+        <p class="mt-4 text-center text-sm text-white/90">
           Ke tashmë llogari?
           <a href="{% url 'cms:sign_in' %}" class="font-extrabold underline decoration-white/40 underline-offset-2 hover:decoration-white">Hyr këtu</a>
         </p>

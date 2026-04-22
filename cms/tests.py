@@ -39,7 +39,7 @@ class MemberSignUpTests(TestCase):
             "national_id": "K12345678X_SIGNUP",
             "place_of_birth": "Tiranë",
             "address": "Rruga Test 1",
-            "company_website": "",
+            "trap_field": "",
             "accept_terms": "on",
         }
         r = self.client.post("/regjistrohu/", data, follow=False)
@@ -52,7 +52,7 @@ class MemberSignUpTests(TestCase):
         self.assertTrue(mp.member_no.startswith("M"))
         self.assertEqual(mp.full_name, "Test User")
 
-    def test_honeypot_blocks(self):
+    def test_hidden_trap_field_does_not_block_real_signup(self):
         data = {
             "email": "bot@test.com",
             "password1": "K9#mP2$vLxQw!nR8tY",
@@ -63,12 +63,13 @@ class MemberSignUpTests(TestCase):
             "national_id": "BOT999",
             "place_of_birth": "Tiranë",
             "address": "X",
-            "company_website": "http://spam.com",
+            "trap_field": "http://spam.com",
             "accept_terms": "on",
         }
         r = self.client.post("/regjistrohu/", data)
-        self.assertEqual(r.status_code, 200)
-        self.assertFalse(User.objects.filter(email="bot@test.com").exists())
+        self.assertEqual(r.status_code, 302)
+        self.assertTrue(r.url.endswith("/anetar/"))
+        self.assertTrue(User.objects.filter(email="bot@test.com").exists())
 
     def test_sign_up_requires_terms_acceptance(self):
         data = {
@@ -81,7 +82,7 @@ class MemberSignUpTests(TestCase):
             "national_id": "TM12345678X",
             "place_of_birth": "Tirane",
             "address": "Rruga Test",
-            "company_website": "",
+            "trap_field": "",
         }
         r = self.client.post("/regjistrohu/", data)
         self.assertEqual(r.status_code, 200)

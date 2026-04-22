@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model, password_validation
 from django.contrib.auth.forms import SetPasswordForm
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from accounts.models import MemberProfile, MemberStatus, MemberType, UserRole
 
@@ -148,18 +149,25 @@ class MemberSignUpForm(forms.Form):
         widget=forms.CheckboxInput(attrs={"class": _AUTH_CHECKBOX_CLASS}),
         error_messages={"required": "Duhet të pranoni kushtet për të vazhduar."},
     )
-    # Honeypot (fshehur me CSS) – botët e mbushin
-    company_website = forms.CharField(
+    # Hidden passive anti-bot fields. Do not block human users
+    # aggressively (password managers can autofill unexpected inputs).
+    trap_field = forms.CharField(
         required=False,
         label="",
         widget=forms.TextInput(
             attrs={
                 "tabindex": "-1",
-                "autocomplete": "off",
+                "autocomplete": "new-password",
                 "aria-hidden": "true",
             }
         ),
     )
+    signup_ts = forms.CharField(required=False, widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.is_bound:
+            self.initial["signup_ts"] = str(int(timezone.now().timestamp()))
 
     def clean_email(self):
         email = (self.cleaned_data.get("email") or "").strip().lower()
@@ -180,10 +188,17 @@ class MemberSignUpForm(forms.Form):
             raise ValidationError("Ky numër ID është i regjistruar tashmë.")
         return nid
 
-    def clean_company_website(self):
-        if (self.cleaned_data.get("company_website") or "").strip():
-            raise ValidationError("Dërgesa nuk u pranua.")
-        return ""
+    def clean_signup_ts(self):
+        raw = (self.cleaned_data.get("signup_ts") or "").strip()
+        try:
+            posted_ts = int(raw)
+        except Exception:
+            posted_ts = 0
+        now_ts = int(timezone.now().timestamp())
+        # Basic timing check: too fast submissions are likely automated.
+        if posted_ts and (now_ts - posted_ts) < 1:
+            raise ValidationError("Dërgesa shumë e shpejtë. Ju lutem provo përsëri.")
+        return raw
 
     def clean_password1(self):
         p = self.cleaned_data.get("password1") or ""

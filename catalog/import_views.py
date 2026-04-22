@@ -12,13 +12,22 @@ from catalog.models import Author, Book, BookType, Copy, CopyStatus, Genre, Publ
 
 
 def _norm(s):
-    return (s or "").strip()
+    # Robust normalization: Excel/CSV cells can be numbers, booleans or None.
+    return str(s or "").strip()
 
 
 def _parse_authors(s):
     if not s:
         return []
     return [_norm(x) for x in str(s).replace(";", ",").split(",") if _norm(x)]
+
+
+def _author_signature(names):
+    return tuple(sorted({_norm(n).lower() for n in (names or []) if _norm(n)}))
+
+
+def _row_signature(title, authors):
+    return (_norm(title).lower(), _author_signature(authors))
 
 
 def _get_or_create_authors(names):
@@ -72,6 +81,15 @@ def _get_val(row, keys, default=""):
     return default
 
 
+def _norm_header_key(k):
+    return _norm(k).lower().replace(" ", "_")
+
+
+def _has_required_title_header(headers):
+    normalized = {_norm_header_key(h) for h in headers}
+    return "titulli" in normalized
+
+
 def _parse_purchase_method(raw):
     v = _norm(str(raw or "")).lower()
     if not v:
@@ -89,42 +107,76 @@ def _parse_purchase_method(raw):
     return PurchaseMethod.OTHER
 
 
+def _extract_row_fields(row, is_excel=False):
+    if is_excel:
+        return {
+            "titulli": _norm(_get_val(row, ["titulli", "Titulli"])),
+            "isbn": _norm(_get_val(row, ["isbn", "ISBN"])),
+            "pershkrimi": _norm(_get_val(row, ["pershkrimi", "përshkrimi", "Përshkrimi"])),
+            "gjuha": _norm(_get_val(row, ["gjuha", "Gjuha"])),
+            "viti": _get_val(row, ["viti", "Viti"]),
+            "lloji": _norm(str(_get_val(row, ["lloji_librit", "lloji", "Lloji"]))),
+            "botuesi": _norm(_get_val(row, ["botuesi", "Botuesi"])),
+            "autoret": _parse_authors(_get_val(row, ["autoret", "Autorët", "autorët"])),
+            "zhanret": _parse_authors(_get_val(row, ["zhanret", "Zhanret"])),
+            "etiketa": _parse_authors(_get_val(row, ["etiketa", "Etiketa"])),
+            "nr_kopjeve": _get_val(row, ["nr_kopjeve", "nr_kopjesh", "kopje"]),
+            "lokacioni": _norm(_get_val(row, ["lokacioni", "location", "vendndodhja"])),
+            "rafti": _norm(_get_val(row, ["rafti", "shelf", "rafte"])),
+            "cmimi": _get_val(row, ["cmimi", "çmimi", "price", "cmim"]),
+            "menyra_blerjes": _get_val(row, ["menyra_blerjes", "mënyra_blerjes", "menyra_e_blerjes"]),
+            "vendi_blerjes": _norm(_get_val(row, ["vendi_blerjes", "vendi_i_blerjes", "vendi"])),
+        }
+
+    return {
+        "titulli": _norm(row.get("titulli", "")),
+        "isbn": _norm(row.get("isbn", "")),
+        "pershkrimi": _norm(row.get("pershkrimi", "")),
+        "gjuha": _norm(row.get("gjuha", "")),
+        "viti": row.get("viti"),
+        "lloji": _norm(row.get("lloji_librit", "")),
+        "botuesi": _norm(row.get("botuesi", "")),
+        "autoret": _parse_authors(row.get("autoret", "")),
+        "zhanret": _parse_authors(row.get("zhanret", "")),
+        "etiketa": _parse_authors(row.get("etiketa", "")),
+        "nr_kopjeve": row.get("nr_kopjeve") or row.get("nr_kopjesh") or row.get("kopje"),
+        "lokacioni": _norm(row.get("lokacioni", "") or row.get("location", "")),
+        "rafti": _norm(row.get("rafti", "") or row.get("shelf", "")),
+        "cmimi": row.get("cmimi") or row.get("çmimi") or row.get("price") or row.get("cmim"),
+        "menyra_blerjes": row.get("menyra_blerjes") or row.get("mënyra_blerjes") or row.get("menyra_e_blerjes"),
+        "vendi_blerjes": _norm(row.get("vendi_blerjes", "") or row.get("vendi_i_blerjes", "") or row.get("vendi", "")),
+    }
+
+
+def _is_duplicate_title_author_in_db(title, authors):
+    sig = _row_signature(title, authors)
+    candidates = Book.objects.filter(is_deleted=False, title__iexact=title).prefetch_related("authors")
+    for b in candidates:
+        db_sig = _row_signature(b.title, [a.name for a in b.authors.all()])
+        if db_sig == sig:
+            return True
+    return False
+
+
 def _import_row(row, is_excel=False):
     """Import one row. row is dict with keys."""
-    if is_excel:
-        titulli = _norm(_get_val(row, ["titulli", "Titulli"]))
-        isbn = _norm(_get_val(row, ["isbn", "ISBN"]))
-        pershkrimi = _norm(_get_val(row, ["pershkrimi", "përshkrimi", "Përshkrimi"]))
-        gjuha = _norm(_get_val(row, ["gjuha", "Gjuha"]))
-        viti = _get_val(row, ["viti", "Viti"])
-        lloji = _norm(str(_get_val(row, ["lloji_librit", "lloji", "Lloji"])))
-        botuesi = _norm(_get_val(row, ["botuesi", "Botuesi"]))
-        autoret = _parse_authors(_get_val(row, ["autoret", "Autorët", "autorët"]))
-        zhanret = _parse_authors(_get_val(row, ["zhanret", "Zhanret"]))
-        etiketa = _parse_authors(_get_val(row, ["etiketa", "Etiketa"]))
-        nr_kopjeve = _get_val(row, ["nr_kopjeve", "nr_kopjesh", "kopje"])
-        lokacioni = _norm(_get_val(row, ["lokacioni", "location", "vendndodhja"]))
-        rafti = _norm(_get_val(row, ["rafti", "shelf", "rafte"]))
-        cmimi = _get_val(row, ["cmimi", "çmimi", "price", "cmim"])
-        menyra_blerjes = _get_val(row, ["menyra_blerjes", "mënyra_blerjes", "menyra_e_blerjes"])
-        vendi_blerjes = _norm(_get_val(row, ["vendi_blerjes", "vendi_i_blerjes", "vendi"]))
-    else:
-        titulli = _norm(row.get("titulli", ""))
-        isbn = _norm(row.get("isbn", ""))
-        pershkrimi = _norm(row.get("pershkrimi", ""))
-        gjuha = _norm(row.get("gjuha", ""))
-        viti = row.get("viti")
-        lloji = _norm(row.get("lloji_librit", ""))
-        botuesi = _norm(row.get("botuesi", ""))
-        autoret = _parse_authors(row.get("autoret", ""))
-        zhanret = _parse_authors(row.get("zhanret", ""))
-        etiketa = _parse_authors(row.get("etiketa", ""))
-        nr_kopjeve = row.get("nr_kopjeve") or row.get("nr_kopjesh") or row.get("kopje")
-        lokacioni = _norm(row.get("lokacioni", "") or row.get("location", ""))
-        rafti = _norm(row.get("rafti", "") or row.get("shelf", ""))
-        cmimi = row.get("cmimi") or row.get("çmimi") or row.get("price") or row.get("cmim")
-        menyra_blerjes = row.get("menyra_blerjes") or row.get("mënyra_blerjes") or row.get("menyra_e_blerjes")
-        vendi_blerjes = _norm(row.get("vendi_blerjes", "") or row.get("vendi_i_blerjes", "") or row.get("vendi", ""))
+    fields = _extract_row_fields(row, is_excel=is_excel)
+    titulli = fields["titulli"]
+    isbn = fields["isbn"]
+    pershkrimi = fields["pershkrimi"]
+    gjuha = fields["gjuha"]
+    viti = fields["viti"]
+    lloji = fields["lloji"]
+    botuesi = fields["botuesi"]
+    autoret = fields["autoret"]
+    zhanret = fields["zhanret"]
+    etiketa = fields["etiketa"]
+    nr_kopjeve = fields["nr_kopjeve"]
+    lokacioni = fields["lokacioni"]
+    rafti = fields["rafti"]
+    cmimi = fields["cmimi"]
+    menyra_blerjes = fields["menyra_blerjes"]
+    vendi_blerjes = fields["vendi_blerjes"]
 
     if not titulli:
         return None, "Titulli zbrazët"
@@ -147,8 +199,6 @@ def _import_row(row, is_excel=False):
     created = False
     if isbn:
         book = Book.objects.filter(isbn=isbn, is_deleted=False).first()
-    if not book:
-        book = Book.objects.filter(title=titulli, is_deleted=False).first()
     if book:
         book.title = titulli
         book.isbn = isbn or ""
@@ -227,6 +277,8 @@ def book_import(request):
     created = 0
     updated = 0
     errors = []
+    duplicate_rows = []
+    parsed_rows = []
 
     try:
         if is_excel:
@@ -236,38 +288,95 @@ def book_import(request):
             if not rows:
                 messages.warning(request, "Skedari është bosh.")
                 return redirect("/admin/catalog/book/")
-            headers = [str(c or "").strip().lower().replace(" ", "_") for c in rows[0]]
-            for r in rows[1:]:
+            raw_headers = [str(c or "") for c in rows[0]]
+            if not _has_required_title_header(raw_headers):
+                messages.error(
+                    request,
+                    "Skedari nuk ka kolonën e detyrueshme 'titulli'. Përdor skedarin shembull për formatin korrekt.",
+                )
+                return redirect("/admin/catalog/book/")
+
+            headers = [_norm_header_key(c) for c in rows[0]]
+            for idx, r in enumerate(rows[1:], start=2):
                 row_dict = dict(zip(headers, r))
-                result, msg = _import_row(row_dict, is_excel=True)
-                if result:
-                    if msg == "Krijuar":
-                        created += 1
-                    else:
-                        updated += 1
-                elif msg:
-                    errors.append(f"Rresht: {msg}")
+                # Skip fully empty rows
+                if not any(_norm(v) for v in row_dict.values()):
+                    continue
+                parsed_rows.append((idx, row_dict, True))
         else:
             content = f.read().decode("utf-8-sig", errors="replace")
             reader = csv.DictReader(io.StringIO(content))
-            for row in reader:
-                row_clean = {k.strip().lower().replace(" ", "_"): v for k, v in row.items()}
-                result, msg = _import_row(row_clean, is_excel=False)
-                if result:
-                    if msg == "Krijuar":
-                        created += 1
-                    else:
-                        updated += 1
-                elif msg:
-                    errors.append(msg)
+            if not reader.fieldnames or not _has_required_title_header(reader.fieldnames):
+                messages.error(
+                    request,
+                    "CSV nuk ka kolonën e detyrueshme 'titulli'. Përdor skedarin shembull për formatin korrekt.",
+                )
+                return redirect("/admin/catalog/book/")
+            for idx, row in enumerate(reader, start=2):
+                row_clean = {_norm_header_key(k): v for k, v in (row or {}).items() if _norm(k)}
+                if not any(_norm(v) for v in row_clean.values()):
+                    continue
+                parsed_rows.append((idx, row_clean, False))
     except Exception as e:
         messages.error(request, f"Gabim: {e}")
         return redirect("/admin/catalog/book/")
 
+    if not parsed_rows:
+        messages.warning(request, "Skedari nuk ka rreshta të vlefshëm për import.")
+        return redirect("/admin/catalog/book/")
+
+    # Validation pass: if there are errors, cancel entire import before writing.
+    validation_errors = []
+    valid_rows = []
+    seen_signatures = set()
+    for row_no, row_dict, row_is_excel in parsed_rows:
+        fields = _extract_row_fields(row_dict, is_excel=row_is_excel)
+        title = fields["titulli"]
+        authors = fields["autoret"]
+        if not title:
+            validation_errors.append(f"Rreshti {row_no}: mungon vlera te kolona 'titulli'.")
+            continue
+        signature = _row_signature(title, authors)
+        if signature in seen_signatures:
+            duplicate_rows.append(f"Rreshti {row_no}: dublikatë brenda file-it ({title}).")
+            continue
+        if _is_duplicate_title_author_in_db(title, authors):
+            duplicate_rows.append(f"Rreshti {row_no}: dublikatë ekzistuese në sistem ({title}).")
+            continue
+        seen_signatures.add(signature)
+        valid_rows.append((row_no, row_dict, row_is_excel))
+
+    if validation_errors:
+        messages.error(
+            request,
+            f"Importi u anulua: u gjetën {len(validation_errors)} gabime në file. "
+            "Korrigjo file-in dhe provo sërish.",
+        )
+        for err in validation_errors[:6]:
+            messages.warning(request, err)
+        return redirect("/admin/catalog/book/")
+
+    # Import pass: process only after validation succeeded.
+    for row_no, row_dict, row_is_excel in valid_rows:
+        result, msg = _import_row(row_dict, is_excel=row_is_excel)
+        if result:
+            if msg == "Krijuar":
+                created += 1
+            else:
+                updated += 1
+        elif msg:
+            errors.append(f"Rreshti {row_no}: {msg}")
+
     msg = f"Import u përfundua: {created} libra të rinj, {updated} përditësuar."
+    if duplicate_rows:
+        msg += f" {len(duplicate_rows)} rreshta u anashkaluan si dublikatë."
     if errors:
         msg += f" Gabime: {len(errors)}."
     messages.success(request, msg)
+    if duplicate_rows:
+        messages.warning(request, "Këta rreshta nuk u importuan sepse janë dublikatë (titull + autor):")
+        for dup in duplicate_rows[:10]:
+            messages.warning(request, dup)
     return redirect("/admin/catalog/book/")
 
 

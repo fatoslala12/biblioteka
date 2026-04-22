@@ -1,6 +1,7 @@
 from datetime import timedelta
 from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.core import mail
 from django.test import Client, TestCase, override_settings
 from django.utils import timezone
 from pathlib import Path
@@ -39,6 +40,7 @@ class MemberSignUpTests(TestCase):
             "place_of_birth": "Tiranë",
             "address": "Rruga Test 1",
             "company_website": "",
+            "accept_terms": "on",
         }
         r = self.client.post("/regjistrohu/", data, follow=False)
         self.assertEqual(r.status_code, 302)
@@ -62,10 +64,28 @@ class MemberSignUpTests(TestCase):
             "place_of_birth": "Tiranë",
             "address": "X",
             "company_website": "http://spam.com",
+            "accept_terms": "on",
         }
         r = self.client.post("/regjistrohu/", data)
         self.assertEqual(r.status_code, 200)
         self.assertFalse(User.objects.filter(email="bot@test.com").exists())
+
+    def test_sign_up_requires_terms_acceptance(self):
+        data = {
+            "email": "terms_missing@test.com",
+            "password1": "K9#mP2$vLxQw!nR8tY",
+            "password2": "K9#mP2$vLxQw!nR8tY",
+            "full_name": "Terms Missing",
+            "phone": "0691234567",
+            "date_of_birth": "1995-05-15",
+            "national_id": "TM12345678X",
+            "place_of_birth": "Tirane",
+            "address": "Rruga Test",
+            "company_website": "",
+        }
+        r = self.client.post("/regjistrohu/", data)
+        self.assertEqual(r.status_code, 200)
+        self.assertFalse(User.objects.filter(email="terms_missing@test.com").exists())
 
 
 class HealthzTests(TestCase):
@@ -86,6 +106,33 @@ class AdminAuthRedirectTests(TestCase):
         r = self.client.get("/admin/logout/")
         self.assertEqual(r.status_code, 302)
         self.assertEqual(r["Location"], "/")
+
+
+@override_settings(
+    EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+    RATELIMIT_ENABLE=False,
+)
+class PasswordResetFlowTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="forgot_member",
+            email="forgot_member@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.MEMBER,
+        )
+
+    def test_forgot_password_sends_email_and_redirects(self):
+        r = self.client.post("/harrova-fjalekalimin/", {"email": "forgot_member@test.com"})
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(r["Location"], "/rivendosje-derguar/")
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Rivendos fjalëkalimin", mail.outbox[0].subject)
+
+    def test_forgot_password_unknown_email_still_redirects(self):
+        r = self.client.post("/harrova-fjalekalimin/", {"email": "unknown@test.com"})
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(r["Location"], "/rivendosje-derguar/")
 
 
 class PublicSmokeTests(TestCase):

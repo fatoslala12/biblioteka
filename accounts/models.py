@@ -16,6 +16,8 @@ class User(AbstractUser):
     is_locked = models.BooleanField(default=False)
     locked_at = models.DateTimeField(null=True, blank=True)
     lock_reason = models.CharField(max_length=255, blank=True, default="")
+    accepted_terms_at = models.DateTimeField(null=True, blank=True)
+    accepted_terms_version = models.CharField(max_length=32, blank=True, default="")
 
     class Meta:
         verbose_name = "Përdorues"

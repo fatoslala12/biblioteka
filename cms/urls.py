@@ -26,6 +26,10 @@ urlpatterns = [
 
     # Auth / Member portal
     path("hyr/", auth_views.sign_in, name="sign_in"),
+    path("harrova-fjalekalimin/", auth_views.forgot_password, name="forgot_password"),
+    path("rivendosje-derguar/", auth_views.password_reset_sent, name="password_reset_sent"),
+    path("rivendosje/<uidb64>/<token>/", auth_views.password_reset_confirm, name="password_reset_confirm"),
+    path("rivendosje-u-krye/", auth_views.password_reset_done, name="password_reset_done"),
     path("regjistrohu/", auth_views.sign_up, name="sign_up"),
     path("dil/", auth_views.sign_out, name="sign_out"),
     path("anetar/", auth_views.member_portal, name="member_portal"),

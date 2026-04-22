@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model, password_validation
+from django.contrib.auth.forms import SetPasswordForm
 from django.core.exceptions import ValidationError
 
 from accounts.models import MemberProfile, MemberStatus, MemberType, UserRole
@@ -10,6 +11,10 @@ User = get_user_model()
 _AUTH_INPUT_CLASS = (
     "mt-2 w-full rounded-2xl border border-white/25 bg-white/10 px-4 py-3 text-sm "
     "text-white placeholder:text-white/70 outline-none focus:ring-4 focus:ring-white/20"
+)
+_AUTH_CHECKBOX_CLASS = (
+    "h-5 w-5 rounded-md border border-white/40 bg-white/10 text-brand-200 "
+    "focus:ring-2 focus:ring-white/35"
 )
 
 
@@ -137,6 +142,12 @@ class MemberSignUpForm(forms.Form):
         max_length=255,
         widget=forms.TextInput(attrs={"class": _AUTH_INPUT_CLASS, "autocomplete": "street-address"}),
     )
+    accept_terms = forms.BooleanField(
+        label="Pranoj kushtet e përdorimit dhe privatësisë",
+        required=True,
+        widget=forms.CheckboxInput(attrs={"class": _AUTH_CHECKBOX_CLASS}),
+        error_messages={"required": "Duhet të pranoni kushtet për të vazhduar."},
+    )
     # Honeypot (fshehur me CSS) – botët e mbushin
     company_website = forms.CharField(
         required=False,
@@ -241,4 +252,37 @@ class MemberPasswordChangeForm(forms.Form):
         if p1:
             password_validation.validate_password(p1, user=self.user)
         return cleaned
+
+
+class ForgotPasswordForm(forms.Form):
+    email = forms.EmailField(
+        label="Email",
+        max_length=254,
+        widget=forms.EmailInput(
+            attrs={
+                "class": _AUTH_INPUT_CLASS,
+                "autocomplete": "email",
+                "placeholder": "email@shembull.com",
+            }
+        ),
+    )
+
+
+class MemberPasswordResetSetForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["new_password1"].widget.attrs.update(
+            {
+                "class": _AUTH_INPUT_CLASS,
+                "autocomplete": "new-password",
+                "placeholder": "Fjalëkalimi i ri",
+            }
+        )
+        self.fields["new_password2"].widget.attrs.update(
+            {
+                "class": _AUTH_INPUT_CLASS,
+                "autocomplete": "new-password",
+                "placeholder": "Përsërit fjalëkalimin",
+            }
+        )
 

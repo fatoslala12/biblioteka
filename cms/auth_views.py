@@ -6,10 +6,17 @@ from django.utils import timezone
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout, update_session_auth_hash
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.paginator import Paginator
+from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_str
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.decorators.http import require_POST
 from django.http import HttpRequest
 from django.shortcuts import redirect, render
@@ -24,12 +31,19 @@ from circulation.exceptions import PolicyViolation
 from circulation.models import Hold, HoldStatus, Loan, LoanStatus
 from circulation.models import ReservationRequest, ReservationRequestStatus
 from circulation.services import create_reservation_request
-from cms.forms import MemberPasswordChangeForm, MemberProfileUpdateForm, MemberSignUpForm
+from cms.forms import (
+    ForgotPasswordForm,
+    MemberPasswordChangeForm,
+    MemberPasswordResetSetForm,
+    MemberProfileUpdateForm,
+    MemberSignUpForm,
+)
 from fines.models import Fine, FineStatus, Payment
 from notifications.models import UserNotification
 from notifications.services import notify_staff_member_cancelled_request
 
 User = get_user_model()
+TERMS_VERSION = "2026-04"
 
 
 def _split_full_name(full_name: str) -> tuple[str, str]:
@@ -171,6 +185,8 @@ def sign_up(request: HttpRequest):
                         role=UserRole.MEMBER,
                         is_staff=False,
                         is_superuser=False,
+                        accepted_terms_at=timezone.now(),
+                        accepted_terms_version=TERMS_VERSION,
                     )
                     MemberProfile.objects.create(
                         user=user,
@@ -223,6 +239,77 @@ def sign_up(request: HttpRequest):
 def sign_out(request: HttpRequest):
     logout(request)
     return redirect("/")
+
+
+@ratelimit(key="ip", rate="8/h", method="POST")
+def forgot_password(request: HttpRequest):
+    if request.user.is_authenticated:
+        return redirect(_login_default_destination(request.user))
+
+    if request.method == "POST" and getattr(request, "limited", False):
+        messages.error(request, "Shumë kërkesa rikuperimi nga kjo adresë. Provo përsëri më vonë.")
+        return render(
+            request,
+            "cms/auth/forgot_password.html",
+            {"form": ForgotPasswordForm()},
+            status=429,
+        )
+
+    form = ForgotPasswordForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        email = (form.cleaned_data.get("email") or "").strip().lower()
+        users = User.objects.filter(email__iexact=email, is_active=True)
+        for user in users:
+            ctx = {
+                "user": user,
+                "domain": get_current_site(request).domain,
+                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                "token": default_token_generator.make_token(user),
+                "protocol": "https" if request.is_secure() else "http",
+            }
+            subject = "Rivendos fjalëkalimin — Smart Library"
+            text_body = render_to_string("cms/emails/password_reset.txt", ctx)
+            html_body = render_to_string("cms/emails/password_reset.html", ctx)
+            try:
+                msg = EmailMultiAlternatives(subject=subject, body=text_body, to=[user.email])
+                msg.attach_alternative(html_body, "text/html")
+                msg.send(fail_silently=True)
+            except Exception:
+                pass
+        return redirect("cms:password_reset_sent")
+
+    return render(request, "cms/auth/forgot_password.html", {"form": form})
+
+
+def password_reset_sent(request: HttpRequest):
+    return render(request, "cms/auth/password_reset_sent.html")
+
+
+def password_reset_confirm(request: HttpRequest, uidb64: str, token: str):
+    user = None
+    validlink = False
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid, is_active=True)
+    except Exception:
+        user = None
+    if user and default_token_generator.check_token(user, token):
+        validlink = True
+
+    form = MemberPasswordResetSetForm(user=user, data=request.POST or None) if validlink else None
+    if validlink and request.method == "POST" and form and form.is_valid():
+        form.save()
+        messages.success(request, "Fjalëkalimi u ndryshua me sukses. Tani mund të hyni.")
+        return redirect("cms:password_reset_done")
+    return render(
+        request,
+        "cms/auth/password_reset_confirm.html",
+        {"form": form, "validlink": validlink},
+    )
+
+
+def password_reset_done(request: HttpRequest):
+    return render(request, "cms/auth/password_reset_done.html")
 
 
 def member_portal(request: HttpRequest):

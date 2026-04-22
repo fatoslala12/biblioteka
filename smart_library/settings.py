@@ -39,6 +39,25 @@ if DEBUG and "testserver" not in ALLOWED_HOSTS:
 
 # HTTPS në Render / proxy; CSRF për login admin
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+CSRF_FAILURE_VIEW = "cms.security_views.csrf_failure_view"
+
+
+def _csrf_origin_for_host(host: str) -> list[str]:
+    h = (host or "").strip()
+    if not h:
+        return []
+    if h.startswith("."):
+        h = h[1:]
+    if not h or h in {"localhost", "127.0.0.1", "testserver"}:
+        return []
+    return [f"https://{h}", f"http://{h}"]
+
+
+# Build a robust CSRF trusted-origin list from ALLOWED_HOSTS + PUBLIC_BASE_URL
+# so login forms don't fail intermittently behind proxies or domain aliases.
+_csrf_candidates = list(CSRF_TRUSTED_ORIGINS)
+for _h in ALLOWED_HOSTS:
+    _csrf_candidates.extend(_csrf_origin_for_host(_h))
 
 # Render.com: variabla të vendosura automatikisht (pa nevojë për ALLOWED_HOSTS manual)
 _render_url = os.environ.get("RENDER_EXTERNAL_URL", "").strip()
@@ -47,8 +66,15 @@ if _render_url:
     if _pu.netloc:
         ALLOWED_HOSTS = list(dict.fromkeys([*ALLOWED_HOSTS, _pu.netloc, ".onrender.com"]))
         _origin = f"{_pu.scheme}://{_pu.netloc}"
-        if _origin not in CSRF_TRUSTED_ORIGINS:
-            CSRF_TRUSTED_ORIGINS = list(CSRF_TRUSTED_ORIGINS) + [_origin]
+        _csrf_candidates.append(_origin)
+
+_public_base = env("PUBLIC_BASE_URL", default="").strip()
+if _public_base:
+    _pub = urlparse(_public_base)
+    if _pub.scheme and _pub.netloc:
+        _csrf_candidates.append(f"{_pub.scheme}://{_pub.netloc}")
+
+CSRF_TRUSTED_ORIGINS = list(dict.fromkeys([c for c in _csrf_candidates if c]))
 
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

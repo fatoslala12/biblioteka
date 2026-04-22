@@ -170,6 +170,14 @@ class PublicSmokeTests(TestCase):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200, msg=f"Expected 200 for {url}")
 
+
+class CsrfFailureViewTests(TestCase):
+    def test_sign_in_post_without_csrf_uses_custom_failure_page(self):
+        c = Client(enforce_csrf_checks=True)
+        r = c.post("/hyr/", {"username": "x", "password": "y"})
+        self.assertEqual(r.status_code, 403)
+        self.assertContains(r, "Verifikimi i sesionit dështoi", status_code=403)
+
     def test_admin_index_requires_auth_and_redirects(self):
         r = self.client.get("/admin/")
         self.assertEqual(r.status_code, 302)

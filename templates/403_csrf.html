@@ -1,0 +1,29 @@
+{% extends "cms/base.html" %}
+{% load static %}
+{% block title %}Verifikimi i sesionit dështoi — Smart Library{% endblock %}
+{% block content %}
+<section class="relative flex min-h-[72vh] items-center justify-center px-4 py-14 text-white">
+  <div class="absolute inset-0 -z-10 bg-[linear-gradient(180deg,#1a9d9b_0%,#189392_100%)]"></div>
+  <div class="w-full max-w-xl rounded-3xl border border-white/30 bg-white/15 p-8 text-center shadow-2xl backdrop-blur">
+    <h1 class="text-2xl font-black tracking-tight">Verifikimi i sesionit dështoi (403)</h1>
+    <p class="mt-2 text-sm font-semibold text-white/95">
+      Seanca e formularit ka skaduar ose kërkesa është bllokuar nga siguria.
+      Ju lutem rifreskoni faqen dhe provoni përsëri.
+    </p>
+    <div class="mt-6 flex flex-wrap items-center justify-center gap-2">
+      <a href="/hyr/" class="inline-flex items-center justify-center rounded-xl bg-white/20 px-5 py-2.5 text-sm font-extrabold text-white ring-1 ring-white/35 hover:bg-white/30">
+        Shko te hyrja
+      </a>
+      <a href="/" class="inline-flex items-center justify-center rounded-xl bg-white/10 px-5 py-2.5 text-sm font-extrabold text-white ring-1 ring-white/30 hover:bg-white/20">
+        Kthehu në kryefaqe
+      </a>
+    </div>
+    {% if reason %}
+      <details class="mt-5 rounded-2xl bg-black/10 p-3 text-left text-xs text-white/85">
+        <summary class="cursor-pointer font-bold">Detaj teknik</summary>
+        <div class="mt-2 break-words">{{ reason }}</div>
+      </details>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

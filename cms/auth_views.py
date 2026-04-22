@@ -41,6 +41,7 @@ from cms.forms import (
 from fines.models import Fine, FineStatus, Payment
 from notifications.models import UserNotification
 from notifications.services import notify_staff_member_cancelled_request
+from notifications.services import notify_staff_new_member_signup
 
 User = get_user_model()
 TERMS_VERSION = "2026-04"
@@ -200,6 +201,7 @@ def sign_up(request: HttpRequest):
                         status=MemberStatus.ACTIVE,
                         member_type=MemberType.STANDARD,
                     )
+                    notify_staff_new_member_signup(member_profile=user.member_profile)
             except Exception:
                 messages.error(
                     request,

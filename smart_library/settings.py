@@ -266,8 +266,8 @@ LOGIN_URL = "/hyr/"
 
 JAZZMIN_SETTINGS = {
     "site_title": "Smart Library",
-    "site_header": "Smart Library",
-    "site_brand": "Smart Library",
+    "site_header": "",
+    "site_brand": "",
     "site_logo": "img/logo_biblioteka.png",
     "site_icon": "img/logo_biblioteka.png",
     "login_logo": "img/logo_biblioteka.png",

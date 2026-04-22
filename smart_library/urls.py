@@ -23,6 +23,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from django.conf import settings
 from django.conf.urls.static import static
 
+from cms import auth_views
 from notifications.views import staff_notification_badge_json
 
 handler403 = "cms.security_views.permission_denied_redirect"
@@ -34,7 +35,7 @@ urlpatterns = [
         "admin/login/",
         lambda request: redirect(f"/hyr/?next={request.GET.get('next', '/admin/')}"),
     ),
-    path("admin/logout/", lambda request: redirect("/")),
+    path("admin/logout/", auth_views.sign_out),
     path("_staff-notif-badge/", staff_notification_badge_json, name="staff_notification_badge_json"),
     path('admin/', admin.site.urls),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),

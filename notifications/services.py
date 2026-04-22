@@ -87,6 +87,27 @@ def notify_staff_member_cancelled_request(req) -> None:
     _safe(_go)
 
 
+def notify_staff_new_member_signup(*, member_profile) -> None:
+    member_no = (getattr(member_profile, "member_no", "") or "").strip() or "—"
+    full_name = (getattr(member_profile, "full_name", "") or "").strip() or "Anëtar i ri"
+    user = getattr(member_profile, "user", None)
+    username = getattr(user, "username", "") if user else ""
+    title = f"Anëtar i ri: {full_name}"
+    body = f"U shtua anëtari {full_name} ({member_no}){f' · {username}' if username else ''}."
+    link = f"/admin/accounts/memberprofile/{member_profile.id}/change/"
+
+    def _go():
+        create_for_users(
+            staff_recipient_users(),
+            kind=NotificationKind.MEMBER_NEW_STAFF,
+            title=title,
+            body=body,
+            link_url=link,
+        )
+
+    _safe(_go)
+
+
 def notify_member_user(user, *, kind: str, title: str, body: str = "", link_url: str = "") -> None:
     if not user or not user.pk:
         return

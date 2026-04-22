@@ -53,6 +53,18 @@ body,
 body {
   font-size: var(--sl-fs-14) !important;
 }
+
+/* Sidebar brand: logo only (hide text label) */
+.brand-link .brand-text,
+.main-sidebar .brand-text {
+  display: none !important;
+}
+.brand-link {
+  justify-content: center !important;
+}
+.brand-link .brand-image {
+  margin-right: 0 !important;
+}
 .content-wrapper h1 {
   font-size: var(--sl-fs-28) !important;
 }

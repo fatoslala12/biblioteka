@@ -23,6 +23,13 @@ User = get_user_model()
 class MemberSignUpTests(TestCase):
     def setUp(self):
         self.client = Client()
+        self.staff = User.objects.create_user(
+            username="staff_signup_notif",
+            email="staff_signup_notif@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.STAFF,
+            is_staff=True,
+        )
 
     def test_sign_up_get_ok(self):
         r = self.client.get("/regjistrohu/")
@@ -51,6 +58,13 @@ class MemberSignUpTests(TestCase):
         mp = u.member_profile
         self.assertTrue(mp.member_no.startswith("M"))
         self.assertEqual(mp.full_name, "Test User")
+        self.assertTrue(
+            UserNotification.objects.filter(
+                user=self.staff,
+                kind=NotificationKind.MEMBER_NEW_STAFF,
+                title__icontains="Anëtar i ri",
+            ).exists()
+        )
 
     def test_hidden_trap_field_does_not_block_real_signup(self):
         data = {
@@ -107,6 +121,20 @@ class AdminAuthRedirectTests(TestCase):
         r = self.client.get("/admin/logout/")
         self.assertEqual(r.status_code, 302)
         self.assertEqual(r["Location"], "/")
+
+    def test_admin_logout_really_logs_out_user(self):
+        u = User.objects.create_user(
+            username="logout_test_user",
+            email="logout_test_user@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.STAFF,
+            is_staff=True,
+        )
+        self.client.force_login(u)
+        r = self.client.get("/admin/logout/")
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(r["Location"], "/")
+        self.assertNotIn("_auth_user_id", self.client.session)
 
 
 @override_settings(

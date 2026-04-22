@@ -3,6 +3,7 @@ from django.db import models
 
 
 class NotificationKind(models.TextChoices):
+    MEMBER_NEW_STAFF = "member_new_staff", "Anëtar i ri (staf)"
     RESERVATION_NEW_STAFF = "reservation_new_staff", "Kërkesë e re (staf)"
     RESERVATION_CANCELLED_STAFF = "reservation_cancelled_staff", "Kërkesë e anuluar (staf)"
     RESERVATION_SUBMITTED_MEMBER = "reservation_submitted_member", "Kërkesa u dërgua"

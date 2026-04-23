@@ -4,38 +4,63 @@
 {% block title %}Biblioteka Kamëz{% endblock %}
 
 {% block content %}
-  <!-- Mirë se vini + foto kryesore + galeri foto të vogla (hyrja e parë) -->
+  <!-- Hero i ridizajnuar (fiks sipas mockup premium) -->
   <section class="relative mx-auto w-full max-w-7xl px-3 pb-6 pt-4 sm:px-6 sm:pb-8 sm:pt-6 lg:px-8">
-    <div class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[min(92vw,520px)] overflow-hidden sm:h-[480px]" aria-hidden="true">
-      <div class="sl-home-orb sl-home-orb-a absolute -left-[20%] top-[-18%] h-[min(85vw,380px)] w-[min(85vw,380px)] rounded-full bg-brand-400/30 blur-3xl dark:bg-brand-500/25"></div>
-      <div class="sl-home-orb sl-home-orb-b absolute -right-[12%] top-[8%] h-[min(70vw,320px)] w-[min(70vw,320px)] rounded-full bg-cyan-200/35 blur-3xl dark:bg-slate-600/25"></div>
-      <div class="sl-home-orb sl-home-orb-c absolute left-[20%] bottom-[-30%] h-[min(60vw,280px)] w-[min(60vw,280px)] rounded-full bg-emerald-200/25 blur-3xl dark:bg-emerald-900/20"></div>
-    </div>
-    <div class="sl-premium-surface sl-premium-hero min-w-0 overflow-hidden rounded-2xl border border-slate-200/90 bg-white/95 shadow-md ring-1 ring-white/70 backdrop-blur-sm dark:border-slate-600/50 dark:bg-slate-800/55 dark:ring-white/5 sm:rounded-3xl">
-      <div class="grid grid-cols-1 gap-0 lg:grid-cols-12">
-        <div class="sl-hero-enter min-w-0 p-4 sm:p-6 lg:col-span-7 lg:p-8">
-          <div class="flex min-w-0 flex-row flex-wrap items-center gap-3 sm:gap-4">
-            <img src="{% static 'img/logo_kamez.png' %}" alt="Bashkia Kamëz" width="64" height="80" class="h-11 w-auto max-h-11 shrink-0 object-contain object-left sm:h-12 sm:max-h-12" loading="eager" decoding="async" fetchpriority="high" />
-            <div class="inline-flex min-w-0 items-center rounded-full bg-brand-100 px-2.5 py-1 text-xs font-extrabold leading-none text-brand-800 dark:bg-brand-900/50 dark:text-brand-100">Bashkia Kamëz</div>
-          </div>
-          <h2 class="mt-2 text-xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:mt-3 sm:text-2xl md:text-3xl">Mirë se vini në Bibliotekën Kamëz</h2>
-          <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300 sm:mt-3">
-            Biblioteka Kamëz është një hapësirë e dedikuar dijes, kulturës dhe zhvillimit të komunitetit. Ajo shërben si një urë lidhëse mes brezave, duke ofruar libra, informacion dhe mundësi studimi për të gjitha moshat. Në këtë ambient të qetë dhe mikpritës, çdo lexues gjen një botë të re për të zbuluar dhe një mundësi për t’u rritur personalisht e profesionalisht.
-          </p>
-          <p class="mt-2 flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
-            <span>📍</span> Qendër kulturore dhe edukative për komunitetin e Kamzës.
-          </p>
-          <div class="sl-hero-head sl-hero-cta-bar mt-4 flex justify-center rounded-2xl border border-brand-200/60 bg-gradient-to-b from-white/95 to-brand-50/40 p-4 dark:border-brand-900/40 dark:from-slate-900/80 dark:to-slate-900/50 sm:p-5">
-            <div class="flex w-full max-w-lg flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:justify-center sm:gap-4">
-              <a href="/catalog/" class="sl-hero-btn sl-hero-btn-primary min-h-[48px] flex flex-1 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 px-6 py-3 text-center text-sm font-extrabold tracking-tight text-white shadow-lg shadow-brand-600/35 ring-2 ring-brand-400/30 ring-offset-2 ring-offset-white/80 hover:from-brand-600 hover:to-brand-800 hover:shadow-xl hover:shadow-brand-600/40 active:scale-[0.98] dark:ring-offset-slate-900/80 sm:flex-initial sm:min-w-[200px]">Shfleto katalogun</a>
-              {% if not user.is_authenticated %}
-              <a href="{% url 'cms:sign_up' %}" class="sl-hero-btn sl-hero-btn-secondary min-h-[48px] flex flex-1 items-center justify-center rounded-2xl border-2 border-brand-400/50 bg-white/95 px-6 py-3 text-center text-sm font-extrabold tracking-tight text-brand-800 shadow-md shadow-brand-900/5 ring-2 ring-brand-200/40 ring-offset-2 ring-offset-brand-50/90 hover:border-brand-500 hover:bg-white hover:shadow-lg active:scale-[0.98] dark:border-brand-600/50 dark:bg-slate-900/90 dark:text-brand-100 dark:ring-brand-800/40 dark:ring-offset-slate-900 sm:flex-initial sm:min-w-[200px]">Bëhu anëtar</a>
-              {% endif %}
+    <div class="sl-dash-hero relative overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-50/90 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6 lg:p-7">
+      <div class="grid grid-cols-1 gap-5 lg:grid-cols-12 lg:items-center lg:gap-6">
+        <div class="lg:col-span-6">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+              <img src="{% static 'img/logo_kamez.png' %}" alt="Bashkia Kamëz" width="56" height="70" class="h-11 w-auto object-contain" loading="eager" decoding="async" fetchpriority="high" />
+              <div>
+                <div class="text-lg font-extrabold text-brand-800 dark:text-brand-200">Bashkia Kamëz</div>
+                <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Biblioteka Kamëz</div>
+              </div>
+            </div>
+            <div class="hidden rounded-full border border-brand-200/70 bg-brand-50 px-4 py-2 text-xs font-extrabold text-brand-700 dark:border-brand-900/50 dark:bg-brand-900/25 dark:text-brand-200 sm:inline-flex">
+              📖 Ditur i sotëm, nesër më i mirë
             </div>
           </div>
+
+          <div class="mt-6 inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-[.1em] text-brand-700 dark:text-brand-200">
+            <span class="h-2.5 w-2.5 rounded-full bg-brand-500"></span>
+            Sistemi i Menaxhimit të Bibliotekës
+          </div>
+
+          <h1 class="mt-3 text-4xl font-black leading-[1.05] tracking-tight text-slate-900 dark:text-white sm:text-5xl">
+            Mirë se vini në<br />Bibliotekën <span class="text-brand-600 dark:text-brand-300">Kamëz</span>
+          </h1>
+          <div class="mt-3 h-1 w-14 rounded-full bg-brand-500/70"></div>
+
+          <p class="mt-4 max-w-xl text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+            Biblioteka Kamëz është një hapësirë e dedikuar dijes, kulturës dhe zhvillimit të komunitetit. Ajo shërben si një urë lidhëse mes brezave, duke ofruar libra, informacion dhe mundësi studimi për të gjitha moshat.
+          </p>
+          <p class="mt-3 flex items-center gap-2 text-base font-semibold text-slate-600 dark:text-slate-300">
+            <span>📍</span> Qendër kulturore dhe edukative për komunitetin e Kamzës.
+          </p>
+
+          <div class="mt-5 rounded-2xl border border-slate-200/80 bg-white/70 p-4 dark:border-slate-700 dark:bg-slate-900/60">
+            <a href="/catalog/" class="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-700 px-6 py-3 text-base font-extrabold text-white shadow-lg shadow-brand-700/25 transition hover:-translate-y-0.5 hover:from-brand-600 hover:to-brand-800">
+              <span>📖</span>
+              <span>Shfleto katalogun</span>
+              <span>→</span>
+            </a>
+            {% if not user.is_authenticated %}
+            <div class="mt-2 text-xs font-bold text-slate-500 dark:text-slate-400">
+              Ose <a href="{% url 'cms:sign_up' %}" class="text-brand-700 hover:text-brand-800 dark:text-brand-300">Bëhu anëtar</a>
+            </div>
+            {% endif %}
+          </div>
         </div>
-        <div class="sl-hero-photo-wrap sl-hero-photo-premium relative min-h-[200px] w-full overflow-hidden rounded-b-2xl bg-slate-100 dark:bg-slate-900/50 lg:col-span-5 lg:min-h-[280px] lg:rounded-b-none lg:rounded-r-2xl">
-          <img src="{% static hero_library_image %}" alt="Biblioteka Kamëz" width="960" height="720" sizes="(max-width:1024px) 100vw, 41vw" class="sl-hero-photo relative z-[1] h-56 w-full object-cover sm:h-64 lg:h-full lg:min-h-[280px]" loading="eager" decoding="async" fetchpriority="high" />
+
+        <div class="relative lg:col-span-6">
+          <div class="pointer-events-none absolute right-8 top-0 hidden h-72 w-72 rounded-full bg-brand-100/70 blur-[1px] dark:bg-brand-900/35 lg:block"></div>
+          <div class="pointer-events-none absolute bottom-4 right-0 hidden opacity-25 dark:opacity-20 lg:block">
+            <img src="{% static 'img/library-hero.svg' %}" alt="" class="h-72 w-auto" loading="lazy" decoding="async" aria-hidden="true" />
+          </div>
+          <div class="relative z-[2] overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-md dark:border-slate-700 dark:bg-slate-900">
+            <img src="{% static hero_library_image %}" alt="Biblioteka Kamëz" width="960" height="720" sizes="(max-width:1024px) 100vw, 45vw" class="h-72 w-full object-cover sm:h-80 lg:h-[420px]" loading="eager" decoding="async" fetchpriority="high" />
+          </div>
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@ from datetime import timedelta
 from decimal import Decimal
 from django.conf import settings
 from django import template
-from django.db.models import Avg, Count, DurationField, ExpressionWrapper, F, Sum
+from django.db.models import Avg, Count, DurationField, ExpressionWrapper, F, Q, Sum
 from django.db.models.functions import TruncMonth
 from django.urls import reverse
 from django.utils import timezone
@@ -90,7 +90,11 @@ def stat_authors():
 
 @register.simple_tag
 def stat_publishers():
-    return Publisher.objects.count()
+    return (
+        Publisher.objects.filter(books__is_deleted=False)
+        .distinct()
+        .count()
+    )
 
 
 @register.simple_tag
@@ -106,6 +110,19 @@ def stat_requests_approved():
 @register.simple_tag
 def stat_requests_rejected():
     return ReservationRequest.objects.filter(status=ReservationRequestStatus.REJECTED).count()
+
+
+@register.simple_tag
+def stat_books_purchase_total_lek():
+    total = Decimal("0.00")
+    books = Book.objects.filter(is_deleted=False).annotate(
+        active_copies=Count("copies", filter=Q(copies__is_deleted=False))
+    )
+    for book in books:
+        if not book.price or not book.active_copies:
+            continue
+        total += (book.price * book.active_copies)
+    return round(total, 2)
 
 
 @register.simple_tag

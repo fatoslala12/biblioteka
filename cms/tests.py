@@ -622,6 +622,15 @@ class AdminExecutiveDashboardSmokeTests(TestCase):
         self.assertContains(resp, "Njoftime për ju (në aplikacion)")
         self.assertContains(resp, "Dash notif ping")
 
+    def test_admin_dashboard_replaces_rejections_with_purchase_value_card(self):
+        self.client.force_login(self.admin_user)
+        resp = self.client.get("/admin/")
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "💰 Çmim total")
+        self.assertContains(resp, "Shtëpi botuese")
+        self.assertContains(resp, "LEK")
+        self.assertNotContains(resp, "Refuzime")
+
 
 class HomeCtaAndCmsDetailTests(TestCase):
     def setUp(self):

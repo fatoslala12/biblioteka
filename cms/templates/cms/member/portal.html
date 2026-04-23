@@ -17,6 +17,13 @@
         linear-gradient(180deg, #ffffff, #f8fbff);
       box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
     }
+    .sl-profile-title {
+      color: #0f172a;
+      text-shadow: 0 1px 0 rgba(255,255,255,.65);
+    }
+    .sl-profile-subtitle {
+      color: #64748b;
+    }
     .sl-hero-shell {
       background:
         radial-gradient(circle at 12% 0%, rgba(255,255,255,.18), transparent 34%),
@@ -100,6 +107,10 @@
       color: #0f172a;
       line-height: 1.2;
       overflow-wrap: anywhere;
+    }
+    .sl-profile-view-card {
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      background: rgba(248, 250, 252, .95);
     }
     .sl-member-content,
     .sl-member-content .grid,
@@ -191,6 +202,34 @@
       .sl-loans-table-wrap table {
         width: 880px;
       }
+    }
+    .dark .sl-profile-shell {
+      border-color: rgba(71, 85, 105, .88);
+      background:
+        radial-gradient(circle at 90% 0%, rgba(45, 212, 191, 0.15), transparent 44%),
+        linear-gradient(180deg, rgba(7, 25, 36, .98), rgba(2, 20, 32, .98));
+      box-shadow: 0 18px 36px rgba(2, 8, 23, .45);
+    }
+    .dark .sl-profile-title {
+      color: #f8fafc;
+      text-shadow: none;
+    }
+    .dark .sl-profile-subtitle {
+      color: #cbd5e1;
+    }
+    .dark .sl-profile-kpi {
+      border-color: rgba(71, 85, 105, .9);
+      background: rgba(15, 23, 42, .74);
+    }
+    .dark .sl-profile-kpi .k {
+      color: #94a3b8;
+    }
+    .dark .sl-profile-kpi .v {
+      color: #f1f5f9;
+    }
+    .dark .sl-profile-view-card {
+      border-color: rgba(71, 85, 105, .85);
+      background: rgba(15, 23, 42, .72);
     }
 
     .sl-loan-chart-wrap {
@@ -413,8 +452,8 @@
                 </div>
               {% endif %}
               <div class="sl-profile-copy">
-                <div class="text-xl font-black tracking-tight">Profili im</div>
-                <div class="sl-profile-note mt-0.5 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <div class="sl-profile-title text-xl font-black tracking-tight">Profili im</div>
+                <div class="sl-profile-subtitle sl-profile-note mt-0.5 text-xs font-semibold">
                   Përshtate profilin tënd me një klikim dhe mbaje llogarinë gjithmonë të përditësuar.
                 </div>
               </div>
@@ -436,27 +475,27 @@
 
           <!-- View mode -->
           <div id="profileView" class="mt-4 grid gap-3 sm:grid-cols-2">
-            <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-900/40">
+            <div class="sl-profile-view-card rounded-2xl p-4">
               <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Emri dhe mbiemri</div>
               <div class="mt-1 text-sm font-extrabold">{{ member.full_name|default:"—" }}</div>
             </div>
-            <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-900/40">
+            <div class="sl-profile-view-card rounded-2xl p-4">
               <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Nr. telefoni</div>
               <div class="mt-1 text-sm font-extrabold">{{ member.phone|default:"—" }}</div>
             </div>
-            <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-900/40">
+            <div class="sl-profile-view-card rounded-2xl p-4">
               <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Datëlindja</div>
               <div class="mt-1 text-sm font-extrabold">{% if member.date_of_birth %}{{ member.date_of_birth|date:"Y-m-d" }}{% else %}—{% endif %}</div>
             </div>
-            <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-900/40">
+            <div class="sl-profile-view-card rounded-2xl p-4">
               <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Nr. ID</div>
               <div class="mt-1 text-sm font-extrabold">{{ member.national_id|default:"—" }}</div>
             </div>
-            <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-900/40">
+            <div class="sl-profile-view-card rounded-2xl p-4">
               <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Vendlindja</div>
               <div class="mt-1 text-sm font-extrabold">{{ member.place_of_birth|default:"—" }}</div>
             </div>
-            <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-900/40">
+            <div class="sl-profile-view-card rounded-2xl p-4">
               <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Adresa</div>
               <div class="mt-1 text-sm font-extrabold">{{ member.address|default:"—" }}</div>
             </div>

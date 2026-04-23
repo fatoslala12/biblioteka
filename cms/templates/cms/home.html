@@ -18,27 +18,27 @@
             </div>
           </div>
 
-          <h1 class="mt-5 text-4xl font-black leading-[1.05] tracking-tight text-slate-900 dark:text-white sm:text-5xl">
+          <h1 class="mt-4 text-[2.65rem] font-black leading-[1.04] tracking-tight text-slate-900 dark:text-white sm:text-[2.95rem] lg:text-[3.15rem]">
             Mirë se vini në<br />Bibliotekën <span class="text-brand-600 dark:text-brand-300">Kamëz</span>
           </h1>
           <div class="mt-3 h-1 w-14 rounded-full bg-brand-500/70"></div>
 
-          <p class="mt-4 max-w-xl text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+          <p class="mt-3 max-w-xl text-base leading-relaxed text-slate-600 dark:text-slate-300 lg:text-[1.04rem]">
             Biblioteka Kamëz është një hapësirë e dedikuar dijes, kulturës dhe zhvillimit të komunitetit. Ajo shërben si një urë lidhëse mes brezave, duke ofruar libra, informacion dhe mundësi studimi për të gjitha moshat.
           </p>
-          <p class="mt-3 flex items-center gap-2 text-base font-semibold text-slate-600 dark:text-slate-300">
+          <p class="mt-2.5 flex items-center gap-2 text-[0.98rem] font-semibold text-slate-600 dark:text-slate-300">
             <span>📍</span> Qendër kulturore dhe edukative për komunitetin e Kamzës.
           </p>
 
-          <div class="mt-5 rounded-2xl border border-slate-200/80 bg-white/70 p-4 dark:border-slate-700 dark:bg-slate-900/60">
-            <div class="flex flex-wrap items-center gap-3">
-            <a href="/catalog/" class="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-700 px-6 py-3 text-base font-extrabold text-white shadow-lg shadow-brand-700/25 transition hover:-translate-y-0.5 hover:from-brand-600 hover:to-brand-800">
+          <div class="mt-4 rounded-2xl border border-slate-200/80 bg-white/70 p-3.5 dark:border-slate-700 dark:bg-slate-900/60 sm:p-4">
+            <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3">
+            <a href="/catalog/" class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-700 px-5 py-2.5 text-[0.98rem] font-extrabold text-white shadow-lg shadow-brand-700/25 transition hover:-translate-y-0.5 hover:from-brand-600 hover:to-brand-800">
               <span>📖</span>
               <span>Shfleto katalogun</span>
               <span>→</span>
             </a>
             {% if not user.is_authenticated %}
-            <a href="{% url 'cms:sign_up' %}" class="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-700 px-6 py-3 text-base font-extrabold text-white shadow-lg shadow-brand-700/25 transition hover:-translate-y-0.5 hover:from-brand-600 hover:to-brand-800">
+            <a href="{% url 'cms:sign_up' %}" class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-700 px-5 py-2.5 text-[0.98rem] font-extrabold text-white shadow-lg shadow-brand-700/25 transition hover:-translate-y-0.5 hover:from-brand-600 hover:to-brand-800">
               <span>📝</span>
               <span>Bëhu anëtar</span>
               <span>→</span>
@@ -238,8 +238,8 @@
 
   <!-- Thënie — kompakt -->
   <section class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
-      <div class="sl-quote-v2 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40">
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:gap-5">
+      <div class="sl-quote-v2 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800/40">
         <div class="flex items-center justify-between gap-2">
           <div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">Thënie</div>
           <span class="text-sm text-brand-300">❝</span>
@@ -247,7 +247,7 @@
         <p class="mt-2 text-sm font-black leading-snug text-slate-800 dark:text-white">“Sot një faqe, nesër një kapitull, pasnesër një sukses.”</p>
         <p class="mt-2 text-xs font-medium text-slate-500 dark:text-slate-400">— Motivim për lexim</p>
       </div>
-      <div class="sl-quote-v2 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40">
+      <div class="sl-quote-v2 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800/40">
         <div class="flex items-center justify-between gap-2">
           <div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">Thënie</div>
           <span class="text-sm text-brand-300">❝</span>
@@ -255,7 +255,7 @@
         <p class="mt-2 text-sm font-black leading-snug text-slate-800 dark:text-white">Leximi është investimi më i sigurt për të ardhmen.</p>
         <p class="mt-2 text-xs font-medium text-slate-500 dark:text-slate-400">— Dije & zhvillim</p>
       </div>
-      <div class="sl-quote-v2 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/40">
+      <div class="sl-quote-v2 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800/40">
         <div class="flex items-center justify-between gap-2">
           <div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">Thënie</div>
           <span class="text-sm text-brand-300">❝</span>
@@ -263,7 +263,7 @@
         <p class="mt-2 text-sm font-black leading-snug text-slate-800 dark:text-white">“Një qytet që lexon është një qytet që rritet.”</p>
         <p class="mt-2 text-xs font-medium text-slate-500 dark:text-slate-400">— Komunitet</p>
       </div>
-      <div class="sl-quote-v2 sl-quote-v2-accent rounded-2xl border border-brand-200 bg-brand-50 p-4 shadow-sm dark:border-brand-800 dark:bg-slate-800/60">
+      <div class="sl-quote-v2 sl-quote-v2-accent rounded-2xl border border-brand-200 bg-brand-50 p-5 shadow-sm dark:border-brand-800 dark:bg-slate-800/60">
         <div class="flex items-center justify-between gap-2">
           <div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand-700 dark:text-brand-300">Mirëseardhje</div>
           <span class="text-sm text-brand-400">✦</span>
@@ -409,6 +409,37 @@
       }
       .sl-hero-photo-main {
         object-position: center;
+      }
+      .sl-dash-hero {
+        padding: 1rem;
+      }
+    }
+    @media (max-width: 640px) {
+      .sl-dash-hero h1 {
+        font-size: 2.1rem;
+        line-height: 1.08;
+      }
+      .sl-dash-hero p {
+        font-size: .96rem;
+      }
+      .sl-hero-badge-logo {
+        width: 46px !important;
+        height: 46px !important;
+        min-width: 46px !important;
+        max-width: 46px !important;
+      }
+      .sl-hero-photo-shell {
+        margin-top: .35rem;
+      }
+      .sl-hero-photo-main {
+        height: 250px;
+      }
+      .sl-quote-v2 {
+        min-height: 132px;
+      }
+      .sl-quote-v2 p:first-of-type {
+        font-size: .97rem;
+        line-height: 1.35;
       }
     }
     .sl-quote-card {
@@ -596,6 +627,10 @@
       overflow: hidden;
       backdrop-filter: blur(8px);
       transition: transform .24s ease, box-shadow .26s ease, border-color .22s ease;
+      min-height: 146px;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(49,145,137,.08), transparent 42%),
+        linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,252,252,.92));
     }
     .sl-quote-v2::before {
       content: "";
@@ -621,6 +656,22 @@
       box-shadow: 0 16px 32px -20px rgba(49,145,137,.42);
     }
     .sl-quote-v2:hover::after { opacity: .9; }
+    .sl-quote-v2 p:first-of-type {
+      font-size: 1.06rem;
+      line-height: 1.4;
+      letter-spacing: .01em;
+      margin-top: .6rem;
+    }
+    .sl-quote-v2 p:last-of-type {
+      margin-top: .55rem;
+      font-weight: 700;
+      color: #64748b;
+    }
+    .dark .sl-quote-v2 {
+      background:
+        radial-gradient(circle at 0% 0%, rgba(49,145,137,.16), transparent 42%),
+        linear-gradient(180deg, rgba(30,41,59,.72), rgba(15,23,42,.7));
+    }
     .sl-quote-v2-accent::before {
       background:
         radial-gradient(circle at 0% 0%, rgba(214,178,94,.22), transparent 45%),

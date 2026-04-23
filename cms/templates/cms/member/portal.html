@@ -354,6 +354,29 @@
       color: #0f766e;
       box-shadow: 0 8px 22px rgba(20, 184, 166, 0.14);
     }
+    .sl-fine-empty,
+    .sl-fine-payments {
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(255, 255, 255, 0.78);
+    }
+    .sl-user-btn {
+      border-radius: 14px;
+      font-weight: 800;
+      transition: transform .16s ease, box-shadow .18s ease;
+    }
+    .sl-user-btn:hover {
+      transform: translateY(-1px);
+    }
+    .sl-user-btn-primary {
+      background: linear-gradient(135deg, #319189, #2b7f78);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(49, 145, 137, 0.22);
+    }
+    .sl-user-btn-secondary {
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: rgba(255, 255, 255, 0.9);
+      color: #0f172a;
+    }
     .sl-fine-item.is-hidden {
       display: none;
     }
@@ -373,8 +396,8 @@
       }
       .sl-fine-filter {
         border-color: rgba(71, 85, 105, 0.9);
-        background: rgba(15, 23, 42, 0.78);
-        color: rgba(226, 232, 240, 0.95);
+        background: rgba(15, 23, 42, 0.9);
+        color: rgba(241, 245, 249, 0.98);
       }
       .sl-fine-filter:hover {
         border-color: rgba(45, 212, 191, 0.85);
@@ -382,8 +405,22 @@
       }
       .sl-fine-filter.is-active {
         border-color: rgba(45, 212, 191, 0.9);
-        background: rgba(20, 184, 166, 0.18);
+        background: rgba(20, 184, 166, 0.28);
         color: rgba(153, 246, 228, 1);
+      }
+      .sl-fine-empty,
+      .sl-fine-payments {
+        border-color: rgba(71, 85, 105, 0.85);
+        background: rgba(12, 28, 42, 0.82);
+      }
+      .sl-user-btn-primary {
+        background: linear-gradient(135deg, #38b2ac, #2b7f78);
+        box-shadow: 0 10px 22px rgba(45, 212, 191, 0.18);
+      }
+      .sl-user-btn-secondary {
+        border-color: rgba(71, 85, 105, 0.9);
+        background: rgba(15, 23, 42, 0.86);
+        color: rgba(241, 245, 249, 0.98);
       }
     }
   </style>
@@ -459,10 +496,10 @@
               </div>
             </div>
             <div class="sl-profile-actions mt-3 flex items-center gap-2">
-              <button id="btnEditProfile" type="button" class="rounded-2xl bg-brand-700 px-4 py-2 text-xs font-extrabold text-white hover:bg-brand-800">
+              <button id="btnEditProfile" type="button" class="sl-user-btn sl-user-btn-primary px-4 py-2 text-xs">
                 Ndrysho
               </button>
-              <button id="btnCancelProfile" type="button" class="hidden rounded-2xl border border-slate-200 bg-white px-4 py-2 text-xs font-extrabold text-slate-900 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:hover:bg-slate-900/40">
+              <button id="btnCancelProfile" type="button" class="sl-user-btn sl-user-btn-secondary hidden px-4 py-2 text-xs">
                 Anulo
               </button>
             </div>
@@ -533,7 +570,7 @@
               {{ profile_form.address }}
             </div>
             <div class="sm:col-span-2 flex items-center justify-end gap-2 pt-2">
-              <button type="submit" class="rounded-2xl bg-brand-700 px-4 py-2 text-sm font-extrabold text-white hover:bg-brand-800">
+              <button type="submit" class="sl-user-btn sl-user-btn-primary px-4 py-2 text-sm">
                 Ruaj profilin
               </button>
             </div>
@@ -548,7 +585,7 @@
                   Ndrysho fjalëkalimin tënd kur të nevojitet.
                 </div>
               </div>
-              <button id="btnPwd" type="button" class="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-xs font-extrabold text-slate-900 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:hover:bg-slate-900/40">
+              <button id="btnPwd" type="button" class="sl-user-btn sl-user-btn-secondary px-4 py-2 text-xs">
                 Ndrysho fjalëkalimin
               </button>
             </div>
@@ -568,10 +605,10 @@
                 {{ password_form.new_password2 }}
               </div>
               <div class="sm:col-span-2 flex items-center justify-end gap-2 pt-2">
-                <button type="button" id="btnPwdCancel" class="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-xs font-extrabold text-slate-900 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:hover:bg-slate-900/40">
+                <button type="button" id="btnPwdCancel" class="sl-user-btn sl-user-btn-secondary px-4 py-2 text-xs">
                   Anulo
                 </button>
-                <button type="submit" class="rounded-2xl bg-brand-700 px-4 py-2 text-xs font-extrabold text-white hover:bg-brand-800">
+                <button type="submit" class="sl-user-btn sl-user-btn-primary px-4 py-2 text-xs">
                   Ruaj fjalëkalimin
                 </button>
               </div>
@@ -678,7 +715,7 @@
               </div>
             </div>
             {% if not staff_view_mode %}
-            <a href="/catalog/" class="inline-flex items-center justify-center rounded-2xl bg-brand-700 px-4 py-2 text-xs font-extrabold text-white hover:bg-brand-800">
+            <a href="/catalog/" class="sl-user-btn sl-user-btn-primary inline-flex items-center justify-center px-4 py-2 text-xs">
               Bëj rezervim
             </a>
             {% endif %}
@@ -756,7 +793,7 @@
               </div>
             </div>
             {% if not staff_view_mode %}
-            <a href="/catalog/" class="inline-flex items-center gap-2 rounded-2xl bg-brand-700 px-4 py-2 text-xs font-extrabold text-white hover:bg-brand-800">
+            <a href="/catalog/" class="sl-user-btn sl-user-btn-primary inline-flex items-center gap-2 px-4 py-2 text-xs">
               Bëj rezervim
             </a>
             {% endif %}
@@ -781,7 +818,7 @@
                       {% if not staff_view_mode %}
                       <form method="post" action="/anetar/kerkesa/{{ r.id }}/anulo/" onsubmit="return confirm('Ta anulosh këtë kërkesë?');">
                         {% csrf_token %}
-                        <button type="submit" class="rounded-2xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-extrabold text-slate-900 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:hover:bg-slate-900/40">
+                        <button type="submit" class="sl-user-btn sl-user-btn-secondary px-3 py-1.5 text-xs">
                           Anulo
                         </button>
                       </form>
@@ -907,7 +944,7 @@
                 </div>
                 <div class="mt-3 flex items-center justify-between gap-3">
                   <span class="rounded-full bg-brand-100 px-2 py-1 text-xs font-extrabold text-brand-800 dark:bg-brand-900/40 dark:text-brand-100">Gati për tërheqje</span>
-                  <a href="/books/{{ item.book.id }}/" class="rounded-2xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-extrabold text-slate-900 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:hover:bg-slate-900/40">
+                  <a href="/books/{{ item.book.id }}/" class="sl-user-btn sl-user-btn-secondary px-3 py-1.5 text-xs">
                     Shiko titullin
                   </a>
                 </div>
@@ -1021,13 +1058,13 @@
                 {% endif %}
               </div>
             {% empty %}
-              <div class="rounded-2xl border border-slate-200 p-4 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-300">
+              <div class="sl-fine-empty rounded-2xl p-4 text-sm text-slate-600 dark:text-slate-300">
                 S’ka gjoba të regjistruara për momentin.
               </div>
             {% endfor %}
           </div>
 
-          <div class="mt-4 rounded-2xl border border-slate-200 bg-white/70 p-3 dark:border-slate-800 dark:bg-slate-950/45">
+          <div class="sl-fine-payments mt-4 rounded-2xl p-3">
             <div class="text-xs font-extrabold text-slate-700 dark:text-slate-200">Pagesat e fundit</div>
             <div class="mt-2 space-y-1.5">
               {% for p in latest_payments %}

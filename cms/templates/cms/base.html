@@ -95,6 +95,55 @@
       }
       .sl-nav-link:hover::after,
       .sl-nav-link.sl-nav-active::after { transform: scaleX(1); }
+      .sl-header-icon-btn {
+        border-radius: .9rem;
+        border: 1px solid rgba(255, 255, 255, .24);
+        background: rgba(255, 255, 255, .1);
+        color: #fff;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, .15);
+        transition: background .2s ease, transform .16s ease, border-color .2s ease;
+      }
+      .sl-header-icon-btn:hover {
+        background: rgba(255, 255, 255, .18);
+        transform: translateY(-1px);
+      }
+      .sl-header-cta {
+        border-radius: .9rem;
+        background: rgba(255, 255, 255, .96);
+        color: #0f766e;
+        box-shadow: 0 10px 18px rgba(15, 23, 42, .16);
+        transition: transform .16s ease, background .2s ease;
+      }
+      .sl-header-cta:hover {
+        background: #fff;
+        transform: translateY(-1px);
+      }
+      .dark .sl-header-icon-btn {
+        border-color: rgba(148, 163, 184, .34);
+        background: rgba(30, 41, 59, .72);
+        color: rgba(241, 245, 249, .98);
+      }
+      .dark .sl-header-icon-btn:hover {
+        border-color: rgba(45, 212, 191, .5);
+        background: rgba(51, 65, 85, .82);
+      }
+      .dark .sl-header-cta {
+        background: rgba(241, 245, 249, .96);
+        color: #0f766e;
+      }
+      .dark .sl-header-cta:hover {
+        background: #fff;
+      }
+      @media (max-width: 640px) {
+        .sl-header-icon-btn {
+          padding: .55rem;
+        }
+        .sl-header-cta {
+          padding: .55rem .95rem;
+          font-size: .95rem;
+          line-height: 1.1rem;
+        }
+      }
       @keyframes sl-section-media-float {
         0%, 100% {
           transform: translateY(0);
@@ -129,7 +178,7 @@
               <img src="{% static 'img/logo_biblioteka.png' %}" alt="Biblioteka Kamëz" width="200" height="48" class="h-9 w-auto max-w-[min(52vw,200px)] object-contain object-left sm:h-10 sm:max-w-[220px]" decoding="async" />
             </a>
 
-            <button id="sl-mobile-menu-btn" type="button" class="md:hidden rounded-xl p-2 text-white hover:bg-white/10 aria-expanded=false" aria-label="Hap menunë">
+            <button id="sl-mobile-menu-btn" type="button" class="sl-header-icon-btn md:hidden p-2.5 aria-expanded=false" aria-label="Hap menunë">
               <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
             <nav id="sl-desktop-nav" class="hidden items-center gap-1 md:flex">
@@ -156,15 +205,15 @@
                     {% if nm %}{{ nm }}{% else %}{{ request.user.username }}{% endif %}
                   {% endwith %}
                 </a>
-                <a href="/dil/" class="rounded-xl bg-white px-3 py-2 text-sm font-extrabold text-brand-700 shadow-sm hover:bg-white/90">
+                <a href="/dil/" class="sl-header-cta px-3 py-2 text-sm font-extrabold">
                   Dil
                 </a>
               {% else %}
-                <a href="/hyr/" class="rounded-xl bg-white px-3 py-2 text-sm font-extrabold text-brand-700 shadow-sm hover:bg-white/90">
+                <a href="/hyr/" class="sl-header-cta px-3 py-2 text-sm font-extrabold">
                   Logohu
                 </a>
               {% endif %}
-              <button id="themeToggle" type="button" class="rounded-xl border border-white/25 bg-white/10 p-2 text-white shadow-sm hover:bg-white/15" aria-label="Ndrysho temën">
+              <button id="themeToggle" type="button" class="sl-header-icon-btn p-2.5" aria-label="Ndrysho temën">
                 <svg id="sun" viewBox="0 0 24 24" class="h-5 w-5 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path>
                   <path d="M12 2v2"></path><path d="M12 20v2"></path>

@@ -53,13 +53,11 @@
           </div>
         </div>
 
-        <div class="relative lg:col-span-6">
-          <div class="pointer-events-none absolute right-8 top-0 hidden h-72 w-72 rounded-full bg-brand-100/70 blur-[1px] dark:bg-brand-900/35 lg:block"></div>
-          <div class="pointer-events-none absolute bottom-4 right-0 hidden opacity-25 dark:opacity-20 lg:block">
-            <img src="{% static 'img/library-hero.svg' %}" alt="" class="h-72 w-auto" loading="lazy" decoding="async" aria-hidden="true" />
-          </div>
-          <div class="relative z-[2] overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-md dark:border-slate-700 dark:bg-slate-900">
-            <img src="{% static hero_library_image %}" alt="Biblioteka Kamëz" width="960" height="720" sizes="(max-width:1024px) 100vw, 45vw" class="h-72 w-full object-cover sm:h-80 lg:h-[420px]" loading="eager" decoding="async" fetchpriority="high" />
+        <div class="sl-hero-art-wrap relative lg:col-span-6">
+          <div class="sl-hero-art-glow pointer-events-none absolute right-8 top-0 hidden h-72 w-72 rounded-full bg-brand-100/80 lg:block dark:bg-brand-900/35"></div>
+          <img src="{% static 'img/library-hero.svg' %}" alt="" class="sl-hero-book-art pointer-events-none absolute -right-10 top-3 hidden h-[26rem] w-auto lg:block" loading="lazy" decoding="async" aria-hidden="true" />
+          <div class="sl-hero-photo-shell relative z-[2] overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-md dark:border-slate-700 dark:bg-slate-900">
+            <img src="{% static hero_library_image %}" alt="Biblioteka Kamëz" width="960" height="720" sizes="(max-width:1024px) 100vw, 45vw" class="sl-hero-photo-main h-72 w-full object-cover sm:h-80 lg:h-[420px]" loading="eager" decoding="async" fetchpriority="high" />
           </div>
         </div>
       </div>
@@ -369,6 +367,47 @@
 
 {% block extrahead %}
   <style>
+    .sl-dash-hero {
+      background:
+        radial-gradient(circle at 74% 18%, rgba(45, 212, 191, 0.10), transparent 36%),
+        linear-gradient(180deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.92));
+    }
+    .sl-hero-art-wrap {
+      min-height: 420px;
+    }
+    .sl-hero-art-glow {
+      filter: blur(1px);
+      opacity: .9;
+    }
+    .sl-hero-book-art {
+      opacity: .34;
+      transform: translateZ(0);
+    }
+    .sl-hero-photo-shell {
+      box-shadow: 0 24px 50px -26px rgba(15, 23, 42, .45);
+    }
+    .sl-hero-photo-main {
+      object-position: center;
+    }
+    .dark .sl-dash-hero {
+      background:
+        radial-gradient(circle at 74% 18%, rgba(45, 212, 191, 0.16), transparent 36%),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.9));
+    }
+    .dark .sl-hero-book-art {
+      opacity: .22;
+    }
+    .dark .sl-hero-photo-shell {
+      box-shadow: 0 24px 56px -24px rgba(0, 0, 0, .62);
+    }
+    @media (max-width: 1024px) {
+      .sl-hero-art-wrap {
+        min-height: auto;
+      }
+      .sl-hero-photo-main {
+        object-position: center;
+      }
+    }
     .sl-quote-card {
       background:
         radial-gradient(circle at 0% 0%, rgba(49, 145, 137, 0.14), transparent 36%),

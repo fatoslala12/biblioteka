@@ -108,6 +108,11 @@ def stat_requests_approved():
 
 
 @register.simple_tag
+def stat_reservations():
+    return Reservation.objects.count()
+
+
+@register.simple_tag
 def stat_requests_rejected():
     return ReservationRequest.objects.filter(status=ReservationRequestStatus.REJECTED).count()
 

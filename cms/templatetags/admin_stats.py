@@ -10,7 +10,7 @@ from django.utils import timezone
 
 from accounts.models import MemberProfile
 from catalog.models import Author, Book, Copy, CopyStatus, Genre, Publisher
-from circulation.models import Loan, LoanStatus, Reservation, ReservationRequest, ReservationRequestStatus
+from circulation.models import Loan, LoanStatus, Reservation, ReservationRequest, ReservationRequestStatus, ReservationStatus
 from fines.models import Fine, FineStatus
 
 register = template.Library()
@@ -109,7 +109,7 @@ def stat_requests_approved():
 
 @register.simple_tag
 def stat_reservations():
-    return Reservation.objects.count()
+    return Reservation.objects.filter(status=ReservationStatus.APPROVED, loan__isnull=True).count()
 
 
 @register.simple_tag

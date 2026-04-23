@@ -13,7 +13,7 @@ from django.utils import timezone
 
 from accounts.models import MemberProfile, UserRole
 from catalog.models import Author, Book, Copy, CopyStatus, Genre, Publisher, Tag
-from circulation.models import Hold, HoldStatus, Loan, LoanStatus
+from circulation.models import Hold, HoldStatus, Loan, LoanStatus, Reservation, ReservationStatus
 from circulation.models import ReservationRequest, ReservationRequestStatus
 from cms.forms import ContactForm
 from cms.models import Announcement, Event, WeeklyBook
@@ -85,6 +85,7 @@ def home(request):
     copies_available = Copy.objects.filter(is_deleted=False, status=CopyStatus.AVAILABLE).count()
     copies_on_loan = Copy.objects.filter(is_deleted=False, status=CopyStatus.ON_LOAN).count()
     copies_on_hold = Copy.objects.filter(is_deleted=False, status=CopyStatus.ON_HOLD).count()
+    reservations_active = Reservation.objects.filter(status=ReservationStatus.APPROVED, loan__isnull=True).count()
     authors_count = Author.objects.count()
     publishers_count = Publisher.objects.count()
     genres_count = Genre.objects.count()
@@ -197,6 +198,7 @@ def home(request):
             "copies_available": copies_available,
             "copies_on_loan": copies_on_loan,
             "copies_on_hold": copies_on_hold,
+            "reservations_active": reservations_active,
             "authors_count": authors_count,
             "publishers_count": publishers_count,
             "genres_count": genres_count,

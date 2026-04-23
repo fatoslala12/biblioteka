@@ -28,7 +28,7 @@ from audit.services import get_client_ip, log_audit_event
 from accounts.models import MemberProfile, MemberStatus, MemberType, UserRole
 from catalog.models import Book
 from circulation.exceptions import PolicyViolation
-from circulation.models import Hold, HoldStatus, Loan, LoanStatus
+from circulation.models import Hold, HoldStatus, Loan, LoanStatus, Reservation, ReservationStatus
 from circulation.models import ReservationRequest, ReservationRequestStatus
 from circulation.services import create_reservation_request
 from cms.forms import (
@@ -338,11 +338,39 @@ def member_portal(request: HttpRequest):
         .filter(member=member_profile)
         .order_by("-created_at")[:20]
     )
-    ready_for_pickup = (
+    ready_holds = (
         Hold.objects.select_related("book")
         .filter(member=member_profile, status=HoldStatus.READY_FOR_PICKUP)
         .order_by("expires_at")[:20]
     )
+    ready_reservations = (
+        Reservation.objects.select_related("book")
+        .filter(member=member_profile, status=ReservationStatus.APPROVED, loan__isnull=True)
+        .order_by("pickup_date", "created_at")[:20]
+    )
+    pickup_ready_items = []
+    for h in ready_holds:
+        pickup_ready_items.append(
+            {
+                "book": h.book,
+                "pickup_date": getattr(h, "pickup_date", None),
+                "expires_at": h.expires_at,
+                "source": "hold",
+            }
+        )
+    for r in ready_reservations:
+        pickup_ready_items.append(
+            {
+                "book": r.book,
+                "pickup_date": r.pickup_date,
+                "expires_at": None,
+                "source": "reservation",
+            }
+        )
+    pickup_ready_items = sorted(
+        pickup_ready_items,
+        key=lambda x: (x.get("pickup_date") or timezone.localdate(), x.get("book").title if x.get("book") else ""),
+    )[:20]
     fines = (
         Fine.objects.filter(member=member_profile)
         .prefetch_related(Prefetch("payments", queryset=Payment.objects.order_by("-created_at"), to_attr="portal_payments"))
@@ -372,7 +400,7 @@ def member_portal(request: HttpRequest):
     pending_requests_count = ReservationRequest.objects.filter(
         member=member_profile, status=ReservationRequestStatus.PENDING
     ).count()
-    ready_for_pickup_count = ready_for_pickup.count()
+    ready_for_pickup_count = len(pickup_ready_items)
 
     # Loans per month (last 6 months, including current month)
     now = timezone.now().date()
@@ -422,7 +450,8 @@ def member_portal(request: HttpRequest):
             "active_rows": active_rows,
             "history": history,
             "requests": requests_qs,
-            "ready_for_pickup": ready_for_pickup,
+            "ready_for_pickup": ready_holds,
+            "pickup_ready_items": pickup_ready_items,
             "fines": fines,
             "latest_payments": latest_payments,
             "unpaid_total": unpaid_total,

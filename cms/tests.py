@@ -9,7 +9,7 @@ from pathlib import Path
 from accounts.models import MemberProfile, UserRole
 from audit.services import log_audit_event
 from catalog.models import Book, Copy, CopyStatus
-from circulation.models import Loan, LoanStatus, ReservationRequest, ReservationRequestStatus
+from circulation.models import Loan, LoanStatus, Reservation, ReservationStatus, ReservationRequest, ReservationRequestStatus
 from fines.models import Fine, FineStatus, Payment, PaymentMethod
 from policies.models import LibraryPolicy
 
@@ -237,6 +237,21 @@ class MemberPortalIntegrationTests(TestCase):
         r = self.client.get("/anetar/notifications/")
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "Test njoftim")
+
+    def test_member_portal_shows_approved_reservation_in_ready_pickup(self):
+        self.client.force_login(self.user)
+        b = Book.objects.create(title="Libri Test Pickup", isbn="9780000000999")
+        Reservation.objects.create(
+            member=self.user.member_profile,
+            book=b,
+            pickup_date=timezone.localdate() + timedelta(days=1),
+            return_date=timezone.localdate() + timedelta(days=8),
+            status=ReservationStatus.APPROVED,
+        )
+        r = self.client.get("/anetar/")
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "Libri Test Pickup")
+        self.assertContains(r, "Marrja:")
 
     def test_member_notifications_legacy_redirects(self):
         self.client.force_login(self.user)

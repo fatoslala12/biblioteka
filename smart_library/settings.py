@@ -140,6 +140,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'notifications.context_processors.notification_bell',
+                'cms.context_processors.analytics_context',
             ],
         },
     },
@@ -276,6 +277,7 @@ SMS_WEBHOOK_URL = env("SMS_WEBHOOK_URL", default="").strip()
 SMS_WEBHOOK_TOKEN = env("SMS_WEBHOOK_TOKEN", default="").strip()
 PUBLIC_BASE_URL = env("PUBLIC_BASE_URL", default="").strip()
 MAINTENANCE_MODE = env.bool("MAINTENANCE_MODE", default=False)
+GA_MEASUREMENT_ID = env("GA_MEASUREMENT_ID", default="").strip()
 
 # Use SMTP if configured; fallback to console for local dev.
 if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:

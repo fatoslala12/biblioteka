@@ -221,10 +221,10 @@
           </div>
           <div class="hidden text-[11px] font-semibold text-slate-500 dark:text-slate-400 sm:block">Ambient modern dhe i qetë për lexim</div>
         </div>
-        <div class="mt-2 grid grid-cols-2 gap-2 sm:mt-3 sm:grid-cols-4 sm:gap-3">
+        <div class="mt-2 grid grid-cols-2 gap-2 sm:mt-3 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
           {% for item in home_gallery %}
           <div class="sl-premium-img-cell sl-gallery-card group relative min-w-0 overflow-hidden rounded-lg border border-slate-200/80 bg-white shadow-sm dark:border-slate-700 sm:rounded-xl">
-            <img src="{% static item.path %}" alt="{{ item.caption }}" width="420" height="280" sizes="(max-width:640px) 50vw, 25vw" class="relative z-[1] h-24 w-full min-w-0 object-cover transition duration-700 group-hover:scale-[1.065] sm:h-28 md:h-32" loading="lazy" decoding="async" data-sl-skip-skeleton="1" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 120%22 fill=%22%23e2e8f0%22><text x=%2250%25%22 y=%2255%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%2294a3b8%22 font-size=%2212%22 font-family=%22sans-serif%22>Foto</text></svg>';" />
+            <img src="{% static item.path %}" alt="{{ item.caption }}" width="420" height="280" sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 20vw" class="relative z-[1] aspect-[4/3] w-full min-w-0 object-cover object-center transition duration-700 group-hover:scale-[1.065]" loading="lazy" decoding="async" data-sl-skip-skeleton="1" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 120%22 fill=%22%23e2e8f0%22><text x=%2250%25%22 y=%2255%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%2294a3b8%22 font-size=%2212%22 font-family=%22sans-serif%22>Foto</text></svg>';" />
             <div class="absolute inset-x-0 bottom-0 z-[3] bg-gradient-to-t from-black/70 via-black/20 to-transparent px-2 py-2">
               <span class="text-xs font-semibold tracking-wide text-white drop-shadow">{{ item.caption }}</span>
             </div>

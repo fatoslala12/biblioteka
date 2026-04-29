@@ -39,21 +39,62 @@ def _first_existing_img_path(candidates: list[str], fallback: str) -> str:
 
 
 def _home_gallery_entries():
-    """Preferon *_thumb.webp / *_thumb.jpg për ngarkim më të shpejtë (krijo me scripts/build_image_thumbs.py)."""
-    captions = ["Salla e leximit", "Hapësira", "Katalogu", "Evente"]
-    out = []
-    for i, caption in enumerate(captions, start=1):
-        stem = str(i)
-        path = _first_existing_img_path(
+    """Preferon fotot e personalizuara të bibliotekës; bie te thumbs klasike si fallback."""
+    gallery_sources = [
+        (
+            "Salla e leximit",
             [
-                f"img/home-gallery/{stem}_thumb.webp",
-                f"img/home-gallery/{stem}_thumb.jpg",
-                f"img/home-gallery/{stem}.webp",
-                f"img/home-gallery/{stem}.jpg",
-                f"img/home-gallery/{stem}.jpeg",
-                f"img/home-gallery/{stem}.png",
+                "img/home-gallery/biblioteka10.jpg",
+                "img/home-gallery/biblioteka10.jpeg",
+                "img/home-gallery/biblioteka10.png",
             ],
-            f"img/home-gallery/{stem}.jpg",
+        ),
+        (
+            "Pamje panoramike",
+            [
+                "img/home-gallery/biblioteka9.jpg",
+                "img/home-gallery/biblioteka9.jpeg",
+                "img/home-gallery/biblioteka9.png",
+            ],
+        ),
+        (
+            "Raftet e librave",
+            [
+                "img/home-gallery/biblioteka6.jpg",
+                "img/home-gallery/biblioteka6.jpeg",
+                "img/home-gallery/biblioteka6.png",
+            ],
+        ),
+        (
+            "Zona e aktiviteteve",
+            [
+                "img/home-gallery/biblioteka5.jpg",
+                "img/home-gallery/biblioteka5.jpeg",
+                "img/home-gallery/biblioteka5.png",
+            ],
+        ),
+        (
+            "Këndi i studimit",
+            [
+                "img/home-gallery/biblioteka4.jpg",
+                "img/home-gallery/biblioteka4.jpeg",
+                "img/home-gallery/biblioteka4.png",
+            ],
+        ),
+    ]
+    out = []
+    for idx, (caption, custom_candidates) in enumerate(gallery_sources, start=1):
+        fallback_candidates = [
+            f"img/home-gallery/{idx}_thumb.webp",
+            f"img/home-gallery/{idx}_thumb.jpg",
+            f"img/home-gallery/{idx}.webp",
+            f"img/home-gallery/{idx}.jpg",
+            f"img/home-gallery/{idx}.jpeg",
+            f"img/home-gallery/{idx}.png",
+        ]
+        path = _first_existing_img_path(
+            [*custom_candidates, *fallback_candidates],
+            f"img/home-gallery/{idx}.jpg",
         )
         out.append({"path": path, "caption": caption})
     return out

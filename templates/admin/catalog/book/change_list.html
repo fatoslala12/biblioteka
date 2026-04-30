@@ -78,6 +78,18 @@
       grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 10px;
     }
+    .app-catalog.model-book.change-list .sl-filter-block {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .app-catalog.model-book.change-list .sl-filter-label {
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .02em;
+      color: #475569;
+      text-transform: uppercase;
+    }
     .app-catalog.model-book.change-list .sl-filter-select {
       width: 100%;
       border-radius: 12px;
@@ -358,67 +370,20 @@
   {% if cl.has_filters %}
   <div class="sl-filters-top">
     <div class="sl-filters-top-title">🔎 Filtro dhe Rregullo</div>
-    <div class="sl-filters-grid" id="sl-filters-grid"></div>
+    <div class="sl-filters-grid">
+      {% for spec in cl.filter_specs %}
+      <div class="sl-filter-block">
+        <label class="sl-filter-label">{{ spec.title }}</label>
+        <select class="sl-filter-select" onchange="if(this.value){window.location.href=this.value;}">
+          {% for choice in spec.choices %}
+          <option value="{{ choice.query_string|iriencode }}" {% if choice.selected %}selected{% endif %}>{{ choice.display|striptags|default:"—" }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endfor %}
+    </div>
   </div>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var original = document.getElementById('changelist-filter');
-      var host = document.getElementById('sl-filters-grid');
-      if (!original || !host) return;
-
-      var blocks = original.querySelectorAll('details, .filter-wrapper, .filter, #changelist-filter > ul > li');
-      var usedFallback = false;
-      if (!blocks.length) {
-        blocks = original.querySelectorAll('h3');
-        usedFallback = true;
-      }
-      if (!blocks.length) return;
-
-      function appendSelect(title, links) {
-        if (!links || !links.length) return;
-        var wrap = document.createElement('div');
-        var select = document.createElement('select');
-        select.className = 'sl-filter-select';
-        links.forEach(function (a) {
-          var opt = document.createElement('option');
-          opt.value = a.getAttribute('href') || '';
-          opt.textContent = (a.textContent || '').trim();
-          if (a.parentElement && a.parentElement.classList.contains('selected')) {
-            opt.selected = true;
-          }
-          select.appendChild(opt);
-        });
-        select.setAttribute('aria-label', title || 'Filter');
-        select.addEventListener('change', function () {
-          if (this.value) window.location.href = this.value;
-        });
-        wrap.appendChild(select);
-        host.appendChild(wrap);
-      }
-
-      if (usedFallback) {
-        blocks.forEach(function (h3) {
-          var links = [];
-          var node = h3.nextElementSibling;
-          while (node && node.tagName !== 'H3') {
-            links = links.concat(Array.from(node.querySelectorAll('a')));
-            node = node.nextElementSibling;
-          }
-          appendSelect((h3.textContent || '').trim(), links);
-        });
-      } else {
-        blocks.forEach(function (block) {
-          var titleEl = block.querySelector('h3, summary');
-          var links = Array.from(block.querySelectorAll('a'));
-          appendSelect(titleEl ? titleEl.textContent.trim() : 'Filter', links);
-        });
-      }
-
-      if (host.children.length) {
-        original.classList.add('sl-filter-hide');
-      }
-    });
-  </script>
+  <script>document.addEventListener('DOMContentLoaded', function(){ var original = document.getElementById('changelist-filter'); if(original){ original.classList.add('sl-filter-hide'); } });</script>
   {% endif %}
 {% endblock %}
 

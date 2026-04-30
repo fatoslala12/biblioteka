@@ -246,11 +246,11 @@
       <ul class="object-tools d-flex flex-wrap gap-2 align-items-center m-0 p-0">
         <li>
           <div class="sl-quick-filters">
-            <a href="?status__exact=APPROVED" class="{% if current_scope == 'APPROVED' %}is-active{% endif %}">Aprovuar</a>
-            <a href="?status__exact=BORROWED" class="{% if current_scope == 'BORROWED' %}is-active{% endif %}">Huazuar</a>
-            <a href="?status__exact=EXPIRED" class="{% if current_scope == 'EXPIRED' %}is-active{% endif %}">Skaduar</a>
-            <a href="?status__exact=CANCELLED" class="{% if current_scope == 'CANCELLED' %}is-active{% endif %}">Anuluar</a>
-            <a href="?status__exact=ALL" class="{% if current_scope == 'ALL' %}is-active{% endif %}">Të gjithë</a>
+            <a href="{{ reservation_scope_urls.approved }}" class="{% if current_scope == 'APPROVED' %}is-active{% endif %}">Aktiv</a>
+            <a href="{{ reservation_scope_urls.borrowed }}" class="{% if current_scope == 'BORROWED' %}is-active{% endif %}">Huazuar</a>
+            <a href="{{ reservation_scope_urls.expired }}" class="{% if current_scope == 'EXPIRED' %}is-active{% endif %}">Skaduar</a>
+            <a href="{{ reservation_scope_urls.cancelled }}" class="{% if current_scope == 'CANCELLED' %}is-active{% endif %}">Anuluar</a>
+            <a href="{{ reservation_scope_urls.all }}" class="{% if current_scope == 'ALL' %}is-active{% endif %}">Të gjithë</a>
           </div>
         </li>
         <li>

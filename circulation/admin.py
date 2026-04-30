@@ -217,7 +217,7 @@ class LoanAdmin(admin.ModelAdmin):
         elif status_in:
             status_qs = qs
         else:
-            status_qs = qs
+            status_qs = qs.filter(status="ACTIVE")
 
         if book_id_exact.isdigit():
             status_qs = status_qs.filter(copy__book_id=int(book_id_exact))
@@ -476,12 +476,17 @@ class LoanAdmin(admin.ModelAdmin):
     @admin.display(description="Koha")
     def time_status_badge(self, obj: Loan):
         is_late = obj.status == "ACTIVE" and obj.due_at < timezone.now()
+        returned_late = (
+            obj.status == "RETURNED"
+            and obj.returned_at is not None
+            and obj.returned_at > obj.due_at
+        )
         returned_early = (
             obj.status == "RETURNED"
             and obj.returned_at is not None
             and obj.returned_at < obj.due_at
         )
-        if is_late:
+        if is_late or returned_late:
             return format_html(
                 '<span title="Me vonesë" style="display:inline-flex;width:16px;height:16px;border-radius:999px;background:#e74c3c;"></span>'
             )
@@ -739,7 +744,7 @@ class LoanAdmin(admin.ModelAdmin):
         elif status_in:
             current_scope = "ALL"
         else:
-            current_scope = "ALL"
+            current_scope = "ACTIVE"
         source_isnull = (request.GET.get("from_reservation__isnull") or "").strip()
         if source_isnull == "False":
             current_source = "RESERVATION"
@@ -987,14 +992,27 @@ class ReservationAdmin(admin.ModelAdmin):
 
     actions = None
 
+    def lookup_allowed(self, lookup, value, request):
+        if lookup in {"reservation_scope"}:
+            return True
+        return super().lookup_allowed(lookup, value, request)
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        scope = (request.GET.get("status__exact") or "ALL").upper()
+        scope = (request.GET.get("reservation_scope") or "").upper()
+        if not scope:
+            status_exact = (request.GET.get("status__exact") or "").upper()
+            if status_exact in ("APPROVED", "BORROWED", "EXPIRED", "CANCELLED"):
+                scope = status_exact
+            elif status_exact == "ALL":
+                scope = "ALL"
+            else:
+                scope = "APPROVED"
         if scope == "ALL":
             return qs
         if scope in ("APPROVED", "BORROWED", "EXPIRED", "CANCELLED"):
             return qs.filter(status=scope)
-        return qs
+        return qs.filter(status="APPROVED")
 
     @admin.display(description="Anëtari")
     def member_display(self, obj: Reservation):
@@ -1245,14 +1263,35 @@ class ReservationAdmin(admin.ModelAdmin):
             "pickup_date": timezone.now().date(),
             "return_date": (timezone.now() + timezone.timedelta(days=7)).date(),
         }
-        current_scope = (request.GET.get("status__exact") or "ALL").upper()
+        current_scope = (request.GET.get("reservation_scope") or "").upper()
+        if not current_scope:
+            status_exact = (request.GET.get("status__exact") or "").upper()
+            if status_exact in ("APPROVED", "BORROWED", "EXPIRED", "CANCELLED"):
+                current_scope = status_exact
+            elif status_exact == "ALL":
+                current_scope = "ALL"
+            else:
+                current_scope = "APPROVED"
         if current_scope not in ("APPROVED", "BORROWED", "EXPIRED", "CANCELLED", "ALL"):
-            current_scope = "ALL"
+            current_scope = "APPROVED"
+        keep_keys = ("q", "o", "ot")
+        base_params = {}
+        for k in keep_keys:
+            vals = request.GET.getlist(k)
+            if vals:
+                base_params[k] = vals
+
+        reservation_scope_urls = {}
+        for scope in ("APPROVED", "BORROWED", "EXPIRED", "CANCELLED", "ALL"):
+            qp = {k: list(v) for k, v in base_params.items()}
+            qp["reservation_scope"] = [scope]
+            reservation_scope_urls[scope.lower()] = "?" + urlencode(qp, doseq=True)
         ctx = {
             "quick_res_form": self.QuickReservationForm(initial=initial),
             "quick_res_api_url": "/admin/circulation/reservation/shto-rezervim/api/",
             "quick_res_create_url": "/admin/circulation/reservation/shto-rezervim/krijo/",
             "current_scope": current_scope,
+            "reservation_scope_urls": reservation_scope_urls,
             "reservation_grace_days": int(policy.reservation_grace_days or 0),
             "reservation_warning_hours": int(policy.reservation_warning_hours or 0),
             "export_excel_url": "/admin/circulation/reservation/eksporto-excel/" + ("?" + request.GET.urlencode() if request.GET else ""),
@@ -1388,14 +1427,27 @@ class ReservationRequestAdmin(admin.ModelAdmin):
 
     actions = None
 
+    def lookup_allowed(self, lookup, value, request):
+        if lookup in {"request_scope"}:
+            return True
+        return super().lookup_allowed(lookup, value, request)
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        scope = (request.GET.get("status__exact") or "ALL").upper()
+        scope = (request.GET.get("request_scope") or "").upper()
+        if not scope:
+            status_exact = (request.GET.get("status__exact") or "").upper()
+            if status_exact in ("PENDING", "APPROVED", "REJECTED", "CANCELLED"):
+                scope = status_exact
+            elif status_exact == "ALL":
+                scope = "ALL"
+            else:
+                scope = "PENDING"
         if scope == "ALL":
             return qs
         if scope in ("PENDING", "APPROVED", "REJECTED", "CANCELLED"):
             return qs.filter(status=scope)
-        return qs
+        return qs.filter(status="PENDING")
 
     @admin.display(description="Anëtari")
     def member_display(self, obj: ReservationRequest):
@@ -1578,14 +1630,35 @@ class ReservationRequestAdmin(admin.ModelAdmin):
             "pickup_date": timezone.now().date(),
             "return_date": (timezone.now() + timezone.timedelta(days=7)).date(),
         }
-        current_scope = (request.GET.get("status__exact") or "ALL").upper()
-        if current_scope not in ("PENDING", "APPROVED", "REJECTED", "CANCELLED", "ALL"):
-            current_scope = "ALL"
+        current_scope = (request.GET.get("request_scope") or "").upper()
+        if not current_scope:
+            status_exact = (request.GET.get("status__exact") or "").upper()
+            if status_exact in ("PENDING", "APPROVED", "REJECTED", "CANCELLED"):
+                current_scope = status_exact
+            elif status_exact == "ALL":
+                current_scope = "ALL"
+            else:
+                current_scope = "PENDING"
+        if current_scope not in ("PENDING", "APPROVED", "REJECTED", "ALL"):
+            current_scope = "PENDING"
+        keep_keys = ("q", "o", "ot")
+        base_params = {}
+        for k in keep_keys:
+            vals = request.GET.getlist(k)
+            if vals:
+                base_params[k] = vals
+
+        request_scope_urls = {}
+        for scope in ("PENDING", "APPROVED", "REJECTED", "ALL"):
+            qp = {k: list(v) for k, v in base_params.items()}
+            qp["request_scope"] = [scope]
+            request_scope_urls[scope.lower()] = "?" + urlencode(qp, doseq=True)
         ctx = {
             "quick_req_form": self.QuickReservationRequestForm(initial=initial),
             "quick_req_api_url": "/admin/circulation/reservationrequest/shto-kerkese/api/",
             "quick_req_create_url": "/admin/circulation/reservationrequest/shto-kerkese/krijo/",
             "current_scope": current_scope,
+            "request_scope_urls": request_scope_urls,
         }
         if extra_context:
             ctx.update(extra_context)

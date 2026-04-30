@@ -159,11 +159,10 @@
       <ul class="object-tools d-flex flex-wrap gap-2 align-items-center m-0 p-0">
         <li>
           <div class="sl-quick-filters">
-            <a href="?status__exact=PENDING" class="{% if current_scope == 'PENDING' %}is-active{% endif %}">Në pritje</a>
-            <a href="?status__exact=APPROVED" class="{% if current_scope == 'APPROVED' %}is-active{% endif %}">Pranuar</a>
-            <a href="?status__exact=REJECTED" class="{% if current_scope == 'REJECTED' %}is-active{% endif %}">Refuzuar</a>
-            <a href="?status__exact=CANCELLED" class="{% if current_scope == 'CANCELLED' %}is-active{% endif %}">Anuluar</a>
-            <a href="?status__exact=ALL" class="{% if current_scope == 'ALL' %}is-active{% endif %}">Të gjithë</a>
+            <a href="{{ request_scope_urls.pending }}" class="{% if current_scope == 'PENDING' %}is-active{% endif %}">Në pritje</a>
+            <a href="{{ request_scope_urls.approved }}" class="{% if current_scope == 'APPROVED' %}is-active{% endif %}">Pranuar</a>
+            <a href="{{ request_scope_urls.rejected }}" class="{% if current_scope == 'REJECTED' %}is-active{% endif %}">Refuzuar</a>
+            <a href="{{ request_scope_urls.all }}" class="{% if current_scope == 'ALL' %}is-active{% endif %}">Të gjithë</a>
           </div>
         </li>
         <li>

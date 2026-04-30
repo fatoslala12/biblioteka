@@ -218,12 +218,20 @@ class MemberProfileAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        scope = (request.GET.get("member_scope") or "ACTIVE").upper()
-        if scope == "ALL":
-            return qs
-        if scope in ("ACTIVE", "SUSPENDED", "BLOCKED"):
-            return qs.filter(status=scope)
-        return qs.filter(status="ACTIVE")
+        status = (request.GET.get("member_status") or "").strip().upper() or "ALL"
+        mtype = (request.GET.get("member_type_filter") or "").strip().upper() or "ALL"
+
+        # Backward compatibility for old quick scope links.
+        legacy_scope = (request.GET.get("member_scope") or "").strip().upper()
+        if legacy_scope and status == "ALL":
+            if legacy_scope in ("ACTIVE", "SUSPENDED", "BLOCKED"):
+                status = legacy_scope
+
+        if status in ("ACTIVE", "SUSPENDED", "BLOCKED"):
+            qs = qs.filter(status=status)
+        if mtype in ("STANDARD", "STUDENT", "VIP"):
+            qs = qs.filter(member_type=mtype)
+        return qs
 
     @admin.display(description="Anëtari")
     def member_display(self, obj: MemberProfile):
@@ -283,12 +291,30 @@ class MemberProfileAdmin(admin.ModelAdmin):
         return custom + urls
 
     def changelist_view(self, request, extra_context=None):
-        current_scope = (request.GET.get("member_scope") or "ACTIVE").upper()
-        if current_scope not in ("ACTIVE", "SUSPENDED", "BLOCKED", "ALL"):
-            current_scope = "ACTIVE"
+        status = (request.GET.get("member_status") or "").strip().upper() or "ALL"
+        mtype = (request.GET.get("member_type_filter") or "").strip().upper() or "ALL"
+        if status not in ("ALL", "ACTIVE", "SUSPENDED", "BLOCKED"):
+            status = "ALL"
+        if mtype not in ("ALL", "STANDARD", "STUDENT", "VIP"):
+            mtype = "ALL"
+        status_options = [
+            {"display": "", "query_string": f"?member_status=ALL&member_type_filter={mtype}", "selected": status == "ALL"},
+            {"display": "Aktiv", "query_string": f"?member_status=ACTIVE&member_type_filter={mtype}", "selected": status == "ACTIVE"},
+            {"display": "Pezulluar", "query_string": f"?member_status=SUSPENDED&member_type_filter={mtype}", "selected": status == "SUSPENDED"},
+            {"display": "Bllokuar", "query_string": f"?member_status=BLOCKED&member_type_filter={mtype}", "selected": status == "BLOCKED"},
+        ]
+        type_options = [
+            {"display": "", "query_string": f"?member_status={status}&member_type_filter=ALL", "selected": mtype == "ALL"},
+            {"display": "Standard", "query_string": f"?member_status={status}&member_type_filter=STANDARD", "selected": mtype == "STANDARD"},
+            {"display": "Student", "query_string": f"?member_status={status}&member_type_filter=STUDENT", "selected": mtype == "STUDENT"},
+            {"display": "VIP", "query_string": f"?member_status={status}&member_type_filter=VIP", "selected": mtype == "VIP"},
+        ]
         ctx = {
-            "current_scope": current_scope,
             "quick_member_create_url": "/admin/accounts/memberprofile/shto-anetar/krijo/",
+            "sl_member_filter_dropdowns": [
+                {"title": "Status", "options": status_options},
+                {"title": "Lloji anëtarit", "options": type_options},
+            ],
         }
         if extra_context:
             ctx.update(extra_context)

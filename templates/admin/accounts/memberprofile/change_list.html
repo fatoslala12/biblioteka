@@ -37,44 +37,59 @@
       flex: 1 1 auto !important;
       min-width: 320px !important;
     }
-    .app-accounts.model-memberprofile.change-list .sl-quick-filters {
-      display:flex;
-      align-items:center;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      width:100%;
-      gap:10px;
-      margin:0;
+    .app-accounts.model-memberprofile.change-list .sl-filters-top {
+      margin-top: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+      padding: 14px;
     }
-    .app-accounts.model-memberprofile.change-list .sl-quick-filters a {
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-height:38px;
-      border-radius:999px;
-      padding:8px 16px;
-      font-weight:800;
-      font-size:12px;
-      letter-spacing:.01em;
-      white-space:nowrap;
-      border:1px solid rgba(148,163,184,.24);
-      color:#475569;
-      background:#eef2f6;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
-      transition:all .18s ease;
+    .app-accounts.model-memberprofile.change-list .sl-filters-top-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 8px;
+      text-align: center;
+      width: 100%;
     }
-    .app-accounts.model-memberprofile.change-list .sl-quick-filters a.is-active {
-      color:#fff;
-      background:linear-gradient(135deg, #319189, #2b7f78);
-      border-color:transparent;
-      box-shadow:0 10px 18px rgba(49,145,137,.22);
+    .app-accounts.model-memberprofile.change-list .sl-filters-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
     }
-    .app-accounts.model-memberprofile.change-list .sl-quick-filters a:hover {
-      color:#0f172a;
-      background:#e2e8f0;
-      border-color:rgba(49,145,137,.18);
-      transform:translateY(-1px);
+    .app-accounts.model-memberprofile.change-list .sl-filter-block {
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 12px;
+      padding: 8px;
+      background: #fff;
+    }
+    .app-accounts.model-memberprofile.change-list .sl-filter-label {
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .04em;
+      color: #475569;
+      text-transform: uppercase;
+      margin: 0 0 6px 0;
+    }
+    .app-accounts.model-memberprofile.change-list .sl-filter-select {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      min-height: 36px;
+      padding: 7px 10px;
+      font-weight: 700;
+      font-size: .82rem;
+      color: #334155;
+      background: #fff;
+      outline: none;
+    }
+    .app-accounts.model-memberprofile.change-list .sl-filter-select:focus {
+      border-color: rgba(49,145,137,.75);
+      box-shadow: 0 0 0 3px rgba(49,145,137,.15);
     }
     .app-accounts.model-memberprofile.change-list #changelist-filter { display:none !important; }
     .app-accounts.model-memberprofile.change-list #result_list thead th,
@@ -103,8 +118,9 @@
         width: 100% !important;
         min-width: 0 !important;
       }
-      .app-accounts.model-memberprofile.change-list .sl-quick-filters {
-        justify-content:flex-start !important;
+      .app-accounts.model-memberprofile.change-list .sl-filters-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
       }
     }
 
@@ -120,59 +136,31 @@
 {% block search %}
   <div class="col-12 pb-4" id="change-list-filters">
     <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
-      <form id="changelist-search" class="d-flex flex-wrap gap-2 align-items-center flex-grow-1" method="GET">
-        {% if cl.search_fields %}
-          <input class="form-control" style="width: auto; min-width: 260px;" type="text" name="q" value="{{ cl.query }}" id="searchbar"
-              {% if cl.search_help_text %} placeholder="{{ cl.search_help_text }}{% endif %}>
-        {% endif %}
-
-        {% if cl.search_fields %}
-          <button type="submit" class="btn btn-primary">{% trans 'Kërko' %}</button>
-          {% if show_result_count %}
-            <span class="small quiet ms-2">
-              {% blocktrans count counter=cl.result_count %}{{ counter }} result{% plural %}{{ counter }} results{% endblocktrans %}
-              (<a href="?{% if cl.is_popup %}_popup=1{% endif %}">
-                {% if cl.show_full_result_count %}
-                  {% blocktrans with full_result_count=cl.full_result_count %}{{ full_result_count }} total{% endblocktrans %}
-                {% else %}
-                  {% trans "Show all" %}
-                {% endif %}
-              </a>)
-            </span>
-          {% endif %}
-          {% admin_extra_filters cl as extra_filters %}
-          {% for pair in extra_filters.items %}
-            {% if pair.0 != "q" %}<input type="hidden" name="{{ pair.0 }}" value="{{ pair.1 }}">{% endif %}
-          {% endfor %}
-        {% endif %}
-      </form>
-
       <ul class="object-tools d-flex flex-wrap gap-2 align-items-center m-0 p-0">
-        <li>
-          <div class="sl-quick-filters">
-            <a href="?member_scope=ACTIVE" class="{% if current_scope == 'ACTIVE' %}is-active{% endif %}">Aktivë</a>
-            <a href="?member_scope=SUSPENDED" class="{% if current_scope == 'SUSPENDED' %}is-active{% endif %}">Pezulluar</a>
-            <a href="?member_scope=BLOCKED" class="{% if current_scope == 'BLOCKED' %}is-active{% endif %}">Bllokuar</a>
-            <a href="?member_scope=ALL" class="{% if current_scope == 'ALL' %}is-active{% endif %}">Të gjithë</a>
-          </div>
-        </li>
         <li>
           <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quickMemberModal">Shto anëtar</a>
         </li>
       </ul>
     </div>
   </div>
+  <div class="sl-filters-top">
+    <div class="sl-filters-top-title">🔎 Filtro dhe Rregullo</div>
+    <div class="sl-filters-grid">
+      {% for item in sl_member_filter_dropdowns %}
+      <div class="sl-filter-block">
+        <label class="sl-filter-label">{{ item.title }}</label>
+        <select class="sl-filter-select" onchange="if(this.value){window.location.href=this.value;}">
+          {% for opt in item.options %}
+          <option value="{{ opt.query_string }}" {% if opt.selected %}selected{% endif %}>{{ opt.display|default:'' }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
 {% endblock %}
 
 {% block object-tools-items %}
-  <li>
-    <div class="sl-quick-filters">
-      <a href="?member_scope=ACTIVE" class="{% if current_scope == 'ACTIVE' %}is-active{% endif %}">Aktivë</a>
-      <a href="?member_scope=SUSPENDED" class="{% if current_scope == 'SUSPENDED' %}is-active{% endif %}">Pezulluar</a>
-      <a href="?member_scope=BLOCKED" class="{% if current_scope == 'BLOCKED' %}is-active{% endif %}">Bllokuar</a>
-      <a href="?member_scope=ALL" class="{% if current_scope == 'ALL' %}is-active{% endif %}">Të gjithë</a>
-    </div>
-  </li>
   <li>
     <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#quickMemberModal">Shto anëtar</a>
   </li>

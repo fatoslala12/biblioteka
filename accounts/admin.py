@@ -118,7 +118,20 @@ class UserAdmin(DjangoUserAdmin):
             current_scope = "ACTIVE"
         if current_scope not in ("ACTIVE", "INACTIVE", "ADMIN", "STAFF", "MEMBER", "ALL"):
             current_scope = "ACTIVE"
-        ctx = {"current_scope": current_scope}
+        filter_options = [
+            {"display": "", "query_string": "?user_scope=ALL", "selected": current_scope == "ALL"},
+            {"display": "Aktivë", "query_string": "?user_scope=ACTIVE", "selected": current_scope == "ACTIVE"},
+            {"display": "Të çaktivizuar", "query_string": "?user_scope=INACTIVE", "selected": current_scope == "INACTIVE"},
+            {"display": "Admin", "query_string": "?user_scope=ADMIN", "selected": current_scope == "ADMIN"},
+            {"display": "Staf", "query_string": "?user_scope=STAFF", "selected": current_scope == "STAFF"},
+            {"display": "Anëtarë", "query_string": "?user_scope=MEMBER", "selected": current_scope == "MEMBER"},
+        ]
+        ctx = {
+            "current_scope": current_scope,
+            "sl_user_filter_dropdowns": [
+                {"title": "Status / Rol", "options": filter_options},
+            ],
+        }
         if extra_context:
             ctx.update(extra_context)
         return super().changelist_view(request, extra_context=ctx)

@@ -76,6 +76,71 @@
       border-color:rgba(49,145,137,.18);
       transform:translateY(-1px);
     }
+    .app-accounts.model-user.change-list .sl-filters-top {
+      margin-top: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+      padding: 14px;
+    }
+    .app-accounts.model-user.change-list .sl-filters-top-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 8px;
+      text-align: center;
+      width: 100%;
+    }
+    .app-accounts.model-user.change-list .sl-filters-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .app-accounts.model-user.change-list .sl-filter-block {
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 12px;
+      padding: 8px;
+      background: #fff;
+    }
+    .app-accounts.model-user.change-list .sl-filter-label {
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .04em;
+      color: #475569;
+      text-transform: uppercase;
+      margin: 0 0 6px 0;
+    }
+    .app-accounts.model-user.change-list .sl-filter-input {
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      min-height: 36px;
+      padding: 7px 10px;
+      font-weight: 700;
+      color: #334155;
+      background: #fff;
+      width: 100%;
+    }
+    .app-accounts.model-user.change-list .sl-filter-input:focus {
+      border-color: rgba(49,145,137,.75);
+      box-shadow: 0 0 0 3px rgba(49,145,137,.15);
+      outline: none;
+    }
+    .app-accounts.model-user.change-list .sl-filter-select-mobile {
+      display: none;
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      min-height: 36px;
+      padding: 7px 10px;
+      font-weight: 700;
+      font-size: .82rem;
+      color: #334155;
+      background: #fff;
+    }
     .app-accounts.model-user.change-list #changelist-filter { display:none !important; }
     .app-accounts.model-user.change-list #result_list thead th,
     .app-accounts.model-user.change-list #result_list thead th a { color:#0f172a !important; font-weight:900 !important; }
@@ -94,6 +159,17 @@
       line-height:1.2 !important;
     }
     @media (max-width: 991.98px) {
+      .app-accounts.model-user.change-list .sl-filters-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .app-accounts.model-user.change-list .sl-filters-top {
+        padding: 12px;
+      }
+      .app-accounts.model-user.change-list .sl-filters-top-title {
+        font-size: .95rem;
+        margin-bottom: 10px;
+      }
       .app-accounts.model-user.change-list #changelist-search {
         max-width: none !important;
         width: 100% !important;
@@ -105,6 +181,18 @@
       }
       .app-accounts.model-user.change-list .sl-quick-filters {
         justify-content:flex-start !important;
+      }
+    }
+    @media (max-width: 575.98px) {
+      .app-accounts.model-user.change-list .sl-filters-grid {
+        grid-template-columns: 1fr;
+        gap: 7px;
+      }
+      .app-accounts.model-user.change-list .sl-filter-input {
+        display: none;
+      }
+      .app-accounts.model-user.change-list .sl-filter-select-mobile {
+        display: block;
       }
     }
     .sl-pass-modal .modal-content { border-radius:18px; overflow:hidden; background:rgba(255,255,255,.985); border:1px solid rgba(255,255,255,.78); box-shadow:0 24px 55px rgba(15,23,42,.24); }
@@ -157,6 +245,49 @@
           </div>
         </li>
       </ul>
+    </div>
+  </div>
+  <div class="sl-filters-top">
+    <div class="sl-filters-top-title">🔎 Filtro dhe Rregullo</div>
+    <div class="sl-filters-grid">
+      {% for item in sl_user_filter_dropdowns %}
+      <div class="sl-filter-block">
+        <label class="sl-filter-label">{{ item.title }}</label>
+        <input
+          type="text"
+          class="sl-filter-input"
+          list="sl-user-list-{{ forloop.counter }}"
+          placeholder="Kërko..."
+          {% for opt in item.options %}
+            {% if opt.selected %}value="{{ opt.display|default:'' }}"{% endif %}
+          {% endfor %}
+          onchange="(function(input){
+            var list = document.getElementById(input.getAttribute('list'));
+            if(!list){return;}
+            var value = (input.value || '').trim().toLowerCase();
+            var exact = null;
+            var partial = null;
+            Array.from(list.options).forEach(function(o){
+              var txt = (o.value || '').trim().toLowerCase();
+              if(txt === value){ exact = o; }
+              if(!partial && value && txt.indexOf(value) !== -1){ partial = o; }
+            });
+            var chosen = exact || partial;
+            if(chosen && chosen.dataset.url){ window.location.href = chosen.dataset.url; }
+          })(this)"
+        />
+        <select class="sl-filter-select-mobile" onchange="if(this.value){window.location.href=this.value;}">
+          {% for opt in item.options %}
+          <option value="{{ opt.query_string }}" {% if opt.selected %}selected{% endif %}>{{ opt.display|default:'' }}</option>
+          {% endfor %}
+        </select>
+        <datalist id="sl-user-list-{{ forloop.counter }}">
+          {% for opt in item.options %}
+          <option value="{{ opt.display|default:'' }}" data-url="{{ opt.query_string }}"></option>
+          {% endfor %}
+        </datalist>
+      </div>
+      {% endfor %}
     </div>
   </div>
 {% endblock %}

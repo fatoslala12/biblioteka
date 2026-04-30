@@ -35,6 +35,14 @@
   --sl-ring-focus: 0 0 0 3px rgba(49, 145, 137, 0.22);
 }
 
+/* Stable admin refresh: disable visual stagger/flicker effects */
+body:not(.login-page) *,
+body:not(.login-page) *::before,
+body:not(.login-page) *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
 /* Global typography */
 body,
 .content-wrapper,

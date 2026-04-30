@@ -1,7 +1,7 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.db.models import Count, Q
-from django.http import HttpRequest, JsonResponse
-from django.urls import path
+from django.http import HttpRequest, HttpResponseRedirect, JsonResponse
+from django.urls import path, reverse
 from django.utils.html import format_html
 from django.utils.http import urlencode
 from django.utils.safestring import mark_safe
@@ -89,13 +89,117 @@ class BookAdmin(admin.ModelAdmin):
                 return queryset.filter(genres__id=self.value())
             return queryset
 
+    class LanguageFilter(admin.SimpleListFilter):
+        title = "Gjuha"
+        parameter_name = "language_value"
+
+        def lookups(self, request, model_admin):
+            values = (
+                Book.objects.exclude(language__exact="")
+                .exclude(language__isnull=True)
+                .values_list("language", flat=True)
+                .distinct()
+                .order_by("language")
+            )
+            return [(v, v) for v in values]
+
+        def queryset(self, request, queryset):
+            if self.value():
+                return queryset.filter(language=self.value())
+            return queryset
+
+    class HasISBNFilter(admin.SimpleListFilter):
+        title = "ISBN"
+        parameter_name = "has_isbn"
+
+        def lookups(self, request, model_admin):
+            return (("yes", "Ka ISBN"), ("no", "Pa ISBN"))
+
+        def queryset(self, request, queryset):
+            if self.value() == "yes":
+                return queryset.exclude(isbn__exact="")
+            if self.value() == "no":
+                return queryset.filter(isbn__exact="")
+            return queryset
+
+    class HasCoverFilter(admin.SimpleListFilter):
+        title = "Kopertina"
+        parameter_name = "has_cover"
+
+        def lookups(self, request, model_admin):
+            return (("yes", "Ka kopertinë"), ("no", "Pa kopertinë"))
+
+        def queryset(self, request, queryset):
+            if self.value() == "yes":
+                return queryset.exclude(cover_image__isnull=True).exclude(cover_image__exact="")
+            if self.value() == "no":
+                return queryset.filter(Q(cover_image__isnull=True) | Q(cover_image__exact=""))
+            return queryset
+
+    class PriceRangeFilter(admin.SimpleListFilter):
+        title = "Çmimi"
+        parameter_name = "price_range"
+
+        def lookups(self, request, model_admin):
+            return (
+                ("none", "Pa çmim"),
+                ("lte_500", "0–500"),
+                ("500_1000", "500–1000"),
+                ("1000_2000", "1000–2000"),
+                ("gt_2000", ">2000"),
+            )
+
+        def queryset(self, request, queryset):
+            value = self.value()
+            if value == "none":
+                return queryset.filter(price__isnull=True)
+            if value == "lte_500":
+                return queryset.filter(price__isnull=False, price__lte=500)
+            if value == "500_1000":
+                return queryset.filter(price__gt=500, price__lte=1000)
+            if value == "1000_2000":
+                return queryset.filter(price__gt=1000, price__lte=2000)
+            if value == "gt_2000":
+                return queryset.filter(price__gt=2000)
+            return queryset
+
+    class CopyLoadFilter(admin.SimpleListFilter):
+        title = "Kopje"
+        parameter_name = "copy_load"
+
+        def lookups(self, request, model_admin):
+            return (
+                ("none", "Pa kopje"),
+                ("low", "1–2 kopje"),
+                ("medium", "3–10 kopje"),
+                ("high", ">10 kopje"),
+                ("available", "Ka kopje të lira"),
+                ("unavailable", "0 kopje të lira"),
+            )
+
+        def queryset(self, request, queryset):
+            value = self.value()
+            if value == "none":
+                return queryset.filter(_total_copies=0)
+            if value == "low":
+                return queryset.filter(_total_copies__gte=1, _total_copies__lte=2)
+            if value == "medium":
+                return queryset.filter(_total_copies__gte=3, _total_copies__lte=10)
+            if value == "high":
+                return queryset.filter(_total_copies__gt=10)
+            if value == "available":
+                return queryset.filter(_available_copies__gt=0)
+            if value == "unavailable":
+                return queryset.filter(_available_copies=0)
+            return queryset
+
     list_display = (
         "cover_preview",
         "title_display",
         "author_display",
         "isbn_display",
         "publication_year_display",
-        "book_type_display",
+        "genre_or_type_display",
         "is_recommended",
         "purchase_method_display",
         "price_display",
@@ -103,7 +207,23 @@ class BookAdmin(admin.ModelAdmin):
         "total_copies",
         "available_copies",
     )
-    list_filter = (AuthorFilter, PublisherFilter, PublicationYearFilter, GenreFilter, "purchase_method", "is_recommended")
+    list_filter = (
+        AuthorFilter,
+        PublisherFilter,
+        PublicationYearFilter,
+        GenreFilter,
+        "book_type",
+        LanguageFilter,
+        "purchase_method",
+        PriceRangeFilter,
+        "is_recommended",
+        HasISBNFilter,
+        HasCoverFilter,
+        CopyLoadFilter,
+        "is_deleted",
+        "created_at",
+        "updated_at",
+    )
     search_fields = ("title", "isbn", "publisher__name", "authors__name")
     autocomplete_fields = ("publisher", "authors", "genres", "tags")
     actions = None
@@ -116,6 +236,11 @@ class BookAdmin(admin.ModelAdmin):
             path("quick-create-related/", self.admin_site.admin_view(self.quick_create_related), name="catalog_book_quick_create_related"),
             path("import/", self.admin_site.admin_view(book_import), name="catalog_book_import"),
             path("import-sample/", self.admin_site.admin_view(book_import_sample), name="catalog_book_import_sample"),
+            path(
+                "delete-duplicates-by-title/",
+                self.admin_site.admin_view(self.delete_duplicates_by_title),
+                name="catalog_book_delete_duplicates_by_title",
+            ),
         ]
         return custom + urls
 
@@ -217,8 +342,14 @@ class BookAdmin(admin.ModelAdmin):
     def publication_year_display(self, obj: Book):
         return obj.publication_year or "—"
 
-    @admin.display(description="Lloji", ordering="book_type")
-    def book_type_display(self, obj: Book):
+    @admin.display(description="Zhanri / Lloji i librit")
+    def genre_or_type_display(self, obj: Book):
+        all_genres = list(obj.genres.all())
+        if all_genres:
+            names = [g.name for g in all_genres[:2]]
+            if len(all_genres) > 2:
+                return f"{', '.join(names)} +{len(all_genres) - 2}"
+            return ", ".join(names)
         return obj.get_book_type_display() if obj.book_type else "—"
 
     @admin.display(description="Mënyra e blerjes", ordering="purchase_method")
@@ -355,6 +486,37 @@ class BookAdmin(admin.ModelAdmin):
 
         obj, _ = Publisher.objects.get_or_create(name=name)
         return JsonResponse({"ok": True, "id": obj.id, "label": obj.name})
+
+    def delete_duplicates_by_title(self, request: HttpRequest):
+        if request.method != "POST":
+            return HttpResponseRedirect(reverse("admin:catalog_book_changelist"))
+
+        # Grupojmë sipas titullit (case-insensitive) dhe mbajmë librin më të vjetër;
+        # dublikatat i kalojmë në soft-delete për të mos prishur referencat ekzistuese.
+        seen_titles = {}
+        to_soft_delete_ids = []
+        books = Book.objects.filter(is_deleted=False).order_by("title", "id")
+        for book in books:
+            normalized = (book.title or "").strip().lower()
+            if not normalized:
+                continue
+            if normalized in seen_titles:
+                to_soft_delete_ids.append(book.id)
+            else:
+                seen_titles[normalized] = book.id
+
+        if not to_soft_delete_ids:
+            self.message_user(request, "Nuk u gjetën dublikata sipas titullit.", level=messages.INFO)
+            return HttpResponseRedirect(reverse("admin:catalog_book_changelist"))
+
+        updated = Book.objects.filter(id__in=to_soft_delete_ids).update(is_deleted=True)
+        Copy.objects.filter(book_id__in=to_soft_delete_ids).update(is_deleted=True)
+        self.message_user(
+            request,
+            f"U fshinë {updated} libra dublikatë (soft-delete) bazuar në titull.",
+            level=messages.SUCCESS,
+        )
+        return HttpResponseRedirect(reverse("admin:catalog_book_changelist"))
 
 
 BookAdmin.readonly_fields = getattr(BookAdmin, "readonly_fields", tuple()) + ("borrow_count", "borrow_history")

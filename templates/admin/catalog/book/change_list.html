@@ -253,6 +253,12 @@
         <li>
           <div class="sl-list-actions">
             <a href="/admin/catalog/book/" class="btn btn-outline-secondary">Pastro filtrat</a>
+            <form method="post" action="{% url 'admin:catalog_book_delete_duplicates_by_title' %}" class="d-inline" onsubmit="return confirm('Je i sigurt që do të fshish dublikatat sipas titullit?');">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-danger">
+                <i class="fas fa-trash-alt me-1"></i>Fshi dublikatat
+              </button>
+            </form>
             <a href="{% url 'admin:catalog_book_import_sample' %}" class="btn btn-outline-secondary">
               <i class="fas fa-download me-1"></i>Excel
             </a>
@@ -271,6 +277,12 @@
   <li>
     <div class="sl-list-actions">
       <a href="/admin/catalog/book/" class="btn btn-sm btn-outline-secondary">Pastro filtrat</a>
+      <form method="post" action="{% url 'admin:catalog_book_delete_duplicates_by_title' %}" class="d-inline" onsubmit="return confirm('Je i sigurt që do të fshish dublikatat sipas titullit?');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-outline-danger">
+          <i class="fas fa-trash-alt me-1"></i>Fshi dublikatat
+        </button>
+      </form>
       <a href="{% url 'admin:catalog_book_import_sample' %}" class="btn btn-sm btn-outline-secondary">
         <i class="fas fa-download me-1"></i>Excel
       </a>

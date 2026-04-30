@@ -29,6 +29,9 @@
       box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07) !important;
       padding: 12px !important;
     }
+    .app-catalog.model-book.change-list #changelist-filter.sl-filter-hide {
+      display: none !important;
+    }
     .app-catalog.model-book.change-list #changelist-filter h2 {
       border: 0 !important;
       background: transparent !important;
@@ -56,6 +59,46 @@
     .app-catalog.model-book.change-list #changelist-filter li a:hover {
       background: rgba(49,145,137,.12) !important;
       color: #0f766e !important;
+    }
+    .app-catalog.model-book.change-list .sl-filters-top {
+      margin-top: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+      padding: 14px;
+    }
+    .app-catalog.model-book.change-list .sl-filters-top-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 10px;
+    }
+    .app-catalog.model-book.change-list .sl-filters-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .app-catalog.model-book.change-list .sl-filter-select {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.36);
+      background: #fff;
+      min-height: 40px;
+      padding: 8px 10px;
+      font-weight: 700;
+      color: #334155;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .app-catalog.model-book.change-list .sl-filter-select:focus {
+      border-color: rgba(49,145,137,.75);
+      box-shadow: 0 0 0 3px rgba(49,145,137,.15);
+    }
+    .app-catalog.model-book.change-list .sl-filter-hide {
+      display: none !important;
     }
     .app-catalog.model-book.change-list #change-list-filters {
       padding-top: 10px !important;
@@ -168,6 +211,9 @@
       .app-catalog.model-book.change-list #changelist-filter {
         margin-top: 10px !important;
       }
+      .app-catalog.model-book.change-list .sl-filters-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
       .app-catalog.model-book.change-list #changelist-search {
         max-width: none !important;
         width: 100% !important;
@@ -248,6 +294,9 @@
       .app-catalog.model-book.change-list #changelist-search {
         grid-template-columns: 1fr !important;
       }
+      .app-catalog.model-book.change-list .sl-filters-grid {
+        grid-template-columns: 1fr;
+      }
       .app-catalog.model-book.change-list #changelist-search .btn,
       .app-catalog.model-book.change-list #changelist-search input[type="submit"] {
         width: 100% !important;
@@ -308,6 +357,23 @@
       </ul>
     </div>
   </div>
+  {% if cl.has_filters %}
+  <script>document.addEventListener('DOMContentLoaded', function(){ var el = document.getElementById('changelist-filter'); if(el){ el.classList.add('sl-filter-hide'); } });</script>
+  <div class="sl-filters-top">
+    <div class="sl-filters-top-title">🔎 Filtro dhe Rregullo</div>
+    <div class="sl-filters-grid">
+      {% for spec in cl.filter_specs %}
+      <div>
+        <select class="sl-filter-select" onchange="if(this.value){window.location.href=this.value;}">
+          {% for choice in spec.choices %}
+          <option value="{{ choice.query_string|iriencode }}" {% if choice.selected %}selected{% endif %}>{{ choice.display }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
 {% endblock %}
 
 {% block object-tools-items %}

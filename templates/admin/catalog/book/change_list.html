@@ -66,12 +66,15 @@
       padding: 14px;
     }
     .app-catalog.model-book.change-list .sl-filters-top-title {
-      display: inline-flex;
+      display: flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
       font-weight: 900;
       color: #0f172a;
       margin-bottom: 8px;
+      text-align: center;
+      width: 100%;
     }
     .app-catalog.model-book.change-list .sl-filter-input {
       border-radius: 10px;
@@ -239,6 +242,22 @@
       }
       .app-catalog.model-book.change-list .sl-filters-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .app-catalog.model-book.change-list .sl-filters-top {
+        padding: 12px;
+      }
+      .app-catalog.model-book.change-list .sl-filters-top-title {
+        font-size: .95rem;
+        margin-bottom: 10px;
+      }
+      .app-catalog.model-book.change-list .sl-filter-label {
+        font-size: .68rem;
+      }
+      .app-catalog.model-book.change-list .sl-filter-input {
+        min-height: 34px;
+        font-size: .8rem;
+        padding: 6px 8px;
       }
       .app-catalog.model-book.change-list #changelist-search {
         max-width: none !important;
@@ -322,6 +341,18 @@
       }
       .app-catalog.model-book.change-list .sl-filters-grid {
         grid-template-columns: 1fr;
+        gap: 7px;
+      }
+      .app-catalog.model-book.change-list .sl-filters-top {
+        border-radius: 14px;
+        padding: 10px;
+      }
+      .app-catalog.model-book.change-list .sl-filters-top-title {
+        font-size: .9rem;
+      }
+      .app-catalog.model-book.change-list .sl-filter-block {
+        border-radius: 10px;
+        padding: 7px;
       }
       .app-catalog.model-book.change-list #changelist-search .btn,
       .app-catalog.model-book.change-list #changelist-search input[type="submit"] {

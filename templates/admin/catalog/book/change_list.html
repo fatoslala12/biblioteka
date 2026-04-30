@@ -73,13 +73,7 @@
       color: #0f172a;
       margin-bottom: 8px;
     }
-    .app-catalog.model-book.change-list .sl-author-search {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    .app-catalog.model-book.change-list .sl-author-search input {
+    .app-catalog.model-book.change-list .sl-filter-input {
       border-radius: 10px;
       border: 1px solid rgba(148, 163, 184, 0.35);
       min-height: 36px;
@@ -87,11 +81,12 @@
       font-weight: 700;
       color: #334155;
       background: #fff;
+      width: 100%;
     }
-    .app-catalog.model-book.change-list .sl-author-search .btn {
-      min-height: 36px !important;
-      border-radius: 10px !important;
-      font-weight: 800 !important;
+    .app-catalog.model-book.change-list .sl-filter-input:focus {
+      border-color: rgba(49,145,137,.75);
+      box-shadow: 0 0 0 3px rgba(49,145,137,.15);
+      outline: none;
     }
     .app-catalog.model-book.change-list .sl-filters-grid {
       display: grid;
@@ -245,9 +240,6 @@
       .app-catalog.model-book.change-list .sl-filters-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
-      .app-catalog.model-book.change-list .sl-author-search {
-        grid-template-columns: 1fr;
-      }
       .app-catalog.model-book.change-list #changelist-search {
         max-width: none !important;
         width: 100% !important;
@@ -397,24 +389,39 @@
   {% if cl.has_filters %}
   <div class="sl-filters-top">
     <div class="sl-filters-top-title">🔎 Filtro dhe Rregullo</div>
-    <form method="get" class="sl-author-search">
-      <input type="text" name="author_search" value="{{ request.GET.author_search|default:'' }}" placeholder="Kërko autorin (p.sh. Kadare)" />
-      <button type="submit" class="btn btn-sm btn-primary">Kërko autor</button>
-      {% for pair in cl.params.items %}
-        {% if pair.0 != "author_search" %}
-          <input type="hidden" name="{{ pair.0 }}" value="{{ pair.1 }}">
-        {% endif %}
-      {% endfor %}
-    </form>
     <div class="sl-filters-grid">
       {% for item in sl_filter_dropdowns %}
       <div class="sl-filter-block">
         <label class="sl-filter-label">{{ item.title }}</label>
-        <select class="sl-filter-select" onchange="if(this.value){window.location.href=this.value;}">
+        <input
+          type="text"
+          class="sl-filter-input"
+          list="sl-list-{{ forloop.counter }}"
+          placeholder="Kërko {{ item.title|lower }}..."
           {% for opt in item.options %}
-          <option value="{{ opt.query_string|iriencode }}" {% if opt.selected %}selected{% endif %}>{{ opt.display|striptags }}</option>
+            {% if opt.selected %}value="{{ opt.display|striptags }}"{% endif %}
           {% endfor %}
-        </select>
+          onchange="(function(input){
+            var list = document.getElementById(input.getAttribute('list'));
+            if(!list){return;}
+            var value = (input.value || '').trim().toLowerCase();
+            var exact = null;
+            var partial = null;
+            Array.from(list.options).forEach(function(o){
+              var txt = (o.value || '').trim().toLowerCase();
+              if(!txt){ return; }
+              if(txt === value){ exact = o; }
+              if(!partial && value && txt.indexOf(value) !== -1){ partial = o; }
+            });
+            var chosen = exact || partial;
+            if(chosen && chosen.dataset.url){ window.location.href = chosen.dataset.url; }
+          })(this)"
+        />
+        <datalist id="sl-list-{{ forloop.counter }}">
+          {% for opt in item.options %}
+          <option value="{{ opt.display|striptags }}" data-url="{{ opt.query_string|iriencode }}"></option>
+          {% endfor %}
+        </datalist>
       </div>
       {% endfor %}
     </div>

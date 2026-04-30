@@ -308,9 +308,6 @@ class BookAdmin(admin.ModelAdmin):
                 distinct=True,
             ),
         )
-        author_search = (request.GET.get("author_search") or "").strip()
-        if author_search:
-            qs = qs.filter(authors__name__icontains=author_search).distinct()
         return qs
 
     @admin.display(description="Titulli", ordering="title")

@@ -22,7 +22,41 @@
       font-size: 1.05rem;
       line-height: 1;
     }
-    .app-catalog.model-book.change-list #changelist-filter { display:none !important; }
+    .app-catalog.model-book.change-list #changelist-filter {
+      border-radius: 16px !important;
+      border: 1px solid rgba(148, 163, 184, 0.2) !important;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%) !important;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07) !important;
+      padding: 12px !important;
+    }
+    .app-catalog.model-book.change-list #changelist-filter h2 {
+      border: 0 !important;
+      background: transparent !important;
+      color: #0f172a !important;
+      font-weight: 900 !important;
+      font-size: .86rem !important;
+      text-transform: uppercase !important;
+      letter-spacing: .06em !important;
+      margin-bottom: 8px !important;
+    }
+    .app-catalog.model-book.change-list #changelist-filter h3 {
+      font-weight: 800 !important;
+      color: #334155 !important;
+      margin-top: 10px !important;
+      font-size: .82rem !important;
+    }
+    .app-catalog.model-book.change-list #changelist-filter li a {
+      display: block !important;
+      padding: 4px 8px !important;
+      border-radius: 8px !important;
+      color: #334155 !important;
+      font-weight: 700 !important;
+    }
+    .app-catalog.model-book.change-list #changelist-filter li.selected a,
+    .app-catalog.model-book.change-list #changelist-filter li a:hover {
+      background: rgba(49,145,137,.12) !important;
+      color: #0f766e !important;
+    }
     .app-catalog.model-book.change-list #change-list-filters {
       padding-top: 10px !important;
       border-radius: 16px !important;
@@ -131,6 +165,9 @@
       align-items: center !important;
     }
     @media (max-width: 991.98px) {
+      .app-catalog.model-book.change-list #changelist-filter {
+        margin-top: 10px !important;
+      }
       .app-catalog.model-book.change-list #changelist-search {
         max-width: none !important;
         width: 100% !important;

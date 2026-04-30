@@ -199,24 +199,22 @@ class BookAdmin(admin.ModelAdmin):
         "author_display",
         "isbn_display",
         "publication_year_display",
-        "genre_or_type_display",
-        "is_recommended",
+        "genre_display",
         "purchase_method_display",
         "price_display",
         "publisher_display",
         "total_copies",
         "available_copies",
     )
+    list_display_links = ("title_display",)
     list_filter = (
         AuthorFilter,
         PublisherFilter,
         PublicationYearFilter,
         GenreFilter,
-        "book_type",
         LanguageFilter,
         "purchase_method",
         PriceRangeFilter,
-        "is_recommended",
         HasISBNFilter,
         HasCoverFilter,
         CopyLoadFilter,
@@ -313,7 +311,8 @@ class BookAdmin(admin.ModelAdmin):
 
     @admin.display(description="Titulli", ordering="title")
     def title_display(self, obj: Book):
-        return obj.title
+        url = reverse("admin:catalog_book_change", args=[obj.id])
+        return format_html('<a href="{}" style="font-weight:900;">{}</a>', url, obj.title)
 
     @admin.display(description="Kopertina")
     def cover_preview(self, obj: Book):
@@ -342,15 +341,15 @@ class BookAdmin(admin.ModelAdmin):
     def publication_year_display(self, obj: Book):
         return obj.publication_year or "—"
 
-    @admin.display(description="Zhanri / Lloji i librit")
-    def genre_or_type_display(self, obj: Book):
+    @admin.display(description="Zhanri")
+    def genre_display(self, obj: Book):
         all_genres = list(obj.genres.all())
         if all_genres:
             names = [g.name for g in all_genres[:2]]
             if len(all_genres) > 2:
                 return f"{', '.join(names)} +{len(all_genres) - 2}"
             return ", ".join(names)
-        return obj.get_book_type_display() if obj.book_type else "—"
+        return "—"
 
     @admin.display(description="Mënyra e blerjes", ordering="purchase_method")
     def purchase_method_display(self, obj: Book):

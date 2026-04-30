@@ -1,6 +1,8 @@
+import csv
+
 from django.contrib import admin, messages
 from django.db.models import Count, Q
-from django.http import HttpRequest, HttpResponseRedirect, JsonResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import path, reverse
 from django.utils.html import format_html
 from django.utils.http import urlencode
@@ -234,6 +236,7 @@ class BookAdmin(admin.ModelAdmin):
             path("quick-create-related/", self.admin_site.admin_view(self.quick_create_related), name="catalog_book_quick_create_related"),
             path("import/", self.admin_site.admin_view(book_import), name="catalog_book_import"),
             path("import-sample/", self.admin_site.admin_view(book_import_sample), name="catalog_book_import_sample"),
+            path("extract/", self.admin_site.admin_view(self.extract_books), name="catalog_book_extract"),
             path(
                 "delete-duplicates-by-title/",
                 self.admin_site.admin_view(self.delete_duplicates_by_title),
@@ -516,6 +519,46 @@ class BookAdmin(admin.ModelAdmin):
             level=messages.SUCCESS,
         )
         return HttpResponseRedirect(reverse("admin:catalog_book_changelist"))
+
+    def extract_books(self, request: HttpRequest):
+        response = HttpResponse(content_type="text/csv; charset=utf-8")
+        response["Content-Disposition"] = 'attachment; filename="libra_extract.csv"'
+        writer = csv.writer(response)
+        writer.writerow(
+            [
+                "Titulli",
+                "Autoret",
+                "ISBN",
+                "Viti",
+                "Zhanret",
+                "Menyra e blerjes",
+                "Cmimi",
+                "Botuesi",
+                "Kopje totale",
+                "Kopje te lira",
+            ]
+        )
+        # Përdor të njëjtin queryset si changelist për të respektuar filtrat/kërkimin aktiv.
+        changelist = self.get_changelist_instance(request)
+        books = changelist.get_queryset(request).prefetch_related("genres")
+        for book in books:
+            authors = ", ".join(a.name for a in book.authors.all()) or "—"
+            genres = ", ".join(g.name for g in book.genres.all()) or "—"
+            writer.writerow(
+                [
+                    book.title,
+                    authors,
+                    book.isbn or "—",
+                    book.publication_year or "—",
+                    genres,
+                    book.get_purchase_method_display() if book.purchase_method else "—",
+                    f"{book.price:.2f}" if book.price is not None else "—",
+                    book.publisher.name if book.publisher_id else "—",
+                    getattr(book, "_total_copies", 0),
+                    getattr(book, "_available_copies", 0),
+                ]
+            )
+        return response
 
 
 BookAdmin.readonly_fields = getattr(BookAdmin, "readonly_fields", tuple()) + ("borrow_count", "borrow_history")

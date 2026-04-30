@@ -26,26 +26,28 @@ class UserAdmin(DjangoUserAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request).select_related("member_profile")
-        raw_scope = (request.GET.get("user_scope") or "").strip()
-        # Only apply our quick-filter when user_scope is explicitly set.
-        # Otherwise, let the default ChangeList filters/search behave normally.
-        if not raw_scope:
-            return qs
-        scope = raw_scope.upper()
-        if scope == "ALL":
-            return qs
-        if scope == "INACTIVE":
+        # New split filters (status + role) with backwards compatibility for legacy user_scope.
+        status = (request.GET.get("user_status") or "").strip().upper()
+        role = (request.GET.get("user_role") or "").strip().upper()
+        legacy_scope = (request.GET.get("user_scope") or "").strip().upper()
+        if legacy_scope and not status and not role:
+            if legacy_scope in {"ACTIVE", "INACTIVE"}:
+                status = legacy_scope
+            elif legacy_scope in {"ADMIN", "STAFF", "MEMBER"}:
+                role = legacy_scope
+
+        if status == "INACTIVE":
             return qs.filter(is_active=False)
-        if scope == "ADMIN":
-            # Prefer Django permissions flags for admins
+
+        # Default status = ACTIVE
+        qs = qs.filter(is_active=True)
+        if role == "ADMIN":
             return qs.filter(is_superuser=True)
-        if scope == "STAFF":
+        if role == "STAFF":
             return qs.filter(is_staff=True, is_superuser=False)
-        if scope == "MEMBER":
-            # Members are non-staff users
+        if role == "MEMBER":
             return qs.filter(is_staff=False, is_superuser=False, role="MEMBER")
-        # Default scope (ACTIVE)
-        return qs.filter(is_active=True)
+        return qs
 
     @admin.display(description="Përdoruesi")
     def user_display(self, obj: User):
@@ -113,23 +115,28 @@ class UserAdmin(DjangoUserAdmin):
         return custom + urls
 
     def changelist_view(self, request, extra_context=None):
-        current_scope = (request.GET.get("user_scope") or "").strip().upper()
-        if not current_scope:
-            current_scope = "ACTIVE"
-        if current_scope not in ("ACTIVE", "INACTIVE", "ADMIN", "STAFF", "MEMBER", "ALL"):
-            current_scope = "ACTIVE"
-        filter_options = [
-            {"display": "", "query_string": "?user_scope=ALL", "selected": current_scope == "ALL"},
-            {"display": "Aktivë", "query_string": "?user_scope=ACTIVE", "selected": current_scope == "ACTIVE"},
-            {"display": "Të çaktivizuar", "query_string": "?user_scope=INACTIVE", "selected": current_scope == "INACTIVE"},
-            {"display": "Admin", "query_string": "?user_scope=ADMIN", "selected": current_scope == "ADMIN"},
-            {"display": "Staf", "query_string": "?user_scope=STAFF", "selected": current_scope == "STAFF"},
-            {"display": "Anëtarë", "query_string": "?user_scope=MEMBER", "selected": current_scope == "MEMBER"},
+        status = (request.GET.get("user_status") or "").strip().upper() or "ACTIVE"
+        role = (request.GET.get("user_role") or "").strip().upper() or "ALL"
+        if status not in ("ACTIVE", "INACTIVE"):
+            status = "ACTIVE"
+        if role not in ("ALL", "ADMIN", "STAFF", "MEMBER"):
+            role = "ALL"
+
+        status_options = [
+            {"display": "", "query_string": "?user_status=ACTIVE&user_role={}".format(role), "selected": status == "ACTIVE"},
+            {"display": "Aktivë", "query_string": "?user_status=ACTIVE&user_role={}".format(role), "selected": status == "ACTIVE"},
+            {"display": "Të çaktivizuar", "query_string": "?user_status=INACTIVE&user_role={}".format(role), "selected": status == "INACTIVE"},
+        ]
+        role_options = [
+            {"display": "", "query_string": "?user_status={}&user_role=ALL".format(status), "selected": role == "ALL"},
+            {"display": "Admin", "query_string": "?user_status={}&user_role=ADMIN".format(status), "selected": role == "ADMIN"},
+            {"display": "Staf", "query_string": "?user_status={}&user_role=STAFF".format(status), "selected": role == "STAFF"},
+            {"display": "Anëtarë", "query_string": "?user_status={}&user_role=MEMBER".format(status), "selected": role == "MEMBER"},
         ]
         ctx = {
-            "current_scope": current_scope,
             "sl_user_filter_dropdowns": [
-                {"title": "Status / Rol", "options": filter_options},
+                {"title": "Status", "options": status_options},
+                {"title": "Rol", "options": role_options},
             ],
         }
         if extra_context:

@@ -300,7 +300,7 @@ class BookAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request).select_related("publisher").prefetch_related("authors")
-        return qs.annotate(
+        qs = qs.annotate(
             _total_copies=Count("copies", filter=Q(copies__is_deleted=False), distinct=True),
             _available_copies=Count(
                 "copies",
@@ -308,6 +308,10 @@ class BookAdmin(admin.ModelAdmin):
                 distinct=True,
             ),
         )
+        author_search = (request.GET.get("author_search") or "").strip()
+        if author_search:
+            qs = qs.filter(authors__name__icontains=author_search).distinct()
+        return qs
 
     @admin.display(description="Titulli", ordering="title")
     def title_display(self, obj: Book):
@@ -476,7 +480,7 @@ class BookAdmin(admin.ModelAdmin):
                         continue
                     options.append(
                         {
-                            "display": display,
+                            "display": "" if display.lower() in {"krejt", "all"} else display,
                             "query_string": choice.get("query_string", ""),
                             "selected": bool(choice.get("selected", False)),
                         }

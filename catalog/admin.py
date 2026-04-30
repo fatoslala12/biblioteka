@@ -220,9 +220,6 @@ class BookAdmin(admin.ModelAdmin):
         HasISBNFilter,
         HasCoverFilter,
         CopyLoadFilter,
-        "is_deleted",
-        "created_at",
-        "updated_at",
     )
     search_fields = ("title", "isbn", "publisher__name", "authors__name")
     autocomplete_fields = ("publisher", "authors", "genres", "tags")

@@ -79,32 +79,45 @@
       gap: 10px;
     }
     .app-catalog.model-book.change-list .sl-filter-block {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 12px;
+      padding: 8px;
+      background: #fff;
     }
-    .app-catalog.model-book.change-list .sl-filter-label {
+    .app-catalog.model-book.change-list .sl-filter-block h3 {
       font-size: .72rem;
-      font-weight: 800;
-      letter-spacing: .02em;
+      font-weight: 900;
+      letter-spacing: .04em;
       color: #475569;
       text-transform: uppercase;
+      margin: 0 0 6px 0;
+      padding: 0;
+      border: 0;
     }
-    .app-catalog.model-book.change-list .sl-filter-select {
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid rgba(148, 163, 184, 0.36);
-      background: #fff;
-      min-height: 40px;
-      padding: 8px 10px;
-      font-weight: 700;
+    .app-catalog.model-book.change-list .sl-filter-block ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 132px;
+      overflow: auto;
+    }
+    .app-catalog.model-book.change-list .sl-filter-block li {
+      margin: 0;
+    }
+    .app-catalog.model-book.change-list .sl-filter-block li a {
+      display: block;
+      border-radius: 8px;
+      padding: 6px 8px;
       color: #334155;
-      outline: none;
-      transition: border-color .2s ease, box-shadow .2s ease;
+      font-weight: 700;
+      font-size: .82rem;
+      text-decoration: none;
+      transition: background .18s ease, color .18s ease;
     }
-    .app-catalog.model-book.change-list .sl-filter-select:focus {
-      border-color: rgba(49,145,137,.75);
-      box-shadow: 0 0 0 3px rgba(49,145,137,.15);
+    .app-catalog.model-book.change-list .sl-filter-block li.selected a,
+    .app-catalog.model-book.change-list .sl-filter-block li a:hover {
+      background: rgba(49,145,137,.12);
+      color: #0f766e;
     }
     .app-catalog.model-book.change-list #changelist-filter.sl-filter-hide { display: none !important; }
     .app-catalog.model-book.change-list #change-list-filters {
@@ -373,17 +386,11 @@
     <div class="sl-filters-grid">
       {% for spec in cl.filter_specs %}
       <div class="sl-filter-block">
-        <label class="sl-filter-label">{{ spec.title }}</label>
-        <select class="sl-filter-select" onchange="if(this.value){window.location.href=this.value;}">
-          {% for choice in spec.choices %}
-          <option value="{{ choice.query_string|iriencode }}" {% if choice.selected %}selected{% endif %}>{{ choice.display|striptags|default:"—" }}</option>
-          {% endfor %}
-        </select>
+        {% admin_list_filter cl spec %}
       </div>
       {% endfor %}
     </div>
   </div>
-  <script>document.addEventListener('DOMContentLoaded', function(){ var original = document.getElementById('changelist-filter'); if(original){ original.classList.add('sl-filter-hide'); } });</script>
   {% endif %}
 {% endblock %}
 

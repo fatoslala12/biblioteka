@@ -84,40 +84,31 @@
       padding: 8px;
       background: #fff;
     }
-    .app-catalog.model-book.change-list .sl-filter-block h3 {
+    .app-catalog.model-book.change-list .sl-filter-label {
       font-size: .72rem;
       font-weight: 900;
       letter-spacing: .04em;
       color: #475569;
       text-transform: uppercase;
       margin: 0 0 6px 0;
-      padding: 0;
-      border: 0;
     }
-    .app-catalog.model-book.change-list .sl-filter-block ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      max-height: 132px;
-      overflow: auto;
-    }
-    .app-catalog.model-book.change-list .sl-filter-block li {
-      margin: 0;
-    }
-    .app-catalog.model-book.change-list .sl-filter-block li a {
+    .app-catalog.model-book.change-list .sl-filter-select {
       display: block;
+      width: 100%;
       border-radius: 8px;
       padding: 6px 8px;
+      border: 1px solid rgba(148, 163, 184, 0.36);
+      background: #fff;
       color: #334155;
       font-weight: 700;
       font-size: .82rem;
-      text-decoration: none;
-      transition: background .18s ease, color .18s ease;
+      min-height: 36px;
+      outline: none;
+      transition: border-color .18s ease, box-shadow .18s ease;
     }
-    .app-catalog.model-book.change-list .sl-filter-block li.selected a,
-    .app-catalog.model-book.change-list .sl-filter-block li a:hover {
-      background: rgba(49,145,137,.12);
-      color: #0f766e;
+    .app-catalog.model-book.change-list .sl-filter-select:focus {
+      border-color: rgba(49,145,137,.75);
+      box-shadow: 0 0 0 3px rgba(49,145,137,.15);
     }
     .app-catalog.model-book.change-list #changelist-filter.sl-filter-hide { display: none !important; }
     .app-catalog.model-book.change-list #change-list-filters {
@@ -384,13 +375,21 @@
   <div class="sl-filters-top">
     <div class="sl-filters-top-title">🔎 Filtro dhe Rregullo</div>
     <div class="sl-filters-grid">
-      {% for spec in cl.filter_specs %}
+      {% for item in sl_filter_dropdowns %}
       <div class="sl-filter-block">
-        {% admin_list_filter cl spec %}
+        <label class="sl-filter-label">{{ item.title }}</label>
+        <select class="sl-filter-select" onchange="if(this.value){window.location.href=this.value;}">
+          {% for opt in item.options %}
+          <option value="{{ opt.query_string|iriencode }}" {% if opt.selected %}selected{% endif %}>{{ opt.display|striptags }}</option>
+          {% endfor %}
+        </select>
       </div>
       {% endfor %}
     </div>
   </div>
+  {% if sl_filter_dropdowns %}
+  <script>document.addEventListener('DOMContentLoaded', function(){ var original = document.getElementById('changelist-filter'); if(original){ original.classList.add('sl-filter-hide'); } });</script>
+  {% endif %}
   {% endif %}
 {% endblock %}
 

@@ -463,6 +463,38 @@ class BookAdmin(admin.ModelAdmin):
                 extra_context["sl_book_history_list_url"] = f"/admin/circulation/loan/?{urlencode(book_loans_qs)}"
         return super().changeform_view(request, object_id, form_url, extra_context=extra_context)
 
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        sl_filter_dropdowns = []
+        try:
+            cl = self.get_changelist_instance(request)
+            for spec in getattr(cl, "filter_specs", []):
+                options = []
+                for choice in spec.choices(cl):
+                    display = str(choice.get("display", "")).strip()
+                    if not display:
+                        continue
+                    options.append(
+                        {
+                            "display": display,
+                            "query_string": choice.get("query_string", ""),
+                            "selected": bool(choice.get("selected", False)),
+                        }
+                    )
+                if options:
+                    sl_filter_dropdowns.append(
+                        {
+                            "title": str(getattr(spec, "title", "Filter")),
+                            "options": options,
+                        }
+                    )
+        except Exception:
+            # Fail-safe: keep default sidebar filters if dropdown transform fails.
+            sl_filter_dropdowns = []
+
+        extra_context["sl_filter_dropdowns"] = sl_filter_dropdowns
+        return super().changelist_view(request, extra_context=extra_context)
+
     def quick_create_related(self, request: HttpRequest):
         if request.method != "POST":
             return JsonResponse({"ok": False, "error": "Method not allowed."}, status=405)

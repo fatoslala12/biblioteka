@@ -142,33 +142,6 @@
 {% block search %}
   <div class="col-12 pb-4" id="change-list-filters">
     <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
-      <form id="changelist-search" class="d-flex flex-wrap gap-2 align-items-center flex-grow-1" method="GET">
-        {% if cl.search_fields %}
-          <input class="form-control" style="width: auto; min-width: 260px;" type="text" name="q" value="{{ cl.query }}" id="searchbar"
-              {% if cl.search_help_text %} placeholder="{{ cl.search_help_text }}{% endif %}>
-        {% endif %}
-
-        {% if cl.search_fields %}
-          <button type="submit" class="btn btn-primary">{% trans 'Kërko' %}</button>
-          {% if show_result_count %}
-            <span class="small quiet ms-2">
-              {% blocktrans count counter=cl.result_count %}{{ counter }} result{% plural %}{{ counter }} results{% endblocktrans %}
-              (<a href="?{% if cl.is_popup %}_popup=1{% endif %}">
-                {% if cl.show_full_result_count %}
-                  {% blocktrans with full_result_count=cl.full_result_count %}{{ full_result_count }} total{% endblocktrans %}
-                {% else %}
-                  {% trans "Show all" %}
-                {% endif %}
-              </a>)
-            </span>
-          {% endif %}
-          {% admin_extra_filters cl as extra_filters %}
-          {% for pair in extra_filters.items %}
-            {% if pair.0 != "q" %}<input type="hidden" name="{{ pair.0 }}" value="{{ pair.1 }}">{% endif %}
-          {% endfor %}
-        {% endif %}
-      </form>
-
       <ul class="object-tools d-flex flex-wrap gap-2 align-items-center m-0 p-0"></ul>
     </div>
   </div>

@@ -39,8 +39,9 @@ class UserAdmin(DjangoUserAdmin):
         if status == "INACTIVE":
             return qs.filter(is_active=False)
 
-        # Default status = ACTIVE
-        qs = qs.filter(is_active=True)
+        # Default status = ALL (pa filtër).
+        if status == "ACTIVE":
+            qs = qs.filter(is_active=True)
         if role == "ADMIN":
             return qs.filter(is_superuser=True)
         if role == "STAFF":
@@ -115,15 +116,15 @@ class UserAdmin(DjangoUserAdmin):
         return custom + urls
 
     def changelist_view(self, request, extra_context=None):
-        status = (request.GET.get("user_status") or "").strip().upper() or "ACTIVE"
+        status = (request.GET.get("user_status") or "").strip().upper() or "ALL"
         role = (request.GET.get("user_role") or "").strip().upper() or "ALL"
-        if status not in ("ACTIVE", "INACTIVE"):
-            status = "ACTIVE"
+        if status not in ("ALL", "ACTIVE", "INACTIVE"):
+            status = "ALL"
         if role not in ("ALL", "ADMIN", "STAFF", "MEMBER"):
             role = "ALL"
 
         status_options = [
-            {"display": "", "query_string": "?user_status=ACTIVE&user_role={}".format(role), "selected": status == "ACTIVE"},
+            {"display": "", "query_string": "?user_status=ALL&user_role={}".format(role), "selected": status == "ALL"},
             {"display": "Aktivë", "query_string": "?user_status=ACTIVE&user_role={}".format(role), "selected": status == "ACTIVE"},
             {"display": "Të çaktivizuar", "query_string": "?user_status=INACTIVE&user_role={}".format(role), "selected": status == "INACTIVE"},
         ]

@@ -574,7 +574,7 @@ def contact(request):
                     subject=subject,
                     body=text_body,
                     from_email=None,
-                    to=["fatoslala12@gmail.com"],
+                    to=["biblioteka@kamez.gov.al"],
                     reply_to=[data["email"]],
                 )
                 email_msg.attach_alternative(html_body, "text/html")

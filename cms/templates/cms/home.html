@@ -109,21 +109,11 @@
                   <span class="inline-flex min-w-0 items-center gap-1.5"><span class="h-2 w-2 shrink-0 rounded-full bg-slate-400"></span><span class="truncate">Në huazim: {{ copies_on_loan }}</span></span>
                   <span class="inline-flex min-w-0 items-center gap-1.5"><span class="h-2 w-2 shrink-0 rounded-full bg-amber-400"></span><span class="truncate">Rezervime: {{ reservations_active }}</span></span>
                 </div>
-                <div class="mt-3 flex gap-2">
-                  <button type="button" data-tab="katalog" class="dashTab min-h-[44px] min-w-[44px] flex-1 rounded-lg bg-brand-100 px-3 py-2.5 text-xs font-bold text-brand-800 active:bg-brand-200 dark:bg-brand-900/50 dark:text-brand-100 sm:flex-none sm:py-1.5">Katalog</button>
-                  <button type="button" data-tab="qarkullim" class="dashTab min-h-[44px] min-w-[44px] flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-xs font-bold text-slate-600 active:bg-slate-100 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 sm:flex-none sm:py-1.5">Qarkullim</button>
-                </div>
-                <div id="tab-katalog" class="mt-3 grid grid-cols-2 gap-2 text-center sm:grid-cols-4">
-                  <div class="rounded-lg bg-brand-50/80 py-2 dark:bg-slate-700/50"><span class="font-extrabold">{{ authors_count }}</span><div class="text-[10px] font-semibold text-slate-500">Autorë</div></div>
-                  <div class="rounded-lg bg-brand-50/80 py-2 dark:bg-slate-700/50"><span class="font-extrabold">{{ publishers_count }}</span><div class="text-[10px] font-semibold text-slate-500">Botues</div></div>
-                  <div class="rounded-lg bg-brand-50/80 py-2 dark:bg-slate-700/50"><span class="font-extrabold">{{ genres_count }}</span><div class="text-[10px] font-semibold text-slate-500">Zhanre</div></div>
-                  <div class="rounded-lg bg-brand-50/80 py-2 dark:bg-slate-700/50"><span class="font-extrabold">{{ tags_count }}</span><div class="text-[10px] font-semibold text-slate-500">Etiketa</div></div>
-                </div>
-                <div id="tab-qarkullim" class="mt-3 hidden grid grid-cols-2 gap-2 text-center sm:grid-cols-4">
-                  <div class="rounded-lg bg-brand-50/80 py-2 dark:bg-slate-700/50"><span class="font-extrabold">{{ active_loans }}</span><div class="text-[10px] font-semibold text-slate-500">Aktive</div></div>
-                  <div class="rounded-lg bg-amber-50 py-2 dark:bg-amber-900/20"><span class="font-extrabold text-amber-700 dark:text-amber-300">{{ overdue_loans }}</span><div class="text-[10px] font-semibold text-amber-600">Overdue</div></div>
-                  <div class="rounded-lg bg-brand-50/80 py-2 dark:bg-slate-700/50"><span class="font-extrabold">{{ holds_waiting }}</span><div class="text-[10px] font-semibold text-slate-500">Në radhë</div></div>
-                  <div class="rounded-lg bg-brand-50/80 py-2 dark:bg-slate-700/50"><span class="font-extrabold">{{ holds_ready }}</span><div class="text-[10px] font-semibold text-slate-500">Gati</div></div>
+                <div class="mt-4 grid grid-cols-2 gap-2.5 text-center sm:grid-cols-4">
+                  <div class="rounded-xl bg-brand-50/80 px-2 py-2.5 dark:bg-slate-700/50"><span class="font-extrabold">{{ authors_count }}</span><div class="text-[10px] font-semibold text-slate-500">Autorë</div></div>
+                  <div class="rounded-xl bg-brand-50/80 px-2 py-2.5 dark:bg-slate-700/50"><span class="font-extrabold">{{ publishers_count }}</span><div class="text-[10px] font-semibold text-slate-500">Botues</div></div>
+                  <div class="rounded-xl bg-brand-50/80 px-2 py-2.5 dark:bg-slate-700/50"><span class="font-extrabold">{{ genres_count }}</span><div class="text-[10px] font-semibold text-slate-500">Zhanre</div></div>
+                  <div class="rounded-xl bg-brand-50/80 px-2 py-2.5 dark:bg-slate-700/50"><span class="font-extrabold">{{ tags_count }}</span><div class="text-[10px] font-semibold text-slate-500">Etiketa</div></div>
                 </div>
               </div>
             </div>
@@ -900,25 +890,6 @@
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const tabs = document.querySelectorAll('.dashTab');
-      const show = function (name) {
-        const a = document.getElementById('tab-katalog');
-        const b = document.getElementById('tab-qarkullim');
-        if (!a || !b) return;
-        a.classList.toggle('hidden', name !== 'katalog');
-        b.classList.toggle('hidden', name !== 'qarkullim');
-        tabs.forEach(function (t) {
-          const active = t.dataset.tab === name;
-          t.classList.toggle('bg-brand-100', active);
-          t.classList.toggle('text-brand-800', active);
-          t.classList.toggle('border', !active);
-          t.classList.toggle('bg-white', !active);
-          t.classList.toggle('border-slate-200', !active);
-        });
-      };
-      tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.dataset.tab); }); });
-      show('katalog');
-
       const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (!prefersReduced) {
         document.documentElement.classList.add('sl-motion-ready');

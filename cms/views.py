@@ -556,6 +556,32 @@ def weekly_book_detail(request, pk):
     )
 
 
+CONTACT_LOCATION = {
+    "lat": 41.384229881523126,
+    "lng": 19.760375621757923,
+    "address": "Bulevardi Blu, Kamëz, Tiranë",
+    "email": "biblioteka@kamez.gov.al",
+    "phone": "+355 47 200 177",
+    "phone_tel": "+35547200177",
+}
+
+
+def _contact_page_context(form):
+    lat, lng = CONTACT_LOCATION["lat"], CONTACT_LOCATION["lng"]
+    pad = 0.004
+    bbox = f"{lng - pad},{lat - pad},{lng + pad},{lat + pad}"
+    return {
+        "form": form,
+        "location": CONTACT_LOCATION,
+        "map_embed_url": (
+            "https://www.openstreetmap.org/export/embed.html"
+            f"?bbox={bbox}&layer=mapnik&marker={lat}%2C{lng}"
+        ),
+        "maps_google_url": f"https://www.google.com/maps?q={lat},{lng}",
+        "maps_osm_url": f"https://www.openstreetmap.org/?mlat={lat}&mlon={lng}#map=17/{lat}/{lng}",
+    }
+
+
 def contact(request):
     if request.method == "POST":
         form = ContactForm(request.POST)
@@ -608,7 +634,7 @@ def contact(request):
     else:
         form = ContactForm()
 
-    return render(request, "cms/contact.html", {"form": form})
+    return render(request, "cms/contact.html", _contact_page_context(form))
 
 
 def page_not_found_view(request, exception=None):

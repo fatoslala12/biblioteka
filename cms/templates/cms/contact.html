@@ -18,16 +18,27 @@
     .dark .sl-contact-page .sl-contact-field:focus {
       background: rgb(2 6 23) !important;
     }
+    .sl-contact-map {
+      position: relative;
+      width: 100%;
+      height: 280px;
+      overflow: hidden;
+      background: #e2e8f0;
+    }
     .sl-contact-map iframe {
-      display: block;
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
-      min-height: 220px;
       border: 0;
+      display: block;
+    }
+    @media (min-width: 1024px) {
+      .sl-contact-map { height: 320px; }
     }
     @media (max-width: 640px) {
       .sl-contact-hero h1 { font-size: 1.55rem; line-height: 1.2; }
-      .sl-contact-map iframe { min-height: 200px; }
+      .sl-contact-map { height: 240px; }
     }
   </style>
 {% endblock %}
@@ -36,7 +47,7 @@
   <div class="sl-contact-page relative">
     <div class="pointer-events-none absolute inset-x-0 top-0 h-56 bg-gradient-to-b from-brand-100/80 to-transparent dark:from-brand-950/35"></div>
 
-    <section class="relative mx-auto max-w-7xl px-4 pt-6 pb-4 sm:px-6 sm:pt-8 lg:px-8">
+    <section class="relative mx-auto max-w-7xl px-4 pt-6 pb-3 sm:px-6 sm:pt-8 lg:px-8">
       <header class="sl-contact-hero rounded-2xl border border-slate-200/80 bg-white/95 p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-7">
         <div class="inline-flex items-center gap-2 rounded-full border border-brand-200/70 bg-brand-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-brand-800 dark:border-brand-800/50 dark:bg-brand-900/35 dark:text-brand-200">
           <span class="h-1.5 w-1.5 rounded-full bg-brand-500"></span>
@@ -49,27 +60,27 @@
       </header>
     </section>
 
-    <section class="relative mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
-      <div class="grid gap-5 lg:grid-cols-12 lg:gap-6">
+    <section class="relative mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
+      <div class="grid gap-4 lg:grid-cols-12 lg:gap-5">
         <!-- Info + harta -->
-        <div class="space-y-5 lg:col-span-5">
-          <div class="grid gap-3 sm:grid-cols-1">
-            <a href="mailto:{{ location.email }}" class="group flex min-h-[44px] items-start gap-4 rounded-2xl border border-brand-200/70 bg-gradient-to-br from-brand-50 to-white p-4 shadow-sm transition hover:border-brand-300 hover:shadow-md dark:border-brand-900/40 dark:from-brand-950/30 dark:to-slate-900/50">
-              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-lg text-white shadow-sm">✉️</span>
+        <div class="flex flex-col gap-3 lg:col-span-5">
+          <div class="grid gap-2.5">
+            <a href="mailto:{{ location.email }}" class="group flex min-h-[44px] items-start gap-3 rounded-2xl border border-brand-200/70 bg-gradient-to-br from-brand-50 to-white p-3.5 shadow-sm transition hover:border-brand-300 hover:shadow-md dark:border-brand-900/40 dark:from-brand-950/30 dark:to-slate-900/50 sm:p-4">
+              <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-base text-white shadow-sm sm:h-11 sm:w-11">✉️</span>
               <div class="min-w-0">
                 <div class="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Email</div>
                 <div class="mt-0.5 break-all text-sm font-extrabold text-brand-800 group-hover:text-brand-900 dark:text-brand-200">{{ location.email }}</div>
               </div>
             </a>
-            <a href="tel:{{ location.phone_tel }}" class="group flex min-h-[44px] items-start gap-4 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm transition hover:border-brand-200 hover:shadow-md dark:border-slate-700 dark:bg-slate-900/50">
-              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-800 text-lg text-white shadow-sm dark:bg-slate-700">📞</span>
+            <a href="tel:{{ location.phone_tel }}" class="group flex min-h-[44px] items-start gap-3 rounded-2xl border border-slate-200/80 bg-white p-3.5 shadow-sm transition hover:border-brand-200 hover:shadow-md dark:border-slate-700 dark:bg-slate-900/50 sm:p-4">
+              <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-800 text-base text-white shadow-sm dark:bg-slate-700 sm:h-11 sm:w-11">📞</span>
               <div>
                 <div class="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Telefon</div>
                 <div class="mt-0.5 text-sm font-extrabold text-slate-900 dark:text-white">{{ location.phone }}</div>
               </div>
             </a>
-            <div class="flex min-h-[44px] items-start gap-4 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/50">
-              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-600 text-lg text-white shadow-sm">📍</span>
+            <div class="flex min-h-[44px] items-start gap-3 rounded-2xl border border-slate-200/80 bg-white p-3.5 shadow-sm dark:border-slate-700 dark:bg-slate-900/50 sm:p-4">
+              <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-600 text-base text-white shadow-sm sm:h-11 sm:w-11">📍</span>
               <div>
                 <div class="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Adresa</div>
                 <div class="mt-0.5 text-sm font-extrabold text-slate-900 dark:text-white">{{ location.address }}</div>
@@ -77,24 +88,25 @@
             </div>
           </div>
 
-          <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-md dark:border-slate-700 dark:bg-slate-900/50 sm:rounded-3xl">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-4 py-3 dark:border-slate-800">
+          <div class="flex flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-md dark:border-slate-700 dark:bg-slate-900/50 sm:rounded-3xl">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-3 py-2.5 dark:border-slate-800 sm:px-4 sm:py-3">
               <span class="text-sm font-extrabold text-slate-800 dark:text-white">Ku ndodhemi</span>
-              <div class="flex flex-wrap gap-2">
-                <a href="{{ maps_google_url }}" target="_blank" rel="noopener noreferrer" class="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-brand-700">Google Maps</a>
-                <a href="{{ maps_osm_url }}" target="_blank" rel="noopener noreferrer" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200">Harta</a>
+              <div class="flex flex-wrap gap-1.5">
+                <a href="{{ maps_google_url }}" target="_blank" rel="noopener noreferrer" class="rounded-lg bg-brand-600 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-brand-700 sm:px-3 sm:py-1.5 sm:text-xs">Google Maps</a>
+                <a href="{{ maps_osm_url }}" target="_blank" rel="noopener noreferrer" class="rounded-lg border border-slate-200 px-2.5 py-1 text-[11px] font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 sm:px-3 sm:py-1.5 sm:text-xs">Harta</a>
               </div>
             </div>
-            <div class="sl-contact-map relative aspect-[4/3] w-full bg-slate-100 dark:bg-slate-800 sm:aspect-[16/11]">
+            <div class="sl-contact-map w-full flex-1">
               <iframe
                 title="Vendndodhja e Bibliotekës Kamëz në hartë"
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
-                src="{{ map_embed_url }}"
+                allowfullscreen
+                src="{{ maps_google_embed_url }}"
               ></iframe>
             </div>
-            <p class="px-4 py-2.5 text-center text-[11px] font-medium text-slate-500 dark:text-slate-400">
-              Bulevardi Blu, Kamëz — afër qendrës së bashkisë
+            <p class="shrink-0 border-t border-slate-100 px-3 py-2 text-center text-[11px] font-medium text-slate-500 dark:border-slate-800 dark:text-slate-400 sm:px-4">
+              Pallati i Kulturës „Artan Cuku” — Bulevardi Blu, Kamëz
             </p>
           </div>
         </div>

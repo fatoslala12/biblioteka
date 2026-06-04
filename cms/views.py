@@ -578,6 +578,7 @@ def _contact_page_context(form):
             f"?bbox={bbox}&layer=mapnik&marker={lat}%2C{lng}"
         ),
         "maps_google_url": f"https://www.google.com/maps?q={lat},{lng}",
+        "maps_google_embed_url": f"https://maps.google.com/maps?q={lat},{lng}&hl=sq&z=17&output=embed",
         "maps_osm_url": f"https://www.openstreetmap.org/?mlat={lat}&mlon={lng}#map=17/{lat}/{lng}",
     }
 

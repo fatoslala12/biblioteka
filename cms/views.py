@@ -385,19 +385,15 @@ def announcements(request):
             "excerpt": a.excerpt,
             "badge": a.badge or "Info",
             "image_url": (a.image.url if a.image else ""),
+            "detail_url": reverse("cms:announcement_detail", kwargs={"pk": a.id}),
         }
         for a in qs
     ]
-    ctx = {
-        "title": "Njoftime",
-        "subtitle": "Përditësime, rregulla dhe informacione për bibliotekën.",
-        "items": items,
-        "is_announcements_page": True,
-    }
+    ctx = {"items": items}
     if _is_ajax(request):
-        html = render_to_string("cms/_section_list_content.html", ctx, request=request)
-        return JsonResponse({"html": html, "title": "Njoftime — Smart Library"})
-    return render(request, "cms/section_list.html", ctx)
+        html = render_to_string("cms/_announcements_content.html", ctx, request=request)
+        return JsonResponse({"html": html, "title": "Njoftime — Biblioteka Kamëz"})
+    return render(request, "cms/announcements.html", ctx)
 
 
 def events(request):

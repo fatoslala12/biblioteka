@@ -1,0 +1,35 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Njoftime — Biblioteka Kamëz{% endblock %}
+
+{% block meta_description %}Njoftime zyrtare nga Biblioteka Kamëz: libra të rinj, aktivitete, orare dhe informacione për komunitetin.{% endblock %}
+
+{% block extrahead %}
+  <style>
+    .sl-announcements-page .sl-announcement-card {
+      -webkit-tap-highlight-color: transparent;
+    }
+    @media (max-width: 640px) {
+      .sl-announcements-hero h1 {
+        font-size: 1.45rem;
+        line-height: 1.2;
+      }
+      .sl-announcements-hero ul li {
+        font-size: 0.8125rem;
+        line-height: 1.45;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sl-announcement-card {
+        transition: none !important;
+      }
+      .sl-announcement-card:hover {
+        transform: none !important;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  {% include "cms/_announcements_body.html" %}
+{% endblock %}

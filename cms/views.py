@@ -11,8 +11,8 @@ from django.urls import reverse
 from django.template.loader import render_to_string
 from django.utils import timezone
 
-from accounts.models import MemberProfile, UserRole
-from catalog.models import Author, Book, Copy, CopyStatus, Genre, Publisher, Tag
+from accounts.models import MemberProfile, MemberStatus, UserRole
+from catalog.models import Author, Book, BookType, Copy, CopyStatus, Genre, Publisher, Tag
 from circulation.models import Hold, HoldStatus, Loan, LoanStatus, Reservation, ReservationStatus
 from circulation.models import ReservationRequest, ReservationRequestStatus
 from cms.forms import ContactForm
@@ -21,6 +21,40 @@ from cms.models import Announcement, Event, WeeklyBook
 
 def _is_ajax(request):
     return request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+
+def _library_public_stats():
+    """Statistika publike nga databaza (përdoret në kryefaqe dhe Rreth nesh)."""
+    book_qs = Book.objects.filter(is_deleted=False)
+    copy_qs = Copy.objects.filter(is_deleted=False)
+    youth_filter = (
+        Q(genres__name__icontains="fëmij")
+        | Q(genres__name__icontains="femij")
+        | Q(genres__name__icontains="rinj")
+        | Q(tags__name__icontains="fëmij")
+        | Q(tags__name__icontains="femij")
+        | Q(tags__name__icontains="rinj")
+    )
+    academic_filter = (
+        Q(book_type=BookType.REFERENCE)
+        | Q(genres__name__icontains="akademik")
+        | Q(genres__name__icontains="studim")
+        | Q(genres__name__icontains="shkenc")
+        | Q(genres__name__icontains="universitet")
+    )
+    return {
+        "books_count": book_qs.count(),
+        "copies_total": copy_qs.count(),
+        "copies_available": copy_qs.filter(status=CopyStatus.AVAILABLE).count(),
+        "authors_count": Author.objects.count(),
+        "publishers_count": Publisher.objects.count(),
+        "genres_count": Genre.objects.count(),
+        "tags_count": Tag.objects.count(),
+        "members_active": MemberProfile.objects.filter(status=MemberStatus.ACTIVE).count(),
+        "members_total": MemberProfile.objects.count(),
+        "books_youth": book_qs.filter(youth_filter).distinct().count(),
+        "books_academic": book_qs.filter(academic_filter).distinct().count(),
+    }
 
 
 def _static_img_dir() -> Path:
@@ -121,17 +155,18 @@ def healthz(request):
 
 
 def home(request):
-    books_count = Book.objects.filter(is_deleted=False).count()
-    copies_total = Copy.objects.filter(is_deleted=False).count()
-    copies_available = Copy.objects.filter(is_deleted=False, status=CopyStatus.AVAILABLE).count()
+    stats = _library_public_stats()
+    books_count = stats["books_count"]
+    copies_total = stats["copies_total"]
+    copies_available = stats["copies_available"]
     copies_on_loan = Copy.objects.filter(is_deleted=False, status=CopyStatus.ON_LOAN).count()
     copies_on_hold = Copy.objects.filter(is_deleted=False, status=CopyStatus.ON_HOLD).count()
     reservations_active = Reservation.objects.filter(status=ReservationStatus.APPROVED, loan__isnull=True).count()
-    authors_count = Author.objects.count()
-    publishers_count = Publisher.objects.count()
-    genres_count = Genre.objects.count()
-    tags_count = Tag.objects.count()
-    members_count = MemberProfile.objects.count()
+    authors_count = stats["authors_count"]
+    publishers_count = stats["publishers_count"]
+    genres_count = stats["genres_count"]
+    tags_count = stats["tags_count"]
+    members_count = stats["members_total"]
 
     now = timezone.now()
     active_loans = Loan.objects.filter(status=LoanStatus.ACTIVE).count()
@@ -364,7 +399,7 @@ def book_detail(request, pk: int):
 
 
 def about(request):
-    return render(request, "cms/about.html")
+    return render(request, "cms/about.html", {"stats": _library_public_stats()})
 
 
 def rules(request):

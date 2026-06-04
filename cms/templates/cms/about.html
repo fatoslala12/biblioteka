@@ -1,120 +1,237 @@
 {% extends "cms/base.html" %}
 {% load static %}
 
-{% block title %}Rreth nesh — Smart Library{% endblock %}
+{% block title %}Rreth nesh — Biblioteka Kamëz{% endblock %}
+
+{% block meta_description %}Biblioteka e Bashkisë Kamëz — mision, vizion, shërbime moderne dhe statistika të përditësuara nga fondi ynë.{% endblock %}
+
+{% block extrahead %}
+  <style>
+    .sl-about-page .sl-about-stat-card {
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .sl-about-page .sl-about-stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(49, 145, 137, .12);
+    }
+    .sl-about-mv-card {
+      background:
+        radial-gradient(circle at 0% 0%, rgba(49, 145, 137, .14), transparent 42%),
+        linear-gradient(165deg, rgba(255,255,255,.98), rgba(248, 252, 252, .94));
+    }
+    .dark .sl-about-mv-card {
+      background:
+        radial-gradient(circle at 0% 0%, rgba(49, 145, 137, .22), transparent 45%),
+        linear-gradient(165deg, rgba(15, 23, 42, .92), rgba(30, 41, 59, .78));
+    }
+    .sl-about-slogan-marquee {
+      animation: sl-about-marquee 28s linear infinite;
+    }
+    @keyframes sl-about-marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @media (max-width: 640px) {
+      .sl-about-hero h1 { font-size: 1.5rem; line-height: 1.2; }
+      .sl-about-slogan-marquee { animation: none; flex-wrap: wrap; justify-content: center; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sl-about-slogan-marquee { animation: none !important; }
+      .sl-about-stat-card:hover { transform: none !important; }
+    }
+  </style>
+{% endblock %}
 
 {% block content %}
-  <section class="relative">
-    <div class="pointer-events-none absolute inset-0">
-      <div class="absolute -top-20 left-0 right-0 h-72 bg-gradient-to-r from-brand-200/60 via-white to-brand-100/70 blur-2xl"></div>
-    </div>
+  <div class="sl-about-page relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-brand-100/80 via-white/50 to-transparent dark:from-brand-950/40 dark:via-slate-950/30"></div>
 
-    <div class="relative mx-auto max-w-7xl px-4 pt-10 sm:px-6 lg:px-8">
-      <div class="grid items-start gap-8 lg:grid-cols-12">
-        <div class="lg:col-span-7">
-          <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950">
-            <div class="inline-flex items-center gap-2 rounded-full bg-brand-100 px-3 py-1 text-xs font-extrabold text-brand-800 dark:bg-brand-900/40 dark:text-brand-100">
-              Rreth Nesh
+    <section class="relative mx-auto max-w-7xl px-4 pt-6 pb-4 sm:px-6 sm:pt-8 lg:px-8">
+      <div class="grid items-stretch gap-5 lg:grid-cols-12 lg:gap-8">
+        <div class="sl-about-hero lg:col-span-7">
+          <div class="h-full rounded-2xl border border-slate-200/80 bg-white/95 p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-7">
+            <div class="inline-flex items-center gap-2 rounded-full border border-brand-200/70 bg-brand-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-brand-800 dark:border-brand-800/50 dark:bg-brand-900/35 dark:text-brand-200">
+              <span class="h-1.5 w-1.5 rounded-full bg-brand-500"></span>
+              Rreth nesh
             </div>
-            <h1 class="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl">
-              Mirë se vini në Bibliotekën Online të Bashkia Kamëz
+            <h1 class="mt-3 text-2xl font-black leading-tight tracking-tight text-slate-900 dark:text-white sm:text-3xl lg:text-[2rem]">
+              Mirë se vini në Bibliotekën e Bashkisë Kamëz
             </h1>
-            <p class="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-              Një hapësirë moderne digjitale e krijuar për të sjellë dijen, kulturën dhe leximin më pranë çdo qytetari.
+            <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300 sm:text-base">
+              Një hapësirë moderne digjitale dhe fizike për dijen, kulturën dhe leximin — më pranë çdo qytetari.
+              Besojmë se biblioteka është ekosistem idesh, urë mes brezave dhe teknologjisë.
             </p>
-            <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-              Ne besojmë se biblioteka nuk është vetëm një ndërtesë me libra, por një ekosistem dijesh, një pikë takimi mes ideve, brezave dhe teknologjisë. Platforma jonë online është ndërtuar për të ofruar akses të shpejtë, të thjeshtë dhe transparent në koleksionin tonë, duke e bërë përvojën e leximit më të aksesueshme se kurrë.
+            <p class="mt-4 rounded-xl border border-brand-200/60 bg-brand-50/70 px-4 py-3 text-base font-extrabold text-brand-900 dark:border-brand-900/40 dark:bg-brand-900/25 dark:text-brand-100">
+              Dija fillon këtu.
             </p>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <a href="/catalog/" class="min-h-[44px] inline-flex items-center rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-extrabold text-white shadow-sm hover:bg-brand-700">Shfleto katalogun</a>
+              <a href="/regjistrohu/" class="min-h-[44px] inline-flex items-center rounded-xl border border-brand-200 bg-white px-4 py-2.5 text-sm font-bold text-brand-700 hover:bg-brand-50 dark:border-brand-800 dark:bg-slate-900 dark:text-brand-200">Bëhu anëtar</a>
+            </div>
           </div>
         </div>
-
         <div class="lg:col-span-5">
-          <div class="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-950">
-            <img src="{% static 'img/library-hero.svg' %}" alt="Biblioteka Kamëz" class="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900" />
+          <div class="flex h-full min-h-[220px] items-center justify-center overflow-hidden rounded-2xl border border-slate-200/80 bg-gradient-to-br from-brand-50 via-white to-brand-100/80 p-6 shadow-sm dark:border-slate-700 dark:from-slate-900 dark:via-slate-900 dark:to-brand-950/30 sm:rounded-3xl sm:min-h-[280px]">
+            <img src="{% static 'img/library-hero.svg' %}" alt="" class="max-h-56 w-full object-contain sm:max-h-64" loading="lazy" decoding="async" />
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="mx-auto mt-10 max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950">
-      <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">📊 Në shifra</div>
-      <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-900/40">
-          <div class="text-2xl font-extrabold">18,500+</div>
-          <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">📚 Libra në koleksion</div>
+    <!-- Statistika reale -->
+    <section class="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <div class="rounded-2xl border border-slate-200/80 bg-white/95 p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-7">
+        <div class="flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <h2 class="text-lg font-extrabold text-slate-900 dark:text-white sm:text-xl">Në shifra</h2>
+            <p class="mt-0.5 text-xs font-semibold text-slate-500 dark:text-slate-400 sm:text-sm">Të dhëna të gjalla nga sistemi i bibliotekës</p>
+          </div>
+          <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200">Përditësohet automatikisht</span>
         </div>
-        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-900/40">
-          <div class="text-2xl font-extrabold">4,200+</div>
-          <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">✍️ Autorë vendas dhe të huaj</div>
+        <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-3">
+          <div class="sl-about-stat-card rounded-2xl border border-slate-200/80 bg-slate-50/90 p-4 dark:border-slate-700 dark:bg-slate-800/50 sm:p-5">
+            <div class="text-2xl font-black tabular-nums text-slate-900 dark:text-white sm:text-3xl">{{ stats.copies_total }}</div>
+            <div class="mt-1 text-xs font-bold text-slate-600 dark:text-slate-300 sm:text-sm">📚 Kopje në koleksion</div>
+          </div>
+          <div class="sl-about-stat-card rounded-2xl border border-slate-200/80 bg-slate-50/90 p-4 dark:border-slate-700 dark:bg-slate-800/50 sm:p-5">
+            <div class="text-2xl font-black tabular-nums text-slate-900 dark:text-white sm:text-3xl">{{ stats.books_count }}</div>
+            <div class="mt-1 text-xs font-bold text-slate-600 dark:text-slate-300 sm:text-sm">📖 Tituj në katalog</div>
+          </div>
+          <div class="sl-about-stat-card rounded-2xl border border-slate-200/80 bg-slate-50/90 p-4 dark:border-slate-700 dark:bg-slate-800/50 sm:p-5">
+            <div class="text-2xl font-black tabular-nums text-slate-900 dark:text-white sm:text-3xl">{{ stats.authors_count }}</div>
+            <div class="mt-1 text-xs font-bold text-slate-600 dark:text-slate-300 sm:text-sm">✍️ Autorë</div>
+          </div>
+          <div class="sl-about-stat-card rounded-2xl border border-slate-200/80 bg-slate-50/90 p-4 dark:border-slate-700 dark:bg-slate-800/50 sm:p-5">
+            <div class="text-2xl font-black tabular-nums text-slate-900 dark:text-white sm:text-3xl">{{ stats.books_youth }}</div>
+            <div class="mt-1 text-xs font-bold text-slate-600 dark:text-slate-300 sm:text-sm">🧒 Tituj fëmijë / të rinj</div>
+          </div>
+          <div class="sl-about-stat-card rounded-2xl border border-slate-200/80 bg-slate-50/90 p-4 dark:border-slate-700 dark:bg-slate-800/50 sm:p-5">
+            <div class="text-2xl font-black tabular-nums text-slate-900 dark:text-white sm:text-3xl">{{ stats.books_academic }}</div>
+            <div class="mt-1 text-xs font-bold text-slate-600 dark:text-slate-300 sm:text-sm">🎓 Materiale akademike</div>
+          </div>
+          <div class="sl-about-stat-card rounded-2xl border border-slate-200/80 bg-slate-50/90 p-4 dark:border-slate-700 dark:bg-slate-800/50 sm:p-5">
+            <div class="text-2xl font-black tabular-nums text-slate-900 dark:text-white sm:text-3xl">{{ stats.members_active }}</div>
+            <div class="mt-1 text-xs font-bold text-slate-600 dark:text-slate-300 sm:text-sm">👥 Anëtarë aktivë</div>
+          </div>
         </div>
-        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-900/40">
-          <div class="text-2xl font-extrabold">1,200</div>
-          <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">📖 Tituj për fëmijë dhe të rinj</div>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-900/40">
-          <div class="text-2xl font-extrabold">3,000+</div>
-          <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">🎓 Materiale akademike dhe studimore</div>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-900/40">
-          <div class="text-2xl font-extrabold">7,500+</div>
-          <div class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">👥 Anëtarë aktivë</div>
-        </div>
-        <div class="rounded-2xl border border-brand-200 bg-brand-50 p-5 dark:border-brand-900/40 dark:bg-brand-900/20">
-          <div class="text-sm font-extrabold text-brand-800 dark:text-brand-100">Shënim</div>
-          <div class="mt-1 text-sm text-slate-700 dark:text-slate-200">Shifrat janë indikative dhe përditësohen vazhdimisht.</div>
+        <div class="mt-4 flex flex-wrap gap-2 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+          <span class="rounded-full bg-slate-100 px-2.5 py-1 dark:bg-slate-800">{{ stats.copies_available }} kopje të lira tani</span>
+          <span class="rounded-full bg-slate-100 px-2.5 py-1 dark:bg-slate-800">{{ stats.genres_count }} zhanre</span>
+          <span class="rounded-full bg-slate-100 px-2.5 py-1 dark:bg-slate-800">{{ stats.publishers_count }} botues</span>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="mx-auto mt-10 max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="grid gap-6 lg:grid-cols-2">
-      <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950">
-        <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">🎯 Misioni Ynë</div>
-        <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-          Të promovojmë kulturën e leximit, edukimin e vazhdueshëm dhe zhvillimin intelektual të komunitetit të Kamzës përmes shërbimeve moderne bibliotekare dhe teknologjisë digjitale.
+    <!-- Mision & Vizion premium -->
+    <section class="relative mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
+      <div class="grid gap-4 lg:grid-cols-2 lg:gap-6">
+        <div class="sl-about-mv-card relative overflow-hidden rounded-2xl border border-brand-200/60 p-5 shadow-md dark:border-brand-800/50 sm:rounded-3xl sm:p-7">
+          <div class="absolute right-0 top-0 h-24 w-24 rounded-full bg-brand-400/10 blur-2xl"></div>
+          <div class="relative">
+            <div class="inline-flex items-center gap-2 text-sm font-extrabold text-brand-800 dark:text-brand-200">🎯 Misioni</div>
+            <p class="mt-4 text-sm leading-relaxed text-slate-700 dark:text-slate-200 sm:text-[0.95rem]">
+              Biblioteka e Bashkisë Kamëz angazhohet të promovojë kulturën e leximit, edukimin e vazhdueshëm dhe aksesin e barabartë në informacion, duke integruar teknologjitë moderne dhe duke mbështetur zhvillimin intelektual, kulturor dhe social të komunitetit.
+            </p>
+            <div class="mt-5 rounded-xl border border-brand-300/40 bg-white/80 p-4 dark:border-brand-700/40 dark:bg-slate-900/50">
+              <div class="text-[11px] font-extrabold uppercase tracking-wide text-brand-700 dark:text-brand-300">Mesazhi ynë</div>
+              <p class="mt-2 text-sm font-semibold italic leading-relaxed text-slate-800 dark:text-slate-100">
+                „Të krijojmë ura mes dijes, teknologjisë dhe komunitetit, duke ofruar shërbime bibliotekare inovative që fuqizojnë qytetarët e çdo moshe për të mësuar, eksploruar dhe realizuar potencialin e tyre.”
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="sl-about-mv-card relative overflow-hidden rounded-2xl border border-violet-200/60 p-5 shadow-md dark:border-violet-900/50 sm:rounded-3xl sm:p-7">
+          <div class="absolute right-0 top-0 h-24 w-24 rounded-full bg-violet-400/10 blur-2xl"></div>
+          <div class="relative">
+            <div class="inline-flex items-center gap-2 text-sm font-extrabold text-violet-900 dark:text-violet-200">🌍 Vizioni</div>
+            <p class="mt-4 text-sm leading-relaxed text-slate-700 dark:text-slate-200 sm:text-[0.95rem]">
+              Të jemi një institucion lider i dijes, inovacionit dhe kulturës, i cili ofron shërbime bibliotekare bashkëkohore dhe kontribuon në ndërtimin e një komuniteti të informuar, të arsimuar dhe të përgatitur për sfidat e së ardhmes.
+            </p>
+            <div class="mt-5 rounded-xl border border-violet-300/40 bg-white/80 p-4 dark:border-violet-800/40 dark:bg-slate-900/50">
+              <div class="text-[11px] font-extrabold uppercase tracking-wide text-violet-800 dark:text-violet-300">Qëllimi ynë</div>
+              <p class="mt-2 text-sm font-semibold italic leading-relaxed text-slate-800 dark:text-slate-100">
+                „Një bibliotekë inteligjente dhe moderne, ku informacioni është i aksesueshëm për të gjithë, ku lindin ide të reja dhe ku komuniteti ndërton të ardhmen përmes dijes.”
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sloganet -->
+    <section class="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-gradient-to-r from-brand-600 to-brand-700 px-4 py-5 shadow-lg dark:border-brand-800 sm:rounded-3xl sm:px-6 sm:py-6">
+        <div class="text-center text-xs font-extrabold uppercase tracking-[0.2em] text-white/80">Sloganet tona</div>
+        <div class="mt-4 overflow-hidden">
+          <div class="sl-about-slogan-marquee flex w-max gap-3 whitespace-nowrap">
+            <span class="rounded-full bg-white/15 px-4 py-2 text-sm font-bold text-white backdrop-blur">Lexo. Mëso. Frymëzohu.</span>
+            <span class="rounded-full bg-white/15 px-4 py-2 text-sm font-bold text-white backdrop-blur">Një bibliotekë moderne për një komunitet modern.</span>
+            <span class="rounded-full bg-white/15 px-4 py-2 text-sm font-bold text-white backdrop-blur">Nga libri te inovacioni.</span>
+            <span class="rounded-full bg-white/15 px-4 py-2 text-sm font-bold text-white backdrop-blur">Dija që bashkon komunitetin.</span>
+            <span class="rounded-full bg-white/15 px-4 py-2 text-sm font-bold text-white backdrop-blur">Hap derën e dijes, ndërto të ardhmen.</span>
+            <span class="rounded-full bg-white/15 px-4 py-2 text-sm font-bold text-white backdrop-blur">Biblioteka e Kamzës – zemra e dijes dhe kulturës.</span>
+            <span class="rounded-full bg-white/15 px-4 py-2 text-sm font-bold text-white backdrop-blur">Lexo. Mëso. Frymëzohu.</span>
+            <span class="rounded-full bg-white/15 px-4 py-2 text-sm font-bold text-white backdrop-blur">Një bibliotekë moderne për një komunitet modern.</span>
+            <span class="rounded-full bg-white/15 px-4 py-2 text-sm font-bold text-white backdrop-blur">Nga libri te inovacioni.</span>
+            <span class="rounded-full bg-white/15 px-4 py-2 text-sm font-bold text-white backdrop-blur">Dija që bashkon komunitetin.</span>
+          </div>
+        </div>
+        <p class="mt-4 text-center text-sm font-extrabold text-white sm:text-base">Dija fillon këtu. 📚</p>
+      </div>
+    </section>
+
+    <!-- Çfarë ofrojmë -->
+    <section class="relative mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+      <div class="rounded-2xl border border-slate-200/80 bg-white/95 p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-7 lg:p-8">
+        <h2 class="text-lg font-extrabold text-slate-900 dark:text-white sm:text-xl">Çfarë ofrojmë</h2>
+        <p class="mt-1 max-w-2xl text-sm text-slate-600 dark:text-slate-300">
+          Shërbime digjitale dhe në zyrë — të dizajnuara për qytetarët, studentët dhe familjet e Kamzës.
         </p>
+        <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+          <a href="/catalog/" class="group flex min-h-[44px] gap-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 transition hover:border-brand-200 hover:bg-brand-50/50 hover:shadow-md dark:border-slate-700 dark:bg-slate-800/40 dark:hover:border-brand-800/50">
+            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-lg text-white shadow-sm">🔎</span>
+            <div>
+              <div class="text-sm font-extrabold text-slate-900 group-hover:text-brand-800 dark:text-white">Katalog online</div>
+              <p class="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">Kërkim i shpejtë sipas titullit, autorit, ISBN dhe zhanrit.</p>
+            </div>
+          </a>
+          <a href="/regjistrohu/" class="group flex min-h-[44px] gap-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 transition hover:border-brand-200 hover:bg-brand-50/50 hover:shadow-md dark:border-slate-700 dark:bg-slate-800/40 dark:hover:border-brand-800/50">
+            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-lg text-white shadow-sm">🪪</span>
+            <div>
+              <div class="text-sm font-extrabold text-slate-900 group-hover:text-brand-800 dark:text-white">Anëtarësim digjital</div>
+              <p class="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">Regjistrim online, portali i anëtarit dhe menaxhim i huazimeve.</p>
+            </div>
+          </a>
+          <a href="/anetar/" class="group flex min-h-[44px] gap-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 transition hover:border-brand-200 hover:bg-brand-50/50 hover:shadow-md dark:border-slate-700 dark:bg-slate-800/40 dark:hover:border-brand-800/50">
+            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-lg text-white shadow-sm">📬</span>
+            <div>
+              <div class="text-sm font-extrabold text-slate-900 group-hover:text-brand-800 dark:text-white">Njoftime & afate</div>
+              <p class="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">Kujtesa për kthime, rezervime dhe mesazhe nga biblioteka.</p>
+            </div>
+          </a>
+          <a href="/evente/" data-sl-full-nav="1" class="group flex min-h-[44px] gap-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 transition hover:border-violet-200 hover:bg-violet-50/30 hover:shadow-md dark:border-slate-700 dark:bg-slate-800/40 dark:hover:border-violet-800/50">
+            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-600 text-lg text-white shadow-sm">🎭</span>
+            <div>
+              <div class="text-sm font-extrabold text-slate-900 group-hover:text-violet-800 dark:text-white">Evente kulturore</div>
+              <p class="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">Promovime, klube leximi, workshop-e dhe aktivitete komunitare.</p>
+            </div>
+          </a>
+          <a href="/libri-i-javes/" data-sl-full-nav="1" class="group flex min-h-[44px] gap-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 transition hover:border-amber-200 hover:bg-amber-50/30 hover:shadow-md dark:border-slate-700 dark:bg-slate-800/40 dark:hover:border-amber-800/50">
+            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-600 text-lg text-white shadow-sm">📖</span>
+            <div>
+              <div class="text-sm font-extrabold text-slate-900 group-hover:text-amber-800 dark:text-white">Libri i javës</div>
+              <p class="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">Rekomandime javore me përshkrim dhe autor.</p>
+            </div>
+          </a>
+          <a href="/orar/" class="group flex min-h-[44px] gap-4 rounded-2xl border border-brand-200/70 bg-brand-50/60 p-4 transition hover:shadow-md dark:border-brand-900/40 dark:bg-brand-900/20">
+            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-lg shadow-sm dark:bg-slate-800">⏰</span>
+            <div>
+              <div class="text-sm font-extrabold text-brand-900 dark:text-brand-100">Orar & informacion</div>
+              <p class="mt-1 text-xs leading-relaxed text-slate-700 dark:text-slate-200">Orari i shërbimit, rregulloret dhe kontakti me stafin.</p>
+            </div>
+          </a>
+        </div>
       </div>
-      <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950">
-        <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">🌍 Vizioni</div>
-        <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-          Të bëhemi një qendër moderne e dijes dhe inovacionit, ku tradita e leximit bashkohet me teknologjinë, duke krijuar një bibliotekë që i përgjigjet nevojave të sotme dhe të nesërme të qytetarëve.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section class="mx-auto mt-10 max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
-    <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950">
-      <div class="text-sm font-extrabold text-brand-700 dark:text-brand-200">🚀 Çfarë Ofrojmë</div>
-      <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
-          <div class="text-sm font-extrabold">Kërkim i avancuar</div>
-          <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">Kërkim i shpejtë dhe rezervim online.</div>
-        </div>
-        <div class="rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
-          <div class="text-sm font-extrabold">Huazime live</div>
-          <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">Menaxhim i huazimeve dhe afateve në kohë reale.</div>
-        </div>
-        <div class="rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
-          <div class="text-sm font-extrabold">Njoftime automatike</div>
-          <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">Njoftime të qarta për përdoruesit dhe stafin.</div>
-        </div>
-        <div class="rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
-          <div class="text-sm font-extrabold">Evente kulturore</div>
-          <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">Aktivitete promovuese dhe komunitare.</div>
-        </div>
-        <div class="rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
-          <div class="text-sm font-extrabold">Bashkëpunim me shkollat</div>
-          <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">Hapësirë e përbashkët për edukim dhe zhvillim.</div>
-        </div>
-        <div class="rounded-2xl border border-brand-200 bg-brand-50 p-5 dark:border-brand-900/40 dark:bg-brand-900/20">
-          <div class="text-sm font-extrabold text-brand-800 dark:text-brand-100">Biblioteka Online e Bashkisë Kamëz</div>
-          <div class="mt-1 text-sm text-slate-700 dark:text-slate-200">Dija fillon këtu. 📚✨</div>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
+  </div>
 {% endblock %}

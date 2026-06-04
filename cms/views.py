@@ -407,22 +407,19 @@ def events(request):
                 "title": e.title,
                 "date": e.published_at.strftime("%d/%m/%Y"),
                 "event_date": event_dt.strftime("%d/%m/%Y"),
+                "event_time": (e.starts_at.strftime("%H:%M") if e.starts_at else ""),
                 "location": e.location or "Biblioteka Kamëz",
                 "excerpt": e.excerpt,
                 "badge": e.badge or "Event",
                 "image_url": (e.image.url if e.image else ""),
+                "detail_url": reverse("cms:event_detail", kwargs={"pk": e.id}),
             }
         )
-    ctx = {
-        "title": "Evente",
-        "subtitle": "Aktivitete të bibliotekës (workshop-e, klube leximi, prezantime).",
-        "items": items,
-        "is_events_page": True,
-    }
+    ctx = {"items": items}
     if _is_ajax(request):
-        html = render_to_string("cms/_section_list_content.html", ctx, request=request)
-        return JsonResponse({"html": html, "title": "Evente — Smart Library"})
-    return render(request, "cms/section_list.html", ctx)
+        html = render_to_string("cms/_events_content.html", ctx, request=request)
+        return JsonResponse({"html": html, "title": "Evente — Biblioteka Kamëz"})
+    return render(request, "cms/events.html", ctx)
 
 
 def videos(request):

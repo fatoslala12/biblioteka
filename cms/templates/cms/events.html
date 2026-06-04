@@ -1,0 +1,31 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Evente — Biblioteka Kamëz{% endblock %}
+
+{% block meta_description %}Evente dhe aktivitete në Bibliotekën Kamëz: promovime librash, takime me autorë, klube leximi dhe workshop-e.{% endblock %}
+
+{% block extrahead %}
+  <style>
+    .sl-events-page .sl-event-card {
+      -webkit-tap-highlight-color: transparent;
+    }
+    @media (max-width: 640px) {
+      .sl-events-hero h1 {
+        font-size: 1.45rem;
+        line-height: 1.2;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sl-event-card {
+        transition: none !important;
+      }
+      .sl-event-card:hover {
+        transform: none !important;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  {% include "cms/_events_body.html" %}
+{% endblock %}

@@ -568,17 +568,14 @@ CONTACT_LOCATION = {
 
 def _contact_page_context(form):
     lat, lng = CONTACT_LOCATION["lat"], CONTACT_LOCATION["lng"]
-    pad = 0.006
-    bbox = f"{lng - pad},{lat - pad},{lng + pad},{lat + pad}"
+    q = "Pallati+i+Kulturës+Artan+Cuku,+Bulevardi+Blu,+Kamëz"
     return {
         "form": form,
         "location": CONTACT_LOCATION,
         "map_embed_url": (
-            f"https://www.openstreetmap.org/export/embed.html"
-            f"?bbox={bbox}&layer=mapnik&marker={lat}%2C{lng}"
+            f"https://www.google.com/maps?q={q}&hl=sq&z=17&output=embed"
         ),
-        "maps_google_url": f"https://www.google.com/maps?q={lat},{lng}",
-        "maps_google_embed_url": f"https://maps.google.com/maps?q={lat},{lng}&hl=sq&z=17&output=embed",
+        "maps_google_url": f"https://www.google.com/maps/search/?api=1&query={lat},{lng}",
         "maps_osm_url": f"https://www.openstreetmap.org/?mlat={lat}&mlon={lng}#map=17/{lat}/{lng}",
     }
 

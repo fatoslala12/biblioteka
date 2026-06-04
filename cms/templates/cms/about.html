@@ -26,37 +26,22 @@
     }
     .sl-slogan-viewport {
       position: relative;
-      height: 7.5rem;
-      overflow: hidden;
-    }
-    @media (min-width: 640px) {
-      .sl-slogan-viewport { height: 8.5rem; }
-    }
-    .sl-slogan-slides {
-      position: relative;
-      height: 100%;
-      width: 100%;
-    }
-    .sl-slogan-slide {
-      position: absolute !important;
-      left: 0 !important;
-      right: 0 !important;
-      top: 0 !important;
-      bottom: 0 !important;
-      display: none !important;
+      min-height: 7.5rem;
+      display: flex;
       align-items: center;
       justify-content: center;
       padding: 0 3rem;
-      text-align: center;
-      margin: 0;
-      opacity: 0;
-      transition: opacity .5s ease;
-      z-index: 1;
     }
-    .sl-slogan-slide.is-active {
-      display: flex !important;
-      opacity: 1;
-      z-index: 2;
+    @media (min-width: 640px) {
+      .sl-slogan-viewport { min-height: 8.5rem; }
+    }
+    #slSloganText {
+      margin: 0;
+      text-align: center;
+      transition: opacity .45s ease;
+    }
+    #slSloganText.is-fading {
+      opacity: 0;
     }
     .sl-slogan-dot {
       height: 8px;
@@ -85,11 +70,10 @@
     }
     @media (max-width: 640px) {
       .sl-about-hero h1 { font-size: 1.45rem; line-height: 1.2; }
-      .sl-slogan-viewport { height: 6.75rem; }
-      .sl-slogan-slide { padding: 0 2.75rem; }
+      .sl-slogan-viewport { min-height: 6.75rem; padding: 0 2.75rem; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .sl-slogan-slide { transition: none; }
+      #slSloganText { transition: none; }
       .sl-about-stat-card:hover { transform: none !important; }
     }
   </style>
@@ -262,15 +246,7 @@
           <button type="button" class="sl-slogan-next absolute right-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-lg text-white backdrop-blur hover:bg-white/30 sm:right-4" aria-label="Slogani tjetër">›</button>
 
           <div class="sl-slogan-viewport" aria-live="polite" aria-atomic="true">
-            <div class="sl-slogan-slides">
-              <p class="sl-slogan-slide is-active text-lg font-extrabold leading-snug text-white sm:text-xl md:text-2xl">Dija fillon këtu.</p>
-              <p class="sl-slogan-slide text-lg font-extrabold leading-snug text-white sm:text-xl md:text-2xl">Lexo. Mëso. Frymëzohu.</p>
-              <p class="sl-slogan-slide text-lg font-extrabold leading-snug text-white sm:text-xl md:text-2xl">Një bibliotekë moderne për një komunitet modern.</p>
-              <p class="sl-slogan-slide text-lg font-extrabold leading-snug text-white sm:text-xl md:text-2xl">Nga libri te inovacioni.</p>
-              <p class="sl-slogan-slide text-lg font-extrabold leading-snug text-white sm:text-xl md:text-2xl">Dija që bashkon komunitetin.</p>
-              <p class="sl-slogan-slide text-lg font-extrabold leading-snug text-white sm:text-xl md:text-2xl">Hap derën e dijes, ndërto të ardhmen.</p>
-              <p class="sl-slogan-slide text-base font-extrabold leading-snug text-white sm:text-lg md:text-xl">Biblioteka e Kamzës — zemra e dijes dhe kulturës.</p>
-            </div>
+            <p id="slSloganText" class="text-lg font-extrabold leading-snug text-white sm:text-xl md:text-2xl">Dija fillon këtu.</p>
           </div>
         </div>
 
@@ -314,59 +290,87 @@
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var root = document.getElementById('slSloganSlider');
-      if (!root) return;
-      var slides = root.querySelectorAll('.sl-slogan-slide');
-      var dotsWrap = document.getElementById('slSloganDots');
-      if (!slides.length) return;
+    (function () {
+      var SLOGANS = [
+        'Dija fillon këtu.',
+        'Lexo. Mëso. Frymëzohu.',
+        'Një bibliotekë moderne për një komunitet modern.',
+        'Nga libri te inovacioni.',
+        'Dija që bashkon komunitetin.',
+        'Hap derën e dijes, ndërto të ardhmen.',
+        'Biblioteka e Kamzës — zemra e dijes dhe kulturës.'
+      ];
 
-      var idx = 0;
-      var timer = null;
-      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function initSloganSlider() {
+        var root = document.getElementById('slSloganSlider');
+        var textEl = document.getElementById('slSloganText');
+        var dotsWrap = document.getElementById('slSloganDots');
+        if (!root || !textEl) return;
 
-      function show(i) {
-        idx = (i + slides.length) % slides.length;
-        slides.forEach(function (s, n) {
-          var on = n === idx;
-          s.classList.toggle('is-active', on);
-          s.setAttribute('aria-hidden', on ? 'false' : 'true');
-        });
-        if (dotsWrap) {
+        var idx = 0;
+        var timer = null;
+        var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function renderDots() {
+          if (!dotsWrap) return;
+          dotsWrap.innerHTML = '';
+          SLOGANS.forEach(function (_, n) {
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'sl-slogan-dot' + (n === idx ? ' is-active' : '');
+            b.setAttribute('role', 'tab');
+            b.setAttribute('aria-label', 'Slogan ' + (n + 1));
+            b.setAttribute('aria-selected', n === idx ? 'true' : 'false');
+            b.addEventListener('click', function () { go(n); resetTimer(); });
+            dotsWrap.appendChild(b);
+          });
+        }
+
+        function updateDots() {
+          if (!dotsWrap) return;
           dotsWrap.querySelectorAll('.sl-slogan-dot').forEach(function (d, n) {
             d.classList.toggle('is-active', n === idx);
             d.setAttribute('aria-selected', n === idx ? 'true' : 'false');
           });
         }
+
+        function go(i) {
+          idx = (i + SLOGANS.length) % SLOGANS.length;
+          if (reduced) {
+            textEl.textContent = SLOGANS[idx];
+            updateDots();
+            return;
+          }
+          textEl.classList.add('is-fading');
+          window.setTimeout(function () {
+            textEl.textContent = SLOGANS[idx];
+            textEl.classList.remove('is-fading');
+            updateDots();
+          }, 220);
+        }
+
+        function next() { go(idx + 1); }
+        function resetTimer() {
+          clearInterval(timer);
+          if (!reduced) timer = setInterval(next, 4500);
+        }
+
+        var prev = root.querySelector('.sl-slogan-prev');
+        var nextBtn = root.querySelector('.sl-slogan-next');
+        if (prev) prev.addEventListener('click', function () { go(idx - 1); resetTimer(); });
+        if (nextBtn) nextBtn.addEventListener('click', function () { go(idx + 1); resetTimer(); });
+        root.addEventListener('mouseenter', function () { clearInterval(timer); });
+        root.addEventListener('mouseleave', resetTimer);
+
+        renderDots();
+        resetTimer();
       }
 
-      slides.forEach(function (s, n) {
-        s.setAttribute('aria-hidden', n === 0 ? 'false' : 'true');
-        if (!dotsWrap) return;
-        var b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'sl-slogan-dot' + (n === 0 ? ' is-active' : '');
-        b.setAttribute('role', 'tab');
-        b.setAttribute('aria-label', 'Slogan ' + (n + 1));
-        b.addEventListener('click', function () { show(n); resetTimer(); });
-        dotsWrap.appendChild(b);
-      });
-
-      function next() { show(idx + 1); }
-      function resetTimer() {
-        clearInterval(timer);
-        if (!reduced) timer = setInterval(next, 4500);
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSloganSlider);
+      } else {
+        initSloganSlider();
       }
-
-      var prev = root.querySelector('.sl-slogan-prev');
-      var nextBtn = root.querySelector('.sl-slogan-next');
-      if (prev) prev.addEventListener('click', function () { show(idx - 1); resetTimer(); });
-      if (nextBtn) nextBtn.addEventListener('click', function () { show(idx + 1); resetTimer(); });
-      root.addEventListener('mouseenter', function () { clearInterval(timer); });
-      root.addEventListener('mouseleave', resetTimer);
-
-      show(0);
-      resetTimer();
-    });
+    })();
   </script>
 {% endblock %}

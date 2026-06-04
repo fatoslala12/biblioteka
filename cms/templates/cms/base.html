@@ -153,6 +153,23 @@
           line-height: 1.1rem;
         }
       }
+      /* Mobile drawer */
+      #sl-mobile-menu { z-index: 60; }
+      #sl-mobile-menu .sl-mobile-drawer {
+        transform: translateX(100%);
+        transition: transform .28s cubic-bezier(.22, 1, .36, 1);
+        padding-bottom: env(safe-area-inset-bottom, 0);
+      }
+      #sl-mobile-menu.is-open .sl-mobile-drawer { transform: translateX(0); }
+      #sl-mobile-menu .sl-mobile-nav-scroll {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+      #sl-mobile-menu-btn .sl-icon-close { display: none; }
+      #sl-mobile-menu-btn[aria-expanded="true"] .sl-icon-menu { display: none; }
+      #sl-mobile-menu-btn[aria-expanded="true"] .sl-icon-close { display: block; }
+      body.sl-menu-open { overflow: hidden; }
+      #sl-mobile-menu.is-open #sl-mobile-menu-backdrop { opacity: 1; }
       @keyframes sl-section-media-float {
         0%, 100% {
           transform: translateY(0);
@@ -182,15 +199,12 @@
       {% block site_header %}
       <header class="site-header sticky top-0 z-40 border-b border-white/15 bg-brand-600/95 backdrop-blur dark:border-brand-500/30">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div class="flex h-16 items-center justify-between gap-3">
-            <a href="/" class="group flex min-w-0 items-center gap-2">
-              <img src="{% static 'img/logo_biblioteka.png' %}" alt="Biblioteka Kamëz" width="200" height="48" class="h-9 w-auto max-w-[min(52vw,200px)] object-contain object-left sm:h-10 sm:max-w-[220px]" decoding="async" />
+          <div class="flex h-16 items-center justify-between gap-2 sm:gap-3">
+            <a href="/" class="group flex min-w-0 shrink-0 items-center gap-2">
+              <img src="{% static 'img/logo_biblioteka.png' %}" alt="Biblioteka Kamëz" width="200" height="48" class="h-9 w-auto max-w-[min(48vw,200px)] object-contain object-left sm:h-10 sm:max-w-[220px]" decoding="async" />
             </a>
 
-            <button id="sl-mobile-menu-btn" type="button" class="sl-header-icon-btn md:hidden p-2.5 aria-expanded=false" aria-label="Hap menunë">
-              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-            </button>
-            <nav id="sl-desktop-nav" class="hidden items-center gap-1 md:flex">
+            <nav id="sl-desktop-nav" class="hidden flex-1 items-center justify-center gap-1 md:flex">
               <a href="/" data-nav="home" class="sl-nav-link {% if request.path == '/' %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if request.path == '/' %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Kryefaqja</a>
               <a href="/catalog/" data-nav="catalog" class="sl-nav-link {% if '/catalog/' in request.path or '/books/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/catalog/' in request.path or '/books/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Katalog</a>
               {% if '/panel/' not in request.path %}
@@ -204,7 +218,11 @@
               <a href="/kontakt/" data-nav="kontakt" class="sl-nav-link {% if '/kontakt/' in request.path %}sl-nav-active{% endif %} rounded-xl px-3 py-2 text-sm font-medium hover:bg-white/10 hover:text-white dark:hover:bg-brand-500/20 {% if '/kontakt/' in request.path %}bg-white/20 text-white ring-1 ring-white/35 dark:ring-brand-300/40{% else %}text-white/90{% endif %}">Kontakt</a>
             </nav>
 
-            <div class="flex items-center gap-2">
+            <div class="flex shrink-0 items-center gap-1.5 sm:gap-2">
+              <button id="sl-mobile-menu-btn" type="button" class="sl-header-icon-btn p-2.5 md:hidden" aria-expanded="false" aria-controls="sl-mobile-menu" aria-label="Hap menunë">
+                <svg class="sl-icon-menu h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                <svg class="sl-icon-close h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
               {% if request.user.is_authenticated %}
                 {% if sl_notif_list_url %}
                   {% include "cms/includes/_member_notification_bell.html" %}
@@ -238,31 +256,33 @@
           </div>
         </div>
       </header>
-      <div id="sl-mobile-menu" class="fixed inset-0 z-30 hidden md:hidden" aria-hidden="true">
-        <div id="sl-mobile-menu-backdrop" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-        <div class="absolute right-0 top-0 h-full w-72 max-w-[85vw] border-l border-white/10 bg-brand-700 shadow-xl dark:bg-slate-900">
-          <div class="flex h-16 items-center justify-between border-b border-white/15 px-4">
-            <span class="text-sm font-semibold text-white">Menuja</span>
-            <button id="sl-mobile-menu-close" type="button" class="rounded-lg p-2 text-white hover:bg-white/10" aria-label="Mbylle">✕</button>
+      <div id="sl-mobile-menu" class="fixed inset-0 hidden md:hidden" aria-hidden="true">
+        <div id="sl-mobile-menu-backdrop" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm opacity-0 transition-opacity duration-300"></div>
+        <div class="sl-mobile-drawer absolute right-0 top-0 flex h-full w-[min(20rem,88vw)] flex-col border-l border-white/10 bg-brand-700 shadow-2xl dark:bg-slate-900">
+          <div class="flex h-16 shrink-0 items-center justify-between border-b border-white/15 px-4">
+            <span class="text-sm font-extrabold text-white">Menuja</span>
+            <button id="sl-mobile-menu-close" type="button" class="sl-header-icon-btn p-2" aria-label="Mbylle menunë">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
           </div>
-          <nav class="flex flex-col gap-1 p-4">
-            <a href="/" data-nav="home" class="rounded-xl px-3 py-2.5 text-sm font-medium {% if request.path == '/' %}bg-white/20 text-white ring-1 ring-white/30{% else %}text-white/95 hover:bg-white/10{% endif %}">Kryefaqja</a>
-            <a href="/catalog/" data-nav="catalog" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Katalog</a>
+          <nav class="sl-mobile-nav-scroll flex flex-1 flex-col gap-1 overflow-y-auto p-4 pb-6">
+            <a href="/" data-nav="home" class="min-h-[44px] rounded-xl px-3 py-2.5 text-sm font-medium {% if request.path == '/' %}bg-white/20 text-white ring-1 ring-white/30{% else %}text-white/95 hover:bg-white/10{% endif %}">Kryefaqja</a>
+            <a href="/catalog/" data-nav="catalog" class="min-h-[44px] rounded-xl px-3 py-2.5 text-sm font-medium {% if '/catalog/' in request.path or '/books/' in request.path %}bg-white/20 text-white ring-1 ring-white/30{% else %}text-white/95 hover:bg-white/10{% endif %}">Katalog</a>
             {% if '/panel/' not in request.path %}
-            <a href="/njoftime/" data-nav="njoftime" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Njoftime</a>
+            <a href="/njoftime/" data-nav="njoftime" class="min-h-[44px] rounded-xl px-3 py-2.5 text-sm font-medium {% if '/njoftime/' in request.path %}bg-white/20 text-white ring-1 ring-white/30{% else %}text-white/95 hover:bg-white/10{% endif %}">Njoftime</a>
             {% endif %}
-            <a href="/evente/" data-nav="evente" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Evente</a>
-            <a href="/libri-i-javes/" data-nav="libri-i-javes" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Libri i javës</a>
-            <a href="/rreth-nesh/" data-nav="rreth-nesh" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Rreth nesh</a>
-            <a href="/rregullore/" data-nav="rregullore" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Rregullore</a>
-            <a href="/orar/" data-nav="orar" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Orar</a>
-            <a href="/kontakt/" data-nav="kontakt" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Kontakt</a>
+            <a href="/evente/" data-nav="evente" class="min-h-[44px] rounded-xl px-3 py-2.5 text-sm font-medium {% if '/evente/' in request.path %}bg-white/20 text-white ring-1 ring-white/30{% else %}text-white/95 hover:bg-white/10{% endif %}">Evente</a>
+            <a href="/libri-i-javes/" data-nav="libri-i-javes" class="min-h-[44px] rounded-xl px-3 py-2.5 text-sm font-medium {% if '/libri-i-javes/' in request.path %}bg-white/20 text-white ring-1 ring-white/30{% else %}text-white/95 hover:bg-white/10{% endif %}">Libri i javës</a>
+            <a href="/rreth-nesh/" data-nav="rreth-nesh" class="min-h-[44px] rounded-xl px-3 py-2.5 text-sm font-medium {% if '/rreth-nesh/' in request.path %}bg-white/20 text-white ring-1 ring-white/30{% else %}text-white/95 hover:bg-white/10{% endif %}">Rreth nesh</a>
+            <a href="/rregullore/" data-nav="rregullore" class="min-h-[44px] rounded-xl px-3 py-2.5 text-sm font-medium {% if '/rregullore/' in request.path %}bg-white/20 text-white ring-1 ring-white/30{% else %}text-white/95 hover:bg-white/10{% endif %}">Rregullore</a>
+            <a href="/orar/" data-nav="orar" class="min-h-[44px] rounded-xl px-3 py-2.5 text-sm font-medium {% if '/orar/' in request.path %}bg-white/20 text-white ring-1 ring-white/30{% else %}text-white/95 hover:bg-white/10{% endif %}">Orar</a>
+            <a href="/kontakt/" data-nav="kontakt" class="min-h-[44px] rounded-xl px-3 py-2.5 text-sm font-medium {% if '/kontakt/' in request.path %}bg-white/20 text-white ring-1 ring-white/30{% else %}text-white/95 hover:bg-white/10{% endif %}">Kontakt</a>
             <div class="my-2 border-t border-white/15"></div>
             {% if request.user.is_authenticated %}
-            <a href="/anetar/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Portali im</a>
-            <a href="/dil/" class="rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Dil</a>
+            <a href="/anetar/" class="min-h-[44px] rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Portali im</a>
+            <a href="/dil/" class="min-h-[44px] rounded-xl px-3 py-2.5 text-sm font-medium text-white/95 hover:bg-white/10">Dil</a>
             {% else %}
-            <a href="/hyr/" class="rounded-xl bg-white px-3 py-2.5 text-sm font-extrabold text-brand-700 hover:bg-white/90">Logohu</a>
+            <a href="/hyr/" class="min-h-[44px] rounded-xl bg-white px-3 py-2.5 text-center text-sm font-extrabold text-brand-700 hover:bg-white/90">Logohu</a>
             {% endif %}
           </nav>
         </div>
@@ -298,11 +318,11 @@
       <footer class="site-footer mt-20 border-t border-white/15 bg-brand-700 py-10 text-white dark:border-brand-500/25">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div class="rounded-3xl border border-white/15 bg-white/5 px-5 py-4 shadow-sm backdrop-blur sm:px-6">
-            <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
               <div class="text-sm font-semibold text-white/95">
                 Biblioteka Bashkia Kamëz — ambient modern, i qetë dhe i fokusuar te dija.
               </div>
-              <a href="/catalog/" class="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-extrabold text-brand-700 shadow-sm transition hover:bg-white/90">
+              <a href="/catalog/" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-extrabold text-brand-700 shadow-sm transition hover:bg-white/90 sm:w-auto">
                 <span>🔎</span>
                 <span>Kërko në katalog</span>
               </a>
@@ -400,11 +420,39 @@
           var btn = document.getElementById('sl-mobile-menu-btn');
           var closeBtn = document.getElementById('sl-mobile-menu-close');
           var backdrop = document.getElementById('sl-mobile-menu-backdrop');
-          function openMenu() { if (menu) { menu.classList.remove('hidden'); menu.setAttribute('aria-hidden', 'false'); if (btn) btn.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; } }
-          function closeMenu() { if (menu) { menu.classList.add('hidden'); menu.setAttribute('aria-hidden', 'true'); if (btn) btn.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; } }
-          if (btn) btn.addEventListener('click', openMenu);
+          var closeTimer = null;
+          function openMenu() {
+            if (!menu) return;
+            menu.classList.remove('hidden');
+            menu.setAttribute('aria-hidden', 'false');
+            if (btn) btn.setAttribute('aria-expanded', 'true');
+            document.body.classList.add('sl-menu-open');
+            requestAnimationFrame(function () {
+              menu.classList.add('is-open');
+              if (backdrop) backdrop.classList.remove('opacity-0');
+            });
+          }
+          function closeMenu() {
+            if (!menu) return;
+            menu.classList.remove('is-open');
+            if (backdrop) backdrop.classList.add('opacity-0');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+            document.body.classList.remove('sl-menu-open');
+            clearTimeout(closeTimer);
+            closeTimer = setTimeout(function () {
+              menu.classList.add('hidden');
+              menu.setAttribute('aria-hidden', 'true');
+            }, 280);
+          }
+          if (btn) btn.addEventListener('click', function () {
+            if (menu && menu.classList.contains('is-open')) closeMenu();
+            else openMenu();
+          });
           if (closeBtn) closeBtn.addEventListener('click', closeMenu);
           if (backdrop) backdrop.addEventListener('click', closeMenu);
+          document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && menu && menu.classList.contains('is-open')) closeMenu();
+          });
           menu && menu.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeMenu); });
         })();
         /* Keep nav active state correct after AJAX navigation */

@@ -1,0 +1,31 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Libri i javës — Biblioteka Kamëz{% endblock %}
+
+{% block meta_description %}Libri i javës nga Biblioteka Kamëz — rekomandime javore me përshkrim, autor dhe arsye pse ia vlen t'i lexoni.{% endblock %}
+
+{% block extrahead %}
+  <style>
+    .sl-weekly-books-page .sl-weekly-book-card {
+      -webkit-tap-highlight-color: transparent;
+    }
+    @media (max-width: 640px) {
+      .sl-weekly-books-hero h1 {
+        font-size: 1.45rem;
+        line-height: 1.2;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sl-weekly-book-card {
+        transition: none !important;
+      }
+      .sl-weekly-book-card:hover {
+        transform: none !important;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  {% include "cms/_weekly_books_body.html" %}
+{% endblock %}

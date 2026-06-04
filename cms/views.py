@@ -425,30 +425,23 @@ def events(request):
 def videos(request):
     now = timezone.now()
     qs = WeeklyBook.objects.filter(is_published=True, published_at__lte=now).order_by("-published_at")
-    items = []
-    for b in qs:
-        items.append(
-            {
-                "title": b.title,
-                "date": b.published_at.strftime("%d/%m/%Y"),
-                "excerpt": b.excerpt,
-                "badge": "Libri i javës",
-                "url": (b.cta_url or "").strip(),
-                "image_url": (b.image.url if b.image else ""),
-                "author": b.author,
-                "cta_label": (b.cta_label or "").strip() or "Shiko më shumë",
-            }
-        )
-    ctx = {
-        "title": "Libri i javës",
-        "subtitle": "Zgjedhjet javore me përshkrim, kopertinë dhe detaje nga paneli i admin.",
-        "items": items,
-        "is_books_page": True,
-    }
+    items = [
+        {
+            "title": b.title,
+            "date": b.published_at.strftime("%d/%m/%Y"),
+            "excerpt": b.excerpt,
+            "badge": "Libri i javës",
+            "image_url": (b.image.url if b.image else ""),
+            "author": b.author,
+            "detail_url": reverse("cms:weekly_book_detail", kwargs={"pk": b.id}),
+        }
+        for b in qs
+    ]
+    ctx = {"items": items}
     if _is_ajax(request):
-        html = render_to_string("cms/_section_list_content.html", ctx, request=request)
-        return JsonResponse({"html": html, "title": "Libri i javës — Smart Library"})
-    return render(request, "cms/section_list.html", ctx)
+        html = render_to_string("cms/_weekly_books_content.html", ctx, request=request)
+        return JsonResponse({"html": html, "title": "Libri i javës — Biblioteka Kamëz"})
+    return render(request, "cms/weekly_books.html", ctx)
 
 
 def _published_cms_qs(model_cls):

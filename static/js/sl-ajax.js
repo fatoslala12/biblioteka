@@ -1,15 +1,34 @@
 /**
  * Smart Library — AJAX navigation with skeleton loading
- * Intercepts links to catalog, njoftime, evente, libri i javes
+ * Vetëm faqet e listës (jo detajet me ID numerik).
  */
 (function () {
-  var AJAX_PATHS = ['/catalog/', '/njoftime/', '/evente/', '/libri-i-javes/'];
+  var AJAX_LIST_PATHS = ['/catalog/', '/njoftime/', '/evente/', '/libri-i-javes/'];
+
+  function pathFromUrl(url) {
+    try {
+      if (url.indexOf('http') === 0) return new URL(url).pathname;
+      return (url.split('?')[0] || '/').split('#')[0];
+    } catch (_) {
+      return '/';
+    }
+  }
+
+  /** Detaj: /njoftime/12/, /evente/3/, /libri-i-javes/5/ */
+  function isCmsDetailPath(path) {
+    return /^\/(njoftime|evente|libri-i-javes)\/\d+\/?$/.test(path);
+  }
 
   function isAjaxPath(url) {
-    try {
-      var path = url.indexOf('http') === 0 ? new URL(url).pathname : url.split('?')[0] || '/';
-      return AJAX_PATHS.some(function (p) { return path === p || path.indexOf(p) === 0; });
-    } catch (_) { return false; }
+    var path = pathFromUrl(url);
+    if (isCmsDetailPath(path)) return false;
+    if (/^\/books\/\d+/.test(path)) return false;
+    if (path === '/catalog' || path.indexOf('/catalog/') === 0) {
+      return path.indexOf('/books/') === -1;
+    }
+    return AJAX_LIST_PATHS.some(function (p) {
+      return path === p || path === p.replace(/\/$/, '');
+    });
   }
 
   var cardSk = '<div class="rounded-3xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-950"><div class="sl-skeleton sl-skeleton-brand rounded-xl h-5 mb-3" style="width:85%"></div><div class="sl-skeleton sl-skeleton-brand rounded-lg h-4 mb-4" style="width:55%"></div><div class="flex gap-2 mb-4"><span class="sl-skeleton sl-skeleton-brand rounded-full h-6 w-14"></span><span class="sl-skeleton sl-skeleton-brand rounded-full h-6 w-16"></span></div><div class="grid grid-cols-3 gap-3"><div class="sl-skeleton sl-skeleton-brand rounded-2xl h-14"></div><div class="sl-skeleton sl-skeleton-brand rounded-2xl h-14"></div><div class="sl-skeleton sl-skeleton-brand rounded-2xl h-14"></div></div></div>';
@@ -38,7 +57,7 @@
     var c = getContainer();
     if (!c) return false;
 
-    var path = url.replace(/^https?:\/\/[^/]+/, '') || '/';
+    var path = pathFromUrl(url);
     var skeleton = getSkeleton(path);
     c.innerHTML = skeleton;
 
@@ -68,19 +87,25 @@
     return true;
   }
 
+  function shouldAjaxLink(a) {
+    if (!a || a.target || a.download) return false;
+    var href = a.getAttribute('href');
+    if (!href || href.indexOf('http') === 0 && href.indexOf(location.origin) !== 0) return false;
+    if (a.hasAttribute('data-sl-full-nav')) return false;
+    return isAjaxPath(a.href || href);
+  }
+
   function initAjaxLinks(root) {
     root = root || document;
-    var sel = 'a[href^="/catalog"], a[href^="/njoftime"], a[href^="/evente"], a[href^="/libri-i-javes"], a[href^="/video"]';
     try {
-      root.querySelectorAll(sel).forEach(function (a) {
-        if (a.target || a.download) return;
-        var h = a.getAttribute('href');
-        if (h && h.indexOf('http') === 0 && h.indexOf(location.origin) !== 0) return;
-        a.classList.add('sl-ajax-link');
+      root.querySelectorAll('a[href^="/catalog"], a[href^="/njoftime"], a[href^="/evente"], a[href^="/libri-i-javes"], a[href^="/video"]').forEach(function (a) {
+        a.classList.toggle('sl-ajax-link', shouldAjaxLink(a));
       });
       root.querySelectorAll('a[href^="?"]').forEach(function (a) {
         if (a.target || a.download) return;
-        if (document.location.pathname.indexOf('/catalog') === 0) a.classList.add('sl-ajax-link');
+        if (document.location.pathname.indexOf('/catalog') === 0) {
+          a.classList.toggle('sl-ajax-link', shouldAjaxLink(a));
+        }
       });
     } catch (_) {}
   }
@@ -89,8 +114,9 @@
     var a = e.target.closest('a.sl-ajax-link');
     if (!a) {
       a = e.target.closest('a[href^="/catalog"], a[href^="/njoftime"], a[href^="/evente"], a[href^="/libri-i-javes"], a[href^="/video"], a[href^="?"]');
+      if (a && !shouldAjaxLink(a)) a = null;
     }
-    if (a && !a.target && !a.download) {
+    if (a) {
       var href = a.href;
       if (href && href.indexOf(location.origin) === 0 && isAjaxPath(href)) {
         e.preventDefault();
@@ -111,7 +137,7 @@
   });
 
   window.addEventListener('popstate', function (e) {
-    if (e.state && e.state.path) {
+    if (e.state && e.state.path && isAjaxPath(window.location.href)) {
       load(window.location.href, false);
     }
   });

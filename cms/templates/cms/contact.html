@@ -18,27 +18,48 @@
     .dark .sl-contact-page .sl-contact-field:focus {
       background: rgb(2 6 23) !important;
     }
+    .sl-contact-map-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    @media (min-width: 1024px) {
+      .sl-contact-left-col {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .sl-contact-map-card {
+        flex: 1 1 auto;
+        min-height: 340px;
+      }
+    }
     .sl-contact-map {
       position: relative;
+      flex: 1 1 auto;
       width: 100%;
-      height: 280px;
+      min-height: 260px;
       overflow: hidden;
-      background: #e2e8f0;
+      background: #cbd5e1;
+      line-height: 0;
     }
     .sl-contact-map iframe {
       position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
+      top: 0;
+      left: 0;
+      width: 100% !important;
+      height: 100% !important;
+      min-width: 100%;
+      min-height: 100%;
       border: 0;
       display: block;
     }
     @media (min-width: 1024px) {
-      .sl-contact-map { height: 320px; }
+      .sl-contact-map { min-height: 300px; }
     }
     @media (max-width: 640px) {
       .sl-contact-hero h1 { font-size: 1.55rem; line-height: 1.2; }
-      .sl-contact-map { height: 240px; }
+      .sl-contact-map { min-height: 220px; }
     }
   </style>
 {% endblock %}
@@ -63,8 +84,8 @@
     <section class="relative mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
       <div class="grid gap-4 lg:grid-cols-12 lg:gap-5">
         <!-- Info + harta -->
-        <div class="flex flex-col gap-3 lg:col-span-5">
-          <div class="grid gap-2.5">
+        <div class="sl-contact-left-col lg:col-span-5">
+          <div class="grid gap-2">
             <a href="mailto:{{ location.email }}" class="group flex min-h-[44px] items-start gap-3 rounded-2xl border border-brand-200/70 bg-gradient-to-br from-brand-50 to-white p-3.5 shadow-sm transition hover:border-brand-300 hover:shadow-md dark:border-brand-900/40 dark:from-brand-950/30 dark:to-slate-900/50 sm:p-4">
               <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-base text-white shadow-sm sm:h-11 sm:w-11">✉️</span>
               <div class="min-w-0">
@@ -88,24 +109,26 @@
             </div>
           </div>
 
-          <div class="flex flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-md dark:border-slate-700 dark:bg-slate-900/50 sm:rounded-3xl">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-3 py-2.5 dark:border-slate-800 sm:px-4 sm:py-3">
+          <div class="sl-contact-map-card overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-md dark:border-slate-700 dark:bg-slate-900/50 sm:rounded-3xl">
+            <div class="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-3 py-2 dark:border-slate-800 sm:px-4 sm:py-2.5">
               <span class="text-sm font-extrabold text-slate-800 dark:text-white">Ku ndodhemi</span>
-              <div class="flex flex-wrap gap-1.5">
-                <a href="{{ maps_google_url }}" target="_blank" rel="noopener noreferrer" class="rounded-lg bg-brand-600 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-brand-700 sm:px-3 sm:py-1.5 sm:text-xs">Google Maps</a>
-                <a href="{{ maps_osm_url }}" target="_blank" rel="noopener noreferrer" class="rounded-lg border border-slate-200 px-2.5 py-1 text-[11px] font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 sm:px-3 sm:py-1.5 sm:text-xs">Harta</a>
+              <div class="flex gap-1.5">
+                <a href="{{ maps_google_url }}" target="_blank" rel="noopener noreferrer" class="rounded-lg bg-brand-600 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-brand-700">Google Maps</a>
+                <a href="{{ maps_osm_url }}" target="_blank" rel="noopener noreferrer" class="rounded-lg border border-slate-200 px-2.5 py-1 text-[11px] font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200">Harta</a>
               </div>
             </div>
-            <div class="sl-contact-map w-full flex-1">
+            <div class="sl-contact-map">
               <iframe
                 title="Vendndodhja e Bibliotekës Kamëz në hartë"
+                width="100%"
+                height="100%"
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
                 allowfullscreen
-                src="{{ maps_google_embed_url }}"
+                src="{{ map_embed_url }}"
               ></iframe>
             </div>
-            <p class="shrink-0 border-t border-slate-100 px-3 py-2 text-center text-[11px] font-medium text-slate-500 dark:border-slate-800 dark:text-slate-400 sm:px-4">
+            <p class="shrink-0 border-t border-slate-100 px-3 py-2 text-center text-[11px] font-medium text-slate-500 dark:border-slate-800 dark:text-slate-400">
               Pallati i Kulturës „Artan Cuku” — Bulevardi Blu, Kamëz
             </p>
           </div>

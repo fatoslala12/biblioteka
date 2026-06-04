@@ -568,13 +568,13 @@ CONTACT_LOCATION = {
 
 def _contact_page_context(form):
     lat, lng = CONTACT_LOCATION["lat"], CONTACT_LOCATION["lng"]
-    pad = 0.004
+    pad = 0.006
     bbox = f"{lng - pad},{lat - pad},{lng + pad},{lat + pad}"
     return {
         "form": form,
         "location": CONTACT_LOCATION,
         "map_embed_url": (
-            "https://www.openstreetmap.org/export/embed.html"
+            f"https://www.openstreetmap.org/export/embed.html"
             f"?bbox={bbox}&layer=mapnik&marker={lat}%2C{lng}"
         ),
         "maps_google_url": f"https://www.google.com/maps?q={lat},{lng}",

@@ -584,6 +584,164 @@
       letter-spacing: 0.02em;
     }
 
+    /* Stat cards — të njëjta madhësi & stil */
+    .sl-dashboard .sl-stat-grid > [class*="col-"] { display: flex; }
+    .sl-dashboard .sl-stat-card {
+      width: 100%;
+      height: 100%;
+    }
+    .sl-dashboard .sl-stats-row .sl-stat-card .card-body {
+      min-height: 112px;
+      width: 100%;
+      padding: 1rem 1.05rem !important;
+    }
+    .sl-dashboard .sl-stats-row .sl-stat-card .h3 {
+      line-height: 1.15;
+      font-variant-numeric: tabular-nums;
+    }
+    .sl-dashboard .sl-stats-row .sl-stat-card .sl-stat-money {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.2rem 0.35rem;
+    }
+    .sl-dashboard .sl-stats-row .sl-stat-card .sl-stat-money .sl-stat-num {
+      font-size: clamp(0.95rem, 1.6vw, 1.45rem);
+      font-weight: 900;
+      line-height: 1.1;
+    }
+    .sl-dashboard .sl-stats-row .sl-stat-card .sl-stat-unit {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #64748b;
+      letter-spacing: 0.05em;
+    }
+
+    /* Analitikë — karta të barabarta */
+    .sl-analytics .sl-metrics-equal-row > [class*="col-"],
+    .sl-analytics .sl-charts-row > [class*="col-"],
+    .sl-analytics .sl-top-list-row > [class*="col-"] {
+      display: flex;
+    }
+    .sl-analytics .sl-metrics-equal-row > [class*="col-"] > a,
+    .sl-analytics .sl-metrics-equal-row > [class*="col-"] > .card {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .sl-analytics .sl-period-card,
+    .sl-analytics .sl-fines-card,
+    .sl-analytics .sl-reservations-pending-card,
+    .sl-analytics .sl-copies-pie-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 192px;
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,251,255,.96)) !important;
+      color: #0f172a !important;
+      border: 1px solid rgba(148,163,184,.16) !important;
+      box-shadow: 0 1px 2px rgba(15,23,42,.05), 0 14px 30px rgba(15,23,42,.07) !important;
+    }
+    .sl-analytics .sl-period-card::before,
+    .sl-analytics .sl-fines-card::before,
+    .sl-analytics .sl-reservations-pending-card::before,
+    .sl-analytics .sl-copies-pie-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      right: 0;
+      height: 4px;
+      z-index: 2;
+    }
+    .sl-analytics .sl-period-card::before { background: linear-gradient(90deg, #0d9488, #14b8a6); }
+    .sl-analytics .sl-fines-card::before { background: linear-gradient(90deg, #dc2626, #f87171); }
+    .sl-analytics .sl-reservations-pending-card::before { background: linear-gradient(90deg, #6366f1, #818cf8); }
+    .sl-analytics .sl-copies-pie-card::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .sl-analytics .sl-period-card .card-body,
+    .sl-analytics .sl-fines-card .card-body,
+    .sl-analytics .sl-reservations-pending-card .card-body,
+    .sl-analytics .sl-copies-pie-card .card-body {
+      flex: 1;
+      min-height: 192px;
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 1.2rem 1rem !important;
+      position: relative;
+      z-index: 1;
+    }
+    .sl-analytics .sl-period-card .sl-label,
+    .sl-analytics .sl-fines-card .sl-label,
+    .sl-analytics .sl-reservations-pending-card .sl-label,
+    .sl-analytics .sl-copies-pie-card .sl-label {
+      color: #64748b !important;
+      opacity: 1 !important;
+      font-size: 0.72rem !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .sl-analytics .sl-period-card .sl-num,
+    .sl-analytics .sl-fines-card .sl-num,
+    .sl-analytics .sl-reservations-pending-card .sl-num {
+      color: #0f172a !important;
+      font-size: 2rem !important;
+      font-weight: 900 !important;
+      margin-top: 0.35rem;
+    }
+    .sl-analytics .sl-period-card .sl-delta,
+    .sl-analytics .sl-fines-card .sl-delta,
+    .sl-analytics .sl-reservations-pending-card .sl-delta {
+      color: #64748b !important;
+      opacity: 1 !important;
+      margin-top: 0.45rem;
+      font-weight: 700;
+    }
+    .sl-analytics .sl-period-card.sl-compare-up .sl-delta { color: #059669 !important; }
+    .sl-analytics .sl-period-card.sl-compare-down .sl-delta { color: #dc2626 !important; }
+    .sl-analytics .sl-reservations-pending-card:hover {
+      transform: translateY(-4px);
+      color: #0f172a !important;
+    }
+    .sl-analytics .sl-charts-row .sl-chart-card {
+      width: 100%;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+    }
+    .sl-analytics .sl-charts-row .sl-chart-card .card-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 240px;
+    }
+    .sl-analytics .sl-top-list-row .sl-chart-card {
+      width: 100%;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+    }
+    .sl-analytics .sl-top-list-row .sl-chart-card .card-body {
+      flex: 1;
+      overflow-y: auto;
+    }
+    .sl-analytics .sl-top-table .d-flex {
+      border-radius: 10px;
+      margin-bottom: 2px;
+      padding: 0.45rem 0.55rem !important;
+    }
+    .sl-analytics .sl-top-table .sl-bar-wrap {
+      height: 7px;
+      min-width: 56px;
+      background: #e2e8f0;
+    }
+    .sl-analytics .sl-top-table .sl-bar-fill {
+      background: linear-gradient(90deg, #0d9488, #2dd4bf);
+      box-shadow: 0 0 8px rgba(13,148,136,.25);
+    }
+
     /* User dropdown: premium + modern */
     #jazzy-navbar .dropdown-menu,
     .app-header .dropdown-menu {
@@ -687,26 +845,52 @@
         margin-bottom: 0.2rem !important;
       }
 
-      /* Stats cards: 2 per row, compact premium look */
-      .sl-dashboard .sl-stats-row .col-6 .card .card-body {
-        min-height: 86px;
-        padding: 0.75rem 0.78rem !important;
-        display: flex !important;
-        flex-direction: column !important;
+      /* Stats cards mobile — të njëjta, 2 kolona */
+      .sl-dashboard .sl-stats-row .col-6 .sl-stat-card .card-body {
+        min-height: 94px !important;
+        padding: 0.78rem 0.82rem !important;
+        flex-direction: row !important;
         align-items: center !important;
-        justify-content: center !important;
-        gap: 5px !important;
+        justify-content: space-between !important;
+        gap: 0.45rem !important;
+        text-align: left !important;
+      }
+      .sl-dashboard .sl-stats-row .col-6 .sl-stat-card .card-body > div:first-child {
+        text-align: left !important;
+        width: auto !important;
+        min-width: 0;
       }
       .sl-dashboard .sl-stats-row .col-6 .text-muted {
-        font-size: 0.68rem !important;
-        letter-spacing: 0.02em !important;
+        font-size: 0.66rem !important;
+        letter-spacing: 0.03em !important;
       }
       .sl-dashboard .sl-stats-row .col-6 .h3 {
-        font-size: 1.2rem !important;
+        font-size: 1.15rem !important;
       }
-      .sl-dashboard .sl-stats-row .col-6 .h2 {
-        font-size: 1.45rem !important;
-        opacity: .95;
+      .sl-dashboard .sl-stats-row .col-6 .sl-stat-card .h2.m-0 {
+        width: 2.35rem !important;
+        height: 2.35rem !important;
+        min-width: 2.35rem !important;
+        font-size: 0.95rem !important;
+      }
+      .sl-analytics .sl-period-card,
+      .sl-analytics .sl-fines-card,
+      .sl-analytics .sl-reservations-pending-card,
+      .sl-analytics .sl-copies-pie-card {
+        min-height: 168px;
+      }
+      .sl-analytics .sl-period-card .card-body,
+      .sl-analytics .sl-fines-card .card-body,
+      .sl-analytics .sl-reservations-pending-card .card-body,
+      .sl-analytics .sl-copies-pie-card .card-body {
+        min-height: 168px;
+        padding: 1rem 0.85rem !important;
+      }
+      .sl-analytics .sl-charts-row .sl-chart-card {
+        min-height: 280px;
+      }
+      .sl-analytics .sl-top-list-row .sl-chart-card {
+        min-height: 300px;
       }
 
       /* Quick actions/Qarkullimi: keep buttons inside viewport */
@@ -937,142 +1121,142 @@
 
     <div class="row sl-stats-row">
       <div class="col-12">
-        <div class="row g-3">
+        <div class="row g-3 sl-stat-grid">
             <div class="col-md-3 col-sm-6 col-6">
-                <div class="card">
+                <div class="card sl-stat-card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
                             <div class="text-muted text-xs font-weight-bold">Libra</div>
                             <div class="h3 m-0">{% stat_books %}</div>
                         </div>
-                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-book"></i></div>
+                        <div class="h2 m-0"><i class="fas fa-book"></i></div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-6 col-6">
-                <div class="card">
+                <div class="card sl-stat-card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
                             <div class="text-muted text-xs font-weight-bold">Autorë</div>
                             <div class="h3 m-0">{% stat_authors %}</div>
                         </div>
-                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-pen-nib"></i></div>
+                        <div class="h2 m-0"><i class="fas fa-pen-nib"></i></div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-6 col-6">
-                <div class="card">
+                <div class="card sl-stat-card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
                             <div class="text-muted text-xs font-weight-bold">Kopje gjithsej</div>
                             <div class="h3 m-0">{% stat_copies %}</div>
                         </div>
-                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-copy"></i></div>
+                        <div class="h2 m-0"><i class="fas fa-copy"></i></div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-6 col-6">
-                <div class="card">
+                <div class="card sl-stat-card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
                             <div class="text-muted text-xs font-weight-bold">Kopje të lira</div>
                             <div class="h3 m-0">{% stat_available_copies %}</div>
                         </div>
-                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-check-double"></i></div>
+                        <div class="h2 m-0"><i class="fas fa-check-double"></i></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row g-3">
+        <div class="row g-3 sl-stat-grid">
             <div class="col-md-3 col-sm-6 col-6">
-                <div class="card">
+                <div class="card sl-stat-card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
                             <div class="text-muted text-xs font-weight-bold">Anëtarë</div>
                             <div class="h3 m-0">{% stat_members %}</div>
                         </div>
-                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-id-card"></i></div>
+                        <div class="h2 m-0"><i class="fas fa-id-card"></i></div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-6 col-6">
-                <div class="card">
+                <div class="card sl-stat-card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
                             <div class="text-muted text-xs font-weight-bold">Huazime aktive</div>
                             <div class="h3 m-0">{% stat_active_loans %}</div>
                         </div>
-                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-exchange-alt"></i></div>
+                        <div class="h2 m-0"><i class="fas fa-exchange-alt"></i></div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-6 col-6">
-                <div class="card">
+                <div class="card sl-stat-card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
                             <div class="text-muted text-xs font-weight-bold">Kërkesa (në pritje)</div>
                             <div class="h3 m-0">{% stat_requests_pending %}</div>
                         </div>
-                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-inbox"></i></div>
+                        <div class="h2 m-0"><i class="fas fa-inbox"></i></div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-6 col-6">
-                <div class="card">
+                <div class="card sl-stat-card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
                             <div class="text-muted text-xs font-weight-bold">Rezervime</div>
                             <div class="h3 m-0">{% stat_reservations %}</div>
                         </div>
-                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-check-circle"></i></div>
+                        <div class="h2 m-0"><i class="fas fa-check-circle"></i></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row g-3">
+        <div class="row g-3 sl-stat-grid">
             <div class="col-md-3 col-sm-6 col-6">
-                <div class="card">
+                <div class="card sl-stat-card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
-                            <div class="text-muted text-xs font-weight-bold">💰 Çmim total</div>
-                            <div class="h3 m-0">{% stat_books_purchase_total_lek %} LEK</div>
+                            <div class="text-muted text-xs font-weight-bold">Çmim total</div>
+                            <div class="h3 m-0 sl-stat-money"><span class="sl-stat-num">{% stat_books_purchase_total_lek %}</span><span class="sl-stat-unit">LEK</span></div>
                         </div>
-                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-coins"></i></div>
+                        <div class="h2 m-0"><i class="fas fa-coins"></i></div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-6 col-6">
-                <div class="card">
+                <div class="card sl-stat-card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
                             <div class="text-muted text-xs font-weight-bold">Shtëpi botuese</div>
                             <div class="h3 m-0">{% stat_publishers %}</div>
                         </div>
-                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-building"></i></div>
+                        <div class="h2 m-0"><i class="fas fa-building"></i></div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-6 col-6">
-                <div class="card">
+                <div class="card sl-stat-card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
                             <div class="text-muted text-xs font-weight-bold">Zhanre</div>
                             <div class="h3 m-0">{% stat_genres %}</div>
                         </div>
-                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-tags"></i></div>
+                        <div class="h2 m-0"><i class="fas fa-tags"></i></div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-6 col-6">
-                <div class="card">
+                <div class="card sl-stat-card">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
                             <div class="text-muted text-xs font-weight-bold">Mes. ditë të mbajtura</div>
                             <div class="h3 m-0">{% stat_avg_days_kept %}</div>
                         </div>
-                        <div class="h2 m-0" style="color:#319189;"><i class="fas fa-calendar-day"></i></div>
+                        <div class="h2 m-0"><i class="fas fa-calendar-day"></i></div>
                     </div>
                 </div>
             </div>
@@ -1213,6 +1397,7 @@
     </div>
 
     <!-- Dashboard analitikë -->
+    <div class="sl-dash-section">
     <div class="row sl-section-title-row sl-analytics">
       <div class="col-12 text-center">
         <h5 class="sl-section-title">Analitikë dhe trendet</h5>
@@ -1221,7 +1406,7 @@
 
     <div class="row sl-analytics mb-4">
       <div class="col-12">
-        <div class="row g-3 mb-4">
+        <div class="row g-3 mb-4 sl-metrics-equal-row">
           <div class="col-md-4">
             <div class="card sl-period-card {% if loans_today >= loans_yesterday %}sl-compare-up{% else %}sl-compare-down{% endif %}">
               <div class="card-body">
@@ -1251,7 +1436,7 @@
           </div>
         </div>
 
-        <div class="row g-3 mb-4">
+        <div class="row g-3 mb-4 sl-charts-row">
           <div class="col-lg-6">
             <div class="card sl-chart-card">
               <div class="card-header"><i class="fas fa-chart-bar mr-2 text-teal"></i> Huazime sipas muajve (12 muajt e fundit)</div>
@@ -1266,7 +1451,7 @@
           </div>
         </div>
 
-        <div class="row g-3 mb-4">
+        <div class="row g-3 mb-4 sl-metrics-equal-row">
           <div class="col-md-4">
             <div class="card sl-fines-card">
               <div class="card-body">
@@ -1301,7 +1486,7 @@
           </div>
         </div>
 
-        <div class="row g-3 mb-4">
+        <div class="row g-3 mb-4 sl-top-list-row">
           <div class="col-lg-4">
             <div class="card sl-chart-card">
               <div class="card-header py-2"><i class="fas fa-book-open mr-2 text-teal"></i> Top 15 librat më të huazuar</div>
@@ -1391,6 +1576,7 @@
             </div>
           </div>
         </div>
+    </div>
     </div>
     </div>
 

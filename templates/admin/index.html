@@ -455,6 +455,135 @@
       margin-top: 6px; display: flex; justify-content: space-between; font-size: .72rem; color: #64748b; font-weight: 700;
     }
 
+    .sl-dash-welcome {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.35rem;
+      padding: 1.15rem 1.25rem;
+      border-radius: 22px;
+      border: 1px solid rgba(13,148,136,.18);
+      background:
+        radial-gradient(circle at 100% 0%, rgba(13,148,136,.14), transparent 42%),
+        linear-gradient(135deg, rgba(255,255,255,.98), rgba(240,253,250,.92));
+      box-shadow: 0 10px 28px rgba(15,23,42,.06);
+    }
+    .sl-dash-welcome-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border-radius: 999px;
+      border: 1px solid rgba(13,148,136,.22);
+      background: rgba(13,148,136,.08);
+      padding: 0.25rem 0.65rem;
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0f766e;
+    }
+    .sl-dash-welcome-badge::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #14b8a6;
+    }
+    .sl-dash-welcome-title {
+      margin: 0.45rem 0 0;
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: #0f172a;
+    }
+    .sl-dash-welcome-sub {
+      margin: 0.35rem 0 0;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #475569;
+    }
+    .sl-dash-welcome-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .sl-dash-welcome-pills span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,.2);
+      background: rgba(255,255,255,.88);
+      padding: 0.45rem 0.7rem;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #1e293b;
+      box-shadow: 0 2px 8px rgba(15,23,42,.05);
+    }
+    .sl-dash-welcome-pills i { color: #0d9488; }
+    .sl-dash-section {
+      margin-bottom: 0.35rem;
+      padding: 0.35rem 0.15rem 0.15rem;
+    }
+    .sl-dashboard .sl-stats-row .card .card-body {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      text-align: left !important;
+      gap: 0.65rem;
+    }
+    .sl-dashboard .sl-stats-row .card .card-body > div:first-child {
+      width: auto !important;
+      text-align: left !important;
+      min-width: 0;
+    }
+    .sl-dashboard .sl-stats-row .card .h2.m-0 {
+      width: 2.75rem;
+      height: 2.75rem;
+      min-width: 2.75rem;
+      border-radius: 0.85rem;
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, rgba(13,148,136,.1), rgba(13,148,136,.22));
+      color: #0d9488 !important;
+      font-size: 1.1rem !important;
+      opacity: 1 !important;
+      box-shadow: inset 0 0 0 1px rgba(13,148,136,.14);
+    }
+    .sl-dashboard .sl-top-row .sl-rank-badge {
+      width: 1.65rem;
+      height: 1.65rem;
+      min-width: 1.65rem;
+      border-radius: 0.55rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: #fff;
+      margin-right: 0.55rem;
+      box-shadow: 0 4px 10px rgba(15,23,42,.12);
+    }
+    .sl-dashboard .sl-top-row .sl-rank-1 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .sl-dashboard .sl-top-row .sl-rank-2 { background: linear-gradient(135deg, #94a3b8, #64748b); }
+    .sl-dashboard .sl-top-row .sl-rank-3 { background: linear-gradient(135deg, #d97706, #b45309); }
+    .sl-dashboard .sl-top-row .sl-rank-4,
+    .sl-dashboard .sl-top-row .sl-rank-5 { background: linear-gradient(135deg, #0d9488, #0f766e); }
+    .sl-dashboard .sl-top-row .list-group-item {
+      padding: 0.95rem 1.1rem !important;
+    }
+    .sl-dashboard .sl-top-row .badge-pill,
+    .sl-dashboard .sl-top-row .badge-info.badge-pill {
+      background: linear-gradient(135deg, #0d9488, #0f766e) !important;
+      border: 0;
+      font-size: 0.72rem;
+      letter-spacing: 0.02em;
+    }
+
     /* User dropdown: premium + modern */
     #jazzy-navbar .dropdown-menu,
     .app-header .dropdown-menu {
@@ -506,6 +635,13 @@
     }
 
     @media (max-width: 991.98px) {
+      .sl-dash-welcome {
+        padding: 0.95rem 1rem;
+        border-radius: 18px;
+      }
+      .sl-dash-welcome-title { font-size: 1.15rem; }
+      .sl-dash-welcome-pills { width: 100%; }
+      .sl-dash-welcome-pills span { flex: 1 1 auto; justify-content: center; }
       .sl-dashboard {
         border-radius: 16px;
         padding: 0.05rem 0.32rem 1rem;
@@ -779,6 +915,20 @@
     {{ chart_loans_data|json_script:"chartLoansData" }}
     {{ chart_reservations_data|json_script:"chartReservationsData" }}
 
+    <div class="sl-dash-welcome">
+      <div>
+        <div class="sl-dash-welcome-badge">Biblioteka Kamëz</div>
+        <h2 class="sl-dash-welcome-title">Paneli i administrimit</h2>
+        <p class="sl-dash-welcome-sub">Përmbledhje e shpejtë e fondit, huazimeve dhe aktivitetit të bibliotekës.</p>
+      </div>
+      <div class="sl-dash-welcome-pills">
+        <span><i class="fas fa-book"></i> {% stat_books %} libra</span>
+        <span><i class="fas fa-id-card"></i> {% stat_members %} anëtarë</span>
+        <span><i class="fas fa-exchange-alt"></i> {% stat_active_loans %} huazime aktive</span>
+      </div>
+    </div>
+
+    <div class="sl-dash-section">
     <div class="row sl-section-title-row">
       <div class="col-12">
         <h5 class="sl-section-title">Statistikat kryesore</h5>
@@ -929,7 +1079,9 @@
         </div>
       </div>
     </div>
+    </div>
 
+    <div class="sl-dash-section">
     <div class="row sl-section-title-row">
       <div class="col-12">
         <h5 class="sl-section-title">Përmbledhje ekzekutive</h5>
@@ -980,7 +1132,9 @@
       </div>
       {% endfor %}
     </div>
+    </div>
 
+    <div class="sl-dash-section">
     <div class="row sl-section-title-row">
         <div class="col-12">
             <h5 class="sl-section-title">Top performuesit</h5>
@@ -999,6 +1153,7 @@
                             {% for member in top_members %}
                                 <li class="list-group-item d-flex align-items-center justify-content-between">
                                     <div class="d-flex align-items-center">
+                                        <span class="sl-rank-badge sl-rank-{{ forloop.counter }}">{{ forloop.counter }}</span>
                                         {% if member.photo %}
                                             <img src="{{ member.photo.url }}" alt="{{ member.full_name }}" class="sl-member-avatar">
                                         {% else %}
@@ -1033,13 +1188,16 @@
                         <ul class="list-group list-group-flush">
                             {% for book in top_books %}
                                 <li class="list-group-item d-flex align-items-center justify-content-between">
-                                    <div>
+                                    <div class="d-flex align-items-center min-w-0">
+                                        <span class="sl-rank-badge sl-rank-{{ forloop.counter }}">{{ forloop.counter }}</span>
+                                        <div class="min-w-0">
                                         <div class="font-weight-bold">
                                             <a href="/admin/catalog/book/{{ book.id }}/change/" class="sl-stealth-link">{{ book.title }}</a>
                                         </div>
                                         <small class="text-muted">
                                             {% if book.authors.first %}{{ book.authors.first.name }}{% else %}Pa autor{% endif %}
                                         </small>
+                                        </div>
                                     </div>
                                     <span class="badge badge-info badge-pill">{{ book.total_loans }} huazime</span>
                                 </li>
@@ -1051,6 +1209,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Dashboard analitikë -->

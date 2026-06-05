@@ -6,6 +6,20 @@
 
 {% block extrahead %}
   <style>
+    .sl-list-card-media {
+      width: 100%;
+      overflow: hidden;
+      background: #f1f5f9;
+      line-height: 0;
+    }
+    .dark .sl-list-card-media { background: #1e293b; }
+    .sl-list-card-media img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      object-position: center;
+    }
     .sl-weekly-books-page .sl-weekly-book-card {
       -webkit-tap-highlight-color: transparent;
     }

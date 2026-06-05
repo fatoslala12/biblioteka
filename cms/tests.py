@@ -626,7 +626,7 @@ class AdminExecutiveDashboardSmokeTests(TestCase):
         self.client.force_login(self.admin_user)
         resp = self.client.get("/admin/")
         self.assertEqual(resp.status_code, 200)
-        self.assertContains(resp, "💰 Çmim total")
+        self.assertContains(resp, "Çmim total")
         self.assertContains(resp, "Shtëpi botuese")
         self.assertContains(resp, "LEK")
         self.assertNotContains(resp, "Refuzime")

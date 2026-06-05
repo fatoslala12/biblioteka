@@ -8,36 +8,46 @@
   {{ block.super }}
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
-    /* Keep top header fixed */
-    #jazzy-navbar,
-    .app-header.navbar,
-    .main-header.navbar {
+    /* Shell admin — i njëjtë me faqet e tjera (menu + klikime funksionale) */
+    body.dashboard #jazzy-navbar,
+    body.dashboard .app-header.navbar,
+    body.dashboard .main-header.navbar {
       position: fixed !important;
       inset: 0 0 auto 0 !important;
-      width: 100vw !important;
-      max-width: 100vw !important;
+      width: 100% !important;
+      max-width: 100% !important;
       height: 56px !important;
       min-height: 56px !important;
       max-height: 56px !important;
       z-index: 1045 !important;
       margin: 0 !important;
       border-radius: 0 !important;
-      transform: translate3d(0, 0, 0) !important;
-      will-change: transform;
     }
-    body.dashboard,
-    body.dashboard .wrapper,
-    body.dashboard .app-main,
-    body.dashboard .content-wrapper {
-      overflow-x: hidden !important;
+    body.dashboard #jazzy-sidebar {
+      position: fixed !important;
+      inset: 0 auto 0 0 !important;
+      z-index: 1050 !important;
+    }
+    body.dashboard #jazzy-sidebar .sidebar-wrapper {
+      height: calc(100vh - 72px) !important;
+      overflow-y: auto !important;
     }
     body.dashboard .app-main {
-      height: auto !important;
-      overflow-y: visible !important;
+      height: 100vh !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
     }
-    body.dashboard .app-main,
     body.dashboard .content-wrapper {
+      overflow-x: hidden !important;
       padding-top: 62px !important;
+    }
+    body.dashboard .content-wrapper,
+    body.dashboard .sl-dashboard {
+      position: relative;
+      z-index: 1;
+    }
+    body.dashboard #jazzy-sidebar a {
+      pointer-events: auto !important;
     }
 
     /* —— Dashboard i njësuar: një theme për të gjithë faqen —— */
@@ -628,6 +638,7 @@
       width: 100%;
       display: flex;
       flex-direction: column;
+      pointer-events: auto;
     }
     .sl-analytics .sl-period-card,
     .sl-analytics .sl-fines-card,
@@ -804,20 +815,8 @@
         border-radius: 16px;
         padding: 0.05rem 0.32rem 1rem;
       }
-      body.dashboard #jazzy-navbar,
-      body.dashboard .app-header.navbar,
-      body.dashboard .main-header.navbar {
-        position: fixed !important;
-        inset: 0 0 auto 0 !important;
-        width: 100vw !important;
-        max-width: 100vw !important;
-        height: 56px !important;
-        min-height: 56px !important;
-        max-height: 56px !important;
-        z-index: 2000 !important;
-        margin: 0 !important;
-        border-radius: 0 !important;
-        transform: translate3d(0, 0, 0) !important;
+      body.dashboard #jazzy-sidebar {
+        z-index: 2100 !important;
       }
       .sl-dashboard .sl-section-title {
         font-size: 1rem;

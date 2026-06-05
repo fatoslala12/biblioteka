@@ -3,74 +3,116 @@
 
 {% block title %}Rregullore — Biblioteka Kamëz{% endblock %}
 
-{% block meta_description %}Rregullorja zyrtare e Bibliotekës së Bashkisë Kamëz — anëtarësim, huazime, rezervime, sjellje në ambient dhe shërbime digjitale.{% endblock %}
+{% block meta_description %}Rregullorja zyrtare e Bibliotekës së Bashkisë Kamëz — anëtarësim, huazime, rezervime, gjoba dhe rregulla të qëndrimit.{% endblock %}
 
 {% block extrahead %}
   <style>
     .sl-rules-page .sl-rules-article {
       scroll-margin-top: 5.5rem;
-      transition: box-shadow .2s ease, border-color .2s ease;
+      transition: border-color .2s ease, box-shadow .2s ease;
     }
     .sl-rules-page .sl-rules-article:hover {
-      box-shadow: 0 12px 28px rgba(49, 145, 137, .08);
+      border-color: rgba(49, 145, 137, .35);
+      box-shadow: 0 10px 28px rgba(49, 145, 137, .08);
     }
-    .sl-rules-num {
+    .sl-rules-toc-link {
       display: flex;
-      height: 2.5rem;
-      width: 2.5rem;
-      flex-shrink: 0;
+      align-items: center;
+      gap: .5rem;
+      border-radius: .85rem;
+      padding: .55rem .75rem;
+      font-size: .8125rem;
+      font-weight: 700;
+      color: rgb(71 85 105);
+      transition: background .15s ease, color .15s ease;
+    }
+    .dark .sl-rules-toc-link { color: rgb(203 213 225); }
+    .sl-rules-toc-link:hover {
+      background: rgba(49, 145, 137, .08);
+      color: rgb(31 100 95);
+    }
+    .dark .sl-rules-toc-link:hover {
+      background: rgba(49, 145, 137, .18);
+      color: rgb(207 240 238);
+    }
+    .sl-rules-toc-link.is-active {
+      background: rgba(49, 145, 137, .14);
+      color: rgb(24 79 75);
+      box-shadow: inset 0 0 0 1px rgba(49, 145, 137, .22);
+    }
+    .dark .sl-rules-toc-link.is-active {
+      background: rgba(49, 145, 137, .24);
+      color: rgb(207 240 238);
+    }
+    .sl-rules-toc-num {
+      display: inline-flex;
+      height: 1.35rem;
+      min-width: 1.35rem;
       align-items: center;
       justify-content: center;
-      border-radius: .85rem;
-      background: linear-gradient(135deg, #319088, #45c0ba);
-      font-size: .8rem;
+      border-radius: .45rem;
+      background: rgba(49, 145, 137, .12);
+      font-size: .65rem;
       font-weight: 800;
-      color: #fff;
-      box-shadow: 0 4px 12px rgba(49, 145, 137, .35);
+      color: rgb(39 122 116);
+    }
+    .dark .sl-rules-toc-num {
+      background: rgba(49, 145, 137, .28);
+      color: rgb(207 240 238);
+    }
+    .sl-rules-pill {
+      flex: 0 0 auto;
+      border-radius: 999px;
+      border: 1px solid rgba(49, 145, 137, .25);
+      background: rgba(255, 255, 255, .9);
+      padding: .4rem .85rem;
+      font-size: .75rem;
+      font-weight: 800;
+      color: rgb(31 100 95);
+      white-space: nowrap;
+      transition: background .15s ease, border-color .15s ease;
+    }
+    .dark .sl-rules-pill {
+      background: rgba(15, 23, 42, .7);
+      border-color: rgba(49, 145, 137, .35);
+      color: rgb(207 240 238);
+    }
+    .sl-rules-pill:hover,
+    .sl-rules-pill.is-active {
+      background: rgba(49, 145, 137, .12);
+      border-color: rgba(49, 145, 137, .45);
     }
     .sl-rules-list li {
       position: relative;
-      padding-left: 1.35rem;
-      margin-top: .45rem;
-      font-size: .875rem;
-      line-height: 1.55;
-      color: rgb(71 85 105);
+      padding-left: 1.1rem;
     }
-    .dark .sl-rules-list li { color: rgb(203 213 225); }
     .sl-rules-list li::before {
       content: "";
       position: absolute;
       left: 0;
       top: .55rem;
-      height: 6px;
-      width: 6px;
+      height: 5px;
+      width: 5px;
       border-radius: 999px;
       background: #319088;
     }
-    .sl-rules-toc {
-      scrollbar-width: thin;
+    .sl-rules-kpi {
+      background:
+        radial-gradient(circle at 100% 0%, rgba(49, 145, 137, .12), transparent 42%),
+        linear-gradient(165deg, rgba(255,255,255,.98), rgba(248, 252, 252, .94));
     }
-    .sl-rules-toc::-webkit-scrollbar { height: 4px; }
-    .sl-rules-toc a.is-active {
-      background: rgba(49, 144, 136, .14);
-      border-color: rgba(49, 144, 136, .45);
-      color: #1f645f;
-      font-weight: 800;
+    .dark .sl-rules-kpi {
+      background:
+        radial-gradient(circle at 100% 0%, rgba(49, 145, 137, .2), transparent 45%),
+        linear-gradient(165deg, rgba(15, 23, 42, .92), rgba(30, 41, 59, .78));
     }
-    .dark .sl-rules-toc a.is-active {
-      background: rgba(49, 144, 136, .22);
-      color: #a0e1de;
+    .sl-rules-toc-scroll {
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
-    @media (min-width: 1024px) {
-      .sl-rules-toc-wrap {
-        position: sticky;
-        top: 5.25rem;
-        max-height: calc(100vh - 6rem);
-        overflow-y: auto;
-      }
-    }
+    .sl-rules-toc-scroll::-webkit-scrollbar { display: none; }
     @media (max-width: 640px) {
-      .sl-rules-hero h1 { font-size: 1.55rem; line-height: 1.2; }
+      .sl-rules-hero h1 { font-size: 1.5rem; line-height: 1.2; }
     }
     @media (prefers-reduced-motion: reduce) {
       .sl-rules-page .sl-rules-article:hover { box-shadow: none; }
@@ -84,286 +126,312 @@
 
     <!-- Hero -->
     <section class="relative mx-auto max-w-7xl px-4 pt-6 pb-3 sm:px-6 sm:pt-8 lg:px-8">
-      <header class="sl-rules-hero overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl">
-        <div class="grid gap-0 lg:grid-cols-12">
-          <div class="p-5 sm:p-7 lg:col-span-7 lg:p-8">
-            <div class="inline-flex items-center gap-2 rounded-full border border-brand-200/70 bg-brand-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-brand-800 dark:border-brand-800/50 dark:bg-brand-900/35 dark:text-brand-200">
-              <span class="h-1.5 w-1.5 rounded-full bg-brand-500"></span>
-              Rregullore zyrtare
-            </div>
-            <h1 class="mt-3 text-2xl font-black tracking-tight text-slate-900 dark:text-white sm:text-3xl">Biblioteka e Bashkisë Kamëz</h1>
-            <p class="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-300 sm:text-base">
-              Mënyra e funksionimit, shërbimet, të drejtat dhe detyrimet e përdoruesve — për një mjedis profesional, të qetë dhe të sigurt për të gjithë komunitetin.
-            </p>
-            <div class="mt-4 flex flex-wrap gap-2">
-              <span class="inline-flex items-center gap-1.5 rounded-xl border border-brand-200/60 bg-brand-50/80 px-3 py-1.5 text-xs font-bold text-brand-800 dark:border-brand-900/40 dark:bg-brand-900/25 dark:text-brand-100">12 nene</span>
-              <span class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/80 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-200">Anëtarësim & huazime</span>
-            </div>
-          </div>
-          <div class="relative border-t border-slate-100 dark:border-slate-800 lg:col-span-5 lg:border-t-0 lg:border-l">
-            <img src="{% static 'img/kamez-library_thumb.webp' %}" alt="Biblioteka Kamëz" class="h-48 w-full object-cover sm:h-56 lg:h-full lg:min-h-[220px]" loading="lazy" decoding="async" />
-            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-900/70 via-brand-900/15 to-transparent lg:bg-gradient-to-l lg:from-brand-900/50"></div>
-            <div class="absolute bottom-4 left-4 right-4 rounded-2xl border border-white/25 bg-white/10 px-4 py-3 text-white backdrop-blur-sm">
-              <div class="text-[11px] font-semibold uppercase tracking-wide text-white/80">Parimi ynë</div>
-              <div class="mt-1 text-sm font-extrabold leading-snug">„Dija është pasuria më e madhe e komunitetit.”</div>
-            </div>
-          </div>
+      <header class="sl-rules-hero rounded-2xl border border-slate-200/80 bg-white/95 p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-7">
+        <div class="inline-flex items-center gap-2 rounded-full border border-brand-200/70 bg-brand-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-brand-800 dark:border-brand-800/50 dark:bg-brand-900/35 dark:text-brand-200">
+          <span class="h-1.5 w-1.5 rounded-full bg-brand-500"></span>
+          Rregullore zyrtare
+        </div>
+        <h1 class="mt-3 text-2xl font-black tracking-tight text-slate-900 dark:text-white sm:text-3xl">Biblioteka e Bashkisë Kamëz</h1>
+        <p class="mt-3 max-w-3xl text-sm leading-relaxed text-slate-600 dark:text-slate-300 sm:text-base">
+          Kjo rregullore përcakton mënyrën e funksionimit, shërbimet, të drejtat dhe detyrimet e përdoruesve, me synim garantimin e një mjedisi profesional, të qetë dhe të sigurt për të gjithë komunitetin.
+        </p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <span class="inline-flex items-center gap-1.5 rounded-xl border border-brand-200/70 bg-brand-50/80 px-3 py-1.5 text-xs font-bold text-brand-800 dark:border-brand-900/40 dark:bg-brand-900/25 dark:text-brand-200">📚 12 nene</span>
+          <span class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/80 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-200">⏳ 14 ditë huazim</span>
+          <span class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/80 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-200">🪪 Anëtarësim falas</span>
         </div>
       </header>
     </section>
 
-    <!-- Përmbajtja + nenet -->
-    <section class="relative mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
-      <!-- Nav mobile: scroll horizontal -->
-      <nav class="sl-rules-toc mb-4 flex gap-2 overflow-x-auto pb-1 lg:hidden" aria-label="Përmbajtja e rregullores">
-        <a href="#neni-1" class="shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">1</a>
-        <a href="#neni-2" class="shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">2</a>
-        <a href="#neni-3" class="shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">3</a>
-        <a href="#neni-4" class="shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">4–5</a>
-        <a href="#neni-6" class="shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">6–8</a>
-        <a href="#neni-9" class="shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">9–11</a>
-        <a href="#neni-12" class="shrink-0 rounded-full border border-brand-200 bg-brand-50 px-3 py-1.5 text-xs font-bold text-brand-800 dark:border-brand-800 dark:bg-brand-900/30 dark:text-brand-100">12</a>
-      </nav>
+    <!-- KPI shpejt -->
+    <section class="relative mx-auto max-w-7xl px-4 pb-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+        <div class="sl-rules-kpi rounded-2xl border border-brand-200/60 p-3.5 shadow-sm dark:border-brand-900/40 sm:p-4">
+          <div class="text-[10px] font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-400">Adult</div>
+          <div class="mt-1 text-xl font-black text-brand-800 dark:text-brand-200 sm:text-2xl">5</div>
+          <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-300">libra max</div>
+        </div>
+        <div class="sl-rules-kpi rounded-2xl border border-brand-200/60 p-3.5 shadow-sm dark:border-brand-900/40 sm:p-4">
+          <div class="text-[10px] font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-400">Fëmijë</div>
+          <div class="mt-1 text-xl font-black text-brand-800 dark:text-brand-200 sm:text-2xl">3</div>
+          <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-300">libra max</div>
+        </div>
+        <div class="sl-rules-kpi rounded-2xl border border-brand-200/60 p-3.5 shadow-sm dark:border-brand-900/40 sm:p-4">
+          <div class="text-[10px] font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-400">Student</div>
+          <div class="mt-1 text-xl font-black text-brand-800 dark:text-brand-200 sm:text-2xl">7</div>
+          <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-300">libra max</div>
+        </div>
+        <div class="sl-rules-kpi rounded-2xl border border-brand-200/60 p-3.5 shadow-sm dark:border-brand-900/40 sm:p-4">
+          <div class="text-[10px] font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-400">Afati</div>
+          <div class="mt-1 text-xl font-black text-brand-800 dark:text-brand-200 sm:text-2xl">14</div>
+          <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-300">ditë + 1 rinovim</div>
+        </div>
+      </div>
+    </section>
 
+    <!-- Nav mobile -->
+    <section class="relative mx-auto max-w-7xl px-4 pb-3 lg:hidden sm:px-6">
+      <nav class="sl-rules-toc-scroll flex gap-2 overflow-x-auto pb-1" aria-label="Navigim i shpejtë">
+        <a href="#neni-1" class="sl-rules-pill is-active" data-rules-pill="1">Neni 1</a>
+        <a href="#neni-2" class="sl-rules-pill" data-rules-pill="2">Neni 2</a>
+        <a href="#neni-3" class="sl-rules-pill" data-rules-pill="3">Neni 3</a>
+        <a href="#neni-4" class="sl-rules-pill" data-rules-pill="4">Neni 4</a>
+        <a href="#neni-5" class="sl-rules-pill" data-rules-pill="5">Neni 5</a>
+        <a href="#neni-6" class="sl-rules-pill" data-rules-pill="6">Neni 6</a>
+        <a href="#neni-7" class="sl-rules-pill" data-rules-pill="7">Neni 7</a>
+        <a href="#neni-8" class="sl-rules-pill" data-rules-pill="8">Neni 8</a>
+        <a href="#neni-9" class="sl-rules-pill" data-rules-pill="9">Neni 9</a>
+        <a href="#neni-10" class="sl-rules-pill" data-rules-pill="10">Neni 10</a>
+        <a href="#neni-11" class="sl-rules-pill" data-rules-pill="11">Neni 11</a>
+        <a href="#neni-12" class="sl-rules-pill" data-rules-pill="12">Neni 12</a>
+      </nav>
+    </section>
+
+    <!-- Përmbajtja -->
+    <section class="relative mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
       <div class="grid gap-5 lg:grid-cols-12 lg:gap-6">
         <!-- TOC desktop -->
         <aside class="hidden lg:col-span-3 lg:block">
-          <div class="sl-rules-toc-wrap rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl">
+          <nav class="sticky top-20 rounded-2xl border border-slate-200/80 bg-white/95 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/70" aria-label="Përmbajtja e rregullores">
             <div class="text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400">Përmbajtja</div>
-            <nav class="sl-rules-toc mt-3 space-y-1" aria-label="Përmbajtja e rregullores">
-              <a href="#neni-1" class="block rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60">Neni 1 — Qëllimi</a>
-              <a href="#neni-2" class="block rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60">Neni 2 — Misioni</a>
-              <a href="#neni-3" class="block rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60">Neni 3 — Anëtarësimi</a>
-              <a href="#neni-4" class="block rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60">Neni 4 — Huazimi</a>
-              <a href="#neni-5" class="block rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60">Neni 5 — Gjobat</a>
-              <a href="#neni-6" class="block rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60">Neni 6 — Rezervimet</a>
-              <a href="#neni-7" class="block rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60">Neni 7 — Qëndrimi</a>
-              <a href="#neni-8" class="block rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60">Neni 8 — Privatësia</a>
-              <a href="#neni-9" class="block rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60">Neni 9 — Inventari</a>
-              <a href="#neni-10" class="block rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60">Neni 10 — Digjital</a>
-              <a href="#neni-11" class="block rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60">Neni 11 — Disiplina</a>
-              <a href="#neni-12" class="block rounded-xl border border-brand-200/60 bg-brand-50/50 px-3 py-2 text-sm font-bold text-brand-800 dark:border-brand-900/40 dark:bg-brand-900/20 dark:text-brand-100">Neni 12 — Fuqia</a>
-            </nav>
-          </div>
+            <div class="mt-3 space-y-0.5">
+              <a href="#neni-1" class="sl-rules-toc-link is-active" data-rules-toc="1"><span class="sl-rules-toc-num">01</span> Qëllimi</a>
+              <a href="#neni-2" class="sl-rules-toc-link" data-rules-toc="2"><span class="sl-rules-toc-num">02</span> Misioni</a>
+              <a href="#neni-3" class="sl-rules-toc-link" data-rules-toc="3"><span class="sl-rules-toc-num">03</span> Anëtarësimi</a>
+              <a href="#neni-4" class="sl-rules-toc-link" data-rules-toc="4"><span class="sl-rules-toc-num">04</span> Huazimi</a>
+              <a href="#neni-5" class="sl-rules-toc-link" data-rules-toc="5"><span class="sl-rules-toc-num">05</span> Vonesat & gjobat</a>
+              <a href="#neni-6" class="sl-rules-toc-link" data-rules-toc="6"><span class="sl-rules-toc-num">06</span> Rezervimet</a>
+              <a href="#neni-7" class="sl-rules-toc-link" data-rules-toc="7"><span class="sl-rules-toc-num">07</span> Qëndrimi në bibliotekë</a>
+              <a href="#neni-8" class="sl-rules-toc-link" data-rules-toc="8"><span class="sl-rules-toc-num">08</span> Siguria & privatësia</a>
+              <a href="#neni-9" class="sl-rules-toc-link" data-rules-toc="9"><span class="sl-rules-toc-num">09</span> Inventari</a>
+              <a href="#neni-10" class="sl-rules-toc-link" data-rules-toc="10"><span class="sl-rules-toc-num">10</span> Shërbimet digjitale</a>
+              <a href="#neni-11" class="sl-rules-toc-link" data-rules-toc="11"><span class="sl-rules-toc-num">11</span> Masat disiplinore</a>
+              <a href="#neni-12" class="sl-rules-toc-link" data-rules-toc="12"><span class="sl-rules-toc-num">12</span> Hyrja në fuqi</a>
+            </div>
+          </nav>
         </aside>
 
-        <div class="space-y-4 lg:col-span-9 lg:space-y-5">
-          <!-- Neni 1 & 2 -->
-          <div class="grid gap-4 sm:grid-cols-2">
-            <article id="neni-1" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6">
-              <div class="flex items-start gap-3">
-                <span class="sl-rules-num" aria-hidden="true">1</span>
-                <div class="min-w-0">
-                  <h2 class="text-base font-extrabold text-slate-900 dark:text-white sm:text-lg">Qëllimi</h2>
-                  <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                    Rregullorja synon standard të lartë shërbimi, qartësi të proceseve dhe respekt të ndërsjellë mes stafit dhe përdoruesve.
-                  </p>
-                </div>
-              </div>
-            </article>
+        <!-- Nenet -->
+        <div class="space-y-4 lg:col-span-9">
 
-            <article id="neni-2" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6">
-              <div class="flex items-start gap-3">
-                <span class="sl-rules-num" aria-hidden="true">2</span>
-                <div class="min-w-0">
-                  <h2 class="text-base font-extrabold text-slate-900 dark:text-white sm:text-lg">Misioni</h2>
-                  <ul class="sl-rules-list mt-2">
-                    <li>Promovon leximin dhe edukimin</li>
-                    <li>Mbështet arsimin dhe kërkimin</li>
-                    <li>Ofron akses të barabartë në informacion</li>
-                    <li>Nxit përfshirjen komunitare</li>
-                  </ul>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <!-- Neni 3 -->
-          <article id="neni-3" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6">
+          <article id="neni-1" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6" data-rules-section="1">
             <div class="flex items-start gap-3">
-              <span class="sl-rules-num" aria-hidden="true">3</span>
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-600 text-sm font-black text-white shadow-sm">01</span>
+              <div class="min-w-0">
+                <h2 class="text-base font-extrabold text-slate-900 dark:text-white sm:text-lg">Neni 1 — Qëllimi</h2>
+                <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                  Rregullorja synon të sigurojë standard të lartë shërbimi, qartësi të proceseve dhe respekt të ndërsjellë mes stafit dhe përdoruesve.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <article id="neni-2" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6" data-rules-section="2">
+            <div class="flex items-start gap-3">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-violet-600 text-sm font-black text-white shadow-sm">02</span>
+              <div class="min-w-0">
+                <h2 class="text-base font-extrabold text-slate-900 dark:text-white sm:text-lg">Neni 2 — Misioni</h2>
+                <ul class="sl-rules-list mt-3 space-y-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                  <li>Promovon leximin dhe edukimin</li>
+                  <li>Mbështet arsimin dhe kërkimin</li>
+                  <li>Ofron akses të barabartë në informacion</li>
+                  <li>Nxit përfshirjen komunitare</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <article id="neni-3" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6" data-rules-section="3">
+            <div class="flex items-start gap-3">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-amber-600 text-sm font-black text-white shadow-sm">03</span>
               <div class="min-w-0 flex-1">
-                <h2 class="text-base font-extrabold text-slate-900 dark:text-white sm:text-lg">Anëtarësimi</h2>
+                <h2 class="text-base font-extrabold text-slate-900 dark:text-white sm:text-lg">Neni 3 — Anëtarësimi</h2>
                 <div class="mt-4 grid gap-3 sm:grid-cols-3">
-                  <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4 dark:border-slate-800 dark:bg-slate-800/40">
-                    <div class="text-[11px] font-extrabold uppercase tracking-wide text-brand-700 dark:text-brand-300">3.1 Kush regjistrohet</div>
-                    <ul class="sl-rules-list mt-2">
+                  <div class="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-950/50">
+                    <div class="text-[11px] font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-400">3.1 Kush regjistrohet?</div>
+                    <ul class="sl-rules-list mt-2 space-y-1.5 text-sm text-slate-600 dark:text-slate-300">
                       <li>Çdo qytetar rezident ose jo-rezident</li>
                       <li>Të miturit me pëlqimin e prindit/kujdestarit</li>
                     </ul>
                   </div>
-                  <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4 dark:border-slate-800 dark:bg-slate-800/40">
-                    <div class="text-[11px] font-extrabold uppercase tracking-wide text-brand-700 dark:text-brand-300">3.2 Dokumentacioni</div>
-                    <ul class="sl-rules-list mt-2">
+                  <div class="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-950/50">
+                    <div class="text-[11px] font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-400">3.2 Dokumentacioni</div>
+                    <ul class="sl-rules-list mt-2 space-y-1.5 text-sm text-slate-600 dark:text-slate-300">
                       <li>Dokument identifikimi</li>
-                      <li>Formulari i regjistrimit</li>
+                      <li>Plotësimi i formularit të regjistrimit</li>
                     </ul>
                   </div>
-                  <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4 dark:border-slate-800 dark:bg-slate-800/40 sm:col-span-1">
-                    <div class="text-[11px] font-extrabold uppercase tracking-wide text-brand-700 dark:text-brand-300">3.3 Karta e anëtarit</div>
-                    <ul class="sl-rules-list mt-2">
-                      <li>Kartë personale për çdo anëtar</li>
-                      <li>E patransferueshme</li>
-                      <li>Humbja raportohet menjëherë</li>
+                  <div class="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-950/50">
+                    <div class="text-[11px] font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-400">3.3 Karta e anëtarit</div>
+                    <ul class="sl-rules-list mt-2 space-y-1.5 text-sm text-slate-600 dark:text-slate-300">
+                      <li>Çdo anëtar pajiset me kartë personale</li>
+                      <li>Karta është e patransferueshme</li>
+                      <li>Humbja e kartës raportohet menjëherë</li>
                     </ul>
                   </div>
                 </div>
-                <a href="/regjistrohu/" class="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-extrabold text-white shadow-sm transition hover:bg-brand-700">Regjistrohu si anëtar →</a>
+                <a href="/regjistrohu/" class="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-extrabold text-white hover:bg-brand-700">Apliko për anëtarësim →</a>
               </div>
             </div>
           </article>
 
-          <!-- Neni 4 & 5 -->
-          <div class="grid gap-4 lg:grid-cols-2">
-            <article id="neni-4" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6">
-              <div class="flex items-start gap-3">
-                <span class="sl-rules-num" aria-hidden="true">4</span>
-                <div class="min-w-0">
-                  <h2 class="text-base font-extrabold text-slate-900 dark:text-white sm:text-lg">Huazimi i materialeve</h2>
-                  <p class="mt-3 text-xs font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-400">4.1 Limiti</p>
-                  <ul class="sl-rules-list">
-                    <li><strong>Adult:</strong> deri në 5 libra</li>
-                    <li><strong>Fëmijë:</strong> deri në 3 libra</li>
-                    <li><strong>Student:</strong> deri në 7 libra</li>
-                  </ul>
-                  <p class="mt-4 text-xs font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-400">4.2 Afati</p>
-                  <ul class="sl-rules-list">
-                    <li>14 ditë kalendarike</li>
-                    <li>1 rinovim (nëse materiali nuk është i rezervuar)</li>
-                  </ul>
-                </div>
-              </div>
-            </article>
-
-            <article id="neni-5" class="sl-rules-article rounded-2xl border border-amber-200/70 bg-gradient-to-br from-amber-50/90 to-white p-5 shadow-sm dark:border-amber-900/40 dark:from-amber-950/25 dark:to-slate-900/70 sm:rounded-3xl sm:p-6">
-              <div class="flex items-start gap-3">
-                <span class="sl-rules-num bg-gradient-to-br from-amber-600 to-amber-500 shadow-amber-600/30" aria-hidden="true">5</span>
-                <div class="min-w-0">
-                  <h2 class="text-base font-extrabold text-slate-900 dark:text-white sm:text-lg">Vonesat dhe gjobat</h2>
-                  <ul class="sl-rules-list mt-2">
-                    <li>Gjobë ditore sipas tarifës së miratuar nga Drejtoria</li>
-                    <li>Bllokim i përkohshëm nëse gjoba kalon pragun e përcaktuar</li>
-                    <li>Në rast humbjeje: zëvendësim i librit ose pagesa e vlerës</li>
-                  </ul>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <!-- Neni 6–8 -->
-          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <article id="neni-6" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:p-6">
-              <div class="flex items-start gap-3">
-                <span class="sl-rules-num text-[.72rem]" aria-hidden="true">6</span>
-                <div>
-                  <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Rezervimet</h2>
-                  <ul class="sl-rules-list mt-2">
-                    <li>Fizikisht ose online</li>
-                    <li>Tërheqja: 48–72 orë</li>
-                    <li>Mosparaqitja → anulim automatik</li>
-                  </ul>
-                </div>
-              </div>
-            </article>
-            <article id="neni-7" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:p-6">
-              <div class="flex items-start gap-3">
-                <span class="sl-rules-num text-[.72rem]" aria-hidden="true">7</span>
-                <div>
-                  <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Qëndrimi në bibliotekë</h2>
-                  <ul class="sl-rules-list mt-2">
-                    <li>Qetësia është e detyrueshme</li>
-                    <li>Telefonat në modalitetin silent</li>
-                    <li>Ndalohet ushqimi në ambientet e leximit</li>
-                    <li>Pajisjet elektronike me kufizime zhurme</li>
-                  </ul>
-                </div>
-              </div>
-            </article>
-            <article id="neni-8" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:p-6 md:col-span-2 lg:col-span-1">
-              <div class="flex items-start gap-3">
-                <span class="sl-rules-num text-[.72rem]" aria-hidden="true">8</span>
-                <div>
-                  <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Siguria & privatësia</h2>
-                  <ul class="sl-rules-list mt-2">
-                    <li>Të dhënat sipas legjislacionit në fuqi</li>
-                    <li>Përdorim vetëm për qëllime bibliotekare</li>
-                    <li>Monitorim i ambientit për siguri</li>
-                  </ul>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <!-- Neni 9–11 -->
-          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <article id="neni-9" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:p-6">
-              <div class="flex items-start gap-3">
-                <span class="sl-rules-num text-[.72rem]" aria-hidden="true">9</span>
-                <div>
-                  <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Inventari</h2>
-                  <ul class="sl-rules-list mt-2">
-                    <li>Trajtim me kujdes i materialeve</li>
-                    <li>Dëmtimi i qëllimshëm sanksionohet</li>
-                    <li>Inventar periodik nga biblioteka</li>
-                  </ul>
-                </div>
-              </div>
-            </article>
-            <article id="neni-10" class="sl-rules-article rounded-2xl border border-violet-200/60 bg-gradient-to-br from-violet-50/80 to-white p-5 shadow-sm dark:border-violet-900/40 dark:from-violet-950/20 dark:to-slate-900/70 sm:p-6">
-              <div class="flex items-start gap-3">
-                <span class="sl-rules-num bg-gradient-to-br from-violet-600 to-violet-500" aria-hidden="true">10</span>
-                <div>
-                  <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Shërbimet digjitale</h2>
-                  <ul class="sl-rules-list mt-2">
-                    <li>Akses online në katalog</li>
-                    <li>Njoftime për afate</li>
-                    <li>Menaxhim huazimesh në platformë</li>
-                  </ul>
-                </div>
-              </div>
-            </article>
-            <article id="neni-11" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:p-6 sm:col-span-2 lg:col-span-1">
-              <div class="flex items-start gap-3">
-                <span class="sl-rules-num text-[.72rem]" aria-hidden="true">11</span>
-                <div>
-                  <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Masat disiplinore</h2>
-                  <ul class="sl-rules-list mt-2">
-                    <li>Pezullim i përkohshëm i anëtarësisë</li>
-                    <li>Bllokim i huazimeve</li>
-                    <li>Masa administrative për shkelje</li>
-                  </ul>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <!-- Neni 12 -->
-          <article id="neni-12" class="sl-rules-article overflow-hidden rounded-2xl border border-brand-300/50 bg-gradient-to-br from-brand-600 via-brand-600 to-brand-700 p-6 text-white shadow-lg shadow-brand-700/25 sm:rounded-3xl sm:p-8">
+          <article id="neni-4" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6" data-rules-section="4">
             <div class="flex items-start gap-3">
-              <span class="sl-rules-num bg-white/20 shadow-none ring-1 ring-white/30" aria-hidden="true">12</span>
-              <div>
-                <h2 class="text-lg font-extrabold">Hyrja në fuqi</h2>
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-600 text-sm font-black text-white shadow-sm">04</span>
+              <div class="min-w-0 flex-1">
+                <h2 class="text-base font-extrabold text-slate-900 dark:text-white sm:text-lg">Neni 4 — Huazimi i materialeve</h2>
+                <div class="mt-4 grid gap-3 sm:grid-cols-2">
+                  <div class="rounded-2xl border border-brand-200/60 bg-brand-50/50 p-4 dark:border-brand-900/40 dark:bg-brand-900/20">
+                    <div class="text-xs font-extrabold text-brand-800 dark:text-brand-200">4.1 Limiti i huazimit</div>
+                    <ul class="sl-rules-list mt-2 space-y-1.5 text-sm text-slate-700 dark:text-slate-200">
+                      <li>Adult: deri në 5 libra</li>
+                      <li>Fëmijë: deri në 3 libra</li>
+                      <li>Student: deri në 7 libra</li>
+                    </ul>
+                  </div>
+                  <div class="rounded-2xl border border-brand-200/60 bg-brand-50/50 p-4 dark:border-brand-900/40 dark:bg-brand-900/20">
+                    <div class="text-xs font-extrabold text-brand-800 dark:text-brand-200">4.2 Afati</div>
+                    <ul class="sl-rules-list mt-2 space-y-1.5 text-sm text-slate-700 dark:text-slate-200">
+                      <li>14 ditë kalendarike</li>
+                      <li>1 rinovim (nëse materiali nuk është i rezervuar)</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article id="neni-5" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6" data-rules-section="5">
+            <div class="flex items-start gap-3">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rose-600 text-sm font-black text-white shadow-sm">05</span>
+              <div class="min-w-0">
+                <h2 class="text-base font-extrabold text-slate-900 dark:text-white sm:text-lg">Neni 5 — Vonesat dhe gjobat</h2>
+                <ul class="sl-rules-list mt-3 space-y-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                  <li>Gjobë ditore sipas tarifës së miratuar nga Drejtoria</li>
+                  <li>Bllokim i përkohshëm nëse gjoba kalon pragun e përcaktuar</li>
+                  <li>Në rast humbjeje, anëtari zëvendëson librin ose paguan vlerën</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <article id="neni-6" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6" data-rules-section="6">
+            <div class="flex items-start gap-3">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-sky-600 text-sm font-black text-white shadow-sm">06</span>
+              <div class="min-w-0">
+                <h2 class="text-base font-extrabold text-slate-900 dark:text-white sm:text-lg">Neni 6 — Rezervimet</h2>
+                <ul class="sl-rules-list mt-3 space-y-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                  <li>Rezervimi mund të bëhet fizikisht ose online përmes <a href="/catalog/" class="font-bold text-brand-700 hover:underline dark:text-brand-300">katalogut</a></li>
+                  <li>Afati i tërheqjes: 48–72 orë</li>
+                  <li>Mosparaqitja çon në anulim automatik</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <article id="neni-7" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6" data-rules-section="7">
+            <div class="flex items-start gap-3">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-700 text-sm font-black text-white shadow-sm">07</span>
+              <div class="min-w-0">
+                <h2 class="text-base font-extrabold text-slate-900 dark:text-white sm:text-lg">Neni 7 — Rregullat e qëndrimit në bibliotekë</h2>
+                <ul class="sl-rules-list mt-3 space-y-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                  <li>Ruajtja e qetësisë është e detyrueshme</li>
+                  <li>Telefonat në modalitetin silent</li>
+                  <li>Ndalohet konsumimi i ushqimeve në ambientet e leximit</li>
+                  <li>Pajisjet elektronike lejohen me kufizime zhurme</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <article id="neni-8" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6" data-rules-section="8">
+            <div class="flex items-start gap-3">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-600 text-sm font-black text-white shadow-sm">08</span>
+              <div class="min-w-0">
+                <h2 class="text-base font-extrabold text-slate-900 dark:text-white sm:text-lg">Neni 8 — Siguria dhe privatësia</h2>
+                <ul class="sl-rules-list mt-3 space-y-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                  <li>Të dhënat personale ruhen sipas legjislacionit në fuqi</li>
+                  <li>Informacioni përdoret vetëm për qëllime bibliotekare</li>
+                  <li>Ambientet mund të monitorohen për arsye sigurie</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <article id="neni-9" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6" data-rules-section="9">
+            <div class="flex items-start gap-3">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-600 text-sm font-black text-white shadow-sm">09</span>
+              <div class="min-w-0">
+                <h2 class="text-base font-extrabold text-slate-900 dark:text-white sm:text-lg">Neni 9 — Inventari dhe kujdesi për materialet</h2>
+                <ul class="sl-rules-list mt-3 space-y-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                  <li>Anëtarët duhet të trajtojnë materialet me kujdes</li>
+                  <li>Çdo dëmtim i qëllimshëm sanksionohet</li>
+                  <li>Biblioteka kryen inventar periodik</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <article id="neni-10" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6" data-rules-section="10">
+            <div class="flex items-start gap-3">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-cyan-600 text-sm font-black text-white shadow-sm">10</span>
+              <div class="min-w-0">
+                <h2 class="text-base font-extrabold text-slate-900 dark:text-white sm:text-lg">Neni 10 — Shërbimet digjitale</h2>
+                <ul class="sl-rules-list mt-3 space-y-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                  <li>Akses online në <a href="/catalog/" class="font-bold text-brand-700 hover:underline dark:text-brand-300">katalog</a></li>
+                  <li>Njoftime automatike për afate</li>
+                  <li>Menaxhim i huazimeve përmes platformës</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <article id="neni-11" class="sl-rules-article rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6" data-rules-section="11">
+            <div class="flex items-start gap-3">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-orange-600 text-sm font-black text-white shadow-sm">11</span>
+              <div class="min-w-0">
+                <h2 class="text-base font-extrabold text-slate-900 dark:text-white sm:text-lg">Neni 11 — Masat disiplinore</h2>
+                <ul class="sl-rules-list mt-3 space-y-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                  <li>Pezullim i përkohshëm i anëtarësisë</li>
+                  <li>Bllokim i huazimeve</li>
+                  <li>Masa administrative në rast shkeljeje të rregullores</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <article id="neni-12" class="sl-rules-article overflow-hidden rounded-2xl border border-brand-300/50 bg-gradient-to-br from-brand-700 via-brand-600 to-brand-800 p-5 shadow-xl sm:rounded-3xl sm:p-7" data-rules-section="12">
+            <div class="flex items-start gap-3">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/20 text-sm font-black text-white shadow-sm backdrop-blur">12</span>
+              <div class="min-w-0 text-white">
+                <h2 class="text-base font-extrabold sm:text-lg">Neni 12 — Hyrja në fuqi</h2>
                 <p class="mt-2 text-sm leading-relaxed text-white/90">
                   Kjo rregullore hyn në fuqi me miratimin e Drejtorisë së Bibliotekës dhe miratimin institucional nga Bashkia Kamëz.
                 </p>
-                <div class="mt-5 rounded-2xl border border-white/25 bg-white/10 p-4 backdrop-blur-sm">
+                <div class="mt-4 rounded-2xl border border-white/25 bg-white/10 p-4 backdrop-blur">
                   <div class="text-xs font-extrabold uppercase tracking-wide text-white/75">Parimi ynë</div>
                   <p class="mt-1 text-base font-extrabold sm:text-lg">„Dija është pasuria më e madhe e komunitetit.”</p>
-                  <p class="mt-2 text-sm text-white/85">Biblioteka e Bashkisë Kamëz · Në shërbim të qytetarëve · Moderne · Profesionale · Për të gjithë</p>
+                  <p class="mt-2 text-xs font-medium text-white/80">Biblioteka e Bashkisë Kamëz · Në shërbim të qytetarëve · Moderne · Profesionale · Për të gjithë</p>
                 </div>
               </div>
             </div>
           </article>
 
-          <!-- CTA -->
-          <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6">
-            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">Ke pyetje rreth rregullores?</h3>
-            <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Stafi ynë të ndihmon me anëtarësim, huazime dhe shërbime digjitale.</p>
-            <div class="mt-4 flex flex-wrap gap-2">
-              <a href="/kontakt/" class="min-h-[44px] inline-flex items-center rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-extrabold text-white hover:bg-brand-700">Kontakt</a>
-              <a href="/orar/" class="min-h-[44px] inline-flex items-center rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800">Orari</a>
-              <a href="/catalog/" class="min-h-[44px] inline-flex items-center rounded-xl border border-brand-200 px-4 py-2.5 text-sm font-bold text-brand-800 hover:bg-brand-50 dark:border-brand-800 dark:text-brand-200">Katalogu</a>
-            </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="relative mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+      <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div class="text-sm font-extrabold text-slate-900 dark:text-white">Ke pyetje rreth rregullores?</div>
+            <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Stafi ynë është gati t'ju ndihmojë me anëtarësim, huazime dhe rezervime.</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <a href="/kontakt/" class="min-h-[44px] inline-flex items-center rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-extrabold text-white hover:bg-brand-700">Kontakt</a>
+            <a href="/orar/" class="min-h-[44px] inline-flex items-center rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800">Orari</a>
           </div>
         </div>
       </div>
@@ -372,24 +440,38 @@
 
   <script>
     (function () {
-      var links = document.querySelectorAll('.sl-rules-toc a[href^="#"], nav[aria-label="Përmbajtja e rregullores"] a[href^="#"]');
-      var sections = [];
-      links.forEach(function (a) {
-        var id = a.getAttribute('href').slice(1);
-        var el = document.getElementById(id);
-        if (el) sections.push({ link: a, el: el });
-      });
-      if (!sections.length || !('IntersectionObserver' in window)) return;
-      var obs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          var id = entry.target.id;
-          links.forEach(function (a) {
-            a.classList.toggle('is-active', a.getAttribute('href') === '#' + id);
-          });
+      var sections = document.querySelectorAll('[data-rules-section]');
+      var tocLinks = document.querySelectorAll('[data-rules-toc]');
+      var pills = document.querySelectorAll('[data-rules-pill]');
+      if (!sections.length) return;
+
+      function setActive(num) {
+        var id = String(num);
+        tocLinks.forEach(function (el) {
+          el.classList.toggle('is-active', el.getAttribute('data-rules-toc') === id);
         });
-      }, { rootMargin: '-35% 0px -55% 0px', threshold: 0 });
-      sections.forEach(function (s) { obs.observe(s.el); });
+        pills.forEach(function (el) {
+          el.classList.toggle('is-active', el.getAttribute('data-rules-pill') === id);
+        });
+      }
+
+      if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              setActive(entry.target.getAttribute('data-rules-section'));
+            }
+          });
+        }, { rootMargin: '-30% 0px -55% 0px', threshold: 0 });
+        sections.forEach(function (s) { observer.observe(s); });
+      }
+
+      document.querySelectorAll('a[href^="#neni-"]').forEach(function (a) {
+        a.addEventListener('click', function () {
+          var m = (a.getAttribute('href') || '').match(/neni-(\d+)/);
+          if (m) setActive(m[1]);
+        });
+      });
     })();
   </script>
 {% endblock %}

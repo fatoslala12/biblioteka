@@ -2,63 +2,167 @@
 {% load i18n %}
 
 {% block content %}
-  {% if sl_contact_unread_count %}
-    <div class="alert alert-warning d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3" role="alert">
-      <div>
-        <strong>{{ sl_contact_unread_count }}</strong>
-        mesazh{% if sl_contact_unread_count != 1 %}e{% endif %} të palexuar
-        {% if sl_contact_unreplied_count %}
-          · <strong>{{ sl_contact_unreplied_count }}</strong> pa përgjigje
-        {% endif %}
+  <div class="sl-msg-admin">
+    <div class="sl-msg-hero">
+      <div class="sl-msg-hero__copy">
+        <p class="sl-msg-hero__eyebrow"><i class="fas fa-envelope-open-text"></i> Inbox publik</p>
+        <h2 class="sl-msg-hero__title">Mesazhet nga faqja e kontaktit</h2>
+        <p class="sl-msg-hero__sub">Menaxho, lexo dhe përgjigju mesazheve të qytetarëve nga një panel i unifikuar.</p>
       </div>
-      <a href="?status=unread" class="btn btn-sm btn-primary font-weight-bold">Shfaq vetëm të palexuarat</a>
+      {% if sl_contact_unread_count %}
+        <a href="?status=unread" class="btn sl-msg-hero__cta">
+          <i class="fas fa-inbox"></i> {{ sl_contact_unread_count }} të palexuar
+        </a>
+      {% endif %}
     </div>
-  {% endif %}
-  {{ block.super }}
+
+    <div class="sl-msg-kpis">
+      <a href="?" class="sl-msg-kpi {% if not sl_contact_filter_status and not sl_contact_filter_replied %}is-active{% endif %}">
+        <span class="sl-msg-kpi__label">Gjithsej</span>
+        <span class="sl-msg-kpi__value">{{ sl_contact_total|default:"0" }}</span>
+      </a>
+      <a href="?status=unread" class="sl-msg-kpi sl-msg-kpi--warn {% if sl_contact_filter_status == 'unread' %}is-active{% endif %}">
+        <span class="sl-msg-kpi__label">Të palexuar</span>
+        <span class="sl-msg-kpi__value">{{ sl_contact_unread_count|default:"0" }}</span>
+      </a>
+      <a href="?replied=no" class="sl-msg-kpi sl-msg-kpi--muted {% if sl_contact_filter_replied == 'no' %}is-active{% endif %}">
+        <span class="sl-msg-kpi__label">Pa përgjigje</span>
+        <span class="sl-msg-kpi__value">{{ sl_contact_unreplied_count|default:"0" }}</span>
+      </a>
+      <a href="?replied=yes" class="sl-msg-kpi sl-msg-kpi--ok {% if sl_contact_filter_replied == 'yes' %}is-active{% endif %}">
+        <span class="sl-msg-kpi__label">U përgjigj</span>
+        <span class="sl-msg-kpi__value">{{ sl_contact_replied_count|default:"0" }}</span>
+      </a>
+    </div>
+
+    {{ block.super }}
+  </div>
 {% endblock %}
 
 {% block extrahead %}
   {{ block.super }}
   <style>
-    /* Modern table look (Jazzmin-friendly) */
+    body.app-cms.model-contactmessage.change-list .date-hierarchy,
+    body.app-cms.model-contactmessage.change-list .object-tools {
+      display: none !important;
+    }
+
+    .sl-msg-admin { margin-bottom: 1rem; }
+
+    .sl-msg-hero {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem;
+      padding: 1.25rem 1.35rem; border-radius: 20px; margin-bottom: 1rem;
+      background: linear-gradient(135deg, rgba(13,148,136,.14), rgba(255,255,255,.96) 55%);
+      border: 1px solid rgba(13,148,136,.18);
+      box-shadow: 0 14px 34px rgba(15,23,42,.08);
+    }
+    .sl-msg-hero__eyebrow {
+      margin: 0 0 .35rem; font-size: .72rem; font-weight: 800; letter-spacing: .08em;
+      text-transform: uppercase; color: #0f766e;
+    }
+    .sl-msg-hero__title {
+      margin: 0; font-size: 1.45rem; font-weight: 900; color: #0f172a; letter-spacing: -.02em;
+    }
+    .sl-msg-hero__sub { margin: .35rem 0 0; color: #475569; font-size: .92rem; max-width: 42rem; }
+    .sl-msg-hero__cta {
+      border-radius: 999px; padding: .65rem 1.1rem; font-weight: 800; color: #fff;
+      background: linear-gradient(135deg, #0d9488, #0f766e); box-shadow: 0 10px 22px rgba(13,148,136,.28);
+    }
+    .sl-msg-hero__cta:hover { color: #fff; transform: translateY(-1px); }
+
+    .sl-msg-kpis {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; margin-bottom: 1rem;
+    }
+    @media (max-width: 900px) {
+      .sl-msg-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    .sl-msg-kpi {
+      display: flex; flex-direction: column; gap: .2rem; text-decoration: none !important;
+      padding: .95rem 1rem; border-radius: 16px; background: #fff;
+      border: 1px solid rgba(15,23,42,.08); box-shadow: 0 8px 20px rgba(15,23,42,.05);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .sl-msg-kpi:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(15,23,42,.09); }
+    .sl-msg-kpi.is-active {
+      border-color: rgba(13,148,136,.45);
+      box-shadow: 0 12px 28px rgba(13,148,136,.14);
+      background: linear-gradient(180deg, rgba(13,148,136,.08), #fff);
+    }
+    .sl-msg-kpi__label {
+      font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: #64748b;
+    }
+    .sl-msg-kpi__value { font-size: 1.55rem; font-weight: 900; color: #0f172a; line-height: 1.1; }
+    .sl-msg-kpi--warn .sl-msg-kpi__value { color: #b45309; }
+    .sl-msg-kpi--ok .sl-msg-kpi__value { color: #0f766e; }
+
+    body.app-cms.model-contactmessage.change-list #change-list-filters {
+      background: #fff; border: 1px solid rgba(15,23,42,.08); border-radius: 18px;
+      padding: 1rem 1.1rem; box-shadow: 0 8px 22px rgba(15,23,42,.05);
+    }
+    body.app-cms.model-contactmessage.change-list #change-list-filters .form-control,
+    body.app-cms.model-contactmessage.change-list #change-list-filters select {
+      min-height: 42px; border-radius: 12px !important; border-color: rgba(15,23,42,.12) !important;
+      font-weight: 600;
+    }
+    body.app-cms.model-contactmessage.change-list #change-list-filters .btn-primary {
+      border-radius: 12px; font-weight: 800; min-height: 42px; padding-inline: 1.1rem;
+      background: linear-gradient(135deg, #0d9488, #0f766e) !important; border: none !important;
+    }
+    body.app-cms.model-contactmessage.change-list #changelist .card {
+      border: 0; box-shadow: none; background: transparent;
+    }
+    body.app-cms.model-contactmessage.change-list #changelist .card-body { padding: 0; }
+
     #changelist table {
       border-collapse: separate !important;
       border-spacing: 0 10px !important;
+      margin-top: .5rem;
     }
     #changelist table thead th {
       border: 0 !important;
-      color: rgba(15,23,42,.72) !important;
+      color: rgba(15,23,42,.62) !important;
       font-weight: 900 !important;
-      letter-spacing: .02em;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      font-size: .72rem !important;
+      padding: .35rem 1rem !important;
+      background: transparent !important;
     }
     #changelist table tbody tr {
       background: #fff;
       box-shadow: 0 10px 24px rgba(15,23,42,.06);
       border: 1px solid rgba(15,23,42,.08);
+      transition: transform .16s ease, box-shadow .16s ease;
+    }
+    #changelist table tbody tr:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(15,23,42,.09);
     }
     #changelist table tbody tr td,
     #changelist table tbody tr th {
       border-top: 1px solid rgba(15,23,42,.06) !important;
       border-bottom: 1px solid rgba(15,23,42,.06) !important;
+      padding: .95rem 1rem !important;
+      vertical-align: middle !important;
     }
     #changelist table tbody tr th:first-child,
     #changelist table tbody tr td:first-child {
       border-left: 1px solid rgba(15,23,42,.06) !important;
       border-top-left-radius: 14px;
       border-bottom-left-radius: 14px;
-      overflow: hidden;
     }
     #changelist table tbody tr th:last-child,
     #changelist table tbody tr td:last-child {
       border-right: 1px solid rgba(15,23,42,.06) !important;
       border-top-right-radius: 14px;
       border-bottom-right-radius: 14px;
-      overflow: hidden;
     }
-    /* Rreshta pa përgjigje (NEW) – theks i lehtë */
     #changelist table tbody tr:has(.sl-new-badge) {
-      background: linear-gradient(90deg, rgba(13,148,136,.06), #fff 60%);
+      background: linear-gradient(90deg, rgba(245,158,11,.08), #fff 58%);
+      border-color: rgba(245,158,11,.22);
+    }
+    #changelist table tbody tr:has(.sl-new-badge) td:first-child {
+      box-shadow: inset 4px 0 0 #f59e0b;
     }
   </style>
 {% endblock %}
-

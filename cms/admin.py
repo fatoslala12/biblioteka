@@ -102,10 +102,21 @@ class ContactMessageAdmin(admin.ModelAdmin):
             '<span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;color:#fff;background:#f59e0b;font-weight:800;font-size:12px;">Jo</span>'
         )
 
+    def has_add_permission(self, request):
+        return False
+
     def changelist_view(self, request, extra_context=None):
+        qs = ContactMessage.objects.all()
+        status = (request.GET.get("status") or "").strip().lower()
+        replied = (request.GET.get("replied") or "").strip().lower()
         ctx = {
-            "sl_contact_unread_count": ContactMessage.objects.filter(is_read=False).count(),
-            "sl_contact_unreplied_count": ContactMessage.objects.filter(is_replied=False).count(),
+            "sl_contact_total": qs.count(),
+            "sl_contact_unread_count": qs.filter(is_read=False).count(),
+            "sl_contact_unreplied_count": qs.filter(is_replied=False).count(),
+            "sl_contact_replied_count": qs.filter(is_replied=True).count(),
+            "sl_contact_read_count": qs.filter(is_read=True).count(),
+            "sl_contact_filter_status": status,
+            "sl_contact_filter_replied": replied,
         }
         if extra_context:
             ctx.update(extra_context)

@@ -6,11 +6,16 @@ from django.urls import path, reverse
 
 from cms.ops_services import (
     clean_old_backups,
+    clear_django_cache,
     clear_expired_sessions,
     create_full_backup,
     delete_backup,
+    delete_orphan_media,
     optimize_database,
+    optimize_storage,
     prune_old_admin_logs,
+    prune_old_notifications,
+    run_pending_migrations,
     system_settings_context,
     _safe_backup_name,
 )
@@ -35,9 +40,10 @@ def system_settings_view(request):
         if action == "create_backup":
             result = create_full_backup(request.POST.get("description", ""))
             if result.get("ok"):
+                method = result.get("method") or "backup"
                 messages.success(
                     request,
-                    f"Backup u krijua: {result['filename']} ({result.get('size_human', '')})",
+                    f"Backup u krijua ({method}): {result['filename']} ({result.get('size_human', '')})",
                 )
             else:
                 messages.error(request, result.get("error") or "Backup-i dështoi.")
@@ -69,6 +75,42 @@ def system_settings_view(request):
                 messages.success(request, result.get("message") or "Databaza u optimizua.")
             else:
                 messages.error(request, result.get("error") or "Optimizimi dështoi.")
+        elif action == "clear_cache":
+            result = clear_django_cache()
+            if result.get("ok"):
+                messages.success(request, result.get("message") or "Cache u pastrua.")
+            else:
+                messages.error(request, result.get("error") or "Pastrimi i cache dështoi.")
+        elif action == "prune_notifications":
+            result = prune_old_notifications()
+            messages.success(
+                request,
+                f"U fshinë {result.get('removed', 0)} njoftime të lexuara më të vjetra se {result.get('retention_days')} ditë.",
+            )
+        elif action == "run_migrate":
+            result = run_pending_migrations()
+            if result.get("ok"):
+                messages.success(request, result.get("message") or "Migrimet u ekzekutuan.")
+            else:
+                messages.error(request, result.get("error") or "Migrimet dështuan.")
+        elif action == "optimize_storage":
+            result = optimize_storage(purge_orphans=False)
+            if result.get("ok"):
+                messages.success(request, f"Storage u optimizua: {result.get('message')}")
+            else:
+                messages.error(request, result.get("error") or "Optimizimi i storage dështoi.")
+        elif action == "purge_orphan_media":
+            result = delete_orphan_media()
+            messages.success(
+                request,
+                f"U fshinë {result.get('removed', 0)} skedarë media të papërdorur ({result.get('freed_human', '0 B')}).",
+            )
+        elif action == "optimize_storage_full":
+            result = optimize_storage(purge_orphans=True)
+            if result.get("ok"):
+                messages.success(request, f"Optimizim i plotë storage: {result.get('message')}")
+            else:
+                messages.error(request, result.get("error") or "Optimizimi i plotë dështoi.")
         return redirect("admin:system_settings")
 
     ctx = {

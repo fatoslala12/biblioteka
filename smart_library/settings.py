@@ -282,6 +282,7 @@ _ops_backup_dir = env("OPS_BACKUP_DIR", default="").strip()
 OPS_BACKUP_DIR = _ops_backup_dir if _ops_backup_dir else str(BASE_DIR / "backups")
 OPS_BACKUP_RETENTION_DAYS = env.int("OPS_BACKUP_RETENTION_DAYS", default=14)
 OPS_ADMIN_LOG_RETENTION_DAYS = env.int("OPS_ADMIN_LOG_RETENTION_DAYS", default=90)
+OPS_NOTIFICATION_RETENTION_DAYS = env.int("OPS_NOTIFICATION_RETENTION_DAYS", default=30)
 
 # Use SMTP if configured; fallback to console for local dev.
 if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:

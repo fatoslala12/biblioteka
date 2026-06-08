@@ -156,6 +156,102 @@
           <div class="sl-meta">{{ s.backups|length }} skedarë</div>
         </div>
       </div>
+
+      <div class="mt-4">
+        <h3 class="h6 font-weight-bold mb-2">Optimizim storage</h3>
+        <div class="row">
+          <div class="col-lg-6 mb-3">
+            <div class="p-3 rounded" style="background:#f8fafc;border:1px solid rgba(15,23,42,.08);">
+              <div class="small text-muted font-weight-bold mb-2">Çfarë mund të lirohet</div>
+              <ul class="mb-0 pl-3 small">
+                <li>{{ s.storage_preview.old_backups_count }} backup-e të vjetra ({{ s.storage_preview.old_backups_human }})</li>
+                <li>{{ s.storage_preview.expired_sessions }} sesione të skaduara</li>
+                <li>{{ s.storage_preview.old_admin_logs }} regjistra admin të vjetër</li>
+                <li>{{ s.storage_preview.old_notifications }} njoftime të lexuara të vjetra</li>
+                <li>{{ s.storage_scan.count }} media të papërdorura ({{ s.storage_scan.size_human }})</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-6 mb-3">
+            {% if s.storage.media.folders %}
+              <div class="small text-muted font-weight-bold mb-2">Media sipas dosjes</div>
+              <ul class="mb-0 pl-3 small">
+                {% for f in s.storage.media.folders %}
+                  <li>{{ f.name }} — <strong>{{ f.size_human }}</strong></li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+            {% if s.storage_scan.samples %}
+              <div class="small text-muted font-weight-bold mt-3 mb-2">Shembuj media të papërdorura</div>
+              <ul class="mb-0 pl-3 small">
+                {% for o in s.storage_scan.samples %}
+                  <li>{{ o.path }} ({{ o.size_human }})</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+        </div>
+        <div class="d-flex flex-wrap gap-2 mt-2">
+          <form method="post" class="d-inline" onsubmit="return confirm('Pastro sesione, backup-e, log, njoftime, cache dhe optimizo DB?');">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="optimize_storage">
+            <button type="submit" class="btn btn-teal btn-sm font-weight-bold">
+              <i class="fas fa-bolt"></i> Optimizo storage (i sigurt)
+            </button>
+          </form>
+          {% if s.storage_scan.count %}
+            <form method="post" class="d-inline" onsubmit="return confirm('Fshi {{ s.storage_scan.count }} skedarë media të papërdorur?');">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="purge_orphan_media">
+              <button type="submit" class="btn btn-outline-danger btn-sm font-weight-bold">
+                <i class="fas fa-trash-alt"></i> Fshi media të papërdorura
+              </button>
+            </form>
+            <form method="post" class="d-inline" onsubmit="return confirm('Optimizim i plotë përfshin fshirjen e media të papërdorura. Vazhdo?');">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="optimize_storage_full">
+              <button type="submit" class="btn btn-outline-warning btn-sm font-weight-bold">
+                <i class="fas fa-magic"></i> Optimizim i plotë
+              </button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="sl-ops-section">
+      <h2><i class="fas fa-users"></i> Sesionet aktive</h2>
+      <div class="sl-ops-cards">
+        <div class="sl-ops-card">
+          <i class="fas fa-link icon"></i>
+          <div class="label">Sesione aktive</div>
+          <div class="value">{{ s.summary.sessions.total_sessions }}</div>
+          <div class="sl-meta">Cookie të vlefshme tani</div>
+        </div>
+        <div class="sl-ops-card">
+          <i class="fas fa-user-check icon"></i>
+          <div class="label">Përdorues të loguar</div>
+          <div class="value">{{ s.summary.sessions.logged_in_users }}</div>
+          <div class="sl-meta">Unikë në sesionet aktive</div>
+        </div>
+        <div class="sl-ops-card">
+          <i class="fas fa-user-shield icon"></i>
+          <div class="label">Staf / Admin</div>
+          <div class="value">{{ s.summary.sessions.staff_logged_in }}</div>
+        </div>
+        <div class="sl-ops-card">
+          <i class="fas fa-id-card icon"></i>
+          <div class="label">Anëtarë online</div>
+          <div class="value">{{ s.summary.sessions.members_logged_in }}</div>
+        </div>
+      </div>
+      <p class="sl-meta mt-3 mb-0">
+        Vizitorë pa login: <strong>{{ s.summary.sessions.guest_sessions }}</strong>
+        · Sesione të skaduara (në DB): <strong>{{ s.summary.sessions.expired_sessions }}</strong>
+        {% if s.summary.sessions.other_logged_in %}
+          · Të tjerë: <strong>{{ s.summary.sessions.other_logged_in }}</strong>
+        {% endif %}
+      </p>
     </div>
 
     <div class="sl-ops-section">
@@ -183,8 +279,7 @@
         </a>
       </div>
       <p class="sl-meta mt-3 mb-0">
-        Sesione aktive: <strong>{{ s.summary.active_sessions }}</strong>
-        · Regjistra admin: <strong>{{ s.summary.admin_log_entries }}</strong>
+        Regjistra admin: <strong>{{ s.summary.admin_log_entries }}</strong>
         {% if s.summary.disk_level == "critical" %}
           · <span class="text-danger font-weight-bold">Disku kritik ({{ s.summary.disk_percent }}%)</span>
         {% elif s.summary.disk_level == "warning" %}
@@ -195,7 +290,7 @@
 
     <div class="sl-ops-section">
       <h2><i class="fas fa-magic"></i> Optimizim i shpejtë</h2>
-      <p class="sl-meta mb-3">Veprime të sigurta për të liruar hapësirë dhe përmirësuar performancën e databazës.</p>
+      <p class="sl-meta mb-3">Veprime të sigurta për të liruar hapësirë dhe përmirësuar performancën.</p>
       <div class="d-flex flex-wrap gap-2">
         <form method="post" class="d-inline">
           {% csrf_token %}
@@ -211,11 +306,32 @@
             <i class="fas fa-history"></i> Pastro log admin (>{{ s.admin_log_retention_days }} ditë)
           </button>
         </form>
+        <form method="post" class="d-inline" onsubmit="return confirm('Fshi njoftimet e lexuara të vjetra?');">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="prune_notifications">
+          <button type="submit" class="btn btn-outline-secondary btn-sm font-weight-bold">
+            <i class="fas fa-bell-slash"></i> Pastro njoftime (>{{ s.notification_retention_days }} ditë)
+          </button>
+        </form>
         <form method="post" class="d-inline">
           {% csrf_token %}
           <input type="hidden" name="action" value="optimize_db">
           <button type="submit" class="btn btn-outline-primary btn-sm font-weight-bold">
-            <i class="fas fa-database"></i> Optimizo databazën (VACUUM/ANALYZE)
+            <i class="fas fa-database"></i> Optimizo DB (VACUUM/ANALYZE)
+          </button>
+        </form>
+        <form method="post" class="d-inline">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="clear_cache">
+          <button type="submit" class="btn btn-outline-primary btn-sm font-weight-bold">
+            <i class="fas fa-broom"></i> Pastro cache
+          </button>
+        </form>
+        <form method="post" class="d-inline" onsubmit="return confirm('Ekzekuto migrimet e paplota?');">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="run_migrate">
+          <button type="submit" class="btn btn-outline-warning btn-sm font-weight-bold">
+            <i class="fas fa-code-branch"></i> Ekzekuto migrime
           </button>
         </form>
       </div>
@@ -239,6 +355,16 @@
 
     <div class="sl-ops-section">
       <h2><i class="fas fa-cloud-download-alt"></i> Backup</h2>
+      <p class="sl-meta mb-3">
+        {% if s.backup_caps.pg_dump_available %}
+          <i class="fas fa-check-circle text-success"></i> pg_dump i disponueshëm
+          {% if s.backup_caps.pg_dump_path %}<span class="text-muted">({{ s.backup_caps.pg_dump_path }})</span>{% endif %}
+          — backup SQL (.sql.gz)
+        {% else %}
+          <i class="fas fa-info-circle text-warning"></i> pg_dump nuk u gjet — përdoret <strong>dumpdata</strong> (.json.gz) automatikisht.
+          Pas redeploy me <code>postgresql-client</code>, backup SQL aktivizohet vetë.
+        {% endif %}
+      </p>
       <form method="post" class="mb-3">
         {% csrf_token %}
         <input type="hidden" name="action" value="create_backup">

@@ -147,8 +147,15 @@ class SystemSettingsAdminTests(TestCase):
         r = self.client.get("/admin/settings/")
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "Statusi i databazës")
+        self.assertContains(r, "Sesionet aktive")
         self.assertContains(r, "Tabelat e databazës")
         self.assertContains(r, "Backup")
+
+    def test_optimize_storage_runs_safely(self):
+        from cms.ops_services import optimize_storage
+
+        result = optimize_storage(purge_orphans=False)
+        self.assertTrue(result.get("ok"))
 
     def test_backup_download_and_delete(self):
         import tempfile

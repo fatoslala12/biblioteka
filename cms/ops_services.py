@@ -170,8 +170,29 @@ def web_application_status() -> dict:
     }
 
 
+def _media_root() -> Path:
+    return Path(getattr(settings, "MEDIA_ROOT", settings.BASE_DIR / "media"))
+
+
+def _folder_breakdown(root: Path, max_items: int = 12) -> list[dict]:
+    if not root.exists():
+        return []
+    rows: list[dict] = []
+    try:
+        children = [p for p in root.iterdir() if p.is_dir()]
+    except OSError:
+        return []
+    for child in children:
+        size = _dir_size(child)
+        if size <= 0:
+            continue
+        rows.append({"name": child.name, "path": str(child), "size_bytes": size, "size_human": _human_size(size)})
+    rows.sort(key=lambda item: item["size_bytes"], reverse=True)
+    return rows[:max_items]
+
+
 def storage_overview() -> dict:
-    media_root = Path(getattr(settings, "MEDIA_ROOT", settings.BASE_DIR / "media"))
+    media_root = _media_root()
     static_root = Path(getattr(settings, "STATIC_ROOT", settings.BASE_DIR / "staticfiles"))
     backups = backup_dir()
     return {
@@ -180,18 +201,174 @@ def storage_overview() -> dict:
             "path": str(media_root),
             "size_human": _human_size(_dir_size(media_root)),
             "size_bytes": _dir_size(media_root),
+            "folders": _folder_breakdown(media_root),
         },
         "staticfiles": {
             "path": str(static_root),
             "size_human": _human_size(_dir_size(static_root)),
             "size_bytes": _dir_size(static_root),
+            "folders": _folder_breakdown(static_root),
         },
         "backups": {
             "path": str(backups),
             "size_human": _human_size(_dir_size(backups)),
             "size_bytes": _dir_size(backups),
+            "folders": [],
         },
     }
+
+
+def _referenced_media_relpaths() -> set[str]:
+    from django.db import models
+
+    referenced: set[str] = set()
+    for model in apps.get_models():
+        if not model._meta.managed or model._meta.proxy:
+            continue
+        file_fields = [
+            f
+            for f in model._meta.get_fields()
+            if isinstance(f, (models.FileField, models.ImageField)) and getattr(f, "attname", None)
+        ]
+        for field in file_fields:
+            attname = field.attname
+            try:
+                values = model._default_manager.exclude(**{f"{attname}__isnull": True}).exclude(**{attname: ""}).values_list(attname, flat=True)
+            except Exception:
+                continue
+            for value in values:
+                if not value:
+                    continue
+                rel = str(value).replace("\\", "/").lstrip("/")
+                referenced.add(rel)
+    return referenced
+
+
+def _iter_orphan_files(media_root: Path, referenced: set[str]):
+    for dirpath, _dirnames, filenames in os.walk(media_root):
+        for name in filenames:
+            full = Path(dirpath) / name
+            try:
+                rel = full.relative_to(media_root).as_posix()
+            except ValueError:
+                continue
+            if rel not in referenced:
+                yield full, rel
+
+
+def scan_orphan_media(sample_limit: int = 10) -> dict:
+    media_root = _media_root()
+    if not media_root.exists():
+        return {"count": 0, "size_bytes": 0, "size_human": "0 B", "samples": []}
+
+    referenced = _referenced_media_relpaths()
+    count = 0
+    total_bytes = 0
+    samples: list[dict] = []
+    for full, rel in _iter_orphan_files(media_root, referenced):
+        try:
+            size = full.stat().st_size
+        except OSError:
+            continue
+        count += 1
+        total_bytes += size
+        if len(samples) < sample_limit:
+            samples.append({"path": rel, "size_human": _human_size(size)})
+    return {
+        "count": count,
+        "size_bytes": total_bytes,
+        "size_human": _human_size(total_bytes),
+        "samples": samples,
+    }
+
+
+def delete_orphan_media() -> dict:
+    media_root = _media_root()
+    referenced = _referenced_media_relpaths()
+    removed = 0
+    freed = 0
+    for full, _rel in _iter_orphan_files(media_root, referenced):
+        try:
+            size = full.stat().st_size
+            full.unlink(missing_ok=True)
+            removed += 1
+            freed += size
+        except OSError:
+            continue
+    return {"ok": True, "removed": removed, "freed_human": _human_size(freed)}
+
+
+def storage_optimization_preview() -> dict:
+    from django.contrib.admin.models import LogEntry
+    from django.contrib.sessions.models import Session
+
+    from notifications.models import UserNotification
+
+    now = dj_timezone.now()
+    backup_cutoff = now - timedelta(days=int(getattr(settings, "OPS_BACKUP_RETENTION_DAYS", 14) or 14))
+    log_cutoff = now - timedelta(days=int(getattr(settings, "OPS_ADMIN_LOG_RETENTION_DAYS", 90) or 90))
+    notif_cutoff = now - timedelta(days=int(getattr(settings, "OPS_NOTIFICATION_RETENTION_DAYS", 30) or 30))
+
+    old_backup_bytes = 0
+    old_backup_count = 0
+    for item in list_backups():
+        created = item["created_at"]
+        if created.tzinfo is None:
+            created = created.replace(tzinfo=timezone.utc)
+        if created < backup_cutoff:
+            old_backup_count += 1
+            old_backup_bytes += item["size_bytes"]
+
+    orphans = scan_orphan_media(sample_limit=0)
+    expired_sessions = Session.objects.filter(expire_date__lt=now).count()
+    old_logs = LogEntry.objects.filter(action_time__lt=log_cutoff).count()
+    old_notifs = UserNotification.objects.filter(read_at__isnull=False, read_at__lt=notif_cutoff).count()
+
+    return {
+        "orphan_media_count": orphans["count"],
+        "orphan_media_human": orphans["size_human"],
+        "old_backups_count": old_backup_count,
+        "old_backups_human": _human_size(old_backup_bytes),
+        "expired_sessions": expired_sessions,
+        "old_admin_logs": old_logs,
+        "old_notifications": old_notifs,
+    }
+
+
+def optimize_storage(*, purge_orphans: bool = False) -> dict:
+    steps: list[str] = []
+    sessions = clear_expired_sessions()
+    if sessions.get("removed"):
+        steps.append(f"{sessions['removed']} sesione të skaduara")
+
+    backups = clean_old_backups()
+    if backups.get("count"):
+        steps.append(f"{backups['count']} backup-e të vjetra")
+
+    logs = prune_old_admin_logs()
+    if logs.get("removed"):
+        steps.append(f"{logs['removed']} regjistra admin")
+
+    notifs = prune_old_notifications()
+    if notifs.get("removed"):
+        steps.append(f"{notifs['removed']} njoftime të lexuara")
+
+    cache = clear_django_cache()
+    if cache.get("ok"):
+        steps.append("cache")
+
+    db = optimize_database()
+    if db.get("ok"):
+        steps.append("databaza")
+    elif db.get("error"):
+        steps.append(f"db: {db['error']}")
+
+    if purge_orphans:
+        orphans = delete_orphan_media()
+        if orphans.get("removed"):
+            steps.append(f"{orphans['removed']} media të papërdorura ({orphans.get('freed_human', '')})")
+
+    return {"ok": True, "steps": steps, "message": ", ".join(steps) if steps else "Asgjë për pastrim."}
 
 
 _TABLE_ICONS = {
@@ -253,12 +430,58 @@ def _safe_backup_name(filename: str) -> Path | None:
     name = os.path.basename((filename or "").strip())
     if not name or name != filename:
         return None
-    if not (name.startswith("backup-") and (name.endswith(".sql") or name.endswith(".sql.gz") or name.endswith(".sqlite3.gz"))):
+    allowed_suffixes = (".sql", ".sql.gz", ".sqlite3.gz", ".json.gz")
+    if not name.startswith("backup-") or not any(name.endswith(sfx) for sfx in allowed_suffixes):
         return None
     path = backup_dir() / name
     if not path.is_file():
         return None
     return path
+
+
+def _find_pg_dump() -> str | None:
+    candidates = ["pg_dump", "/usr/bin/pg_dump"]
+    for major in ("18", "17", "16", "15", "14"):
+        candidates.append(f"/usr/lib/postgresql/{major}/bin/pg_dump")
+    for candidate in candidates:
+        found = shutil.which(candidate)
+        if found:
+            return found
+        if Path(candidate).is_file():
+            return candidate
+    pg_root = Path("/usr/lib/postgresql")
+    if pg_root.is_dir():
+        for path in sorted(pg_root.glob("*/bin/pg_dump"), reverse=True):
+            if path.is_file():
+                return str(path)
+    return None
+
+
+def backup_capabilities() -> dict:
+    pg_dump = _find_pg_dump()
+    return {
+        "pg_dump_available": bool(pg_dump),
+        "pg_dump_path": pg_dump or "",
+        "fallback": "dumpdata",
+    }
+
+
+def _backup_via_dumpdata(target: Path) -> None:
+    import io
+
+    from django.core.management import call_command
+
+    buf = io.StringIO()
+    call_command(
+        "dumpdata",
+        "--natural-foreign",
+        "--natural-primary",
+        "--indent",
+        "2",
+        stdout=buf,
+    )
+    with gzip.open(target, "wt", encoding="utf-8") as fh:
+        fh.write(buf.getvalue())
 
 
 def create_full_backup(description: str = "") -> dict:
@@ -268,36 +491,45 @@ def create_full_backup(description: str = "") -> dict:
     suffix = f"-{desc_slug}" if desc_slug else ""
 
     if _is_postgresql():
-        filename = f"backup-full-{stamp}{suffix}.sql.gz"
-        target = root / filename
-        db = connection.settings_dict
-        env = os.environ.copy()
-        if db.get("PASSWORD"):
-            env["PGPASSWORD"] = str(db["PASSWORD"])
-        cmd = [
-            "pg_dump",
-            "-h",
-            str(db.get("HOST") or "localhost"),
-            "-p",
-            str(db.get("PORT") or "5432"),
-            "-U",
-            str(db.get("USER") or "postgres"),
-            "-d",
-            str(db.get("NAME") or ""),
-            "--no-owner",
-            "--no-acl",
-        ]
-        try:
-            proc = subprocess.run(cmd, capture_output=True, env=env, check=False, timeout=300)
-        except FileNotFoundError:
-            return {"ok": False, "error": "pg_dump nuk u gjet në server."}
-        except subprocess.TimeoutExpired:
-            return {"ok": False, "error": "Backup-i zgjati shumë dhe u ndal."}
-        if proc.returncode != 0:
-            err = (proc.stderr or b"").decode("utf-8", errors="replace").strip()
-            return {"ok": False, "error": err or "pg_dump dështoi."}
-        with gzip.open(target, "wb") as fh:
-            fh.write(proc.stdout)
+        pg_dump_bin = _find_pg_dump()
+        if pg_dump_bin:
+            filename = f"backup-full-{stamp}{suffix}.sql.gz"
+            target = root / filename
+            db = connection.settings_dict
+            env = os.environ.copy()
+            if db.get("PASSWORD"):
+                env["PGPASSWORD"] = str(db["PASSWORD"])
+            cmd = [
+                pg_dump_bin,
+                "-h",
+                str(db.get("HOST") or "localhost"),
+                "-p",
+                str(db.get("PORT") or "5432"),
+                "-U",
+                str(db.get("USER") or "postgres"),
+                "-d",
+                str(db.get("NAME") or ""),
+                "--no-owner",
+                "--no-acl",
+            ]
+            try:
+                proc = subprocess.run(cmd, capture_output=True, env=env, check=False, timeout=300)
+            except subprocess.TimeoutExpired:
+                return {"ok": False, "error": "Backup-i zgjati shumë dhe u ndal."}
+            if proc.returncode != 0:
+                err = (proc.stderr or b"").decode("utf-8", errors="replace").strip()
+                return {"ok": False, "error": err or "pg_dump dështoi."}
+            with gzip.open(target, "wb") as fh:
+                fh.write(proc.stdout)
+            method = "pg_dump"
+        else:
+            filename = f"backup-full-{stamp}{suffix}.json.gz"
+            target = root / filename
+            try:
+                _backup_via_dumpdata(target)
+            except Exception as exc:
+                return {"ok": False, "error": f"Backup dumpdata dështoi: {exc}"}
+            method = "dumpdata"
     elif _is_sqlite():
         import sqlite3
 
@@ -322,6 +554,7 @@ def create_full_backup(description: str = "") -> dict:
         finally:
             if tmp_path.exists():
                 tmp_path.unlink()
+        method = "sqlite"
     else:
         return {"ok": False, "error": "Motor i panjohur databaze për backup."}
 
@@ -330,6 +563,7 @@ def create_full_backup(description: str = "") -> dict:
         "filename": filename,
         "path": str(target),
         "size_human": _human_size(target.stat().st_size),
+        "method": method,
     }
 
 
@@ -357,9 +591,49 @@ def clean_old_backups(days: int | None = None) -> dict:
     return {"ok": True, "removed": removed, "count": len(removed), "retention_days": keep_days}
 
 
+def active_session_stats() -> dict:
+    from django.contrib.auth import SESSION_KEY
+    from django.contrib.sessions.models import Session
+
+    from accounts.models import User, UserRole
+
+    now = dj_timezone.now()
+    active_qs = Session.objects.filter(expire_date__gte=now)
+    user_ids: set[int] = set()
+    guest_sessions = 0
+    for row in active_qs.only("session_data", "expire_date"):
+        try:
+            data = row.get_decoded()
+        except Exception:
+            guest_sessions += 1
+            continue
+        raw_uid = data.get(SESSION_KEY) or data.get("_auth_user_id")
+        if raw_uid:
+            try:
+                user_ids.add(int(raw_uid))
+            except (TypeError, ValueError):
+                guest_sessions += 1
+        else:
+            guest_sessions += 1
+
+    users = User.objects.filter(id__in=user_ids) if user_ids else User.objects.none()
+    staff_count = users.filter(is_staff=True).count()
+    member_count = users.filter(is_staff=False, role=UserRole.MEMBER).count()
+    other_count = max(0, len(user_ids) - staff_count - member_count)
+
+    return {
+        "total_sessions": active_qs.count(),
+        "logged_in_users": len(user_ids),
+        "staff_logged_in": staff_count,
+        "members_logged_in": member_count,
+        "other_logged_in": other_count,
+        "guest_sessions": guest_sessions,
+        "expired_sessions": Session.objects.filter(expire_date__lt=now).count(),
+    }
+
+
 def operational_summary() -> dict:
     from django.contrib.admin.models import LogEntry
-    from django.contrib.sessions.models import Session
     from django.urls import reverse
 
     from cms.models import ContactMessage
@@ -375,12 +649,16 @@ def operational_summary() -> dict:
         elif disk_percent >= 80:
             disk_level = "warning"
 
+    sessions = active_session_stats()
+
     return {
         "contact_unread": ContactMessage.objects.filter(is_read=False).count(),
         "contact_unreplied": ContactMessage.objects.filter(is_replied=False).count(),
         "pending_requests": ReservationRequest.objects.filter(status=ReservationRequestStatus.PENDING).count(),
         "overdue_loans": Loan.objects.filter(status=LoanStatus.ACTIVE, due_at__lt=now).count(),
-        "active_sessions": Session.objects.count(),
+        "active_sessions": sessions["total_sessions"],
+        "logged_in_users": sessions["logged_in_users"],
+        "sessions": sessions,
         "admin_log_entries": LogEntry.objects.count(),
         "disk_level": disk_level,
         "disk_percent": disk_percent,
@@ -411,6 +689,41 @@ def prune_old_admin_logs(days: int | None = None) -> dict:
     removed = qs.count()
     qs.delete()
     return {"ok": True, "removed": removed, "retention_days": keep_days}
+
+
+def clear_django_cache() -> dict:
+    from django.core.cache import cache
+
+    try:
+        cache.clear()
+        return {"ok": True, "message": "Cache u pastrua."}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)}
+
+
+def prune_old_notifications(days: int | None = None) -> dict:
+    from notifications.models import UserNotification
+
+    keep_days = days if days is not None else int(getattr(settings, "OPS_NOTIFICATION_RETENTION_DAYS", 30) or 30)
+    cutoff = dj_timezone.now() - timedelta(days=max(keep_days, 7))
+    qs = UserNotification.objects.filter(read_at__isnull=False, read_at__lt=cutoff)
+    removed = qs.count()
+    qs.delete()
+    return {"ok": True, "removed": removed, "retention_days": keep_days}
+
+
+def run_pending_migrations() -> dict:
+    import io
+
+    from django.core.management import call_command
+
+    buf = io.StringIO()
+    try:
+        call_command("migrate", "--noinput", stdout=buf)
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)}
+    tail = (buf.getvalue() or "").strip()[-400:]
+    return {"ok": True, "message": tail or "Migrimet u ekzekutuan."}
 
 
 def optimize_database() -> dict:
@@ -444,4 +757,8 @@ def system_settings_context() -> dict:
         "backup_dir_ok": backup_dir().exists(),
         "backup_retention_days": int(getattr(settings, "OPS_BACKUP_RETENTION_DAYS", 14) or 14),
         "admin_log_retention_days": int(getattr(settings, "OPS_ADMIN_LOG_RETENTION_DAYS", 90) or 90),
+        "notification_retention_days": int(getattr(settings, "OPS_NOTIFICATION_RETENTION_DAYS", 30) or 30),
+        "backup_caps": backup_capabilities(),
+        "storage_scan": scan_orphan_media(sample_limit=8),
+        "storage_preview": storage_optimization_preview(),
     }

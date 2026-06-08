@@ -278,6 +278,10 @@ SMS_WEBHOOK_TOKEN = env("SMS_WEBHOOK_TOKEN", default="").strip()
 PUBLIC_BASE_URL = env("PUBLIC_BASE_URL", default="").strip()
 MAINTENANCE_MODE = env.bool("MAINTENANCE_MODE", default=False)
 GA_MEASUREMENT_ID = env("GA_MEASUREMENT_ID", default="").strip()
+_ops_backup_dir = env("OPS_BACKUP_DIR", default="").strip()
+OPS_BACKUP_DIR = _ops_backup_dir if _ops_backup_dir else str(BASE_DIR / "backups")
+OPS_BACKUP_RETENTION_DAYS = env.int("OPS_BACKUP_RETENTION_DAYS", default=14)
+OPS_ADMIN_LOG_RETENTION_DAYS = env.int("OPS_ADMIN_LOG_RETENTION_DAYS", default=90)
 
 # Use SMTP if configured; fallback to console for local dev.
 if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
@@ -360,6 +364,15 @@ JAZZMIN_SETTINGS = {
     "topmenu_links": [
         {"name": "Faqja", "url": "/", "new_window": True},
     ],
+    "custom_links": {
+        "auth": [
+            {
+                "name": "Settings",
+                "url": "admin:system_settings",
+                "icon": "fas fa-cogs",
+            }
+        ],
+    },
     "custom_css": "css/admin.css",
     "language_chooser": False,
     "changeform_format": "horizontal_tabs",

@@ -1,6 +1,22 @@
 {% extends "admin/change_list.html" %}
 {% load i18n %}
 
+{% block content %}
+  {% if sl_contact_unread_count %}
+    <div class="alert alert-warning d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3" role="alert">
+      <div>
+        <strong>{{ sl_contact_unread_count }}</strong>
+        mesazh{% if sl_contact_unread_count != 1 %}e{% endif %} të palexuar
+        {% if sl_contact_unreplied_count %}
+          · <strong>{{ sl_contact_unreplied_count }}</strong> pa përgjigje
+        {% endif %}
+      </div>
+      <a href="?status=unread" class="btn btn-sm btn-primary font-weight-bold">Shfaq vetëm të palexuarat</a>
+    </div>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}
+
 {% block extrahead %}
   {{ block.super }}
   <style>

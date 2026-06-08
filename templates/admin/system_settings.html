@@ -1,0 +1,295 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <style>
+    .sl-ops { padding-bottom: 2rem; }
+    .sl-ops h1 { font-size: 1.65rem; font-weight: 800; color: #0f172a; margin-bottom: 1.25rem; }
+    .sl-ops .sl-ops-section {
+      background: #fff; border: 1px solid rgba(15,23,42,.08); border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(15,23,42,.06); padding: 1.25rem; margin-bottom: 1.25rem;
+    }
+    .sl-ops .sl-ops-section h2 {
+      font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0 0 1rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .sl-ops .sl-ops-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+    .sl-ops .sl-ops-card {
+      border: 1px solid rgba(15,23,42,.08); border-radius: 14px; padding: 1rem 1.1rem;
+      background: linear-gradient(180deg, #fafbfc, #fff);
+    }
+    .sl-ops .sl-ops-card .label { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: #64748b; }
+    .sl-ops .sl-ops-card .value { font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-top: .35rem; }
+    .sl-ops .sl-ops-card .icon { float: right; font-size: 1.5rem; color: #0d9488; opacity: .85; }
+    .sl-ops .badge-status { display: inline-flex; align-items: center; padding: .25rem .65rem; border-radius: 999px; font-size: .78rem; font-weight: 800; }
+    .sl-ops .badge-status.success { background: rgba(34,197,94,.14); color: #166534; }
+    .sl-ops .badge-status.warning { background: rgba(245,158,11,.16); color: #92400e; }
+    .sl-ops .badge-status.danger { background: rgba(239,68,68,.14); color: #991b1b; }
+    .sl-ops .sl-meta { color: #475569; font-size: .9rem; margin: .35rem 0 0; }
+    .sl-ops .sl-table-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: .85rem; }
+    .sl-ops .sl-table-tile {
+      border: 1px solid rgba(15,23,42,.08); border-radius: 12px; padding: .85rem;
+      background: #fff; min-height: 92px;
+    }
+    .sl-ops .sl-table-tile .name { font-size: .78rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
+    .sl-ops .sl-table-tile .count { font-size: 1.45rem; font-weight: 800; color: #0f172a; margin-top: .2rem; }
+    .sl-ops .sl-table-tile .table-name { font-size: .72rem; color: #94a3b8; margin-top: .15rem; word-break: break-all; }
+    .sl-ops .sl-table-tile i { color: #0d9488; margin-bottom: .35rem; }
+    .sl-ops .sl-backup-list { display: grid; gap: .65rem; }
+    .sl-ops .sl-backup-item {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem;
+      border: 1px solid rgba(15,23,42,.08); border-radius: 12px; padding: .75rem 1rem; background: #fafbfc;
+    }
+    .sl-ops .sl-backup-item .fname { font-weight: 700; color: #0f172a; }
+    .sl-ops .sl-backup-item .meta { font-size: .82rem; color: #64748b; }
+    .sl-ops .sl-progress { height: 10px; border-radius: 999px; background: #e2e8f0; overflow: hidden; margin-top: .5rem; }
+    .sl-ops .sl-progress > span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #0d9488, #06b6d4); }
+    .sl-ops .sl-progress.warn > span { background: linear-gradient(90deg, #f59e0b, #f97316); }
+    .sl-ops .sl-progress.danger > span { background: linear-gradient(90deg, #ef4444, #dc2626); }
+    .sl-ops .btn-teal { background: linear-gradient(135deg, #0d9488, #0f766e); border: none; color: #fff; font-weight: 700; }
+    .sl-ops .btn-teal:hover { color: #fff; background: linear-gradient(135deg, #0f766e, #115e59); }
+    .sl-ops .sl-actions-row { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; }
+    .sl-ops .sl-actions-row .form-control { min-width: 260px; }
+    @media (max-width: 768px) {
+      .sl-ops .sl-actions-row .form-control { min-width: 100%; }
+    }
+  </style>
+{% endblock %}
+
+{% block breadcrumbs %}
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a></li>
+    <li class="breadcrumb-item active">Settings</li>
+  </ol>
+{% endblock %}
+
+{% block content_title %}Settings{% endblock %}
+
+{% block content %}
+  {% with s=settings_data %}
+  <div class="sl-ops">
+    <div class="sl-ops-section">
+      <h2><i class="fas fa-database"></i> Statusi i databazës</h2>
+      <div class="sl-ops-cards">
+        <div class="sl-ops-card">
+          <i class="fas fa-database icon"></i>
+          <div class="label">Databaza</div>
+          <div class="value">{{ s.db.name|default:"—" }}</div>
+        </div>
+        <div class="sl-ops-card">
+          <i class="fas fa-plug icon"></i>
+          <div class="label">Statusi</div>
+          <div class="value"><span class="badge-status {{ s.db.status_class }}">{{ s.db.status_label }}</span></div>
+        </div>
+        <div class="sl-ops-card">
+          <i class="fas fa-folder-open icon"></i>
+          <div class="label">Backup directory</div>
+          <div class="value" style="font-size:1rem;">{% if s.backup_dir_ok %}<i class="fas fa-check-circle text-success"></i>{% else %}<i class="fas fa-times-circle text-danger"></i>{% endif %}</div>
+          <div class="sl-meta">{{ s.backup_dir }}</div>
+        </div>
+      </div>
+      <p class="sl-meta mt-3 mb-0">
+        <strong>Motor:</strong> {{ s.db.engine }}
+        {% if s.db.version %} · <strong>Version:</strong> {{ s.db.version }}{% endif %}
+        {% if s.db.size_human %} · <strong>Madhësia:</strong> {{ s.db.size_human }}{% endif %}
+        {% if s.db.host %} · <strong>Host:</strong> {{ s.db.host }}{% endif %}
+      </p>
+    </div>
+
+    <div class="sl-ops-section">
+      <h2><i class="fas fa-globe"></i> Statusi i web app</h2>
+      <div class="sl-ops-cards">
+        <div class="sl-ops-card">
+          <i class="fas fa-server icon"></i>
+          <div class="label">Aplikacioni</div>
+          <div class="value"><span class="badge-status {{ s.web.status_class }}">{{ s.web.status_label }}</span></div>
+        </div>
+        <div class="sl-ops-card">
+          <i class="fab fa-python icon"></i>
+          <div class="label">Django / Python</div>
+          <div class="value" style="font-size:1rem;">{{ s.web.django_version }} / {{ s.web.python_version }}</div>
+        </div>
+        <div class="sl-ops-card">
+          <i class="fas fa-tools icon"></i>
+          <div class="label">Migrime në pritje</div>
+          <div class="value">{{ s.web.pending_migrations }}</div>
+        </div>
+      </div>
+      <p class="sl-meta mt-3 mb-0">
+        DEBUG: {% if s.web.debug %}<span class="text-danger font-weight-bold">ON</span>{% else %}OFF{% endif %}
+        · Maintenance: {% if s.web.maintenance_mode %}<span class="text-warning font-weight-bold">ON</span>{% else %}OFF{% endif %}
+        · Email SMTP: {% if s.web.email_configured %}konfiguruar{% else %}jo{% endif %}
+        {% if s.web.public_base_url %} · URL publike: {{ s.web.public_base_url }}{% endif %}
+      </p>
+      {% if s.web.pending_migration_labels %}
+        <p class="sl-meta mb-0"><strong>Migrime:</strong> {{ s.web.pending_migration_labels|join:", " }}</p>
+      {% endif %}
+    </div>
+
+    <div class="sl-ops-section">
+      <h2><i class="fas fa-hdd"></i> Hapësira</h2>
+      <div class="sl-ops-cards">
+        <div class="sl-ops-card">
+          <i class="fas fa-hdd icon"></i>
+          <div class="label">Disk (projekti)</div>
+          {% if s.storage.project_disk.ok %}
+            <div class="value">{{ s.storage.project_disk.percent }}%</div>
+            <div class="sl-meta">{{ s.storage.project_disk.used_gb }} / {{ s.storage.project_disk.total_gb }} GB · {{ s.storage.project_disk.free_gb }} GB të lira</div>
+            <div class="sl-progress {% if s.storage.project_disk.percent >= 90 %}danger{% elif s.storage.project_disk.percent >= 80 %}warn{% endif %}">
+              <span style="width: {{ s.storage.project_disk.percent }}%;"></span>
+            </div>
+          {% else %}
+            <div class="value">—</div>
+          {% endif %}
+        </div>
+        <div class="sl-ops-card">
+          <i class="fas fa-photo-video icon"></i>
+          <div class="label">Media</div>
+          <div class="value" style="font-size:1.1rem;">{{ s.storage.media.size_human }}</div>
+          <div class="sl-meta">{{ s.storage.media.path }}</div>
+        </div>
+        <div class="sl-ops-card">
+          <i class="fas fa-archive icon"></i>
+          <div class="label">Backup-e</div>
+          <div class="value" style="font-size:1.1rem;">{{ s.storage.backups.size_human }}</div>
+          <div class="sl-meta">{{ s.backups|length }} skedarë</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sl-ops-section">
+      <h2><i class="fas fa-heartbeat"></i> Përmbledhje operative</h2>
+      <div class="sl-ops-cards">
+        <a href="{{ s.summary.urls.contact_unread }}" class="sl-ops-card text-decoration-none">
+          <i class="fas fa-envelope icon"></i>
+          <div class="label">Mesazhe të palexuara</div>
+          <div class="value">{{ s.summary.contact_unread }}</div>
+        </a>
+        <a href="{{ s.summary.urls.contact_all }}" class="sl-ops-card text-decoration-none">
+          <i class="fas fa-reply icon"></i>
+          <div class="label">Pa përgjigje</div>
+          <div class="value">{{ s.summary.contact_unreplied }}</div>
+        </a>
+        <a href="{{ s.summary.urls.pending_requests }}" class="sl-ops-card text-decoration-none">
+          <i class="fas fa-inbox icon"></i>
+          <div class="label">Kërkesa në pritje</div>
+          <div class="value">{{ s.summary.pending_requests }}</div>
+        </a>
+        <a href="{{ s.summary.urls.overdue_loans }}" class="sl-ops-card text-decoration-none">
+          <i class="fas fa-clock icon"></i>
+          <div class="label">Huazime të vonuara</div>
+          <div class="value">{{ s.summary.overdue_loans }}</div>
+        </a>
+      </div>
+      <p class="sl-meta mt-3 mb-0">
+        Sesione aktive: <strong>{{ s.summary.active_sessions }}</strong>
+        · Regjistra admin: <strong>{{ s.summary.admin_log_entries }}</strong>
+        {% if s.summary.disk_level == "critical" %}
+          · <span class="text-danger font-weight-bold">Disku kritik ({{ s.summary.disk_percent }}%)</span>
+        {% elif s.summary.disk_level == "warning" %}
+          · <span class="text-warning font-weight-bold">Disku afër limitit ({{ s.summary.disk_percent }}%)</span>
+        {% endif %}
+      </p>
+    </div>
+
+    <div class="sl-ops-section">
+      <h2><i class="fas fa-magic"></i> Optimizim i shpejtë</h2>
+      <p class="sl-meta mb-3">Veprime të sigurta për të liruar hapësirë dhe përmirësuar performancën e databazës.</p>
+      <div class="d-flex flex-wrap gap-2">
+        <form method="post" class="d-inline">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="clear_sessions">
+          <button type="submit" class="btn btn-outline-secondary btn-sm font-weight-bold">
+            <i class="fas fa-user-clock"></i> Pastro sesionet e skaduara
+          </button>
+        </form>
+        <form method="post" class="d-inline" onsubmit="return confirm('Fshi regjistrat e vjetër të admin-it?');">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="prune_admin_logs">
+          <button type="submit" class="btn btn-outline-secondary btn-sm font-weight-bold">
+            <i class="fas fa-history"></i> Pastro log admin (>{{ s.admin_log_retention_days }} ditë)
+          </button>
+        </form>
+        <form method="post" class="d-inline">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="optimize_db">
+          <button type="submit" class="btn btn-outline-primary btn-sm font-weight-bold">
+            <i class="fas fa-database"></i> Optimizo databazën (VACUUM/ANALYZE)
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="sl-ops-section">
+      <h2><i class="fas fa-table"></i> Tabelat e databazës</h2>
+      <div class="sl-table-grid">
+        {% for t in s.tables %}
+          <div class="sl-table-tile">
+            <i class="fas {{ t.icon }}"></i>
+            <div class="name">{{ t.label }}</div>
+            <div class="count">{% if t.count is None %}—{% else %}{{ t.count }}{% endif %}</div>
+            <div class="table-name">{{ t.table }}</div>
+          </div>
+        {% empty %}
+          <p class="sl-meta mb-0">Nuk u lexuan tabelat.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="sl-ops-section">
+      <h2><i class="fas fa-cloud-download-alt"></i> Backup</h2>
+      <form method="post" class="mb-3">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="create_backup">
+        <div class="sl-actions-row">
+          <div>
+            <label class="small font-weight-bold text-muted d-block mb-1">Përshkrim (opsional)</label>
+            <input type="text" name="description" class="form-control" maxlength="80" placeholder="p.sh. para-deploy">
+          </div>
+          <button type="submit" class="btn btn-teal"><i class="fas fa-plus-circle"></i> Krijo backup të plotë</button>
+        </div>
+      </form>
+      <form method="post" class="d-inline">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="clean_backups">
+        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Fshi backup-et më të vjetra se {{ s.backup_retention_days }} ditë?');">
+          <i class="fas fa-broom"></i> Pastro backup-e të vjetra (>{{ s.backup_retention_days }} ditë)
+        </button>
+      </form>
+
+      <div class="mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <strong>Lista e backup-eve</strong>
+          <span class="text-muted small">{{ s.backups|length }} backup{% if s.backups|length != 1 %}-e{% endif %}</span>
+        </div>
+        {% if s.backups %}
+          <div class="sl-backup-list">
+            {% for b in s.backups %}
+              <div class="sl-backup-item">
+                <div>
+                  <div class="fname">{{ b.filename }}</div>
+                  <div class="meta">{{ b.size_human }} · {{ b.created_at|date:"d/m/Y H:i" }}</div>
+                </div>
+                <div class="btn-group">
+                  <a class="btn btn-primary btn-sm" href="{% url 'admin:system_settings_backup_download' b.filename %}">
+                    <i class="fas fa-download"></i> Shkarko
+                  </a>
+                  <form method="post" class="d-inline" onsubmit="return confirm('Fshi këtë backup?');">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_backup">
+                    <input type="hidden" name="filename" value="{{ b.filename }}">
+                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                  </form>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="sl-meta mb-0">Nuk ka backup-e ende. Krijo një backup të plotë më sipër.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endwith %}
+{% endblock %}

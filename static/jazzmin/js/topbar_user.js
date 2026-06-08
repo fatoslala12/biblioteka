@@ -53,6 +53,38 @@
     return $(".app-header ul.navbar-nav").last();
   }
 
+  function renderSidebarCountBadge($link, count, title) {
+    if (!$link || !$link.length) return;
+    var n = Number(count || 0);
+    var $existing = $link.find(".sl-sidebar-count-badge").first();
+    if (n <= 0) {
+      $existing.remove();
+      $link.removeAttr("title");
+      return;
+    }
+    var text = n > 99 ? "99+" : String(n);
+    if ($existing.length) {
+      $existing.text(text);
+    } else {
+      $link.append(
+        $("<span>").addClass("sl-sidebar-count-badge").attr("aria-label", title).text(text)
+      );
+    }
+    $link.attr("title", title + ": " + text);
+  }
+
+  function injectSidebarBadges(data) {
+    if (!data) return;
+    var unread = Number(data.contact_messages_unread || 0);
+    var $msgLink = $('#jazzy-sidebar a[href*="/admin/cms/contactmessage/"]').first();
+    if (!$msgLink.length) {
+      $msgLink = $("#jazzy-sidebar a").filter(function () {
+        return $(this).text().trim() === "Mesazhet";
+      }).first();
+    }
+    renderSidebarCountBadge($msgLink, unread, "Mesazhe të palexuara");
+  }
+
   function injectAdminNotificationBell() {
     var $nav = findAdminNotificationNavTarget();
     if (!$nav.length || $("#slAdminNotifBellWrap").length) return;
@@ -142,6 +174,7 @@
         if (!data) return;
         var unread = Number(data.unread || 0);
         renderUnreadBadge(unread);
+        injectSidebarBadges(data);
 
         $("#slAdminNotifAllAdmin").attr("href", data.admin_changelist || "#");
 

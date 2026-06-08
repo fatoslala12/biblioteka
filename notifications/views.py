@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 from django.utils import timezone
 
+from cms.models import ContactMessage
 from notifications.models import UserNotification
 
 
@@ -31,10 +32,19 @@ def staff_notification_badge_json(request):
             }
         )
 
+    contact_unread = ContactMessage.objects.filter(is_read=False).count()
+    contact_unreplied = ContactMessage.objects.filter(is_replied=False).count()
+
     return JsonResponse(
         {
             "unread": unread,
             "preview": preview,
             "admin_changelist": reverse("admin:notifications_usernotification_changelist"),
+            "contact_messages_unread": contact_unread,
+            "contact_messages_unreplied": contact_unreplied,
+            "contact_messages_url": reverse("admin:cms_contactmessage_changelist"),
+            "contact_messages_unread_url": (
+                f"{reverse('admin:cms_contactmessage_changelist')}?status=unread"
+            ),
         }
     )

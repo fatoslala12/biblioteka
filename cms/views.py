@@ -148,6 +148,33 @@ def _hero_library_static_path() -> str:
 
 
 def healthz(request):
+    from django.db import connection
+    from django.db.migrations.executor import MigrationExecutor
+
+    try:
+        connection.ensure_connection()
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+    except Exception:
+        response = HttpResponse("db_unavailable", content_type="text/plain; charset=utf-8", status=503)
+        response["Cache-Control"] = "no-store"
+        return response
+
+    try:
+        executor = MigrationExecutor(connection)
+        pending = executor.migration_plan(executor.loader.graph.leaf_nodes())
+    except Exception:
+        pending = None
+
+    if pending:
+        response = HttpResponse(
+            f"migrations_pending:{len(pending)}",
+            content_type="text/plain; charset=utf-8",
+            status=503,
+        )
+        response["Cache-Control"] = "no-store"
+        return response
+
     response = HttpResponse("ok", content_type="text/plain; charset=utf-8")
     # Tiny cache window keeps the endpoint cheap for frequent probes.
     response["Cache-Control"] = "public, max-age=30, stale-while-revalidate=30"

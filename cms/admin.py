@@ -59,7 +59,7 @@ class RepliedStatusFilter(admin.SimpleListFilter):
 class ContactMessageAdmin(admin.ModelAdmin):
     change_form_template = "admin/cms/contactmessage/change_form.html"
     change_list_template = "admin/cms/contactmessage/change_list.html"
-    list_display = ("subject_display", "name", "email", "created_at", "replied_badge")
+    list_display = ("subject_display", "name", "email", "created_at", "read_badge", "replied_badge")
     list_filter = (ReadStatusFilter, RepliedStatusFilter, ("created_at", admin.DateFieldListFilter))
     search_fields = ("name", "email", "subject", "message")
     readonly_fields = (
@@ -82,15 +82,40 @@ class ContactMessageAdmin(admin.ModelAdmin):
     @admin.display(description="Subjekti", ordering="subject")
     def subject_display(self, obj: ContactMessage):
         subject = obj.subject or "—"
-        if not obj.is_replied:
+        if not obj.is_read:
             return format_html(
                 '<span style="font-weight:950;color:#0f172a;">{}</span>'
                 '<span class="sl-new-badge" style="margin-left:8px;display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;'
                 "background:rgba(13,148,136,.14);border:1px solid rgba(13,148,136,.28);color:#0f766e;font-weight:900;font-size:11px;"
-                '">NEW</span>',
+                '">E re</span>',
                 subject,
             )
         return subject
+
+    @admin.display(description="Lexuar")
+    def read_badge(self, obj: ContactMessage):
+        if obj.is_read:
+            return format_html(
+                '<span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;color:#fff;background:#0f766e;font-weight:800;font-size:12px;">Po</span>'
+            )
+        return format_html(
+            '<span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;color:#fff;background:#f59e0b;font-weight:800;font-size:12px;">Jo</span>'
+        )
+
+    def changelist_view(self, request, extra_context=None):
+        ctx = {
+            "sl_contact_unread_count": ContactMessage.objects.filter(is_read=False).count(),
+            "sl_contact_unreplied_count": ContactMessage.objects.filter(is_replied=False).count(),
+        }
+        if extra_context:
+            ctx.update(extra_context)
+        return super().changelist_view(request, extra_context=ctx)
+
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        obj = self.get_object(request, object_id)
+        if obj and not obj.is_read:
+            ContactMessage.objects.filter(pk=obj.pk, is_read=False).update(is_read=True)
+        return super().change_view(request, object_id, form_url, extra_context)
 
     @admin.display(description="Përgjigjur")
     def replied_badge(self, obj: ContactMessage):
@@ -182,11 +207,14 @@ class ContactMessageAdmin(admin.ModelAdmin):
             )
 
         obj.is_replied = True
+        obj.is_read = True
         obj.replied_at = replied_at
         obj.replied_by = getattr(request, "user", None)
         obj.reply_subject = subject
         obj.reply_body = body
-        obj.save(update_fields=["is_replied", "replied_at", "replied_by", "reply_subject", "reply_body"])
+        obj.save(
+            update_fields=["is_replied", "is_read", "replied_at", "replied_by", "reply_subject", "reply_body"]
+        )
 
         try:
             LogEntry.objects.log_action(

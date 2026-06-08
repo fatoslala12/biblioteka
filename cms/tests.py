@@ -110,6 +110,62 @@ class HealthzTests(TestCase):
         self.assertEqual(r.content.decode("utf-8"), "ok")
         self.assertIn("max-age=30", r.headers.get("Cache-Control", ""))
 
+    def test_healthz_reports_pending_migrations(self):
+        from unittest.mock import patch
+
+        with patch("django.db.migrations.executor.MigrationExecutor") as mock_executor_cls:
+            mock_executor = mock_executor_cls.return_value
+            mock_executor.loader.graph.leaf_nodes.return_value = []
+            mock_executor.migration_plan.return_value = [("cms", "0006_weeklybook")]
+            r = self.client.get("/healthz/")
+        self.assertEqual(r.status_code, 503)
+        self.assertEqual(r.content.decode("utf-8"), "migrations_pending:1")
+
+
+class SystemSettingsAdminTests(TestCase):
+    def setUp(self):
+        self.staff = User.objects.create_user(
+            username="ops_staff",
+            password="testpass123",
+            role=UserRole.STAFF,
+            is_staff=True,
+        )
+        self.member = User.objects.create_user(
+            username="ops_member",
+            password="testpass123",
+            role=UserRole.MEMBER,
+            is_staff=False,
+        )
+
+    def test_settings_requires_staff(self):
+        r = self.client.get("/admin/settings/")
+        self.assertEqual(r.status_code, 302)
+        self.assertIn("/admin/login", r["Location"])
+
+    def test_settings_page_loads_for_staff(self):
+        self.client.force_login(self.staff)
+        r = self.client.get("/admin/settings/")
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "Statusi i databazës")
+        self.assertContains(r, "Tabelat e databazës")
+        self.assertContains(r, "Backup")
+
+    def test_backup_download_and_delete(self):
+        import tempfile
+        from cms.ops_services import delete_backup
+
+        with tempfile.TemporaryDirectory() as backup_tmp:
+            backup_file = Path(backup_tmp) / "backup-full-testunit.sqlite3.gz"
+            backup_file.write_bytes(b"demo-backup")
+            with override_settings(OPS_BACKUP_DIR=backup_tmp):
+                self.client.force_login(self.staff)
+                dl = self.client.get("/admin/settings/backup/backup-full-testunit.sqlite3.gz/download/")
+                self.assertEqual(dl.status_code, 200)
+                self.assertIn("attachment", dl.get("Content-Disposition", ""))
+                result = delete_backup(backup_file.name)
+                self.assertTrue(result["ok"])
+                self.assertFalse(backup_file.exists())
+
 
 class AdminAuthRedirectTests(TestCase):
     def test_admin_login_redirects_to_custom_signin(self):
@@ -336,6 +392,39 @@ class StaffNotificationBadgeTests(TestCase):
         self.assertTrue(any("mark_read_url" in p for p in data.get("preview", [])))
         self.assertTrue(any(p.get("title") == "Member ping" for p in data.get("preview", [])))
         self.assertTrue(any(p.get("title") == "Staff ping" for p in data.get("preview", [])))
+
+    def test_badge_json_includes_unread_contact_messages(self):
+        from cms.models import ContactMessage
+
+        ContactMessage.objects.create(
+            name="Test",
+            email="test@example.com",
+            subject="Pyetje",
+            message="Pershendetje",
+            is_read=False,
+        )
+        self.client.force_login(self.staff_admin)
+        r = self.client.get("/_staff-notif-badge/")
+        self.assertEqual(r.status_code, 200)
+        data = r.json()
+        self.assertEqual(data.get("contact_messages_unread"), 1)
+        self.assertIn("contact_messages_url", data)
+
+    def test_contact_message_marked_read_on_open(self):
+        from cms.models import ContactMessage
+
+        msg = ContactMessage.objects.create(
+            name="Test",
+            email="test@example.com",
+            subject="Lexim",
+            message="Body",
+            is_read=False,
+        )
+        self.client.force_login(self.superadmin)
+        r = self.client.get(f"/admin/cms/contactmessage/{msg.id}/change/")
+        self.assertEqual(r.status_code, 200)
+        msg.refresh_from_db()
+        self.assertTrue(msg.is_read)
 
     def test_admin_change_with_mark_read_marks_notification_read(self):
         notif = UserNotification.objects.create(

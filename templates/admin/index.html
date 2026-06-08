@@ -1786,6 +1786,20 @@
                     {% endif %}
 
                 {% endfor %}
+
+                <div class="card sl-settings-card">
+                  <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="m-0 font-weight-bold"><i class="fas fa-cogs mr-2 text-teal"></i>Sistemi</h5>
+                  </div>
+                  <div class="card-body">
+                    <p class="text-muted mb-3" style="font-size:.9rem;">
+                      Monitorim databaze, web app, hapësirë disku, tabela dhe backup-e.
+                    </p>
+                    <a href="{% url 'admin:system_settings' %}" class="btn btn-primary btn-block">
+                      <i class="fas fa-sliders-h mr-1"></i> Hap Settings
+                    </a>
+                  </div>
+                </div>
                 </div>
         </div>
       </div>

@@ -13,14 +13,18 @@
     .sl-about-page {
       --sl-ab-gold: #c9a84c;
       --sl-ab-navy: #0d1b2a;
+      background: linear-gradient(180deg, #f8fffe 0%, #f3fbf9 45%, #ffffff 100%);
+    }
+    .dark .sl-about-page {
+      background: linear-gradient(180deg, #0f172a 0%, #0b1220 100%);
     }
     .sl-about-hero-shell {
       position: relative;
       overflow: hidden;
       border-radius: 1.35rem;
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      background: linear-gradient(135deg, #0f172a 0%, #134e4a 48%, #115e59 100%);
-      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+      border: 1px solid rgba(13, 148, 136, 0.14);
+      background: linear-gradient(135deg, #0d9488 0%, #14b8a6 42%, #2dd4bf 100%);
+      box-shadow: 0 16px 40px rgba(13, 148, 136, 0.16);
     }
     .sl-about-hero-shell::before {
       content: "";
@@ -123,21 +127,30 @@
     }
     .sl-about-hero-actions {
       margin-top: 1.15rem;
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: 1fr;
       gap: 0.55rem;
+    }
+    @media (min-width: 480px) {
+      .sl-about-hero-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
     .sl-about-btn-primary,
     .sl-about-btn-ghost {
       min-height: 44px;
+      width: 100%;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       border-radius: 0.85rem;
-      padding: 0.55rem 1rem;
-      font-size: 0.84rem;
+      padding: 0.55rem 0.65rem;
+      font-size: 0.8rem;
       font-weight: 800;
+      text-align: center;
       transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+    @media (min-width: 640px) {
+      .sl-about-btn-primary,
+      .sl-about-btn-ghost { font-size: 0.84rem; padding: 0.55rem 0.75rem; }
     }
     .sl-about-btn-primary {
       background: linear-gradient(135deg, #f59e0b, #d97706);
@@ -179,11 +192,16 @@
     .sl-about-pillars {
       display: grid;
       gap: 1rem;
+      align-items: stretch;
     }
     @media (min-width: 1024px) {
       .sl-about-pillars { grid-template-columns: 1fr 1fr; }
     }
     .sl-about-pillar {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 100%;
       padding: 1.15rem;
       border-radius: 1.1rem;
       border: 1px solid rgba(148, 163, 184, 0.16);
@@ -241,6 +259,7 @@
       margin-top: 0.85rem;
       display: grid;
       gap: 0.65rem;
+      flex: 1;
     }
     .sl-about-timeline li {
       position: relative;
@@ -263,7 +282,8 @@
     }
     .dark .sl-about-timeline strong { color: #5eead4; }
     .sl-about-live-badge {
-      margin-top: 0.85rem;
+      margin-top: auto;
+      padding-top: 0.85rem;
       border-radius: 0.75rem;
       border: 1px solid rgba(13, 148, 136, 0.22);
       background: rgba(13, 148, 136, 0.08);
@@ -521,7 +541,7 @@
 
 {% block content %}
   <div class="sl-about-page relative">
-    <div class="pointer-events-none absolute inset-x-0 top-0 h-80 bg-gradient-to-b from-brand-100/70 via-white/30 to-transparent dark:from-brand-950/35"></div>
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-white/90 via-brand-50/25 to-transparent dark:from-brand-950/20"></div>
 
     <!-- Hero premium -->
     <section class="relative mx-auto max-w-7xl px-3 pt-5 pb-3 sm:px-6 sm:pt-7 lg:px-8">
@@ -608,14 +628,7 @@
               <strong>Fondi i librave</strong>
               Fondi u pasurua ndjeshëm, duke arritur mijëra tituj të letërsisë shqipe, të huaj dhe për fëmijë.
             </li>
-            <li>
-              <strong>Shërbimi sot</strong>
-              Sallë leximi funksionale, e hapur <strong>08:00–19:00</strong> (Hënë–Premte). Organizohen takime të Klubit të Librit dhe aktivitete si panairi „Kamza Lexon".
-            </li>
           </ul>
-          <div class="sl-about-live-badge">
-            Katalogu online: <strong>{{ stats.books_count }}</strong> tituj · <strong>{{ stats.copies_total }}</strong> kopje · <strong>{{ stats.copies_available }}</strong> të lira tani
-          </div>
         </article>
       </div>
     </section>

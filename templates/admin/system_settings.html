@@ -364,7 +364,7 @@
           Backup SQL (.sql.gz). Nëse versioni i <code>pg_dump</code> nuk përputhet me serverin PostgreSQL, sistemi kalon automatikisht te <strong>dumpdata</strong> (.json.gz).
         {% else %}
           <i class="fas fa-info-circle text-warning"></i> <code>pg_dump</code> nuk u gjet — përdoret <strong>dumpdata</strong> (.json.gz) automatikisht.
-          Pas redeploy me <code>postgresql-client-18</code> aktivizohet backup SQL.
+          Backup SQL kërkon <code>pg_dump</code> me të njëjtin version si serveri; përndryshe përdoret <strong>dumpdata</strong>.
         {% endif %}
       </p>
       <form method="post" class="mb-3">

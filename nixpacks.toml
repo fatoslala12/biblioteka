@@ -1,8 +1,9 @@
 # Nixpacks (Dokploy / Railway): bind publik brenda kontejnerit për Traefik.
 # collectstatic: krijon STATIC_ROOT (/app/staticfiles) për WhiteNoise (CSS/JS në prodhim).
 [phases.setup]
-# Prefer client 18+ to match PostgreSQL 18 server; fallback dumpdata nëse mungon.
-aptPkgs = ["postgresql-client-18", "postgresql-client"]
+# postgresql-client (v16 në Ubuntu 24.04). Për PG 18 server, backup SQL mund të dështojë —
+# ops_services.py kalon automatikisht te dumpdata (.json.gz).
+aptPkgs = ["postgresql-client"]
 
 [start]
 cmd = "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn smart_library.wsgi:application --bind 0.0.0.0:8000"

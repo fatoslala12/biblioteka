@@ -3,287 +3,733 @@
 
 {% block title %}Rreth nesh — Biblioteka Kamëz{% endblock %}
 
-{% block meta_description %}Historia e Pallatit të Kulturës Artan Cuku dhe Bibliotekës së Qytetit Kamëz — mision, vizion dhe shërbime moderne.{% endblock %}
+{% block meta_description %}Historia e Pallatit të Kulturës „Artan Cuku" dhe Bibliotekës së Qytetit Kamëz — mision, vizion dhe shërbime moderne.{% endblock %}
 
 {% block extrahead %}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
   <style>
-    .sl-about-page .sl-about-stat-card {
-      transition: transform .2s ease, box-shadow .2s ease;
+    .sl-about-page {
+      --sl-ab-gold: #c9a84c;
+      --sl-ab-navy: #0d1b2a;
     }
-    .sl-about-page .sl-about-stat-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 28px rgba(49, 145, 137, .12);
-    }
-    .sl-about-mv-card {
-      background:
-        radial-gradient(circle at 0% 0%, rgba(49, 145, 137, .14), transparent 42%),
-        linear-gradient(165deg, rgba(255,255,255,.98), rgba(248, 252, 252, .94));
-    }
-    .dark .sl-about-mv-card {
-      background:
-        radial-gradient(circle at 0% 0%, rgba(49, 145, 137, .22), transparent 45%),
-        linear-gradient(165deg, rgba(15, 23, 42, .92), rgba(30, 41, 59, .78));
-    }
-    .sl-slogan-viewport {
+    .sl-about-hero-shell {
       position: relative;
-      min-height: 7.5rem;
+      overflow: hidden;
+      border-radius: 1.35rem;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: linear-gradient(135deg, #0f172a 0%, #134e4a 48%, #115e59 100%);
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+    }
+    .sl-about-hero-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 85% 15%, rgba(201, 168, 76, 0.22), transparent 42%),
+        radial-gradient(circle at 10% 90%, rgba(45, 212, 191, 0.12), transparent 40%);
+      pointer-events: none;
+    }
+    .sl-about-hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      padding: 1.25rem;
+    }
+    @media (min-width: 1024px) {
+      .sl-about-hero-grid {
+        grid-template-columns: 1.05fr 0.95fr;
+        align-items: center;
+        gap: 2rem;
+        padding: 2rem 2.25rem;
+      }
+    }
+    .sl-about-hero-photo {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1.1rem;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+    .sl-about-hero-photo img {
+      display: block;
+      width: 100%;
+      height: 14rem;
+      object-fit: cover;
+    }
+    @media (min-width: 640px) {
+      .sl-about-hero-photo img { height: 18rem; }
+    }
+    @media (min-width: 1024px) {
+      .sl-about-hero-photo img { height: 22rem; }
+    }
+    .sl-about-hero-photo figcaption {
+      position: absolute;
+      inset: auto 0 0 0;
+      padding: 0.85rem 1rem;
+      background: linear-gradient(to top, rgba(15, 23, 42, 0.88), transparent);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.92);
+    }
+    .sl-about-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.3rem 0.75rem;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    .sl-about-kicker-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--sl-ab-gold);
+      box-shadow: 0 0 8px rgba(201, 168, 76, 0.65);
+    }
+    .sl-about-hero-title {
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(1.65rem, 5vw, 2.65rem);
+      font-weight: 900;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+    .sl-about-hero-sub {
+      margin-top: 0.65rem;
+      max-width: 36rem;
+      font-size: 0.92rem;
+      line-height: 1.65;
+      color: rgba(255, 255, 255, 0.82);
+    }
+    .sl-about-hero-quote {
+      margin-top: 1rem;
+      padding: 0.85rem 1rem;
+      border-left: 3px solid var(--sl-ab-gold);
+      border-radius: 0 0.75rem 0.75rem 0;
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    .sl-about-hero-actions {
+      margin-top: 1.15rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+    }
+    .sl-about-btn-primary,
+    .sl-about-btn-ghost {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.85rem;
+      padding: 0.55rem 1rem;
+      font-size: 0.84rem;
+      font-weight: 800;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+    .sl-about-btn-primary {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #fff;
+      box-shadow: 0 8px 22px rgba(217, 119, 6, 0.35);
+    }
+    .sl-about-btn-primary:hover { transform: translateY(-2px); }
+    .sl-about-btn-ghost {
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+    .sl-about-btn-ghost:hover { background: rgba(255, 255, 255, 0.16); }
+
+    .sl-about-surface {
+      border-radius: 1.25rem;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 14px 34px rgba(15, 23, 42, 0.06);
+    }
+    .dark .sl-about-surface {
+      background: rgba(15, 23, 42, 0.55);
+      border-color: rgba(148, 163, 184, 0.16);
+    }
+
+    .sl-about-intro {
+      padding: 1.25rem 1.15rem;
+    }
+    @media (min-width: 640px) {
+      .sl-about-intro { padding: 1.6rem 1.75rem; }
+    }
+    .sl-about-intro p {
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: #475569;
+    }
+    .dark .sl-about-intro p { color: #cbd5e1; }
+
+    .sl-about-pillars {
+      display: grid;
+      gap: 1rem;
+    }
+    @media (min-width: 1024px) {
+      .sl-about-pillars { grid-template-columns: 1fr 1fr; }
+    }
+    .sl-about-pillar {
+      padding: 1.15rem;
+      border-radius: 1.1rem;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      background: linear-gradient(165deg, rgba(255,255,255,.98), rgba(248,252,252,.92));
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .sl-about-pillar:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+    }
+    .dark .sl-about-pillar {
+      background: linear-gradient(165deg, rgba(15,23,42,.9), rgba(30,41,59,.75));
+    }
+    .sl-about-pillar-head {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .sl-about-pillar-icon {
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 0.85rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0 3rem;
+      font-size: 1.2rem;
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+    }
+    .sl-about-pillar-icon.violet { background: linear-gradient(135deg, #7c3aed, #5b21b6); }
+    .sl-about-pillar-icon.teal { background: linear-gradient(135deg, #0d9488, #0f766e); }
+    .sl-about-pillar h2 {
+      font-size: 1rem;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.25;
+    }
+    .dark .sl-about-pillar h2 { color: #f8fafc; }
+    .sl-about-pillar .sl-about-pillar-sub {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #64748b;
+    }
+    .sl-about-pillar p,
+    .sl-about-pillar li {
+      font-size: 0.86rem;
+      line-height: 1.65;
+      color: #475569;
+    }
+    .dark .sl-about-pillar p,
+    .dark .sl-about-pillar li { color: #cbd5e1; }
+    .sl-about-timeline {
+      margin-top: 0.85rem;
+      display: grid;
+      gap: 0.65rem;
+    }
+    .sl-about-timeline li {
+      position: relative;
+      padding: 0.65rem 0.75rem 0.65rem 1rem;
+      border-radius: 0.75rem;
+      background: rgba(15, 23, 42, 0.03);
+      border-left: 3px solid #319088;
+    }
+    .dark .sl-about-timeline li {
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .sl-about-timeline strong {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #0f766e;
+      margin-bottom: 0.2rem;
+    }
+    .dark .sl-about-timeline strong { color: #5eead4; }
+    .sl-about-live-badge {
+      margin-top: 0.85rem;
+      border-radius: 0.75rem;
+      border: 1px solid rgba(13, 148, 136, 0.22);
+      background: rgba(13, 148, 136, 0.08);
+      padding: 0.65rem 0.8rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #0f766e;
+    }
+    .dark .sl-about-live-badge { color: #99f6e4; }
+
+    .sl-about-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.55rem;
     }
     @media (min-width: 640px) {
-      .sl-slogan-viewport { min-height: 8.5rem; }
+      .sl-about-stats-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.7rem; }
+    }
+    .sl-about-stat {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1rem;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      background: linear-gradient(160deg, #f8fafc, #f1f5f9);
+      padding: 0.9rem 0.85rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .sl-about-stat:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(13, 148, 136, 0.12);
+    }
+    .dark .sl-about-stat {
+      background: linear-gradient(160deg, rgba(30,41,59,.85), rgba(15,23,42,.7));
+    }
+    .sl-about-stat::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #0d9488, #2dd4bf);
+    }
+    .sl-about-stat-num {
+      font-size: clamp(1.35rem, 4vw, 1.85rem);
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      color: #0f172a;
+      line-height: 1.1;
+    }
+    .dark .sl-about-stat-num { color: #f8fafc; }
+    .sl-about-stat-label {
+      margin-top: 0.25rem;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+    }
+
+    .sl-about-mv-grid {
+      display: grid;
+      gap: 1rem;
+    }
+    @media (min-width: 1024px) {
+      .sl-about-mv-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .sl-about-mv {
+      border-radius: 1.15rem;
+      padding: 1.2rem;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(13, 148, 136, 0.12), transparent 45%),
+        linear-gradient(165deg, rgba(255,255,255,.98), rgba(248,252,252,.94));
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+    }
+    .sl-about-mv.mission { border-color: rgba(13, 148, 136, 0.22); }
+    .sl-about-mv.vision {
+      border-color: rgba(124, 58, 237, 0.22);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(124, 58, 237, 0.1), transparent 45%),
+        linear-gradient(165deg, rgba(255,255,255,.98), rgba(250, 245, 255, .94));
+    }
+    .dark .sl-about-mv {
+      background: linear-gradient(165deg, rgba(15,23,42,.92), rgba(30,41,59,.78));
+    }
+    .sl-about-mv h3 {
+      font-size: 0.82rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #0f766e;
+    }
+    .sl-about-mv.vision h3 { color: #6d28d9; }
+    .dark .sl-about-mv h3 { color: #5eead4; }
+    .dark .sl-about-mv.vision h3 { color: #c4b5fd; }
+    .sl-about-mv p { margin-top: 0.65rem; font-size: 0.88rem; line-height: 1.7; color: #475569; }
+    .dark .sl-about-mv p { color: #cbd5e1; }
+    .sl-about-mv-quote {
+      margin-top: 0.85rem;
+      padding: 0.8rem 0.9rem;
+      border-radius: 0.8rem;
+      border: 1px dashed rgba(13, 148, 136, 0.28);
+      background: rgba(255, 255, 255, 0.7);
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 0.92rem;
+      font-style: italic;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .sl-about-mv.vision .sl-about-mv-quote {
+      border-color: rgba(124, 58, 237, 0.25);
+    }
+    .dark .sl-about-mv-quote {
+      background: rgba(15, 23, 42, 0.45);
+      color: #f1f5f9;
+    }
+
+    .sl-about-slogan {
+      overflow: hidden;
+      border-radius: 1.25rem;
+      background: linear-gradient(135deg, #0f766e 0%, #0d9488 45%, #115e59 100%);
+      box-shadow: 0 18px 42px rgba(13, 148, 136, 0.28);
+    }
+    .sl-slogan-viewport {
+      position: relative;
+      min-height: 6.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 2.75rem;
+    }
+    @media (min-width: 640px) {
+      .sl-slogan-viewport { min-height: 7.5rem; padding: 0 3.25rem; }
     }
     #slSloganText {
       margin: 0;
       text-align: center;
-      transition: opacity .45s ease;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(1.05rem, 3.5vw, 1.55rem);
+      font-weight: 700;
+      line-height: 1.35;
+      color: #fff;
+      transition: opacity 0.45s ease;
     }
-    #slSloganText.is-fading {
-      opacity: 0;
+    #slSloganText.is-fading { opacity: 0; }
+    .sl-slogan-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.14);
+      color: #fff;
+      font-size: 1.1rem;
+      line-height: 1;
+      backdrop-filter: blur(6px);
+    }
+    .sl-slogan-nav:hover { background: rgba(255,255,255,.24); }
+    .sl-slogan-nav.prev { left: 0.5rem; }
+    .sl-slogan-nav.next { right: 0.5rem; }
+    @media (min-width: 640px) {
+      .sl-slogan-nav { width: 2.5rem; height: 2.5rem; }
+      .sl-slogan-nav.prev { left: 0.85rem; }
+      .sl-slogan-nav.next { right: 0.85rem; }
     }
     .sl-slogan-dot {
-      height: 8px;
-      width: 8px;
+      height: 7px;
+      width: 7px;
       border-radius: 999px;
       background: rgba(255,255,255,.35);
-      transition: background .2s ease, transform .2s ease;
+      transition: background 0.2s ease, transform 0.2s ease;
     }
     .sl-slogan-dot.is-active {
+      background: var(--sl-ab-gold);
+      transform: scale(1.2);
+    }
+
+    .sl-about-services {
+      display: grid;
+      gap: 0.65rem;
+    }
+    @media (min-width: 640px) {
+      .sl-about-services { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+    }
+    @media (min-width: 1024px) {
+      .sl-about-services { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    .sl-about-service {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      min-height: 44px;
+      border-radius: 1rem;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      padding: 0.9rem;
       background: #fff;
-      transform: scale(1.15);
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
     }
-    .sl-about-timeline li {
-      position: relative;
-      padding-left: 1.25rem;
+    .sl-about-service:hover {
+      transform: translateY(-2px);
+      border-color: rgba(13, 148, 136, 0.28);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
     }
-    .sl-about-timeline li::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: .55rem;
-      height: 6px;
-      width: 6px;
-      border-radius: 999px;
-      background: #319088;
+    .dark .sl-about-service {
+      background: rgba(15, 23, 42, 0.45);
     }
-    @media (max-width: 640px) {
-      .sl-about-hero h1 { font-size: 1.45rem; line-height: 1.2; }
-      .sl-slogan-viewport { min-height: 6.75rem; padding: 0 2.75rem; }
+    .sl-about-service-icon {
+      width: 2.35rem;
+      height: 2.35rem;
+      flex-shrink: 0;
+      border-radius: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: #fff;
     }
+    .sl-about-service-title {
+      font-size: 0.86rem;
+      font-weight: 900;
+      color: #0f172a;
+    }
+    .dark .sl-about-service-title { color: #f8fafc; }
+    .sl-about-service-desc {
+      margin-top: 0.15rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .sl-about-cta {
+      text-align: center;
+      padding: 1.5rem 1.15rem;
+      border-radius: 1.25rem;
+      border: 1px solid rgba(13, 148, 136, 0.2);
+      background: linear-gradient(135deg, rgba(13,148,136,.08), rgba(201,168,76,.08));
+    }
+    .sl-about-cta h2 {
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(1.15rem, 3.5vw, 1.45rem);
+      font-weight: 900;
+      color: #0f172a;
+    }
+    .dark .sl-about-cta h2 { color: #f8fafc; }
+
     @media (prefers-reduced-motion: reduce) {
       #slSloganText { transition: none; }
-      .sl-about-stat-card:hover { transform: none !important; }
+      .sl-about-pillar:hover,
+      .sl-about-stat:hover,
+      .sl-about-service:hover { transform: none !important; }
     }
   </style>
 {% endblock %}
 
 {% block content %}
   <div class="sl-about-page relative">
-    <div class="pointer-events-none absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-brand-100/80 via-white/40 to-transparent dark:from-brand-950/40"></div>
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-80 bg-gradient-to-b from-brand-100/70 via-white/30 to-transparent dark:from-brand-950/35"></div>
 
-    <!-- Hero kompakt -->
-    <section class="relative mx-auto max-w-7xl px-4 pt-6 pb-4 sm:px-6 sm:pt-8 lg:px-8">
-      <div class="sl-about-hero rounded-2xl border border-slate-200/80 bg-white/95 p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6">
-        <div class="flex flex-wrap items-start justify-between gap-4">
-          <div class="max-w-3xl">
-            <div class="inline-flex items-center gap-2 rounded-full border border-brand-200/70 bg-brand-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-brand-800 dark:border-brand-800/50 dark:bg-brand-900/35 dark:text-brand-200">
-              <span class="h-1.5 w-1.5 rounded-full bg-brand-500"></span>
-              Rreth nesh
-            </div>
-            <h1 class="mt-3 text-2xl font-black leading-tight text-slate-900 dark:text-white sm:text-3xl">
+    <!-- Hero premium -->
+    <section class="relative mx-auto max-w-7xl px-3 pt-5 pb-3 sm:px-6 sm:pt-7 lg:px-8">
+      <div class="sl-about-hero-shell">
+        <div class="sl-about-hero-grid">
+          <div>
+            <div class="sl-about-kicker"><span class="sl-about-kicker-dot"></span> Rreth nesh</div>
+            <h1 class="sl-about-hero-title mt-3">
               Qendra e dijes dhe kulturës në Kamëz
             </h1>
-            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300 sm:text-base">
-              Biblioteka e Qytetit — brenda Pallatit të Kulturës „Artan Cuku”
+            <p class="sl-about-hero-sub">
+              Biblioteka e Qytetit — brenda Pallatit të Kulturës <span class="whitespace-nowrap">„Artan Cuku"</span>
             </p>
+            <div class="sl-about-hero-quote">
+              „Një hapësirë ku libri, kultura dhe komuniteti takohen për të ndërtuar të ardhmen."
+            </div>
+            <div class="sl-about-hero-actions">
+              <a href="/catalog/" class="sl-about-btn-primary">Shfleto katalogun →</a>
+              <a href="/kontakt/" class="sl-about-btn-ghost">Na kontaktoni</a>
+              <a href="/orar/" class="sl-about-btn-ghost">Orari 08:00–19:00</a>
+            </div>
           </div>
-          <div class="flex flex-wrap gap-2">
-            <a href="/catalog/" class="min-h-[44px] inline-flex items-center rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-extrabold text-white hover:bg-brand-700">Katalogu</a>
-            <a href="/kontakt/" class="min-h-[44px] inline-flex items-center rounded-xl border border-brand-200 px-4 py-2.5 text-sm font-bold text-brand-700 hover:bg-brand-50 dark:border-brand-800 dark:text-brand-200">Kontakt</a>
-          </div>
+          <figure class="sl-about-hero-photo">
+            <img src="{% static 'img/kamez-library_thumb.webp' %}" alt='Biblioteka Kamëz — Pallati i Kulturës „Artan Cuku"' loading="eager" decoding="async" />
+            <figcaption>Pallati i Kulturës „Artan Cuku" · Bulevardi Blu, Kamëz</figcaption>
+          </figure>
         </div>
       </div>
     </section>
 
-    <!-- Historia — Pallati & Biblioteka -->
-    <section class="relative mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
-      <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl">
-        <div class="border-b border-slate-100 bg-gradient-to-r from-brand-50/80 to-white px-5 py-6 dark:border-slate-800 dark:from-brand-950/30 dark:to-slate-900 sm:px-8 sm:py-8">
-          <p class="text-sm leading-relaxed text-slate-700 dark:text-slate-200 sm:text-base sm:leading-loose">
-            <strong class="text-slate-900 dark:text-white">Pallati i Kulturës „Artan Cuku”</strong> dhe
-            <strong class="text-slate-900 dark:text-white"> Biblioteka e Qytetit në Kamëz</strong> përbëjnë qendrën më të rëndësishme të jetës sociale, artistike dhe edukative për komunitetin lokal. Ky kompleks multifunksional shërben si një pikë takimi për të rinjtë, artistët dhe dashamirësit e librit.
+    <!-- Intro -->
+    <section class="relative mx-auto max-w-7xl px-3 py-4 sm:px-6 lg:px-8">
+      <div class="sl-about-surface sl-about-intro">
+        <p>
+          <strong class="text-slate-900 dark:text-white">Pallati i Kulturës „Artan Cuku"</strong> dhe
+          <strong class="text-slate-900 dark:text-white">Biblioteka e Qytetit në Kamëz</strong> përbëjnë qendrën më të rëndësishme të jetës sociale, artistike dhe edukative për komunitetin lokal — një pikë takimi për të rinjtë, artistët dhe dashamirësit e librit.
+        </p>
+      </div>
+    </section>
+
+    <!-- Pallati & Biblioteka -->
+    <section class="relative mx-auto max-w-7xl px-3 py-2 sm:px-6 lg:px-8">
+      <div class="sl-about-pillars">
+        <article class="sl-about-pillar">
+          <div class="sl-about-pillar-head">
+            <span class="sl-about-pillar-icon violet" aria-hidden="true">🎭</span>
+            <div>
+              <h2>Pallati i Kulturës „Artan Cuku"</h2>
+              <div class="sl-about-pillar-sub">Qendra kulturore e bashkisë</div>
+            </div>
+          </div>
+          <p class="mt-3">
+            I ndërtuar fillimisht rreth vitit <strong>2011</strong>, ky objekt ka pasur një rrugëtim të gjatë sfidash menaxhimi dhe ndryshimesh strukturore.
           </p>
-        </div>
+          <ul class="sl-about-timeline">
+            <li>
+              <strong>Emërtimi zyrtar</strong>
+              Në prill 2022, me vendim të Këshillit Bashkiak, institucioni mori emrin Pallati i Kulturës „Artan Cuku", në nderim të Dëshmorit të Atdheut dhe ish-drejtuesit të Policisë së Shtetit.
+            </li>
+            <li>
+              <strong>Funksioni</strong>
+              Përveç sallës së teatrit dhe shfaqjeve artistike, ndërtesa ka shërbyer historikisht edhe për zyra administrative dhe aktivitete të komunitetit rinor.
+            </li>
+          </ul>
+        </article>
 
-        <div class="grid gap-0 lg:grid-cols-2 lg:divide-x lg:divide-slate-200 dark:lg:divide-slate-700">
-          <!-- Pallati -->
-          <div class="border-b border-slate-100 p-5 dark:border-slate-800 sm:p-7 lg:border-b-0">
-            <div class="flex items-center gap-3">
-              <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-600 text-xl text-white shadow-md">🎭</span>
-              <div>
-                <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">Pallati i Kulturës „Artan Cuku”</h2>
-                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Qendra kulturore e bashkisë</p>
-              </div>
-            </div>
-            <p class="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-              I ndërtuar fillimisht rreth vitit <strong>2011</strong>, ky objekt ka pasur një rrugëtim të gjatë sfidash menaxhimi dhe ndryshimesh strukturore.
-            </p>
-            <ul class="sl-about-timeline mt-4 space-y-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-              <li>
-                <strong class="text-slate-900 dark:text-white">Emërtimi zyrtar:</strong>
-                Në prill 2022, me vendim të Këshillit Bashkiak, institucioni mori emrin Pallati i Kulturës „Artan Cuku”, në nderim të Dëshmorit të Atdheut dhe ish-drejtuesit të Policisë së Shtetit.
-              </li>
-              <li>
-                <strong class="text-slate-900 dark:text-white">Funksioni:</strong>
-                Përveç sallës së teatrit dhe shfaqjeve artistike, ndërtesa ka shërbyer historikisht edhe për zyra administrative dhe aktivitete të komunitetit rinor.
-              </li>
-            </ul>
-          </div>
-
-          <!-- Biblioteka -->
-          <div class="p-5 sm:p-7">
-            <div class="flex items-center gap-3">
-              <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-600 text-xl text-white shadow-md">📚</span>
-              <div>
-                <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">Biblioteka e Qytetit</h2>
-                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Kati i II — Pallati i Kulturës</p>
-              </div>
-            </div>
-            <p class="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-              E pozicionuar në <strong>katin e dytë</strong> të Pallatit të Kulturës, biblioteka ka pësuar një transformim të madh së fundmi. Pas një periudhe problematike ku qëndronte shpesh e mbyllur ose pa staf të kualifikuar, situata ndryshoi rrënjësisht.
-            </p>
-            <ul class="sl-about-timeline mt-4 space-y-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-              <li>
-                <strong class="text-slate-900 dark:text-white">Rikonstruksioni:</strong>
-                Në fund të vitit 2023, përmes bashkëpunimit mes Bashkisë Kamëz dhe Agjencisë Kombëtare të Rinisë, biblioteka u rikonstruktua tërësisht — një hapësirë moderne leximi dhe studimi për nxënësit e studentët.
-              </li>
-              <li>
-                <strong class="text-slate-900 dark:text-white">Fondi i librave:</strong>
-                Fondi u pasurua ndjeshëm, duke arritur rreth <strong>4 mijë tituj</strong> të letërsisë shqipe, të huaj dhe për fëmijë.
-              </li>
-              <li>
-                <strong class="text-slate-900 dark:text-white">Shërbimi sot:</strong>
-                Sallë leximi funksionale, e hapur për publikun <strong>08:00–18:00</strong>. Organizohen takime të Klubit të Librit dhe aktivitete si panairi „Kamza Lexon”.
-              </li>
-            </ul>
-            <div class="mt-5 rounded-xl border border-brand-200/60 bg-brand-50/50 px-4 py-3 text-xs font-semibold text-brand-900 dark:border-brand-900/40 dark:bg-brand-900/20 dark:text-brand-100">
-              Katalogu online pasqyron fondin aktual të bibliotekës ({{ stats.books_count }} tituj, {{ stats.copies_total }} kopje).
+        <article class="sl-about-pillar">
+          <div class="sl-about-pillar-head">
+            <span class="sl-about-pillar-icon teal" aria-hidden="true">📚</span>
+            <div>
+              <h2>Biblioteka e Qytetit</h2>
+              <div class="sl-about-pillar-sub">Kati i II — Pallati i Kulturës</div>
             </div>
           </div>
-        </div>
+          <p class="mt-3">
+            E pozicionuar në <strong>katin e dytë</strong> të Pallatit të Kulturës, biblioteka ka kaluar një transformim të madh — nga një periudhë sfiduese në një ambient modern leximi dhe studimi.
+          </p>
+          <ul class="sl-about-timeline">
+            <li>
+              <strong>Rikonstruksioni</strong>
+              Në fund të vitit 2023, përmes bashkëpunimit mes Bashkisë Kamëz dhe Agjencisë Kombëtare të Rinisë, biblioteka u rikonstruktua tërësisht.
+            </li>
+            <li>
+              <strong>Fondi i librave</strong>
+              Fondi u pasurua ndjeshëm, duke arritur mijëra tituj të letërsisë shqipe, të huaj dhe për fëmijë.
+            </li>
+            <li>
+              <strong>Shërbimi sot</strong>
+              Sallë leximi funksionale, e hapur <strong>08:00–19:00</strong> (Hënë–Premte). Organizohen takime të Klubit të Librit dhe aktivitete si panairi „Kamza Lexon".
+            </li>
+          </ul>
+          <div class="sl-about-live-badge">
+            Katalogu online: <strong>{{ stats.books_count }}</strong> tituj · <strong>{{ stats.copies_total }}</strong> kopje · <strong>{{ stats.copies_available }}</strong> të lira tani
+          </div>
+        </article>
       </div>
     </section>
 
     <!-- Statistika -->
-    <section class="relative mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
-      <div class="rounded-2xl border border-slate-200/80 bg-white/95 p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-6">
+    <section class="relative mx-auto max-w-7xl px-3 py-4 sm:px-6 lg:px-8">
+      <div class="sl-about-surface p-4 sm:p-5">
         <div class="flex flex-wrap items-end justify-between gap-2">
-          <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">Në shifra</h2>
-          <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-300">Live nga sistemi</span>
+          <h2 class="text-base font-black text-slate-900 dark:text-white sm:text-lg">Në shifra</h2>
+          <span class="rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200">Live nga sistemi</span>
         </div>
-        <div class="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3">
-          <div class="sl-about-stat-card rounded-xl border border-slate-200/80 bg-slate-50/90 p-3.5 dark:border-slate-700 dark:bg-slate-800/50 sm:p-4">
-            <div class="text-xl font-black tabular-nums sm:text-2xl">{{ stats.copies_total }}</div>
-            <div class="mt-0.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 sm:text-xs">📚 Kopje</div>
+        <div class="sl-about-stats-grid mt-3">
+          <div class="sl-about-stat">
+            <div class="sl-about-stat-num">{{ stats.copies_total }}</div>
+            <div class="sl-about-stat-label">📚 Kopje</div>
           </div>
-          <div class="sl-about-stat-card rounded-xl border border-slate-200/80 bg-slate-50/90 p-3.5 dark:border-slate-700 dark:bg-slate-800/50 sm:p-4">
-            <div class="text-xl font-black tabular-nums sm:text-2xl">{{ stats.books_count }}</div>
-            <div class="mt-0.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 sm:text-xs">📖 Tituj</div>
+          <div class="sl-about-stat">
+            <div class="sl-about-stat-num">{{ stats.books_count }}</div>
+            <div class="sl-about-stat-label">📖 Tituj</div>
           </div>
-          <div class="sl-about-stat-card rounded-xl border border-slate-200/80 bg-slate-50/90 p-3.5 dark:border-slate-700 dark:bg-slate-800/50 sm:p-4">
-            <div class="text-xl font-black tabular-nums sm:text-2xl">{{ stats.authors_count }}</div>
-            <div class="mt-0.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 sm:text-xs">✍️ Autorë</div>
+          <div class="sl-about-stat">
+            <div class="sl-about-stat-num">{{ stats.authors_count }}</div>
+            <div class="sl-about-stat-label">✍️ Autorë</div>
           </div>
-          <div class="sl-about-stat-card rounded-xl border border-slate-200/80 bg-slate-50/90 p-3.5 dark:border-slate-700 dark:bg-slate-800/50 sm:p-4">
-            <div class="text-xl font-black tabular-nums sm:text-2xl">{{ stats.members_active }}</div>
-            <div class="mt-0.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 sm:text-xs">👥 Anëtarë</div>
+          <div class="sl-about-stat">
+            <div class="sl-about-stat-num">{{ stats.members_active }}</div>
+            <div class="sl-about-stat-label">👥 Anëtarë</div>
           </div>
-          <div class="sl-about-stat-card rounded-xl border border-slate-200/80 bg-slate-50/90 p-3.5 dark:border-slate-700 dark:bg-slate-800/50 sm:p-4">
-            <div class="text-xl font-black tabular-nums sm:text-2xl">{{ stats.books_youth }}</div>
-            <div class="mt-0.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 sm:text-xs">🧒 Fëmijë/rinj</div>
+          <div class="sl-about-stat">
+            <div class="sl-about-stat-num">{{ stats.books_youth }}</div>
+            <div class="sl-about-stat-label">🧒 Fëmijë/rinj</div>
           </div>
-          <div class="sl-about-stat-card rounded-xl border border-slate-200/80 bg-slate-50/90 p-3.5 dark:border-slate-700 dark:bg-slate-800/50 sm:p-4">
-            <div class="text-xl font-black tabular-nums sm:text-2xl">{{ stats.copies_available }}</div>
-            <div class="mt-0.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 sm:text-xs">✅ Të lira</div>
+          <div class="sl-about-stat">
+            <div class="sl-about-stat-num">{{ stats.copies_available }}</div>
+            <div class="sl-about-stat-label">✅ Të lira</div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Mision & Vizion -->
-    <section class="relative mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
-      <div class="grid gap-4 lg:grid-cols-2">
-        <div class="sl-about-mv-card rounded-2xl border border-brand-200/60 p-5 shadow-md dark:border-brand-800/50 sm:p-6">
-          <div class="text-sm font-extrabold text-brand-800 dark:text-brand-200">🎯 Misioni</div>
-          <p class="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-            Biblioteka e Bashkisë Kamëz angazhohet të promovojë kulturën e leximit, edukimin e vazhdueshëm dhe aksesin e barabartë në informacion, duke integruar teknologjitë moderne dhe duke mbështetur zhvillimin intelektual, kulturor dhe social të komunitetit.
+    <section class="relative mx-auto max-w-7xl px-3 py-2 sm:px-6 lg:px-8">
+      <div class="sl-about-mv-grid">
+        <article class="sl-about-mv mission">
+          <h3>🎯 Misioni</h3>
+          <p>
+            Biblioteka e Bashkisë Kamëz promovon kulturën e leximit, edukimin e vazhdueshëm dhe aksesin e barabartë në informacion — duke integruar teknologjitë moderne dhe duke mbështetur zhvillimin intelektual, kulturor dhe social të komunitetit.
           </p>
-          <p class="mt-4 rounded-xl border border-brand-200/50 bg-white/80 p-3 text-sm font-semibold italic text-slate-800 dark:bg-slate-900/50 dark:text-slate-100">
-            „Të krijojmë ura mes dijes, teknologjisë dhe komunitetit…”
+          <div class="sl-about-mv-quote">„Të krijojmë ura mes dijes, teknologjisë dhe komunitetit…"</div>
+        </article>
+        <article class="sl-about-mv vision">
+          <h3>🌍 Vizioni</h3>
+          <p>
+            Të jemi një institucion lider i dijes, inovacionit dhe kulturës — me shërbime bibliotekare bashkëkohore që kontribuojnë në një komunitet të informuar, të arsimuar dhe të përgatitur për sfidat e së ardhmes.
           </p>
-        </div>
-        <div class="sl-about-mv-card rounded-2xl border border-violet-200/60 p-5 shadow-md dark:border-violet-900/50 sm:p-6">
-          <div class="text-sm font-extrabold text-violet-900 dark:text-violet-200">🌍 Vizioni</div>
-          <p class="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-            Të jemi një institucion lider i dijes, inovacionit dhe kulturës, i cili ofron shërbime bibliotekare bashkëkohore dhe kontribuon në ndërtimin e një komuniteti të informuar, të arsimuar dhe të përgatitur për sfidat e së ardhmes.
-          </p>
-          <p class="mt-4 rounded-xl border border-violet-200/50 bg-white/80 p-3 text-sm font-semibold italic text-slate-800 dark:bg-slate-900/50 dark:text-slate-100">
-            „Një bibliotekë inteligjente dhe moderne, ku komuniteti ndërton të ardhmen përmes dijes.”
-          </p>
-        </div>
+          <div class="sl-about-mv-quote">„Një bibliotekë inteligjente dhe moderne, ku komuniteti ndërton të ardhmen përmes dijes."</div>
+        </article>
       </div>
     </section>
 
-    <!-- Sloganet slideshow -->
-    <section class="relative mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
-      <div class="overflow-hidden rounded-2xl border border-brand-700/30 bg-gradient-to-br from-brand-700 via-brand-600 to-brand-800 shadow-xl sm:rounded-3xl">
-        <div class="px-4 pt-5 text-center text-[11px] font-extrabold uppercase tracking-[0.22em] text-white/75 sm:pt-6">Sloganet tona</div>
-
-        <div class="relative mx-auto max-w-3xl px-4 py-3 sm:py-4" id="slSloganSlider">
-          <button type="button" class="sl-slogan-prev absolute left-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-lg text-white backdrop-blur hover:bg-white/30 sm:left-4" aria-label="Slogani i mëparshëm">‹</button>
-          <button type="button" class="sl-slogan-next absolute right-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-lg text-white backdrop-blur hover:bg-white/30 sm:right-4" aria-label="Slogani tjetër">›</button>
-
+    <!-- Sloganet -->
+    <section class="relative mx-auto max-w-7xl px-3 py-4 sm:px-6 lg:px-8">
+      <div class="sl-about-slogan" id="slSloganSlider">
+        <div class="px-4 pt-4 text-center text-[10px] font-extrabold uppercase tracking-[0.2em] text-white/70 sm:pt-5">Sloganet tona</div>
+        <div class="relative mx-auto max-w-3xl px-3 py-2 sm:px-4">
+          <button type="button" class="sl-slogan-nav prev" aria-label="Slogani i mëparshëm">‹</button>
+          <button type="button" class="sl-slogan-nav next" aria-label="Slogani tjetër">›</button>
           <div class="sl-slogan-viewport" aria-live="polite" aria-atomic="true">
-            <p id="slSloganText" class="text-lg font-extrabold leading-snug text-white sm:text-xl md:text-2xl">Dija fillon këtu.</p>
+            <p id="slSloganText">Dija fillon këtu.</p>
           </div>
         </div>
-
-        <div class="flex justify-center gap-2 pb-5 pt-2" id="slSloganDots" role="tablist" aria-label="Sloganet"></div>
+        <div class="flex justify-center gap-2 pb-4 pt-1" id="slSloganDots" role="tablist" aria-label="Sloganet"></div>
       </div>
     </section>
 
-    <!-- Çfarë ofrojmë -->
-    <section class="relative mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
-      <div class="rounded-2xl border border-slate-200/80 bg-white/95 p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 sm:rounded-3xl sm:p-7">
-        <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">Çfarë ofrojmë</h2>
+    <!-- Shërbime -->
+    <section class="relative mx-auto max-w-7xl px-3 pb-10 sm:px-6 lg:px-8">
+      <div class="sl-about-surface p-4 sm:p-5">
+        <h2 class="text-base font-black text-slate-900 dark:text-white sm:text-lg">Çfarë ofrojmë</h2>
         <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Shërbime digjitale dhe në zyrë për komunitetin.</p>
-        <div class="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
-          <a href="/catalog/" class="group flex gap-3 rounded-2xl border border-slate-200/80 p-4 transition hover:border-brand-200 hover:shadow-md dark:border-slate-700 dark:hover:border-brand-800/50">
-            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white">🔎</span>
-            <div><div class="text-sm font-extrabold">Katalog online</div><p class="mt-0.5 text-xs text-slate-500">Kërkim & rezervime</p></div>
+        <div class="sl-about-services mt-3">
+          <a href="/catalog/" class="sl-about-service">
+            <span class="sl-about-service-icon bg-brand-600">🔎</span>
+            <div><div class="sl-about-service-title">Katalog online</div><div class="sl-about-service-desc">Kërkim & rezervime</div></div>
           </a>
-          <a href="/regjistrohu/" class="group flex gap-3 rounded-2xl border border-slate-200/80 p-4 transition hover:border-brand-200 hover:shadow-md dark:border-slate-700">
-            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white">🪪</span>
-            <div><div class="text-sm font-extrabold">Anëtarësim</div><p class="mt-0.5 text-xs text-slate-500">Portali i anëtarit</p></div>
+          <a href="/regjistrohu/" class="sl-about-service">
+            <span class="sl-about-service-icon bg-brand-600">🪪</span>
+            <div><div class="sl-about-service-title">Anëtarësim</div><div class="sl-about-service-desc">Portali i anëtarit</div></div>
           </a>
-          <a href="/evente/" data-sl-full-nav="1" class="group flex gap-3 rounded-2xl border border-slate-200/80 p-4 transition hover:border-violet-200 dark:border-slate-700">
-            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-600 text-white">🎭</span>
-            <div><div class="text-sm font-extrabold">Evente</div><p class="mt-0.5 text-xs text-slate-500">Klub libri & më shumë</p></div>
+          <a href="/evente/" data-sl-full-nav="1" class="sl-about-service">
+            <span class="sl-about-service-icon bg-violet-600">🎭</span>
+            <div><div class="sl-about-service-title">Evente</div><div class="sl-about-service-desc">Klub libri & më shumë</div></div>
           </a>
-          <a href="/libri-i-javes/" data-sl-full-nav="1" class="group flex gap-3 rounded-2xl border border-slate-200/80 p-4 transition dark:border-slate-700">
-            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-600 text-white">📖</span>
-            <div><div class="text-sm font-extrabold">Libri i javës</div><p class="mt-0.5 text-xs text-slate-500">Rekomandime</p></div>
+          <a href="/libri-i-javes/" data-sl-full-nav="1" class="sl-about-service">
+            <span class="sl-about-service-icon bg-amber-600">📖</span>
+            <div><div class="sl-about-service-title">Libri i javës</div><div class="sl-about-service-desc">Rekomandime</div></div>
           </a>
-          <a href="/njoftime/" data-sl-full-nav="1" class="group flex gap-3 rounded-2xl border border-slate-200/80 p-4 transition dark:border-slate-700">
-            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-700 text-white">📢</span>
-            <div><div class="text-sm font-extrabold">Njoftime</div><p class="mt-0.5 text-xs text-slate-500">Lajme zyrtare</p></div>
+          <a href="/njoftime/" data-sl-full-nav="1" class="sl-about-service">
+            <span class="sl-about-service-icon bg-slate-700">📢</span>
+            <div><div class="sl-about-service-title">Njoftime</div><div class="sl-about-service-desc">Lajme zyrtare</div></div>
           </a>
-          <a href="/orar/" class="group flex gap-3 rounded-2xl border border-brand-200/70 bg-brand-50/50 p-4 dark:border-brand-900/40 dark:bg-brand-900/20">
-            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-brand-800 shadow-sm dark:bg-slate-800 dark:text-brand-200">⏰</span>
-            <div><div class="text-sm font-extrabold text-brand-900 dark:text-brand-100">Orari</div><p class="mt-0.5 text-xs text-slate-600">08:00–18:00</p></div>
+          <a href="/orar/" class="sl-about-service">
+            <span class="sl-about-service-icon bg-white text-brand-800 shadow-sm ring-1 ring-brand-200">⏰</span>
+            <div><div class="sl-about-service-title">Orari</div><div class="sl-about-service-desc">08:00–19:00 · Hënë–Premte</div></div>
           </a>
+        </div>
+      </div>
+
+      <div class="sl-about-cta mt-4">
+        <h2>📚 Biblioteka është më shumë se një hapësirë — është një eksperiencë.</h2>
+        <p class="mt-2 text-sm font-semibold text-slate-600 dark:text-slate-300">Ju mirëpresim në Pallatin e Kulturës „Artan Cuku" ✨</p>
+        <div class="mt-3 flex flex-wrap justify-center gap-2">
+          <a href="/catalog/" class="sl-about-btn-primary">Eksploro katalogun</a>
+          <a href="/kontakt/" class="sl-about-btn-ghost !border-brand-300 !text-brand-800 dark:!text-brand-200">Kontakt</a>
         </div>
       </div>
     </section>
@@ -355,8 +801,8 @@
           if (!reduced) timer = setInterval(next, 4500);
         }
 
-        var prev = root.querySelector('.sl-slogan-prev');
-        var nextBtn = root.querySelector('.sl-slogan-next');
+        var prev = root.querySelector('.sl-slogan-nav.prev');
+        var nextBtn = root.querySelector('.sl-slogan-nav.next');
         if (prev) prev.addEventListener('click', function () { go(idx - 1); resetTimer(); });
         if (nextBtn) nextBtn.addEventListener('click', function () { go(idx + 1); resetTimer(); });
         root.addEventListener('mouseenter', function () { clearInterval(timer); });

@@ -9,177 +9,178 @@
 
 {% block content %}
   <style>
-    .sl-honeypot-field { position: absolute !important; left: -9999px !important; width: 1px !important; height: 1px !important;
-      margin: 0 !important; padding: 0 !important; opacity: 0 !important; pointer-events: none !important;
-      overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; border: 0 !important; }
-    .sl-auth-date-input { color-scheme: dark; }
-    .sl-auth-shell {
-      background: linear-gradient(180deg, #1a9d9b 0%, #189392 100%);
-      min-height: 100vh;
-      min-height: 100dvh;
+    .sl-honeypot-field { position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;margin:0!important;padding:0!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;border:0!important; }
+    .sl-auth-shell { background:linear-gradient(145deg,#168f8d 0%,#127674 48%,#0f6664 100%); min-height:100vh; min-height:100dvh; }
+    .sl-auth-grid { background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px); background-size:28px 28px; }
+    .sl-signup-card {
+      background:linear-gradient(165deg,rgba(255,255,255,.22),rgba(255,255,255,.10));
+      border:1px solid rgba(255,255,255,.34);
+      box-shadow:0 20px 50px rgba(5,40,44,.22), inset 0 1px 0 rgba(255,255,255,.25);
+      backdrop-filter:blur(14px);
+      -webkit-backdrop-filter:blur(14px);
+      animation:slCardIn .45s ease-out both;
     }
-    .sl-glass-main {
-      background: linear-gradient(160deg, rgba(255,255,255,.2), rgba(255,255,255,.11));
-      border: 1px solid rgba(255,255,255,.32);
-      box-shadow: 0 12px 28px rgba(7, 47, 56, .18);
-      animation: slCardIn .45s ease-out both;
+    .sl-brand-logo { width:52px;height:52px;border-radius:14px;object-fit:cover;border:1px solid rgba(255,255,255,.45);box-shadow:0 8px 18px rgba(3,30,34,.18); }
+    .sl-section-title { font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.72); }
+    .sl-field-box {
+      border:1px solid rgba(255,255,255,.22);
+      background:rgba(255,255,255,.08);
+      border-radius:14px;
+      padding:.55rem .65rem;
+      transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
     }
-    .sl-terms-card { border: 1px solid rgba(255,255,255,.28); background: linear-gradient(135deg, rgba(15,23,42,.30), rgba(255,255,255,.10)); }
-    .sl-brand-logo {
-      width: 56px; height: 56px; border-radius: 14px; object-fit: cover;
-      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.42);
-      box-shadow: 0 6px 14px rgba(3,30,34,.18);
+    .sl-field-box:focus-within {
+      border-color:rgba(255,255,255,.55);
+      background:rgba(255,255,255,.12);
+      box-shadow:0 0 0 3px rgba(255,255,255,.12);
     }
-    .sl-glass-main input:not([type="checkbox"]):not([type="file"]),
-    .sl-glass-main select, .sl-glass-main textarea {
-      border: 1px solid rgba(255,255,255,.3) !important;
-      background: rgba(255,255,255,.9) !important;
-      color: #0f172a !important;
-      font-weight: 600 !important;
-      border-radius: 10px !important;
-      padding-top: .45rem !important;
-      padding-bottom: .45rem !important;
-      font-size: .84rem !important;
-      margin-top: .15rem !important;
+    .sl-field-box.is-error { border-color:rgba(252,165,165,.75); box-shadow:0 0 0 3px rgba(248,113,113,.18); }
+    .sl-field-label { display:flex;align-items:center;gap:.35rem;font-size:11px;font-weight:700;color:rgba(255,255,255,.92); }
+    .sl-req { color:#fecaca;font-weight:800; }
+    .sl-field-hint { margin-top:.2rem;font-size:10px;color:rgba(255,255,255,.68);line-height:1.35; }
+    .sl-field-error { margin-top:.25rem;font-size:11px;font-weight:600;color:#fecaca;line-height:1.35; }
+    .sl-signup-card input:not([type="checkbox"]):not([type="file"]) {
+      width:100%;margin-top:.2rem;border:0!important;background:transparent!important;
+      color:#f8fafc!important;font-weight:600!important;font-size:.88rem!important;
+      padding:.2rem 0!important;outline:none!important;box-shadow:none!important;
     }
-    .sl-glass-main input[type="file"] {
-      border: 1px dashed rgba(255,255,255,.45) !important;
-      background: rgba(255,255,255,.88) !important;
-      color: #0f172a !important;
-      border-radius: 10px !important;
-      padding: .35rem .5rem !important;
-      font-size: .75rem !important;
-      margin-top: .15rem !important;
+    .sl-signup-card input::placeholder { color:rgba(248,250,252,.45)!important; }
+    .sl-signup-card input[type="file"] {
+      width:100%;margin-top:.25rem;border:0!important;background:transparent!important;
+      color:#f8fafc!important;font-size:.75rem!important;padding:0!important;
     }
-    .sl-glass-main input::placeholder, .sl-glass-main textarea::placeholder { color: #64748b !important; }
-    .sl-field-label { font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: rgba(255,255,255,.9); }
-    .sl-field-error { margin-top: .2rem; font-size: 11px; font-weight: 600; color: #fecaca; line-height: 1.3; }
+    .sl-signup-card input[type="file"]::file-selector-button {
+      margin-right:.55rem;border:0;border-radius:8px;background:rgba(255,255,255,.92);
+      color:#0f5f5a;font-size:10px;font-weight:800;padding:.35rem .55rem;cursor:pointer;
+    }
+    .sl-auth-date-input { color-scheme:dark; }
+    .sl-personal-no-input { text-transform:uppercase; letter-spacing:.06em; font-variant-numeric:tabular-nums; }
+    .sl-avatar-wrap {
+      display:flex;align-items:center;gap:.75rem;border:1px dashed rgba(255,255,255,.35);
+      border-radius:14px;padding:.55rem .65rem;background:rgba(255,255,255,.06);
+    }
     .sl-avatar-ring {
-      width: 64px; height: 64px; border-radius: 999px;
-      border: 2px solid rgba(255,255,255,.55);
-      background: rgba(255,255,255,.14);
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden; flex-shrink: 0;
-      box-shadow: 0 6px 16px rgba(3,30,34,.18);
+      width:56px;height:56px;border-radius:999px;border:2px solid rgba(255,255,255,.55);
+      background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.08));
+      display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;
     }
-    .sl-avatar-ring img { width: 100%; height: 100%; object-fit: cover; }
-    .sl-float-a { animation: slFloatA 8s ease-in-out infinite; }
-    .sl-float-b { animation: slFloatB 10s ease-in-out infinite; }
-    .sl-shimmer-btn { position: relative; overflow: hidden; }
-    .sl-shimmer-btn::after { content: ""; position: absolute; inset: 0; transform: translateX(-120%); background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.22) 50%, transparent 70%); animation: slShimmer 3.2s ease-in-out infinite; }
-    @keyframes slFloatA { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
-    @keyframes slFloatB { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(9px); } }
-    @keyframes slShimmer { 0%, 70% { transform: translateX(-120%); } 100% { transform: translateX(140%); } }
-    @keyframes slCardIn { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .sl-avatar-ring img { width:100%;height:100%;object-fit:cover; }
+    .sl-terms-card {
+      border:1px solid rgba(255,255,255,.24);
+      background:linear-gradient(135deg,rgba(15,23,42,.28),rgba(255,255,255,.08));
+      border-radius:14px;
+    }
+    .sl-submit-btn {
+      background:linear-gradient(135deg,#ffffff 0%,#e7fffd 100%);
+      color:#0f5f5a;font-weight:800;border:0;
+      box-shadow:0 10px 24px rgba(0,0,0,.16);
+      transition:transform .15s ease, box-shadow .2s ease;
+    }
+    .sl-submit-btn:hover { transform:translateY(-1px); box-shadow:0 14px 28px rgba(0,0,0,.2); }
+    @keyframes slCardIn { from{opacity:0;transform:translateY(12px) scale(.985)} to{opacity:1;transform:translateY(0) scale(1)} }
   </style>
-  <section class="sl-auth-shell relative flex items-center justify-center overflow-hidden px-3 py-3 text-white sm:px-4 sm:py-4">
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(255,255,255,.16),transparent_40%),radial-gradient(circle_at_80%_30%,rgba(255,255,255,.14),transparent_38%)]"></div>
-    <div class="sl-float-a absolute -left-20 top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl"></div>
-    <div class="sl-float-b absolute -right-24 bottom-12 h-80 w-80 rounded-full bg-cyan-200/20 blur-3xl"></div>
 
-    <div class="relative mx-auto w-full max-w-lg text-center">
-      <div class="mx-auto flex flex-col items-center">
+  <section class="sl-auth-shell sl-auth-grid relative flex items-center justify-center overflow-hidden px-3 py-3 text-white sm:px-4 sm:py-4">
+    <div class="absolute -left-16 top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+    <div class="absolute -right-20 bottom-10 h-72 w-72 rounded-full bg-cyan-200/15 blur-3xl"></div>
+
+    <div class="relative mx-auto w-full max-w-md">
+      <div class="text-center">
         <div class="inline-flex items-center gap-2">
           <img src="{% static 'img/logo_biblioteka.png' %}" alt="Logo Biblioteka" class="sl-brand-logo" />
           <img src="{% static 'img/Logo_kamez.png' %}" alt="Logo Bashkia Kamëz" class="sl-brand-logo" onerror="this.style.display='none';" />
         </div>
-        <div class="mt-1 text-xs font-bold text-white/95">Sistemi i Menaxhimit të Bibliotekës</div>
+        <h1 class="mt-2 text-2xl font-black tracking-tight">Krijo llogari</h1>
+        <p class="mt-0.5 text-xs text-white/80">Plotësoni të dhënat për anëtarësim në bibliotekë</p>
       </div>
 
-      <h1 class="mt-2 text-2xl font-black tracking-tight">Krijo llogari anëtari</h1>
-      <p class="mt-0.5 text-xs text-white/90">Regjistrim i shpejtë dhe i sigurt.</p>
-
-      <div class="sl-glass-main mx-auto mt-3 rounded-[18px] p-3.5 text-left backdrop-blur sm:p-4">
+      <div class="sl-signup-card mt-3 rounded-[20px] p-3.5 sm:p-4">
         {% if messages %}
           <div class="mb-3 space-y-1.5">
             {% for message in messages %}
-              {% if message.tags == "error" %}
-                <div role="alert" class="rounded-xl border border-red-300/50 bg-red-500/25 px-3 py-2 text-xs font-semibold text-white shadow-sm">
-                  {{ message }}
-                </div>
-              {% else %}
-                <div class="rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-xs font-semibold text-white/95">
-                  {{ message }}
-                </div>
-              {% endif %}
+              <div role="alert" class="rounded-xl px-3 py-2 text-xs font-semibold {% if message.tags == 'error' %}border border-red-300/50 bg-red-500/25 text-white{% else %}border border-white/20 bg-white/10 text-white/95{% endif %}">
+                {{ message }}
+              </div>
             {% endfor %}
           </div>
         {% endif %}
 
-        <form method="post" enctype="multipart/form-data" class="space-y-2" novalidate>
+        <form method="post" enctype="multipart/form-data" class="space-y-2.5" novalidate>
           {% csrf_token %}
           {{ form.signup_ts }}
 
-          <div class="flex items-center gap-3 rounded-xl border border-white/20 bg-white/8 p-2.5">
-            <div class="sl-avatar-ring" id="slAvatarRing" aria-hidden="true">
-              <svg id="slAvatarPlaceholder" viewBox="0 0 24 24" class="h-8 w-8 text-white/75" fill="currentColor">
+          <div class="sl-avatar-wrap">
+            <div class="sl-avatar-ring" aria-hidden="true">
+              <svg id="slAvatarPlaceholder" viewBox="0 0 24 24" class="h-7 w-7 text-white/75" fill="currentColor">
                 <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-3.33 0-6 1.67-6 3.75V20h12v-2.25C18 15.67 15.33 14 12 14Z"/>
               </svg>
               <img id="slAvatarPreview" class="hidden" alt="Parapamje foto" />
             </div>
             <div class="min-w-0 flex-1">
-              <label class="sl-field-label" for="{{ form.photo.id_for_label }}">{{ form.photo.label }} <span class="normal-case font-medium text-white/70">(opsionale)</span></label>
+              <label class="sl-field-label" for="{{ form.photo.id_for_label }}">{{ form.photo.label }} <span class="text-[10px] font-medium text-white/65">(opsionale)</span></label>
               {{ form.photo }}
-              <p class="mt-0.5 text-[10px] text-white/75">JPG, PNG ose WEBP · maks. 5 MB · mund ta shtoni edhe më vonë</p>
-              {% if form.photo.errors %}
-                <p class="sl-field-error">{{ form.photo.errors.0 }}</p>
-              {% endif %}
+              <p class="sl-field-hint">JPG, PNG ose WEBP · maks. 5 MB</p>
+              {% if form.photo.errors %}<p class="sl-field-error">{{ form.photo.errors.0 }}</p>{% endif %}
             </div>
           </div>
 
-          <div>
-            <label class="sl-field-label" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+          <p class="sl-section-title pt-0.5">Të dhënat e llogarisë</p>
+
+          <div class="sl-field-box{% if form.email.errors %} is-error{% endif %}">
+            <label class="sl-field-label" for="{{ form.email.id_for_label }}">{{ form.email.label }} <span class="sl-req">*</span></label>
             {{ form.email }}
             {% if form.email.errors %}<p class="sl-field-error">{{ form.email.errors.0 }}</p>{% endif %}
           </div>
 
           <div class="grid gap-2 sm:grid-cols-2">
-            <div>
-              <label class="sl-field-label" for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
+            <div class="sl-field-box{% if form.password1.errors %} is-error{% endif %}">
+              <label class="sl-field-label" for="{{ form.password1.id_for_label }}">{{ form.password1.label }} <span class="sl-req">*</span></label>
               {{ form.password1 }}
               {% if form.password1.errors %}<p class="sl-field-error">{{ form.password1.errors.0 }}</p>{% endif %}
             </div>
-            <div>
-              <label class="sl-field-label" for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
+            <div class="sl-field-box{% if form.password2.errors %} is-error{% endif %}">
+              <label class="sl-field-label" for="{{ form.password2.id_for_label }}">{{ form.password2.label }} <span class="sl-req">*</span></label>
               {{ form.password2 }}
               {% if form.password2.errors %}<p class="sl-field-error">{{ form.password2.errors.0 }}</p>{% endif %}
             </div>
           </div>
 
+          <p class="sl-section-title pt-0.5">Të dhënat personale</p>
+
+          <div class="sl-field-box{% if form.full_name.errors %} is-error{% endif %}">
+            <label class="sl-field-label" for="{{ form.full_name.id_for_label }}">{{ form.full_name.label }} <span class="sl-req">*</span></label>
+            {{ form.full_name }}
+            {% if form.full_name.errors %}<p class="sl-field-error">{{ form.full_name.errors.0 }}</p>{% endif %}
+          </div>
+
           <div class="grid gap-2 sm:grid-cols-2">
-            <div>
-              <label class="sl-field-label" for="{{ form.full_name.id_for_label }}">{{ form.full_name.label }}</label>
-              {{ form.full_name }}
-              {% if form.full_name.errors %}<p class="sl-field-error">{{ form.full_name.errors.0 }}</p>{% endif %}
-            </div>
-            <div>
-              <label class="sl-field-label" for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
+            <div class="sl-field-box{% if form.phone.errors %} is-error{% endif %}">
+              <label class="sl-field-label" for="{{ form.phone.id_for_label }}">{{ form.phone.label }} <span class="sl-req">*</span></label>
               {{ form.phone }}
               {% if form.phone.errors %}<p class="sl-field-error">{{ form.phone.errors.0 }}</p>{% endif %}
             </div>
-          </div>
-
-          <div class="grid gap-2 sm:grid-cols-2">
-            <div>
-              <label class="sl-field-label" for="{{ form.date_of_birth.id_for_label }}">{{ form.date_of_birth.label }}</label>
+            <div class="sl-field-box{% if form.date_of_birth.errors %} is-error{% endif %}">
+              <label class="sl-field-label" for="{{ form.date_of_birth.id_for_label }}">{{ form.date_of_birth.label }} <span class="sl-req">*</span></label>
               {{ form.date_of_birth }}
               {% if form.date_of_birth.errors %}<p class="sl-field-error">{{ form.date_of_birth.errors.0 }}</p>{% endif %}
             </div>
-            <div>
-              <label class="sl-field-label" for="{{ form.national_id.id_for_label }}">{{ form.national_id.label }}</label>
-              {{ form.national_id }}
-              {% if form.national_id.errors %}<p class="sl-field-error">{{ form.national_id.errors.0 }}</p>{% endif %}
-            </div>
+          </div>
+
+          <div class="sl-field-box{% if form.national_id.errors %} is-error{% endif %}">
+            <label class="sl-field-label" for="{{ form.national_id.id_for_label }}">{{ form.national_id.label }} <span class="sl-req">*</span></label>
+            {{ form.national_id }}
+            <p class="sl-field-hint">Formati: shkronjë · 8 shifra · shkronjë (si në kartën e identitetit)</p>
+            {% if form.national_id.errors %}<p class="sl-field-error">{{ form.national_id.errors.0 }}</p>{% endif %}
           </div>
 
           <div class="grid gap-2 sm:grid-cols-2">
-            <div>
-              <label class="sl-field-label" for="{{ form.place_of_birth.id_for_label }}">{{ form.place_of_birth.label }}</label>
+            <div class="sl-field-box{% if form.place_of_birth.errors %} is-error{% endif %}">
+              <label class="sl-field-label" for="{{ form.place_of_birth.id_for_label }}">{{ form.place_of_birth.label }} <span class="sl-req">*</span></label>
               {{ form.place_of_birth }}
               {% if form.place_of_birth.errors %}<p class="sl-field-error">{{ form.place_of_birth.errors.0 }}</p>{% endif %}
             </div>
-            <div>
-              <label class="sl-field-label" for="{{ form.address.id_for_label }}">{{ form.address.label }}</label>
+            <div class="sl-field-box{% if form.address.errors %} is-error{% endif %}">
+              <label class="sl-field-label" for="{{ form.address.id_for_label }}">{{ form.address.label }} <span class="sl-req">*</span></label>
               {{ form.address }}
               {% if form.address.errors %}<p class="sl-field-error">{{ form.address.errors.0 }}</p>{% endif %}
             </div>
@@ -187,22 +188,15 @@
 
           <div class="sl-honeypot-field" aria-hidden="true">{{ form.trap_field }}</div>
 
-          <div class="sl-terms-card rounded-lg p-2.5 shadow-sm">
+          <div class="sl-terms-card p-2.5">
             <div class="flex items-start gap-2">
               <span class="mt-0.5 inline-flex h-7 w-7 items-center justify-center rounded-lg bg-white/15 ring-1 ring-white/30">
-                <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/>
-                  <path d="m9 12 2 2 4-4"/>
-                </svg>
+                <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
               </span>
               <div class="min-w-0">
-                <div class="text-[11px] font-extrabold text-white">Kushtet & Privatësia</div>
-                <p class="mt-0.5 text-[10px] leading-snug text-white/85">
-                  Të dhënat (përfshirë Nr. ID) përdoren vetëm për anëtarësim, verifikim dhe shërbime biblioteke.
-                </p>
-                <button type="button" id="slTermsBtn" class="mt-1 text-[10px] font-extrabold underline decoration-white/40 underline-offset-2 hover:decoration-white">
-                  Lexo kushtet e plota
-                </button>
+                <div class="text-[11px] font-extrabold text-white">Kushtet & privatësia</div>
+                <p class="mt-0.5 text-[10px] leading-snug text-white/80">Të dhënat përdoren vetëm për anëtarësim, verifikim dhe shërbime biblioteke.</p>
+                <button type="button" id="slTermsBtn" class="mt-1 text-[10px] font-extrabold underline decoration-white/40 underline-offset-2 hover:decoration-white">Lexo kushtet e plota</button>
               </div>
             </div>
             <label for="{{ form.accept_terms.id_for_label }}" class="mt-1.5 flex items-start gap-2 text-[10px] font-semibold text-white/95">
@@ -212,23 +206,24 @@
             {% if form.accept_terms.errors %}<p class="sl-field-error">{{ form.accept_terms.errors.0 }}</p>{% endif %}
           </div>
 
-          <button type="submit" class="sl-shimmer-btn inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white/20 px-4 py-2 text-sm font-extrabold text-white ring-1 ring-white/25 hover:bg-white/25">
+          <button type="submit" class="sl-submit-btn inline-flex w-full items-center justify-center rounded-xl px-4 py-2.5 text-sm">
             Regjistrohu dhe hyr
           </button>
         </form>
 
-        <p class="mt-3 text-center text-xs text-white/90">
+        <p class="mt-3 text-center text-xs text-white/85">
           Ke tashmë llogari?
           <a href="{% url 'cms:sign_in' %}" class="font-extrabold underline decoration-white/40 underline-offset-2 hover:decoration-white">Hyr këtu</a>
         </p>
       </div>
 
-      <div class="mt-4 text-[11px] text-white/80">
+      <p class="mt-3 text-center text-[11px] text-white/75">
         <a href="/" class="font-semibold underline decoration-white/30 hover:decoration-white">Kthehu te faqja</a>
-        · © {% now "Y" %} Smart Library • Bashkia Kamëz
-      </div>
+        · © {% now "Y" %} Smart Library
+      </p>
     </div>
   </section>
+
   <div id="slTermsModal" class="fixed inset-0 z-[120] hidden items-center justify-center bg-slate-900/65 px-4">
     <div class="w-full max-w-2xl rounded-3xl border border-white/25 bg-slate-900/95 p-6 text-left text-white shadow-2xl">
       <div class="flex items-start justify-between gap-3">
@@ -237,7 +232,7 @@
       </div>
       <div class="mt-4 space-y-2 text-sm text-white/90">
         <p>1) Të dhënat përdoren vetëm për funksionimin e bibliotekës dhe menaxhimin e anëtarësimit.</p>
-        <p>2) Nr. ID ruhet për verifikim unik të anëtarit dhe parandalim dublikatash në sistem.</p>
+        <p>2) Numri personal ruhet për verifikim unik të anëtarit dhe parandalim dublikatash.</p>
         <p>3) Të dhënat nuk shpërndahen jashtë qëllimit të shërbimit, përveç rasteve të parashikuara me ligj.</p>
         <p>4) Mund të kërkoni korrigjim të të dhënave në sportel ose përmes administratorit.</p>
       </div>
@@ -246,8 +241,9 @@
       </div>
     </div>
   </div>
+
   <script>
-    (function(){
+    (function () {
       var photoInput = document.getElementById("{{ form.photo.id_for_label }}");
       var preview = document.getElementById("slAvatarPreview");
       var placeholder = document.getElementById("slAvatarPlaceholder");
@@ -270,22 +266,29 @@
         });
       }
 
-      var btn = document.getElementById('slTermsBtn');
-      var modal = document.getElementById('slTermsModal');
-      var closeBtn = document.getElementById('slTermsClose');
-      var agreeBtn = document.getElementById('slTermsAgree');
+      var personalNo = document.getElementById("{{ form.national_id.id_for_label }}");
+      if (personalNo) {
+        personalNo.addEventListener("input", function () {
+          personalNo.value = personalNo.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10);
+        });
+      }
+
+      var btn = document.getElementById("slTermsBtn");
+      var modal = document.getElementById("slTermsModal");
+      var closeBtn = document.getElementById("slTermsClose");
+      var agreeBtn = document.getElementById("slTermsAgree");
       if (!btn || !modal) return;
-      function openM(){ modal.classList.remove('hidden'); modal.classList.add('flex'); }
-      function closeM(){ modal.classList.add('hidden'); modal.classList.remove('flex'); }
-      btn.addEventListener('click', openM);
-      if (closeBtn) closeBtn.addEventListener('click', closeM);
-      if (agreeBtn) agreeBtn.addEventListener('click', function(){
-        var cb = document.getElementById('{{ form.accept_terms.id_for_label }}');
+      function openM() { modal.classList.remove("hidden"); modal.classList.add("flex"); }
+      function closeM() { modal.classList.add("hidden"); modal.classList.remove("flex"); }
+      btn.addEventListener("click", openM);
+      if (closeBtn) closeBtn.addEventListener("click", closeM);
+      if (agreeBtn) agreeBtn.addEventListener("click", function () {
+        var cb = document.getElementById("{{ form.accept_terms.id_for_label }}");
         if (cb) cb.checked = true;
         closeM();
       });
-      modal.addEventListener('click', function(e){ if (e.target === modal) closeM(); });
-      document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeM(); });
+      modal.addEventListener("click", function (e) { if (e.target === modal) closeM(); });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeM(); });
     })();
   </script>
 {% endblock %}

@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from django.contrib.auth import get_user_model, password_validation
 from django.contrib.auth.forms import SetPasswordForm
@@ -25,6 +27,10 @@ _AUTH_FILE_CLASS = (
 )
 _SIGNUP_PHOTO_MAX_BYTES = 5 * 1024 * 1024
 _SIGNUP_PHOTO_TYPES = {"image/jpeg", "image/png", "image/webp"}
+_PERSONAL_NO_RE = re.compile(r"^[A-Z]\d{8}[A-Z]$")
+_PERSONAL_NO_FORMAT_MSG = (
+    "Lutem shkruani saktë nr. personal si në kartë të identitetit (shkronjë, 8 shifra, shkronjë)."
+)
 
 
 class ContactForm(forms.Form):
@@ -101,7 +107,14 @@ class MemberSignUpForm(forms.Form):
     email = forms.EmailField(
         label="Email",
         max_length=254,
-        widget=forms.EmailInput(attrs={"class": _AUTH_INPUT_CLASS, "autocomplete": "email"}),
+        widget=forms.EmailInput(
+            attrs={
+                "class": _AUTH_INPUT_CLASS,
+                "autocomplete": "email",
+                "placeholder": "emri@email.com",
+            }
+        ),
+        error_messages={"required": "Email-i është i detyrueshëm."},
     )
     password1 = forms.CharField(
         label="Fjalëkalimi",
@@ -118,14 +131,26 @@ class MemberSignUpForm(forms.Form):
         ),
     )
     full_name = forms.CharField(
-        label="Emri dhe mbiemri",
+        label="Emër dhe mbiemër",
         max_length=160,
-        widget=forms.TextInput(attrs={"class": _AUTH_INPUT_CLASS, "autocomplete": "name"}),
+        widget=forms.TextInput(
+            attrs={
+                "class": _AUTH_INPUT_CLASS,
+                "autocomplete": "name",
+                "placeholder": "p.sh. Artan Cuku",
+            }
+        ),
     )
     phone = forms.CharField(
         label="Nr. telefoni",
         max_length=32,
-        widget=forms.TextInput(attrs={"class": _AUTH_INPUT_CLASS, "autocomplete": "tel"}),
+        widget=forms.TextInput(
+            attrs={
+                "class": _AUTH_INPUT_CLASS,
+                "autocomplete": "tel",
+                "placeholder": "p.sh. 069 12 34 567",
+            }
+        ),
     )
     date_of_birth = forms.DateField(
         label="Datëlindja",
@@ -147,10 +172,18 @@ class MemberSignUpForm(forms.Form):
         ),
     )
     national_id = forms.CharField(
-        label="Nr. ID",
-        max_length=32,
-        widget=forms.TextInput(attrs={"class": _AUTH_INPUT_CLASS, "autocomplete": "off"}),
-        error_messages={"required": "Numri i ID-së është i detyrueshëm për regjistrim."},
+        label="Numri personal",
+        max_length=10,
+        widget=forms.TextInput(
+            attrs={
+                "class": _AUTH_INPUT_CLASS + " sl-personal-no-input",
+                "autocomplete": "off",
+                "placeholder": "p.sh. J50408078S",
+                "maxlength": "10",
+                "spellcheck": "false",
+            }
+        ),
+        error_messages={"required": "Numri personal është i detyrueshëm për regjistrim."},
     )
     place_of_birth = forms.CharField(
         label="Vendlindja",
@@ -220,13 +253,13 @@ class MemberSignUpForm(forms.Form):
     def clean_national_id(self):
         nid = (self.cleaned_data.get("national_id") or "").strip().upper()
         if not nid:
-            raise ValidationError("Numri i ID-së është i detyrueshëm për regjistrim.")
-        if len(nid) < 5:
-            raise ValidationError("Numri i ID-së duket i shkurtër. Kontrolloni që e keni shkruar saktë.")
+            raise ValidationError("Numri personal është i detyrueshëm për regjistrim.")
+        if not _PERSONAL_NO_RE.match(nid):
+            raise ValidationError(_PERSONAL_NO_FORMAT_MSG)
         if MemberProfile.objects.filter(national_id__iexact=nid).exists():
             raise ValidationError(
-                "Me këtë numër ID ekziston tashmë një llogari. "
-                "Nuk lejohet krijimi i dy llogarive me të njëjtin ID. "
+                "Me këtë numër personal ekziston tashmë një llogari. "
+                "Nuk lejohet krijimi i dy llogarive me të njëjtin numër. "
                 "Nëse keni llogari, hyrni me email-in tuaj."
             )
         return nid

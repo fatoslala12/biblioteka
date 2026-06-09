@@ -53,7 +53,7 @@ class MemberSignUpTests(TestCase):
             "full_name": "Test User",
             "phone": "0691234567",
             "date_of_birth": "1995-05-15",
-            "national_id": "K12345678X_SIGNUP",
+            "national_id": "K12345678X",
             "place_of_birth": "Tiranë",
             "address": "Rruga Test 1",
             "trap_field": "",
@@ -86,7 +86,7 @@ class MemberSignUpTests(TestCase):
             "full_name": "Bot User",
             "phone": "0691234567",
             "date_of_birth": "1995-05-15",
-            "national_id": "BOT999",
+            "national_id": "B12345678T",
             "place_of_birth": "Tiranë",
             "address": "Rruga Bot 12",
             "trap_field": "http://spam.com",
@@ -106,7 +106,7 @@ class MemberSignUpTests(TestCase):
             "full_name": "Terms Missing",
             "phone": "0691234567",
             "date_of_birth": "1995-05-15",
-            "national_id": "TM12345678X",
+            "national_id": "T12345678M",
             "place_of_birth": "Tirane",
             "address": "Rruga Test",
             "trap_field": "",
@@ -126,7 +126,7 @@ class MemberSignUpTests(TestCase):
         MemberProfile.objects.create(
             user=existing,
             full_name="Existing Member",
-            national_id="DUP123456X",
+            national_id="G50408078S",
             phone="0691111111",
             address="Rruga Ekzistuese 1",
             place_of_birth="Tiranë",
@@ -138,7 +138,7 @@ class MemberSignUpTests(TestCase):
             "full_name": "Duplicate ID",
             "phone": "0692222222",
             "date_of_birth": "1990-01-01",
-            "national_id": "dup123456x",
+            "national_id": "g50408078s",
             "place_of_birth": "Durres",
             "address": "Rruga e Re 5",
             "trap_field": "",
@@ -148,7 +148,26 @@ class MemberSignUpTests(TestCase):
         r = self.client.post("/regjistrohu/", data)
         self.assertEqual(r.status_code, 200)
         self.assertFalse(User.objects.filter(email="duplicate_id@test.com").exists())
-        self.assertContains(r, "të njëjtin ID", status_code=200)
+        self.assertContains(r, "numër personal", status_code=200)
+
+    def test_sign_up_rejects_invalid_personal_number_format(self):
+        data = {
+            "email": "bad_nid@test.com",
+            "password1": "K9#mP2$vLxQw!nR8tY",
+            "password2": "K9#mP2$vLxQw!nR8tY",
+            "full_name": "Bad NID",
+            "phone": "0694444444",
+            "date_of_birth": "1991-03-03",
+            "national_id": "BOT999",
+            "place_of_birth": "Tiranë",
+            "address": "Rruga Test 9",
+            "trap_field": "",
+            "accept_terms": "on",
+        }
+        r = self.client.post("/regjistrohu/", data)
+        self.assertEqual(r.status_code, 200)
+        self.assertFalse(User.objects.filter(email="bad_nid@test.com").exists())
+        self.assertContains(r, "identitetit", status_code=200)
 
     def test_sign_up_allows_missing_photo(self):
         data = {
@@ -158,7 +177,7 @@ class MemberSignUpTests(TestCase):
             "full_name": "No Photo",
             "phone": "0693333333",
             "date_of_birth": "1992-02-02",
-            "national_id": "NOPHOTO123X",
+            "national_id": "N12345678O",
             "place_of_birth": "Tiranë",
             "address": "Rruga Pa Foto 3",
             "trap_field": "",

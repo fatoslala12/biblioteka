@@ -1,0 +1,67 @@
+{% load static %}
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="{% static 'css/library-clock-widget.css' %}" />
+
+{{ library_holidays|json_script:"sl-lcw-holidays-data" }}
+<div
+  class="sl-lib-clock sl-premium-surface sl-premium-surface-slow mt-6 min-w-0{% if widget_variant == 'page' %} sl-lib-clock--page{% endif %}"
+  data-open-hour="{{ library_open_hour }}"
+  data-close-hour="{{ library_close_hour }}"
+>
+  <div class="sl-lcw-wrap">
+    <div class="sl-lcw-progress-wrap">
+      <div class="sl-lcw-progress-content">
+        <div class="sl-lcw-clock-wrap">
+          <div class="sl-lcw-clock-svg-wrap">
+            <div class="sl-lcw-clock-glow"></div>
+            <svg class="sl-lcw-clock-svg" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ora aktuale">
+              <circle cx="70" cy="70" r="66" fill="#0d2240" stroke="rgba(201,168,76,.3)" stroke-width="1.5" />
+              <circle cx="70" cy="70" r="62" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="1" />
+              <g id="sl-lcw-hour-marks"></g>
+              <line id="sl-lcw-h-hour" x1="70" y1="70" x2="70" y2="40" stroke="white" stroke-width="3.5" stroke-linecap="round" />
+              <line id="sl-lcw-h-min" x1="70" y1="70" x2="70" y2="25" stroke="white" stroke-width="2.5" stroke-linecap="round" />
+              <line id="sl-lcw-h-sec" x1="70" y1="78" x2="70" y2="18" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round" />
+              <circle cx="70" cy="70" r="4" fill="#C9A84C" />
+              <circle cx="70" cy="70" r="2" fill="white" />
+            </svg>
+          </div>
+          <div class="sl-lcw-digital-time" id="sl-lcw-digital-time" aria-live="polite"></div>
+          <div class="sl-lcw-date-line" id="sl-lcw-date-line"></div>
+        </div>
+
+        <div class="sl-lcw-progress-main">
+          <div class="sl-lcw-prog-title" id="sl-lcw-prog-title">Progresi i ditës punës</div>
+          <div class="sl-lcw-prog-track-row">
+            <div class="sl-lcw-prog-ep">
+              <span class="sl-lcw-prog-ep-time">08:00</span>
+              <span class="sl-lcw-prog-ep-label">Hapja</span>
+            </div>
+            <div class="sl-lcw-prog-track">
+              <div class="sl-lcw-prog-bar-bg">
+                <div class="sl-lcw-prog-bar-fill" id="sl-lcw-prog-fill" style="width:0%">
+                  <div class="sl-lcw-prog-dot" id="sl-lcw-prog-dot"></div>
+                </div>
+              </div>
+              <div class="sl-lcw-prog-markers">
+                <span>08:00</span><span>10:45</span><span>13:30</span><span>16:15</span><span>19:00</span>
+              </div>
+            </div>
+            <div class="sl-lcw-prog-ep" style="align-items:flex-end">
+              <span class="sl-lcw-prog-ep-time">19:00</span>
+              <span class="sl-lcw-prog-ep-label">Mbyllja</span>
+            </div>
+          </div>
+          <div class="sl-lcw-prog-status sl-lcw-prog-open" id="sl-lcw-prog-status">
+            <span id="sl-lcw-prog-status-text">Duke llogaritur...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sl-lcw-week-wrap" id="sl-lcw-week-grid"></div>
+  </div>
+</div>
+
+<script src="{% static 'js/library-clock-widget.js' %}" defer></script>

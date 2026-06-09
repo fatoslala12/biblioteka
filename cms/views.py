@@ -16,6 +16,7 @@ from catalog.models import Author, Book, BookType, Copy, CopyStatus, Genre, Publ
 from circulation.models import Hold, HoldStatus, Loan, LoanStatus, Reservation, ReservationStatus
 from circulation.models import ReservationRequest, ReservationRequestStatus
 from cms.forms import ContactForm
+from cms.library_hours import library_clock_context
 from cms.models import Announcement, Event, WeeklyBook
 
 
@@ -293,6 +294,7 @@ def home(request):
         request,
         "cms/home.html",
         {
+            **library_clock_context(),
             "home_gallery": home_gallery,
             "hero_library_image": hero_library_image,
             "top_publishers": top_publishers,
@@ -434,7 +436,7 @@ def rules(request):
 
 
 def hours(request):
-    return render(request, "cms/hours.html")
+    return render(request, "cms/hours.html", library_clock_context())
 
 
 def announcements(request):

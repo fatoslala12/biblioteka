@@ -1,0 +1,463 @@
+/* Orari live — Biblioteka Kamëz */
+.sl-lib-clock {
+  --slcw-navy: #0d1b2a;
+  --slcw-green: #1a936f;
+  --slcw-greenl: #22b889;
+  --slcw-gold: #c9a84c;
+  --slcw-red: #e85252;
+  --slcw-cream2: #ede9e0;
+  --slcw-txt: #1a1a2e;
+  --slcw-txt2: #4a5568;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.sl-lib-clock.sl-lib-clock--page {
+  margin-top: 0;
+}
+
+.sl-lib-clock .sl-lcw-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.sl-lib-clock .sl-lcw-progress-wrap {
+  background: linear-gradient(180deg, #fff 0%, #faf9f6 100%);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 1.35rem;
+  padding: 1.25rem 1.2rem;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 12px 32px rgba(15, 23, 42, 0.07);
+}
+
+.dark .sl-lib-clock .sl-lcw-progress-wrap {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.62) 0%, rgba(15, 23, 42, 0.48) 100%);
+  border-color: rgba(148, 163, 184, 0.18);
+}
+
+.sl-lib-clock .sl-lcw-progress-content {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.sl-lib-clock .sl-lcw-clock-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.sl-lib-clock .sl-lcw-clock-svg-wrap {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  flex-shrink: 0;
+}
+
+.sl-lib-clock .sl-lcw-clock-svg {
+  width: 128px;
+  height: 128px;
+  display: block;
+}
+
+.sl-lib-clock .sl-lcw-clock-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 28px rgba(201, 168, 76, 0.2);
+  pointer-events: none;
+}
+
+.sl-lib-clock .sl-lcw-digital-time {
+  display: none;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--slcw-txt);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.dark .sl-lib-clock .sl-lcw-digital-time {
+  color: #f1f5f9;
+}
+
+.sl-lib-clock .sl-lcw-date-line {
+  display: none;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--slcw-txt2);
+}
+
+.sl-lib-clock .sl-lcw-progress-main {
+  min-width: 0;
+}
+
+.sl-lib-clock .sl-lcw-prog-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--slcw-txt);
+  margin-bottom: 1.15rem;
+}
+
+.dark .sl-lib-clock .sl-lcw-prog-title {
+  color: #f1f5f9;
+}
+
+.sl-lib-clock .sl-lcw-prog-track-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.sl-lib-clock .sl-lcw-prog-ep {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex-shrink: 0;
+}
+
+.sl-lib-clock .sl-lcw-prog-ep-time {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--slcw-txt);
+}
+
+.dark .sl-lib-clock .sl-lcw-prog-ep-time {
+  color: #f8fafc;
+}
+
+.sl-lib-clock .sl-lcw-prog-ep-label {
+  font-size: 0.62rem;
+  color: var(--slcw-txt2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+
+.dark .sl-lib-clock .sl-lcw-prog-ep-label {
+  color: #94a3b8;
+}
+
+.sl-lib-clock .sl-lcw-prog-track {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+.sl-lib-clock .sl-lcw-prog-bar-bg {
+  height: 9px;
+  border-radius: 999px;
+  background: var(--slcw-cream2);
+}
+
+.dark .sl-lib-clock .sl-lcw-prog-bar-bg {
+  background: rgba(148, 163, 184, 0.22);
+}
+
+.sl-lib-clock .sl-lcw-prog-bar-fill {
+  height: 9px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--slcw-green), var(--slcw-greenl));
+  transition: width 1s ease;
+  position: relative;
+  max-width: 100%;
+}
+
+.sl-lib-clock .sl-lcw-prog-dot {
+  position: absolute;
+  right: -9px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--slcw-gold);
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.28), 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.dark .sl-lib-clock .sl-lcw-prog-dot {
+  border-color: #1e293b;
+}
+
+.sl-lib-clock .sl-lcw-prog-markers {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.55rem;
+  font-size: 0.64rem;
+  color: var(--slcw-txt2);
+  font-weight: 600;
+  padding: 0 1px;
+}
+
+.dark .sl-lib-clock .sl-lcw-prog-markers {
+  color: #94a3b8;
+}
+
+.sl-lib-clock .sl-lcw-prog-status {
+  margin-top: 1rem;
+  padding: 0.75rem 0.95rem;
+  border-radius: 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.sl-lib-clock .sl-lcw-prog-open {
+  background: rgba(26, 147, 111, 0.1);
+  border: 1px solid rgba(26, 147, 111, 0.22);
+  color: var(--slcw-green);
+}
+
+.sl-lib-clock .sl-lcw-prog-closed {
+  background: rgba(232, 82, 82, 0.08);
+  border: 1px solid rgba(232, 82, 82, 0.2);
+  color: var(--slcw-red);
+}
+
+.sl-lib-clock .sl-lcw-prog-before {
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.22);
+  color: #b8820a;
+}
+
+/* Javor — grid me thyerje, jo scroll */
+.sl-lib-clock .sl-lcw-week-wrap {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.sl-lib-clock .sl-lcw-day-card {
+  border-radius: 0.95rem;
+  padding: 0.8rem 0.55rem;
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  position: relative;
+  overflow: hidden;
+  min-height: 4.6rem;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.sl-lib-clock .sl-lcw-day-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.07);
+}
+
+.dark .sl-lib-clock .sl-lcw-day-card {
+  background: rgba(15, 23, 42, 0.45);
+  border-color: rgba(148, 163, 184, 0.16);
+}
+
+.sl-lib-clock .sl-lcw-day-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 3px 0 0 3px;
+}
+
+.sl-lib-clock .sl-lcw-day-card.sl-lcw-open::before {
+  background: var(--slcw-green);
+}
+
+.sl-lib-clock .sl-lcw-day-card.sl-lcw-closed-day::before {
+  background: var(--slcw-red);
+}
+
+.sl-lib-clock .sl-lcw-day-card.sl-lcw-today-card {
+  border-color: var(--slcw-gold);
+  box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.24);
+}
+
+.sl-lib-clock .sl-lcw-dc-name {
+  font-size: 0.58rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--slcw-txt2);
+  margin-bottom: 0.42rem;
+}
+
+.dark .sl-lib-clock .sl-lcw-dc-name {
+  color: #94a3b8;
+}
+
+.sl-lib-clock .sl-lcw-dc-hours {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--slcw-txt);
+  line-height: 1.25;
+}
+
+.dark .sl-lib-clock .sl-lcw-dc-hours {
+  color: #f1f5f9;
+}
+
+.sl-lib-clock .sl-lcw-day-card.sl-lcw-closed-day .sl-lcw-dc-hours {
+  color: var(--slcw-red);
+  font-size: 0.78rem;
+}
+
+.sl-lib-clock .sl-lcw-today-badge {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.4rem;
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--slcw-gold);
+  background: rgba(201, 168, 76, 0.12);
+  border: 1px solid rgba(201, 168, 76, 0.28);
+  border-radius: 999px;
+  padding: 0.08rem 0.38rem;
+}
+
+@media (max-width: 1024px) {
+  .sl-lib-clock .sl-lcw-week-wrap {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .sl-lib-clock .sl-lcw-progress-content {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .sl-lib-clock .sl-lcw-clock-wrap {
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .sl-lib-clock .sl-lcw-clock-svg-wrap,
+  .sl-lib-clock .sl-lcw-clock-svg {
+    width: 140px;
+    height: 140px;
+  }
+
+  .sl-lib-clock .sl-lcw-digital-time,
+  .sl-lib-clock .sl-lcw-date-line {
+    display: block;
+  }
+
+  .sl-lib-clock .sl-lcw-progress-main {
+    width: 100%;
+    text-align: center;
+  }
+
+  .sl-lib-clock .sl-lcw-prog-title {
+    text-align: center;
+    font-size: 1.05rem;
+    margin-bottom: 1rem;
+  }
+
+  .sl-lib-clock .sl-lcw-prog-track-row {
+    gap: 0.5rem;
+  }
+
+  .sl-lib-clock .sl-lcw-prog-ep-time {
+    font-size: 0.85rem;
+  }
+
+  .sl-lib-clock .sl-lcw-prog-markers {
+    font-size: 0.56rem;
+  }
+
+  .sl-lib-clock .sl-lcw-prog-status {
+    text-align: left;
+    font-size: 0.76rem;
+    padding: 0.68rem 0.8rem;
+  }
+
+  /* 5 ditë pune sipër, fundjava poshtë */
+  .sl-lib-clock .sl-lcw-week-wrap {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.45rem;
+  }
+
+  .sl-lib-clock .sl-lcw-day-card:nth-child(6),
+  .sl-lib-clock .sl-lcw-day-card:nth-child(7) {
+    grid-column: span 1;
+  }
+
+  .sl-lib-clock .sl-lcw-day-card:nth-child(6) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .sl-lib-clock .sl-lcw-day-card:nth-child(7) {
+    grid-column: 4;
+    grid-row: 2;
+  }
+
+  .sl-lib-clock .sl-lcw-day-card {
+    min-height: 4.1rem;
+    padding: 0.7rem 0.45rem;
+  }
+
+  .sl-lib-clock .sl-lcw-dc-hours {
+    font-size: 0.74rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .sl-lib-clock .sl-lcw-progress-wrap {
+    padding: 1rem 0.85rem;
+    border-radius: 1.15rem;
+  }
+
+  .sl-lib-clock .sl-lcw-clock-svg-wrap,
+  .sl-lib-clock .sl-lcw-clock-svg {
+    width: 124px;
+    height: 124px;
+  }
+
+  .sl-lib-clock .sl-lcw-digital-time {
+    font-size: 1.2rem;
+  }
+
+  .sl-lib-clock .sl-lcw-prog-ep-label {
+    font-size: 0.56rem;
+  }
+
+  .sl-lib-clock .sl-lcw-week-wrap {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4rem;
+  }
+
+  .sl-lib-clock .sl-lcw-day-card:nth-child(6),
+  .sl-lib-clock .sl-lcw-day-card:nth-child(7) {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .sl-lib-clock .sl-lcw-day-card:nth-child(7) {
+    grid-column: 2;
+  }
+
+  .sl-lib-clock .sl-lcw-day-card {
+    min-height: 3.85rem;
+  }
+
+  .sl-lib-clock .sl-lcw-dc-name {
+    font-size: 0.54rem;
+  }
+
+  .sl-lib-clock .sl-lcw-dc-hours {
+    font-size: 0.68rem;
+  }
+}

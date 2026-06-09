@@ -1,10 +1,14 @@
 from datetime import timedelta
-from django.contrib.auth import get_user_model
+from io import BytesIO
+from pathlib import Path
+
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core import mail
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.utils import timezone
-from pathlib import Path
+from PIL import Image
 
 from accounts.models import MemberProfile, UserRole
 from audit.services import log_audit_event
@@ -17,6 +21,12 @@ from cms.models import Announcement, Event, WeeklyBook
 from notifications.models import NotificationKind, UserNotification
 
 User = get_user_model()
+
+def _signup_test_photo():
+    buf = BytesIO()
+    Image.new("RGB", (8, 8), color="red").save(buf, format="PNG")
+    buf.seek(0)
+    return SimpleUploadedFile("avatar.png", buf.read(), content_type="image/png")
 
 
 @override_settings(RATELIMIT_ENABLE=False)
@@ -48,6 +58,7 @@ class MemberSignUpTests(TestCase):
             "address": "Rruga Test 1",
             "trap_field": "",
             "accept_terms": "on",
+            "photo": _signup_test_photo(),
         }
         r = self.client.post("/regjistrohu/", data, follow=False)
         self.assertEqual(r.status_code, 302)
@@ -58,6 +69,7 @@ class MemberSignUpTests(TestCase):
         mp = u.member_profile
         self.assertTrue(mp.member_no.startswith("M"))
         self.assertEqual(mp.full_name, "Test User")
+        self.assertTrue(bool(mp.photo))
         self.assertTrue(
             UserNotification.objects.filter(
                 user=self.staff,
@@ -76,9 +88,10 @@ class MemberSignUpTests(TestCase):
             "date_of_birth": "1995-05-15",
             "national_id": "BOT999",
             "place_of_birth": "Tiranë",
-            "address": "X",
+            "address": "Rruga Bot 12",
             "trap_field": "http://spam.com",
             "accept_terms": "on",
+            "photo": _signup_test_photo(),
         }
         r = self.client.post("/regjistrohu/", data)
         self.assertEqual(r.status_code, 302)
@@ -97,10 +110,64 @@ class MemberSignUpTests(TestCase):
             "place_of_birth": "Tirane",
             "address": "Rruga Test",
             "trap_field": "",
+            "photo": _signup_test_photo(),
         }
         r = self.client.post("/regjistrohu/", data)
         self.assertEqual(r.status_code, 200)
         self.assertFalse(User.objects.filter(email="terms_missing@test.com").exists())
+
+    def test_sign_up_rejects_duplicate_national_id(self):
+        existing = User.objects.create_user(
+            username="existing_member",
+            email="existing_member@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.MEMBER,
+        )
+        MemberProfile.objects.create(
+            user=existing,
+            full_name="Existing Member",
+            national_id="DUP123456X",
+            phone="0691111111",
+            address="Rruga Ekzistuese 1",
+            place_of_birth="Tiranë",
+        )
+        data = {
+            "email": "duplicate_id@test.com",
+            "password1": "K9#mP2$vLxQw!nR8tY",
+            "password2": "K9#mP2$vLxQw!nR8tY",
+            "full_name": "Duplicate ID",
+            "phone": "0692222222",
+            "date_of_birth": "1990-01-01",
+            "national_id": "dup123456x",
+            "place_of_birth": "Durres",
+            "address": "Rruga e Re 5",
+            "trap_field": "",
+            "accept_terms": "on",
+            "photo": _signup_test_photo(),
+        }
+        r = self.client.post("/regjistrohu/", data)
+        self.assertEqual(r.status_code, 200)
+        self.assertFalse(User.objects.filter(email="duplicate_id@test.com").exists())
+        self.assertContains(r, "të njëjtin ID", status_code=200)
+
+    def test_sign_up_allows_missing_photo(self):
+        data = {
+            "email": "no_photo@test.com",
+            "password1": "K9#mP2$vLxQw!nR8tY",
+            "password2": "K9#mP2$vLxQw!nR8tY",
+            "full_name": "No Photo",
+            "phone": "0693333333",
+            "date_of_birth": "1992-02-02",
+            "national_id": "NOPHOTO123X",
+            "place_of_birth": "Tiranë",
+            "address": "Rruga Pa Foto 3",
+            "trap_field": "",
+            "accept_terms": "on",
+        }
+        r = self.client.post("/regjistrohu/", data, follow=False)
+        self.assertEqual(r.status_code, 302)
+        u = User.objects.get(email="no_photo@test.com")
+        self.assertFalse(bool(u.member_profile.photo))
 
 
 class HealthzTests(TestCase):

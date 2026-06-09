@@ -17,6 +17,14 @@ _AUTH_CHECKBOX_CLASS = (
     "h-5 w-5 rounded-md border border-white/40 bg-white/10 text-brand-200 "
     "focus:ring-2 focus:ring-white/35"
 )
+_AUTH_FILE_CLASS = (
+    "mt-1 block w-full cursor-pointer rounded-xl border border-white/25 bg-white/90 px-3 py-2 "
+    "text-xs font-semibold text-slate-800 file:mr-3 file:rounded-lg file:border-0 "
+    "file:bg-brand-700 file:px-3 file:py-1.5 file:text-[11px] file:font-extrabold file:text-white "
+    "hover:file:bg-brand-800"
+)
+_SIGNUP_PHOTO_MAX_BYTES = 5 * 1024 * 1024
+_SIGNUP_PHOTO_TYPES = {"image/jpeg", "image/png", "image/webp"}
 
 
 class ContactForm(forms.Form):
@@ -128,10 +136,21 @@ class MemberSignUpForm(forms.Form):
             }
         ),
     )
+    photo = forms.ImageField(
+        label="Foto profili",
+        required=False,
+        widget=forms.FileInput(
+            attrs={
+                "class": _AUTH_FILE_CLASS,
+                "accept": "image/jpeg,image/png,image/webp",
+            }
+        ),
+    )
     national_id = forms.CharField(
         label="Nr. ID",
         max_length=32,
-        widget=forms.TextInput(attrs={"class": _AUTH_INPUT_CLASS}),
+        widget=forms.TextInput(attrs={"class": _AUTH_INPUT_CLASS, "autocomplete": "off"}),
+        error_messages={"required": "Numri i ID-së është i detyrueshëm për regjistrim."},
     )
     place_of_birth = forms.CharField(
         label="Vendlindja",
@@ -171,22 +190,91 @@ class MemberSignUpForm(forms.Form):
 
     def clean_email(self):
         email = (self.cleaned_data.get("email") or "").strip().lower()
+        if not email:
+            raise ValidationError("Shkruani adresën tuaj të email-it.")
         if len(email) > 150:
             raise ValidationError(
-                "Email-i është shumë i gjatë për përdorues në sistem (maks. 150 karaktere). "
-                "Përdorni një adresë më të shkurtër."
+                "Email-i është shumë i gjatë (maks. 150 karaktere). Përdorni një adresë më të shkurtër."
             )
         if User.objects.filter(email__iexact=email).exists():
-            raise ValidationError("Ekziston tashmë një llogari me këtë email.")
+            raise ValidationError(
+                "Ekziston tashmë një llogari me këtë email. Hyni me llogarinë ekzistuese ose përdorni një email tjetër."
+            )
+        if User.objects.filter(username__iexact=email).exists():
+            raise ValidationError(
+                "Ky email është i lidhur me një llogari ekzistuese. Provoni të hyni në vend që të regjistroheni përsëri."
+            )
         return email
 
+    def clean_photo(self):
+        photo = self.cleaned_data.get("photo")
+        if not photo:
+            return None
+        if photo.size > _SIGNUP_PHOTO_MAX_BYTES:
+            raise ValidationError("Fotoja është shumë e madhe. Maksimumi i lejuar është 5 MB.")
+        content_type = (getattr(photo, "content_type", "") or "").lower()
+        if content_type and content_type not in _SIGNUP_PHOTO_TYPES:
+            raise ValidationError("Formati i fotos nuk lejohet. Përdorni JPG, PNG ose WEBP.")
+        return photo
+
     def clean_national_id(self):
-        nid = (self.cleaned_data.get("national_id") or "").strip()
+        nid = (self.cleaned_data.get("national_id") or "").strip().upper()
         if not nid:
-            raise ValidationError("Kjo fushë është e detyrueshme.")
+            raise ValidationError("Numri i ID-së është i detyrueshëm për regjistrim.")
+        if len(nid) < 5:
+            raise ValidationError("Numri i ID-së duket i shkurtër. Kontrolloni që e keni shkruar saktë.")
         if MemberProfile.objects.filter(national_id__iexact=nid).exists():
-            raise ValidationError("Ky numër ID është i regjistruar tashmë.")
+            raise ValidationError(
+                "Me këtë numër ID ekziston tashmë një llogari. "
+                "Nuk lejohet krijimi i dy llogarive me të njëjtin ID. "
+                "Nëse keni llogari, hyrni me email-in tuaj."
+            )
         return nid
+
+    def clean_full_name(self):
+        name = (self.cleaned_data.get("full_name") or "").strip()
+        if not name:
+            raise ValidationError("Shkruani emrin dhe mbiemrin tuaj.")
+        if len(name) < 3:
+            raise ValidationError("Emri dhe mbiemri duhet të kenë të paktën 3 karaktere.")
+        return name
+
+    def clean_phone(self):
+        phone = (self.cleaned_data.get("phone") or "").strip()
+        if not phone:
+            raise ValidationError("Shkruani numrin e telefonit.")
+        digits = "".join(c for c in phone if c.isdigit())
+        if len(digits) < 8:
+            raise ValidationError("Numri i telefonit duket i pasaktë. Përdorni të paktën 8 shifra.")
+        return phone
+
+    def clean_date_of_birth(self):
+        dob = self.cleaned_data.get("date_of_birth")
+        if not dob:
+            raise ValidationError("Zgjidhni datëlindjen tuaj.")
+        today = timezone.localdate()
+        if dob > today:
+            raise ValidationError("Datëlindja nuk mund të jetë në të ardhmen.")
+        age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+        if age < 5:
+            raise ValidationError("Datëlindja duket e pasaktë për regjistrim anëtari.")
+        if age > 120:
+            raise ValidationError("Datëlindja duket e pasaktë. Kontrolloni vitin e lindjes.")
+        return dob
+
+    def clean_place_of_birth(self):
+        place = (self.cleaned_data.get("place_of_birth") or "").strip()
+        if not place:
+            raise ValidationError("Shkruani vendlindjen.")
+        return place
+
+    def clean_address(self):
+        address = (self.cleaned_data.get("address") or "").strip()
+        if not address:
+            raise ValidationError("Shkruani adresën e banimit.")
+        if len(address) < 5:
+            raise ValidationError("Adresa duket shumë e shkurtër. Shkruani rrugën dhe qytetin.")
+        return address
 
     def clean_signup_ts(self):
         raw = (self.cleaned_data.get("signup_ts") or "").strip()
@@ -202,22 +290,33 @@ class MemberSignUpForm(forms.Form):
 
     def clean_password1(self):
         p = self.cleaned_data.get("password1") or ""
+        if not p:
+            raise ValidationError("Shkruani një fjalëkalim.")
         if len(p) < 10:
             raise ValidationError("Fjalëkalimi duhet të ketë të paktën 10 karaktere.")
         if len(p) > 128:
-            raise ValidationError("Fjalëkalimi është shumë i gjatë.")
+            raise ValidationError("Fjalëkalimi është shumë i gjatë (maks. 128 karaktere).")
         if not any(c.isalpha() for c in p):
             raise ValidationError("Fjalëkalimi duhet të përmbajë të paktën një shkronjë.")
         if not any(c.isdigit() for c in p):
             raise ValidationError("Fjalëkalimi duhet të përmbajë të paktën një shifër (0–9).")
         return p
 
+    def clean_password2(self):
+        p2 = self.cleaned_data.get("password2") or ""
+        if not p2:
+            raise ValidationError("Përsëritni fjalëkalimin për konfirmim.")
+        return p2
+
     def clean(self):
         data = super().clean()
         p1 = data.get("password1")
         p2 = data.get("password2")
         if p1 and p2 and p1 != p2:
-            self.add_error("password2", "Fjalëkalimet nuk përputhen.")
+            self.add_error(
+                "password2",
+                "Fjalëkalimet nuk përputhen. Shkruani të njëjtin fjalëkalim në të dy fushat.",
+            )
         return data
 
 

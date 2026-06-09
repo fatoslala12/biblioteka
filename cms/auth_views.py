@@ -11,7 +11,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.paginator import Paginator
 from django.core.mail import EmailMultiAlternatives
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
@@ -166,7 +166,7 @@ def sign_up(request: HttpRequest):
         )
 
     if request.method == "POST":
-        form = MemberSignUpForm(request.POST)
+        form = MemberSignUpForm(request.POST, request.FILES)
         if form.is_valid():
             data = form.cleaned_data
             email = data["email"]
@@ -198,14 +198,22 @@ def sign_up(request: HttpRequest):
                         national_id=data["national_id"].strip(),
                         place_of_birth=data["place_of_birth"].strip(),
                         address=data["address"].strip(),
+                        photo=data.get("photo") or None,
                         status=MemberStatus.ACTIVE,
                         member_type=MemberType.STANDARD,
                     )
                     notify_staff_new_member_signup(member_profile=user.member_profile)
+            except IntegrityError:
+                messages.error(
+                    request,
+                    "Regjistrimi dështoi: email ose numri i ID-së është i regjistruar tashmë. "
+                    "Nuk lejohen dy llogari me të njëjtin ID ose email.",
+                )
+                return render(request, "cms/auth/sign_up.html", {"form": form})
             except Exception:
                 messages.error(
                     request,
-                    "Regjistrimi dështoi (p.sh. përdorues ekzistues). Provoni përsëri ose kontaktoni bibliotekën.",
+                    "Regjistrimi dështoi për shkak të një gabimi teknik. Provoni përsëri ose kontaktoni bibliotekën.",
                 )
                 return render(request, "cms/auth/sign_up.html", {"form": form})
 

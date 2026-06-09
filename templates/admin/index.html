@@ -752,6 +752,102 @@
       background: linear-gradient(90deg, #0d9488, #2dd4bf);
       box-shadow: 0 0 8px rgba(13,148,136,.25);
     }
+    .sl-analytics a.sl-metric-link { color: inherit; text-decoration: none; display: flex; width: 100%; }
+    .sl-analytics a.sl-metric-link:hover .sl-fines-card,
+    .sl-analytics a.sl-metric-link:hover .sl-reservations-pending-card {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 36px rgba(15,23,42,.12), 0 4px 12px rgba(15,23,42,.06) !important;
+    }
+    .sl-analytics .sl-kpi-icon {
+      width: 2.5rem; height: 2.5rem; border-radius: 0.75rem;
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-bottom: 0.55rem; font-size: 1rem;
+      background: linear-gradient(145deg, rgba(13,148,136,.1), rgba(13,148,136,.2));
+      color: #0d9488; box-shadow: inset 0 0 0 1px rgba(13,148,136,.12);
+    }
+    .sl-analytics .sl-fines-card .sl-kpi-icon {
+      background: linear-gradient(145deg, rgba(220,38,38,.1), rgba(220,38,38,.18));
+      color: #dc2626; box-shadow: inset 0 0 0 1px rgba(220,38,38,.12);
+    }
+    .sl-analytics .sl-copies-pie-card .sl-kpi-icon {
+      background: linear-gradient(145deg, rgba(245,158,11,.12), rgba(245,158,11,.22));
+      color: #d97706; box-shadow: inset 0 0 0 1px rgba(245,158,11,.15);
+    }
+    .sl-analytics .sl-reservations-pending-card .sl-kpi-icon {
+      background: linear-gradient(145deg, rgba(99,102,241,.1), rgba(99,102,241,.2));
+      color: #6366f1; box-shadow: inset 0 0 0 1px rgba(99,102,241,.12);
+    }
+    .sl-analytics .sl-pie-wrap {
+      position: relative; width: 148px; height: 148px; margin: 0.35rem auto 0;
+    }
+    .sl-analytics .sl-pie-wrap canvas { max-height: 148px !important; }
+    .sl-analytics .sl-pie-center {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; pointer-events: none;
+    }
+    .sl-analytics .sl-pie-total {
+      font-size: 1.35rem; font-weight: 900; color: #0f172a; line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .sl-analytics .sl-pie-sub {
+      font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #94a3b8; margin-top: 0.2rem;
+    }
+    .sl-analytics .sl-copies-legend {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 0.65rem 1rem;
+      margin-top: 0.65rem; font-size: 0.78rem; font-weight: 700; color: #64748b;
+    }
+    .sl-analytics .sl-copies-legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
+    .sl-analytics .sl-copies-legend .dot {
+      width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+    }
+    .sl-analytics .sl-top-table .sl-top-row-item {
+      display: grid;
+      grid-template-columns: 1.65rem minmax(0, 1fr) auto;
+      grid-template-rows: auto auto;
+      gap: 0.15rem 0.5rem;
+      align-items: center;
+      padding: 0.5rem 0.55rem;
+      border-radius: 12px;
+      margin-bottom: 3px;
+      transition: background .15s ease;
+    }
+    .sl-analytics .sl-top-table .sl-top-row-item:hover { background: rgba(13,148,136,.05); }
+    .sl-analytics .sl-top-table .sl-rank-badge {
+      grid-row: 1 / span 2;
+      width: 1.65rem; height: 1.65rem; min-width: 1.65rem;
+      border-radius: 0.55rem; display: inline-flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 900; color: #fff;
+      box-shadow: 0 4px 10px rgba(15,23,42,.1);
+    }
+    .sl-analytics .sl-top-table .sl-rank-1 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .sl-analytics .sl-top-table .sl-rank-2 { background: linear-gradient(135deg, #94a3b8, #64748b); }
+    .sl-analytics .sl-top-table .sl-rank-3 { background: linear-gradient(135deg, #d97706, #b45309); }
+    .sl-analytics .sl-top-table .sl-rank-4,
+    .sl-analytics .sl-top-table .sl-rank-5 { background: linear-gradient(135deg, #0d9488, #0f766e); }
+    .sl-analytics .sl-top-table .sl-top-title {
+      grid-column: 2; min-width: 0;
+      font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .sl-analytics .sl-top-table .sl-top-title a { color: inherit; }
+    .sl-analytics .sl-top-table .sl-top-title a:hover { color: #0d9488; }
+    .sl-analytics .sl-top-table .sl-top-count {
+      grid-column: 3; grid-row: 1 / span 2;
+      font-size: 0.82rem; font-weight: 900; color: #0d9488;
+      font-variant-numeric: tabular-nums; min-width: 1.5rem; text-align: right;
+    }
+    .sl-analytics .sl-top-table .sl-bar-wrap {
+      grid-column: 2; height: 8px; min-width: 0; width: 100%;
+      background: #e8eef5; border-radius: 999px; overflow: hidden;
+    }
+    .sl-analytics .sl-top-table .sl-empty {
+      text-align: center; color: #94a3b8; font-size: 0.85rem; font-weight: 600;
+      padding: 2rem 1rem;
+    }
+    .sl-analytics .sl-metric-cta {
+      font-size: 0.72rem; font-weight: 800; color: #0d9488 !important;
+      margin-top: 0.55rem; letter-spacing: 0.02em;
+    }
 
     /* User dropdown: premium + modern */
     #jazzy-navbar .dropdown-menu,
@@ -1452,33 +1548,45 @@
 
         <div class="row g-3 mb-4 sl-metrics-equal-row">
           <div class="col-md-4">
-            <div class="card sl-fines-card">
-              <div class="card-body">
-                <div class="sl-label"><i class="fas fa-file-invoice-dollar mr-1"></i> Gjoba të papaguara</div>
-                <div class="sl-num">{{ unpaid_fines_total|floatformat:0 }} €</div>
-                <div class="sl-delta">{{ unpaid_fines_members }} anëtarë me gjoba</div>
+            <a href="/admin/fines/fine/?status__exact=UNPAID" class="sl-metric-link">
+              <div class="card sl-fines-card">
+                <div class="card-body">
+                  <div class="sl-kpi-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                  <div class="sl-label">Gjoba të papaguara</div>
+                  <div class="sl-num">{{ unpaid_fines_total|floatformat:0 }} €</div>
+                  <div class="sl-delta">{{ unpaid_fines_members }} anëtarë me gjoba</div>
+                  <div class="sl-metric-cta">Shiko gjobat →</div>
+                </div>
               </div>
-            </div>
+            </a>
           </div>
           <div class="col-md-4">
             <div class="card sl-copies-pie-card">
               <div class="card-body text-center">
-                <div class="sl-label mb-2"><i class="fas fa-pie-chart mr-1"></i> Kopje — në huazim vs të lira</div>
-                <canvas id="chartCopies" height="140"></canvas>
-                <div class="d-flex justify-content-center gap-3 mt-2 small font-weight-600" style="color:#64748b;">
-                  <span><span class="d-inline-block rounded-circle" style="width:10px;height:10px;background:#22c55e;"></span> Të lira: {{ copies_available }}</span>
-                  <span><span class="d-inline-block rounded-circle" style="width:10px;height:10px;background:#0d9488;"></span> Në huazim: {{ copies_on_loan }}</span>
+                <div class="sl-kpi-icon mx-auto"><i class="fas fa-chart-pie"></i></div>
+                <div class="sl-label mb-1">Kopje — në huazim vs të lira</div>
+                <div class="sl-pie-wrap">
+                  <canvas id="chartCopies" height="148"></canvas>
+                  <div class="sl-pie-center">
+                    <div class="sl-pie-total">{{ copies_available|add:copies_on_loan }}</div>
+                    <div class="sl-pie-sub">kopje</div>
+                  </div>
+                </div>
+                <div class="sl-copies-legend">
+                  <span><span class="dot" style="background:#22c55e;"></span> Të lira: {{ copies_available }}</span>
+                  <span><span class="dot" style="background:#0d9488;"></span> Në huazim: {{ copies_on_loan }}</span>
                 </div>
               </div>
             </div>
           </div>
           <div class="col-md-4">
-            <a href="/admin/circulation/reservationrequest/" class="text-decoration-none">
+            <a href="/admin/circulation/reservationrequest/" class="sl-metric-link">
               <div class="card sl-reservations-pending-card">
                 <div class="card-body">
-                  <div class="sl-label"><i class="fas fa-inbox mr-1"></i> Rezervime në pritje</div>
+                  <div class="sl-kpi-icon"><i class="fas fa-inbox"></i></div>
+                  <div class="sl-label">Rezervime në pritje</div>
                   <div class="sl-num">{{ reservations_pending }}</div>
-                  <div class="sl-delta">Kliko për listën →</div>
+                  <div class="sl-metric-cta">Kliko për listën →</div>
                 </div>
               </div>
             </a>
@@ -1491,13 +1599,14 @@
               <div class="card-header py-2"><i class="fas fa-book-open mr-2 text-teal"></i> Top 15 librat më të huazuar</div>
               <div class="card-body p-2 sl-top-table">
                 {% for b in top_books_15 %}
-                <div class="d-flex align-items-center justify-content-between py-1 px-2 border-bottom border-light">
-                  <span class="text-truncate flex-grow-1 mr-2" title="{{ b.title }}"><a href="/admin/catalog/book/{{ b.id }}/change/" class="text-dark">{{ b.title|truncatechars:28 }}</a></span>
-                  <span class="small font-weight-bold text-nowrap">{{ b.total_loans }}</span>
-                  <div class="sl-bar-wrap ml-2" style="width:60px;"><div class="sl-bar-fill" style="width:{% widthratio b.total_loans top_books_15.0.total_loans 100 %}%;"></div></div>
+                <div class="sl-top-row-item">
+                  <span class="sl-rank-badge sl-rank-{% if forloop.counter <= 5 %}{{ forloop.counter }}{% else %}5{% endif %}">{{ forloop.counter }}</span>
+                  <div class="sl-top-title" title="{{ b.title }}"><a href="/admin/catalog/book/{{ b.id }}/change/">{{ b.title|truncatechars:32 }}</a></div>
+                  <span class="sl-top-count">{{ b.total_loans }}</span>
+                  <div class="sl-bar-wrap"><div class="sl-bar-fill" style="width:{% widthratio b.total_loans top_books_15.0.total_loans 100 %}%;"></div></div>
                 </div>
                 {% empty %}
-                <p class="text-muted small mb-0">Nuk ka të dhëna.</p>
+                <p class="sl-empty mb-0">Nuk ka të dhëna ende.</p>
                 {% endfor %}
               </div>
             </div>
@@ -1507,13 +1616,14 @@
               <div class="card-header py-2"><i class="fas fa-pen-fancy mr-2 text-teal"></i> Top 10 autorët më të lexuar</div>
               <div class="card-body p-2 sl-top-table">
                 {% for a in top_authors_10 %}
-                <div class="d-flex align-items-center justify-content-between py-1 px-2 border-bottom border-light">
-                  <span class="text-truncate flex-grow-1"><a href="/admin/catalog/author/{{ a.id }}/change/" class="text-dark">{{ a.name|truncatechars:24 }}</a></span>
-                  <span class="small font-weight-bold">{{ a.total_loans }}</span>
-                  <div class="sl-bar-wrap ml-2" style="width:50px;"><div class="sl-bar-fill" style="width:{% widthratio a.total_loans top_authors_10.0.total_loans 100 %}%;"></div></div>
+                <div class="sl-top-row-item">
+                  <span class="sl-rank-badge sl-rank-{% if forloop.counter <= 5 %}{{ forloop.counter }}{% else %}5{% endif %}">{{ forloop.counter }}</span>
+                  <div class="sl-top-title" title="{{ a.name }}"><a href="/admin/catalog/author/{{ a.id }}/change/">{{ a.name|truncatechars:28 }}</a></div>
+                  <span class="sl-top-count">{{ a.total_loans }}</span>
+                  <div class="sl-bar-wrap"><div class="sl-bar-fill" style="width:{% widthratio a.total_loans top_authors_10.0.total_loans 100 %}%;"></div></div>
                 </div>
                 {% empty %}
-                <p class="text-muted small mb-0">Nuk ka të dhëna.</p>
+                <p class="sl-empty mb-0">Nuk ka të dhëna ende.</p>
                 {% endfor %}
               </div>
             </div>
@@ -1523,13 +1633,14 @@
               <div class="card-header py-2"><i class="fas fa-users mr-2 text-teal"></i> Top 15 anëtarët më aktivë</div>
               <div class="card-body p-2 sl-top-table">
                 {% for m in top_members_15 %}
-                <div class="d-flex align-items-center justify-content-between py-1 px-2 border-bottom border-light">
-                  <span class="text-truncate flex-grow-1"><a href="/admin/accounts/memberprofile/{{ m.id }}/change/" class="text-dark">{{ m.full_name|default:m.member_no|truncatechars:22 }}</a></span>
-                  <span class="small font-weight-bold">{{ m.total_loans }}</span>
-                  <div class="sl-bar-wrap ml-2" style="width:50px;"><div class="sl-bar-fill" style="width:{% widthratio m.total_loans top_members_15.0.total_loans 100 %}%;"></div></div>
+                <div class="sl-top-row-item">
+                  <span class="sl-rank-badge sl-rank-{% if forloop.counter <= 5 %}{{ forloop.counter }}{% else %}5{% endif %}">{{ forloop.counter }}</span>
+                  <div class="sl-top-title" title="{{ m.full_name|default:m.member_no }}"><a href="/admin/accounts/memberprofile/{{ m.id }}/change/">{{ m.full_name|default:m.member_no|truncatechars:26 }}</a></div>
+                  <span class="sl-top-count">{{ m.total_loans }}</span>
+                  <div class="sl-bar-wrap"><div class="sl-bar-fill" style="width:{% widthratio m.total_loans top_members_15.0.total_loans 100 %}%;"></div></div>
                 </div>
                 {% empty %}
-                <p class="text-muted small mb-0">Nuk ka të dhëna.</p>
+                <p class="sl-empty mb-0">Nuk ka të dhëna ende.</p>
                 {% endfor %}
               </div>
             </div>
@@ -1705,8 +1816,8 @@
             options: {
               responsive: true,
               maintainAspectRatio: true,
-              plugins: { legend: { display: false } },
-              cutout: '68%'
+              plugins: { legend: { display: false }, tooltip: { enabled: true } },
+              cutout: '72%'
             }
           });
         }

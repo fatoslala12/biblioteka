@@ -357,12 +357,14 @@
       <h2><i class="fas fa-cloud-download-alt"></i> Backup</h2>
       <p class="sl-meta mb-3">
         {% if s.backup_caps.pg_dump_available %}
-          <i class="fas fa-check-circle text-success"></i> pg_dump i disponueshëm
-          {% if s.backup_caps.pg_dump_path %}<span class="text-muted">({{ s.backup_caps.pg_dump_path }})</span>{% endif %}
-          — backup SQL (.sql.gz)
+          <i class="fas fa-check-circle text-success"></i> <strong>pg_dump</strong> i disponueshëm
+          {% if s.backup_caps.pg_dump_version %}<span class="text-muted">— {{ s.backup_caps.pg_dump_version }}</span>{% endif %}
+          <br>
+          {% if s.backup_caps.pg_dump_path %}<span class="text-muted small">{{ s.backup_caps.pg_dump_path }}</span><br>{% endif %}
+          Backup SQL (.sql.gz). Nëse versioni i <code>pg_dump</code> nuk përputhet me serverin PostgreSQL, sistemi kalon automatikisht te <strong>dumpdata</strong> (.json.gz).
         {% else %}
-          <i class="fas fa-info-circle text-warning"></i> pg_dump nuk u gjet — përdoret <strong>dumpdata</strong> (.json.gz) automatikisht.
-          Pas redeploy me <code>postgresql-client</code>, backup SQL aktivizohet vetë.
+          <i class="fas fa-info-circle text-warning"></i> <code>pg_dump</code> nuk u gjet — përdoret <strong>dumpdata</strong> (.json.gz) automatikisht.
+          Pas redeploy me <code>postgresql-client-18</code> aktivizohet backup SQL.
         {% endif %}
       </p>
       <form method="post" class="mb-3">

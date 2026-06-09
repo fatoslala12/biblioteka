@@ -439,31 +439,66 @@ def _safe_backup_name(filename: str) -> Path | None:
     return path
 
 
-def _find_pg_dump() -> str | None:
-    candidates = ["pg_dump", "/usr/bin/pg_dump"]
-    for major in ("18", "17", "16", "15", "14"):
-        candidates.append(f"/usr/lib/postgresql/{major}/bin/pg_dump")
-    for candidate in candidates:
-        found = shutil.which(candidate)
-        if found:
-            return found
-        if Path(candidate).is_file():
-            return candidate
+def _pg_dump_candidates() -> list[tuple[int, str]]:
+    ranked: list[tuple[int, str]] = []
     pg_root = Path("/usr/lib/postgresql")
     if pg_root.is_dir():
-        for path in sorted(pg_root.glob("*/bin/pg_dump"), reverse=True):
-            if path.is_file():
-                return str(path)
-    return None
+        for path in pg_root.glob("*/bin/pg_dump"):
+            if not path.is_file():
+                continue
+            try:
+                major = int(path.parent.parent.name)
+            except (ValueError, IndexError):
+                major = 0
+            ranked.append((major, str(path)))
+    for fallback in (shutil.which("pg_dump"), "/usr/bin/pg_dump"):
+        if fallback and Path(fallback).is_file():
+            ranked.append((0, fallback))
+    ranked.sort(key=lambda item: item[0], reverse=True)
+    # Dedupe paths while keeping highest version first.
+    seen: set[str] = set()
+    out: list[tuple[int, str]] = []
+    for major, path in ranked:
+        if path in seen:
+            continue
+        seen.add(path)
+        out.append((major, path))
+    return out
+
+
+def _find_pg_dump() -> str | None:
+    candidates = _pg_dump_candidates()
+    return candidates[0][1] if candidates else None
+
+
+def _pg_dump_version(bin_path: str) -> str:
+    try:
+        proc = subprocess.run([bin_path, "--version"], capture_output=True, text=True, timeout=10)
+        return (proc.stdout or proc.stderr or "").strip()
+    except Exception:
+        return ""
+
+
+def _pg_dump_error_needs_fallback(stderr: str) -> bool:
+    msg = (stderr or "").lower()
+    return "version mismatch" in msg or "server version" in msg
 
 
 def backup_capabilities() -> dict:
-    pg_dump = _find_pg_dump()
+    candidates = _pg_dump_candidates()
+    pg_dump = candidates[0][1] if candidates else ""
     return {
         "pg_dump_available": bool(pg_dump),
-        "pg_dump_path": pg_dump or "",
+        "pg_dump_path": pg_dump,
+        "pg_dump_version": _pg_dump_version(pg_dump) if pg_dump else "",
+        "pg_dump_candidates": len(candidates),
         "fallback": "dumpdata",
     }
+
+
+def _write_dumpdata_backup(target: Path) -> str:
+    _backup_via_dumpdata(target)
+    return "dumpdata"
 
 
 def _backup_via_dumpdata(target: Path) -> None:
@@ -491,45 +526,48 @@ def create_full_backup(description: str = "") -> dict:
     suffix = f"-{desc_slug}" if desc_slug else ""
 
     if _is_postgresql():
-        pg_dump_bin = _find_pg_dump()
-        if pg_dump_bin:
+        db = connection.settings_dict
+        env = os.environ.copy()
+        if db.get("PASSWORD"):
+            env["PGPASSWORD"] = str(db["PASSWORD"])
+        cmd_base = [
+            "-h",
+            str(db.get("HOST") or "localhost"),
+            "-p",
+            str(db.get("PORT") or "5432"),
+            "-U",
+            str(db.get("USER") or "postgres"),
+            "-d",
+            str(db.get("NAME") or ""),
+            "--no-owner",
+            "--no-acl",
+        ]
+        method = ""
+        last_err = ""
+        for _major, pg_dump_bin in _pg_dump_candidates():
             filename = f"backup-full-{stamp}{suffix}.sql.gz"
             target = root / filename
-            db = connection.settings_dict
-            env = os.environ.copy()
-            if db.get("PASSWORD"):
-                env["PGPASSWORD"] = str(db["PASSWORD"])
-            cmd = [
-                pg_dump_bin,
-                "-h",
-                str(db.get("HOST") or "localhost"),
-                "-p",
-                str(db.get("PORT") or "5432"),
-                "-U",
-                str(db.get("USER") or "postgres"),
-                "-d",
-                str(db.get("NAME") or ""),
-                "--no-owner",
-                "--no-acl",
-            ]
+            cmd = [pg_dump_bin, *cmd_base]
             try:
                 proc = subprocess.run(cmd, capture_output=True, env=env, check=False, timeout=300)
             except subprocess.TimeoutExpired:
                 return {"ok": False, "error": "Backup-i zgjati shumë dhe u ndal."}
-            if proc.returncode != 0:
-                err = (proc.stderr or b"").decode("utf-8", errors="replace").strip()
-                return {"ok": False, "error": err or "pg_dump dështoi."}
-            with gzip.open(target, "wb") as fh:
-                fh.write(proc.stdout)
-            method = "pg_dump"
-        else:
+            if proc.returncode == 0:
+                with gzip.open(target, "wb") as fh:
+                    fh.write(proc.stdout)
+                method = "pg_dump"
+                break
+            last_err = (proc.stderr or b"").decode("utf-8", errors="replace").strip()
+            if not _pg_dump_error_needs_fallback(last_err):
+                return {"ok": False, "error": last_err or "pg_dump dështoi."}
+        if not method:
             filename = f"backup-full-{stamp}{suffix}.json.gz"
             target = root / filename
             try:
-                _backup_via_dumpdata(target)
+                method = _write_dumpdata_backup(target)
             except Exception as exc:
-                return {"ok": False, "error": f"Backup dumpdata dështoi: {exc}"}
-            method = "dumpdata"
+                detail = f" ({last_err})" if last_err else ""
+                return {"ok": False, "error": f"Backup dumpdata dështoi: {exc}{detail}"}
     elif _is_sqlite():
         import sqlite3
 

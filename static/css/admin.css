@@ -1729,10 +1729,19 @@ body.change-list #changelist .card-body.table-responsive {
     padding-bottom: 6px !important;
   }
 
+  /* AdminLTE: overlay (1037) mbulon sidebar-in nëse sidebar ≤ 1036 — e ngremë mbi overlay */
+  .sidebar-expand-lg.sidebar-open .sidebar-overlay {
+    z-index: 1037 !important;
+  }
+  .sidebar-expand-lg.sidebar-open #jazzy-sidebar,
+  .sidebar-expand-lg.sidebar-open .app-sidebar {
+    z-index: 1042 !important;
+  }
+
   /* Sidebar duhet mbi përmbajtjen kur hapet në mobile */
   body.sidebar-open #jazzy-sidebar,
   body.sidebar-open .main-sidebar {
-    z-index: 2100 !important;
+    z-index: 1042 !important;
     pointer-events: auto !important;
   }
   body.sidebar-open #jazzy-sidebar .sidebar-wrapper,
@@ -1753,12 +1762,12 @@ body.change-list #changelist .card-body.table-responsive {
     touch-action: manipulation;
   }
 
-  /* Sidebar mobile: mbi navbar dhe përmbajtje */
+  /* Sidebar mobile: mbi overlay, nën navbar (1045) */
   #jazzy-sidebar,
   .main-sidebar,
   body.dashboard #jazzy-sidebar,
   body.change-list #jazzy-sidebar {
-    z-index: 2100 !important;
+    z-index: 1042 !important;
     pointer-events: auto !important;
   }
   .app-main,

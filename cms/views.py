@@ -643,19 +643,23 @@ def contact(request):
                 },
                 request=request,
             )
-            try:
-                email_msg = EmailMultiAlternatives(
-                    subject=subject,
-                    body=text_body,
-                    from_email=None,
-                    to=["fatoslala12@gmail.com"],
-                    reply_to=[data["email"]],
-                )
-                email_msg.attach_alternative(html_body, "text/html")
-                email_msg.send(fail_silently=False)
-            except Exception:
-                # If SMTP isn't configured or fails, still keep the contact message saved.
-                pass
+            notify_to = getattr(settings, "CONTACT_NOTIFY_EMAIL", "").strip()
+            if not notify_to:
+                notify_to = getattr(settings, "EMAIL_HOST_USER", "").strip()
+            if notify_to:
+                try:
+                    email_msg = EmailMultiAlternatives(
+                        subject=subject,
+                        body=text_body,
+                        from_email=None,
+                        to=[notify_to],
+                        reply_to=[data["email"]],
+                    )
+                    email_msg.attach_alternative(html_body, "text/html")
+                    email_msg.send(fail_silently=False)
+                except Exception:
+                    # If SMTP isn't configured or fails, still keep the contact message saved.
+                    pass
             messages.success(request, "Mesazhi u dërgua. Faleminderit!")
             return redirect("cms:contact")
     else:

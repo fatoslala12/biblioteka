@@ -28,6 +28,15 @@
       inset: 0 auto 0 0 !important;
       z-index: 1036 !important;
     }
+    @media (max-width: 991.98px) {
+      /* Overlay AdminLTE (1037) mos të mbulojë linket e menysë */
+      body.dashboard #jazzy-sidebar {
+        z-index: 1042 !important;
+      }
+      body.dashboard .sidebar-overlay {
+        z-index: 1037 !important;
+      }
+    }
     body.dashboard #jazzy-sidebar .sidebar-wrapper {
       height: calc(100vh - 72px) !important;
       overflow-y: auto !important;

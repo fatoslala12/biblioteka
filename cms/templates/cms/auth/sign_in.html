@@ -18,10 +18,11 @@
       border: 1px solid rgba(255,255,255,.42); box-shadow: 0 10px 20px rgba(3, 30, 34, .2);
     }
     .sl-auth-card {
-      background: linear-gradient(165deg, rgba(255,255,255,.2), rgba(255,255,255,.11));
-      border: 1px solid rgba(255,255,255,.32);
-      box-shadow: 0 16px 34px rgba(7, 47, 56, .2);
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 16px 34px rgba(7, 47, 56, .18);
       animation: slCardIn .45s ease-out both;
+      color: #0f172a;
     }
     .sl-field {
       border: 1px solid rgba(255,255,255,.22);
@@ -61,12 +62,12 @@
       </div>
 
       <div class="sl-auth-card mx-auto mt-6 rounded-[24px] p-5 text-left backdrop-blur sm:p-6">
-        <h1 class="text-center text-3xl font-black tracking-tight">Mirë se vini!</h1>
-        <p class="mt-1 text-center text-sm text-white/90">Identifikohuni për të vazhduar</p>
+        <h1 class="text-center text-3xl font-black tracking-tight text-slate-900">Mirë se vini!</h1>
+        <p class="mt-1 text-center text-sm text-slate-600">Identifikohuni për të vazhduar</p>
         {% if messages %}
           <div class="mb-3 mt-3 space-y-2">
             {% for message in messages %}
-              <div class="rounded-2xl border border-white/30 bg-white/15 px-4 py-3 text-sm font-semibold text-white">
+              <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800">
                 {{ message }}
               </div>
             {% endfor %}
@@ -79,25 +80,25 @@
             <input type="hidden" name="next" value="{{ next }}">
           {% endif %}
           <div>
-            <label class="text-xs font-semibold uppercase tracking-wide text-white/95">Përdoruesi</label>
+            <label class="text-xs font-semibold uppercase tracking-wide text-slate-600">Përdoruesi</label>
             <input name="username" autocomplete="username" placeholder="Email ose username" class="sl-field mt-1.5 w-full px-4 py-2.5 text-sm font-medium" />
           </div>
           <div>
-            <label class="text-xs font-semibold uppercase tracking-wide text-white/95">Fjalëkalimi</label>
+            <label class="text-xs font-semibold uppercase tracking-wide text-slate-600">Fjalëkalimi</label>
             <input name="password" type="password" autocomplete="current-password" placeholder="Fjalëkalimi" class="sl-field mt-1.5 w-full px-4 py-2.5 text-sm font-medium" />
             <div class="mt-2 text-right">
-              <a href="{% url 'cms:forgot_password' %}" class="text-xs font-bold text-white underline decoration-white/45 underline-offset-2 hover:decoration-white">
+              <a href="{% url 'cms:forgot_password' %}" class="text-xs font-bold text-brand-700 underline decoration-brand-300 underline-offset-2 hover:decoration-brand-600">
                 Keni harruar fjalëkalimin?
               </a>
             </div>
           </div>
-          <button class="sl-cta relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl px-4 py-2.5 text-sm font-extrabold text-white">
+          <button class="relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-extrabold text-white shadow-md hover:bg-brand-700">
             Hyr tani
           </button>
         </form>
 
-        <p class="mt-4 text-center text-sm text-white/90">
-          <a href="{% url 'cms:sign_up' %}" class="text-sm font-extrabold underline decoration-white/40 underline-offset-2 hover:decoration-white">
+        <p class="mt-4 text-center text-sm text-slate-600">
+          <a href="{% url 'cms:sign_up' %}" class="text-sm font-extrabold text-brand-700 underline decoration-brand-300 underline-offset-2 hover:decoration-brand-600">
             Krijo llogari të re
           </a>
         </p>

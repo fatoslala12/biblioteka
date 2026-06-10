@@ -52,10 +52,8 @@
     </script>
     <script>
       (function () {
-        const saved = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const dark = saved ? saved === 'dark' : prefersDark;
-        document.documentElement.classList.toggle('dark', dark);
+        document.documentElement.classList.remove('dark');
+        try { localStorage.setItem('theme', 'light'); } catch (_) {}
       })();
     </script>
     <link rel="stylesheet" href="{% static 'css/skeleton.css' %}">
@@ -241,18 +239,6 @@
                   Logohu
                 </a>
               {% endif %}
-              <button id="themeToggle" type="button" class="sl-header-icon-btn p-2.5" aria-label="Ndrysho temën">
-                <svg id="sun" viewBox="0 0 24 24" class="h-5 w-5 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path>
-                  <path d="M12 2v2"></path><path d="M12 20v2"></path>
-                  <path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path>
-                  <path d="M2 12h2"></path><path d="M20 12h2"></path>
-                  <path d="m4.93 19.07 1.41-1.41"></path><path d="m17.66 6.34 1.41-1.41"></path>
-                </svg>
-                <svg id="moon" viewBox="0 0 24 24" class="h-5 w-5 dark:hidden" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 3a7.5 7.5 0 1 0 9 9 9 9 0 0 1-9-9Z"></path>
-                </svg>
-              </button>
             </div>
           </div>
         </div>
@@ -393,13 +379,25 @@
     <script src="{% static 'js/sl-ajax.js' %}"></script>
     <script>
       (function () {
-        const btn = document.getElementById('themeToggle');
-        if (btn) {
-          btn.addEventListener('click', function () {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-          });
+        function slScrollToTop() {
+          window.scrollTo({ top: 0, left: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
         }
+        window.slScrollToTop = slScrollToTop;
+        document.addEventListener('click', function (e) {
+          var a = e.target.closest('a[href]');
+          if (!a || a.target || a.download || a.hasAttribute('data-sl-no-scroll-top')) return;
+          var href = a.getAttribute('href') || '';
+          if (!href || href.charAt(0) === '#' || href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) return;
+          try {
+            var url = new URL(a.href, window.location.origin);
+            if (url.origin !== window.location.origin) return;
+            if (url.pathname !== window.location.pathname || url.search !== window.location.search) {
+              slScrollToTop();
+            }
+          } catch (_) {}
+        });
         /* Loading bar on navigation & form submit */
         const bar = document.getElementById('sl-loading-bar');
         if (bar) {
@@ -454,7 +452,12 @@
           document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape' && menu && menu.classList.contains('is-open')) closeMenu();
           });
-          menu && menu.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeMenu); });
+          menu && menu.querySelectorAll('a').forEach(function (a) {
+            a.addEventListener('click', function () {
+              closeMenu();
+              if (window.slScrollToTop) window.slScrollToTop();
+            });
+          });
         })();
         /* Keep nav active state correct after AJAX navigation */
         (function () {

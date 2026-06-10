@@ -76,6 +76,8 @@
           if (pushState) history.pushState({ path: path }, '', url);
           if (data.title) document.title = data.title;
           initAjaxLinks(c);
+          if (window.slScrollToTop) window.slScrollToTop();
+          else window.scrollTo(0, 0);
           document.dispatchEvent(new CustomEvent('sl:navigation', { detail: { path: path } }));
         }
       })

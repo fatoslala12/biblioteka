@@ -239,7 +239,6 @@ def sign_up(request: HttpRequest):
                 f"Mirë se erdhe! Nr. anëtari: {member_no}. Hyni më vonë me email-in tuaj si përdorues.",
             )
             return redirect("/anetar/")
-        _member_signup_errors_to_messages(request, form)
     else:
         form = MemberSignUpForm()
 

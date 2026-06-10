@@ -263,9 +263,21 @@ SIMPLE_JWT = {
 }
 
 EMAIL_FROM_ADDRESS = env("EMAIL_FROM_ADDRESS", default="").strip()
+EMAIL_FROM_NAME = env("EMAIL_FROM_NAME", default="Biblioteka Kamëz").strip()
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="").strip()
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="").strip()
 CONTACT_NOTIFY_EMAIL = env("CONTACT_NOTIFY_EMAIL", default="").strip()
+
+
+def format_from_email(address: str | None = None) -> str:
+    """Adresa From me emër shfaqjeje: 'Biblioteka Kamëz <email@...>'."""
+    addr = (address or EMAIL_FROM_ADDRESS or EMAIL_HOST_USER or "").strip()
+    name = (EMAIL_FROM_NAME or "").strip()
+    if not addr:
+        return name or "no-reply@localhost"
+    if name:
+        return f"{name} <{addr}>"
+    return addr
 OPS_REPORT_RECIPIENTS = [e.strip() for e in env.list("OPS_REPORT_RECIPIENTS", default=[]) if e.strip()]
 OPS_ALERT_OVERDUE_LOANS_THRESHOLD = env.int("OPS_ALERT_OVERDUE_LOANS_THRESHOLD", default=10)
 OPS_ALERT_OVERDUE_RESERVATIONS_THRESHOLD = env.int("OPS_ALERT_OVERDUE_RESERVATIONS_THRESHOLD", default=5)
@@ -292,10 +304,10 @@ if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
     EMAIL_PORT = env.int("EMAIL_PORT", default=587)
     EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
     EMAIL_USE_SSL = env.bool("EMAIL_USE_SSL", default=False)
-    DEFAULT_FROM_EMAIL = EMAIL_FROM_ADDRESS or EMAIL_HOST_USER
+    DEFAULT_FROM_EMAIL = format_from_email()
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-    DEFAULT_FROM_EMAIL = EMAIL_FROM_ADDRESS or "no-reply@localhost"
+    DEFAULT_FROM_EMAIL = format_from_email(EMAIL_FROM_ADDRESS or "no-reply@localhost")
 LOGIN_URL = "/hyr/"
 
 JAZZMIN_SETTINGS = {

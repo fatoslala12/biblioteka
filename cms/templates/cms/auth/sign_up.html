@@ -12,97 +12,108 @@
     body { background: #3c968f !important; }
     body > .min-h-full { background: transparent !important; }
     .sl-honeypot-field { position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;margin:0!important;padding:0!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;border:0!important; }
-    .sl-auth-shell { background:linear-gradient(145deg,#3c968f 0%,#358a83 48%,#2f7d77 100%); min-height:100vh; min-height:100dvh; }
-    .sl-auth-grid { background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px); background-size:28px 28px; }
-    .sl-signup-card {
-      background:linear-gradient(165deg,rgba(255,255,255,.22),rgba(255,255,255,.10));
-      border:1px solid rgba(255,255,255,.34);
-      box-shadow:0 20px 50px rgba(5,40,44,.22), inset 0 1px 0 rgba(255,255,255,.25);
-      backdrop-filter:blur(14px);
-      -webkit-backdrop-filter:blur(14px);
-      animation:slCardIn .45s ease-out both;
+    .sl-auth-shell { background: linear-gradient(180deg, #3c968f 0%, #358a83 100%); }
+    .sl-glass-main {
+      background: linear-gradient(160deg, rgba(255,255,255,.17), rgba(255,255,255,.08));
+      border: 1px solid rgba(255,255,255,.25);
+      box-shadow: 0 20px 44px rgba(2,8,23,.22);
+      animation: slCardIn .45s ease-out both;
     }
-    .sl-brand-logo { width:52px;height:52px;border-radius:14px;object-fit:cover;border:1px solid rgba(255,255,255,.45);box-shadow:0 8px 18px rgba(3,30,34,.18); }
-    .sl-section-title { font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.72); }
-    .sl-field-box {
-      border:1px solid rgba(255,255,255,.22);
-      background:rgba(255,255,255,.08);
-      border-radius:14px;
-      padding:.55rem .65rem;
-      transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    .sl-terms-card { border: 1px solid rgba(255,255,255,.28); background: linear-gradient(135deg, rgba(15,23,42,.30), rgba(255,255,255,.10)); }
+    .sl-brand-logo { width: 46px; height: 46px; border-radius: 14px; object-fit: cover; border: 1px solid rgba(255,255,255,.28); box-shadow: 0 8px 20px rgba(2,8,23,.2); }
+    .sl-glass-main input:not([type="checkbox"]):not([type="file"]), .sl-glass-main select, .sl-glass-main textarea {
+      border: 1px solid rgba(255,255,255,.3) !important;
+      background: rgba(255,255,255,.92) !important;
+      color: #0f172a !important;
+      font-weight: 600 !important;
+      border-radius: 12px !important;
+      padding: .58rem .75rem !important;
+      font-size: .92rem !important;
+      width: 100%;
+      margin-top: .35rem;
     }
-    .sl-field-box:focus-within {
-      border-color:rgba(255,255,255,.55);
-      background:rgba(255,255,255,.12);
-      box-shadow:0 0 0 3px rgba(255,255,255,.12);
+    .sl-glass-main input::placeholder, .sl-glass-main textarea::placeholder { color: #64748b !important; }
+    .sl-glass-main input[type="file"] {
+      margin-top: .35rem !important;
+      padding: .45rem .6rem !important;
+      font-size: .78rem !important;
     }
-    .sl-field-box.is-error { border-color:rgba(252,165,165,.75); box-shadow:0 0 0 3px rgba(248,113,113,.18); }
-    .sl-field-label { display:flex;align-items:center;gap:.35rem;font-size:11px;font-weight:700;color:rgba(255,255,255,.92); }
-    .sl-req { color:#fecaca;font-weight:800; }
-    .sl-field-hint { margin-top:.2rem;font-size:10px;color:rgba(255,255,255,.68);line-height:1.35; }
-    .sl-field-error { margin-top:.25rem;font-size:11px;font-weight:600;color:#fecaca;line-height:1.35; }
-    .sl-signup-card input:not([type="checkbox"]):not([type="file"]) {
-      width:100%;margin-top:.2rem;border:0!important;background:transparent!important;
-      color:#f8fafc!important;font-weight:600!important;font-size:.88rem!important;
-      padding:.2rem 0!important;outline:none!important;box-shadow:none!important;
+    .sl-glass-main input[type="file"]::file-selector-button {
+      margin-right: .5rem; border: 0; border-radius: 8px;
+      background: #3c968f; color: #fff; font-size: 10px; font-weight: 800;
+      padding: .35rem .55rem; cursor: pointer;
     }
-    .sl-signup-card input::placeholder { color:rgba(248,250,252,.45)!important; }
-    .sl-signup-card input[type="file"] {
-      width:100%;margin-top:.25rem;border:0!important;background:transparent!important;
-      color:#f8fafc!important;font-size:.75rem!important;padding:0!important;
+    .sl-field-has-error input:not([type="checkbox"]), .sl-field-has-error select, .sl-field-has-error textarea {
+      border-color: #f87171 !important;
+      box-shadow: 0 0 0 3px rgba(248,113,113,.22) !important;
     }
-    .sl-signup-card input[type="file"]::file-selector-button {
-      margin-right:.55rem;border:0;border-radius:8px;background:rgba(255,255,255,.92);
-      color:#2f7d77;font-size:10px;font-weight:800;padding:.35rem .55rem;cursor:pointer;
+    .sl-field-error {
+      margin-top: .3rem; font-size: 11px; font-weight: 600; color: #fecaca;
+      line-height: 1.35; display: flex; align-items: flex-start; gap: .35rem;
     }
-    .sl-auth-date-input { color-scheme:dark; }
-    .sl-personal-no-input { text-transform:uppercase; letter-spacing:.06em; font-variant-numeric:tabular-nums; }
-    .sl-avatar-wrap {
-      display:flex;align-items:center;gap:.75rem;border:1px dashed rgba(255,255,255,.35);
-      border-radius:14px;padding:.55rem .65rem;background:rgba(255,255,255,.06);
+    .sl-field-error::before { content: "•"; flex-shrink: 0; }
+    .sl-field-hint { margin-top: .25rem; font-size: 10px; color: rgba(255,255,255,.7); line-height: 1.35; }
+    .sl-errors-summary {
+      border: 1px solid rgba(252,165,165,.55);
+      background: rgba(127,29,29,.35);
+      border-radius: 14px;
+      padding: .65rem .85rem;
+      margin-bottom: .75rem;
+    }
+    .sl-errors-summary p { font-size: 12px; font-weight: 600; color: #fecaca; line-height: 1.4; }
+    .sl-photo-row {
+      display: flex; align-items: center; gap: .75rem;
+      border: 1px dashed rgba(255,255,255,.35); border-radius: 14px;
+      padding: .55rem .65rem; background: rgba(255,255,255,.06);
     }
     .sl-avatar-ring {
-      width:56px;height:56px;border-radius:999px;border:2px solid rgba(255,255,255,.55);
-      background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.08));
-      display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;
+      width: 52px; height: 52px; border-radius: 999px; border: 2px solid rgba(255,255,255,.5);
+      background: rgba(255,255,255,.12); display: flex; align-items: center; justify-content: center;
+      overflow: hidden; flex-shrink: 0;
     }
-    .sl-avatar-ring img { width:100%;height:100%;object-fit:cover; }
-    .sl-terms-card {
-      border:1px solid rgba(255,255,255,.24);
-      background:linear-gradient(135deg,rgba(15,23,42,.28),rgba(255,255,255,.08));
-      border-radius:14px;
-    }
+    .sl-avatar-ring img { width: 100%; height: 100%; object-fit: cover; }
     .sl-submit-btn {
-      background:linear-gradient(135deg,#ffffff 0%,#e7fffd 100%);
-      color:#2f7d77;font-weight:800;border:0;
-      box-shadow:0 10px 24px rgba(0,0,0,.16);
-      transition:transform .15s ease, box-shadow .2s ease;
+      background: #3c968f; color: #fff; font-weight: 800; border: 1px solid rgba(255,255,255,.25);
+      box-shadow: 0 10px 22px rgba(0,0,0,.14);
+      transition: transform .15s ease, filter .2s ease;
     }
-    .sl-submit-btn:hover { transform:translateY(-1px); box-shadow:0 14px 28px rgba(0,0,0,.2); }
-    @keyframes slCardIn { from{opacity:0;transform:translateY(12px) scale(.985)} to{opacity:1;transform:translateY(0) scale(1)} }
+    .sl-submit-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+    .sl-auth-date-input { color-scheme: light; }
+    .sl-personal-no-input { text-transform: uppercase; letter-spacing: .06em; font-variant-numeric: tabular-nums; }
+    @keyframes slCardIn { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
   </style>
 
-  <section class="sl-auth-shell sl-auth-grid relative flex items-center justify-center overflow-hidden px-3 py-3 text-white sm:px-4 sm:py-4">
-    <div class="absolute -left-16 top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
-    <div class="absolute -right-20 bottom-10 h-72 w-72 rounded-full bg-cyan-200/15 blur-3xl"></div>
+  <section class="sl-auth-shell relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-6 text-white sm:px-6">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(255,255,255,.14),transparent_40%),radial-gradient(circle_at_80%_30%,rgba(255,255,255,.10),transparent_35%)]"></div>
 
-    <div class="relative mx-auto w-full max-w-md">
-      <div class="text-center">
-        <div class="inline-flex items-center gap-2">
-          <img src="{% static 'img/logo_biblioteka.png' %}" alt="Logo Biblioteka" class="sl-brand-logo" />
-          <img src="{% static 'img/Logo_kamez.png' %}" alt="Logo Bashkia Kamëz" class="sl-brand-logo" onerror="this.style.display='none';" />
+    <div class="relative mx-auto w-full max-w-2xl text-center">
+      <div class="mx-auto inline-flex items-center gap-3">
+        <img src="{% static 'img/logo_biblioteka.png' %}" alt="Logo Biblioteka" class="sl-brand-logo" />
+        <img src="{% static 'img/Logo_kamez.png' %}" alt="Logo Bashkia Kamëz" class="sl-brand-logo" onerror="this.style.display='none';" />
+        <div class="text-left">
+          <div class="text-base font-extrabold tracking-tight">SMART LIBRARY</div>
+          <div class="text-xs font-semibold text-white/85">Sistemi i Menaxhimit të Bibliotekës</div>
         </div>
-        <h1 class="mt-2 text-2xl font-black tracking-tight">Krijo llogari</h1>
-        <p class="mt-0.5 text-xs text-white/80">Plotësoni të dhënat për anëtarësim në bibliotekë</p>
       </div>
 
-      <div class="sl-signup-card mt-3 rounded-[20px] p-3.5 sm:p-4">
+      <h1 class="mt-5 text-3xl font-black tracking-tight sm:text-4xl">Krijo llogari anëtari</h1>
+      <p class="mt-1 text-sm text-white/90">Regjistrim i shpejtë dhe i sigurt.</p>
+
+      <div class="sl-glass-main mx-auto mt-5 rounded-[22px] p-5 text-left backdrop-blur sm:p-6">
         {% if messages %}
           <div class="mb-3 space-y-1.5">
             {% for message in messages %}
-              <div role="alert" class="rounded-xl px-3 py-2 text-xs font-semibold {% if message.tags == 'error' %}border border-red-300/50 bg-red-500/25 text-white{% else %}border border-white/20 bg-white/10 text-white/95{% endif %}">
+              <div role="alert" class="rounded-xl px-3 py-2 text-xs font-semibold {% if message.tags == 'error' %}sl-errors-summary border-0{% else %}border border-white/20 bg-white/10 text-white/95{% endif %}">
                 {{ message }}
               </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% if form.non_field_errors %}
+          <div class="sl-errors-summary" role="alert">
+            {% for err in form.non_field_errors %}
+              <p>{{ err }}</p>
             {% endfor %}
           </div>
         {% endif %}
@@ -111,78 +122,76 @@
           {% csrf_token %}
           {{ form.signup_ts }}
 
-          <div class="sl-avatar-wrap">
+          <div class="sl-photo-row{% if form.photo.errors %} sl-field-has-error{% endif %}">
             <div class="sl-avatar-ring" aria-hidden="true">
-              <svg id="slAvatarPlaceholder" viewBox="0 0 24 24" class="h-7 w-7 text-white/75" fill="currentColor">
+              <svg id="slAvatarPlaceholder" viewBox="0 0 24 24" class="h-6 w-6 text-white/75" fill="currentColor">
                 <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-3.33 0-6 1.67-6 3.75V20h12v-2.25C18 15.67 15.33 14 12 14Z"/>
               </svg>
               <img id="slAvatarPreview" class="hidden" alt="Parapamje foto" />
             </div>
-            <div class="min-w-0 flex-1">
-              <label class="sl-field-label" for="{{ form.photo.id_for_label }}">{{ form.photo.label }} <span class="text-[10px] font-medium text-white/65">(opsionale)</span></label>
+            <div class="min-w-0 flex-1 text-left">
+              <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.photo.id_for_label }}">
+                {{ form.photo.label }} <span class="normal-case font-medium text-white/65">(opsionale)</span>
+              </label>
               {{ form.photo }}
               <p class="sl-field-hint">JPG, PNG ose WEBP · maks. 5 MB</p>
               {% if form.photo.errors %}<p class="sl-field-error">{{ form.photo.errors.0 }}</p>{% endif %}
             </div>
           </div>
 
-          <p class="sl-section-title pt-0.5">Të dhënat e llogarisë</p>
-
-          <div class="sl-field-box{% if form.email.errors %} is-error{% endif %}">
-            <label class="sl-field-label" for="{{ form.email.id_for_label }}">{{ form.email.label }} <span class="sl-req">*</span></label>
+          <div class="{% if form.email.errors %}sl-field-has-error{% endif %}">
+            <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
             {{ form.email }}
             {% if form.email.errors %}<p class="sl-field-error">{{ form.email.errors.0 }}</p>{% endif %}
           </div>
 
-          <div class="grid gap-2 sm:grid-cols-2">
-            <div class="sl-field-box{% if form.password1.errors %} is-error{% endif %}">
-              <label class="sl-field-label" for="{{ form.password1.id_for_label }}">{{ form.password1.label }} <span class="sl-req">*</span></label>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <div class="{% if form.password1.errors %}sl-field-has-error{% endif %}">
+              <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
               {{ form.password1 }}
               {% if form.password1.errors %}<p class="sl-field-error">{{ form.password1.errors.0 }}</p>{% endif %}
             </div>
-            <div class="sl-field-box{% if form.password2.errors %} is-error{% endif %}">
-              <label class="sl-field-label" for="{{ form.password2.id_for_label }}">{{ form.password2.label }} <span class="sl-req">*</span></label>
+            <div class="{% if form.password2.errors %}sl-field-has-error{% endif %}">
+              <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
               {{ form.password2 }}
               {% if form.password2.errors %}<p class="sl-field-error">{{ form.password2.errors.0 }}</p>{% endif %}
             </div>
           </div>
 
-          <p class="sl-section-title pt-0.5">Të dhënat personale</p>
-
-          <div class="sl-field-box{% if form.full_name.errors %} is-error{% endif %}">
-            <label class="sl-field-label" for="{{ form.full_name.id_for_label }}">{{ form.full_name.label }} <span class="sl-req">*</span></label>
+          <div class="{% if form.full_name.errors %}sl-field-has-error{% endif %}">
+            <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.full_name.id_for_label }}">{{ form.full_name.label }}</label>
             {{ form.full_name }}
             {% if form.full_name.errors %}<p class="sl-field-error">{{ form.full_name.errors.0 }}</p>{% endif %}
           </div>
 
-          <div class="grid gap-2 sm:grid-cols-2">
-            <div class="sl-field-box{% if form.phone.errors %} is-error{% endif %}">
-              <label class="sl-field-label" for="{{ form.phone.id_for_label }}">{{ form.phone.label }} <span class="sl-req">*</span></label>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <div class="{% if form.phone.errors %}sl-field-has-error{% endif %}">
+              <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
               {{ form.phone }}
               {% if form.phone.errors %}<p class="sl-field-error">{{ form.phone.errors.0 }}</p>{% endif %}
             </div>
-            <div class="sl-field-box{% if form.date_of_birth.errors %} is-error{% endif %}">
-              <label class="sl-field-label" for="{{ form.date_of_birth.id_for_label }}">{{ form.date_of_birth.label }} <span class="sl-req">*</span></label>
+            <div class="{% if form.date_of_birth.errors %}sl-field-has-error{% endif %}">
+              <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.date_of_birth.id_for_label }}">{{ form.date_of_birth.label }}</label>
               {{ form.date_of_birth }}
               {% if form.date_of_birth.errors %}<p class="sl-field-error">{{ form.date_of_birth.errors.0 }}</p>{% endif %}
             </div>
           </div>
 
-          <div class="sl-field-box{% if form.national_id.errors %} is-error{% endif %}">
-            <label class="sl-field-label" for="{{ form.national_id.id_for_label }}">{{ form.national_id.label }} <span class="sl-req">*</span></label>
+          <div class="{% if form.national_id.errors %}sl-field-has-error{% endif %}">
+            <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.national_id.id_for_label }}">{{ form.national_id.label }}</label>
             {{ form.national_id }}
             <p class="sl-field-hint">Formati: shkronjë · 8 shifra · shkronjë (si në kartën e identitetit)</p>
             {% if form.national_id.errors %}<p class="sl-field-error">{{ form.national_id.errors.0 }}</p>{% endif %}
           </div>
 
-          <div class="grid gap-2 sm:grid-cols-2">
-            <div class="sl-field-box{% if form.place_of_birth.errors %} is-error{% endif %}">
-              <label class="sl-field-label" for="{{ form.place_of_birth.id_for_label }}">{{ form.place_of_birth.label }} <span class="sl-req">*</span></label>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <div class="{% if form.place_of_birth.errors %}sl-field-has-error{% endif %}">
+              <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.place_of_birth.id_for_label }}">{{ form.place_of_birth.label }}</label>
               {{ form.place_of_birth }}
               {% if form.place_of_birth.errors %}<p class="sl-field-error">{{ form.place_of_birth.errors.0 }}</p>{% endif %}
             </div>
-            <div class="sl-field-box{% if form.address.errors %} is-error{% endif %}">
-              <label class="sl-field-label" for="{{ form.address.id_for_label }}">{{ form.address.label }} <span class="sl-req">*</span></label>
+            <div class="{% if form.address.errors %}sl-field-has-error{% endif %}">
+              <label class="text-[11px] font-semibold uppercase tracking-wide text-white/90" for="{{ form.address.id_for_label }}">{{ form.address.label }}</label>
               {{ form.address }}
               {% if form.address.errors %}<p class="sl-field-error">{{ form.address.errors.0 }}</p>{% endif %}
             </div>
@@ -190,39 +199,50 @@
 
           <div class="sl-honeypot-field" aria-hidden="true">{{ form.trap_field }}</div>
 
-          <div class="sl-terms-card p-2.5">
-            <div class="flex items-start gap-2">
-              <span class="mt-0.5 inline-flex h-7 w-7 items-center justify-center rounded-lg bg-white/15 ring-1 ring-white/30">
-                <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+          <div class="sl-terms-card rounded-xl p-3 shadow-sm{% if form.accept_terms.errors %} sl-field-has-error{% endif %}">
+            <div class="flex items-start gap-3">
+              <span class="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/15 ring-1 ring-white/30">
+                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
               </span>
               <div class="min-w-0">
-                <div class="text-[11px] font-extrabold text-white">Kushtet & privatësia</div>
-                <p class="mt-0.5 text-[10px] leading-snug text-white/80">Të dhënat përdoren vetëm për anëtarësim, verifikim dhe shërbime biblioteke.</p>
-                <button type="button" id="slTermsBtn" class="mt-1 text-[10px] font-extrabold underline decoration-white/40 underline-offset-2 hover:decoration-white">Lexo kushtet e plota</button>
+                <div class="text-xs font-extrabold text-white">Kushtet & Privatësia</div>
+                <p class="mt-1 text-[11px] leading-relaxed text-white/85">
+                  Duke vazhduar, pranoni që të dhënat (përfshirë numrin personal) përdoren vetëm për anëtarësim,
+                  verifikim, huazim/rezervim dhe komunikim shërbimi nga biblioteka.
+                </p>
+                <button type="button" id="slTermsBtn" class="mt-1.5 text-[11px] font-extrabold underline decoration-white/40 underline-offset-2 hover:decoration-white">
+                  Lexo kushtet e plota
+                </button>
               </div>
             </div>
-            <label for="{{ form.accept_terms.id_for_label }}" class="mt-1.5 flex items-start gap-2 text-[10px] font-semibold text-white/95">
+            <label for="{{ form.accept_terms.id_for_label }}" class="mt-2 flex items-start gap-2 text-[11px] font-semibold text-white/95">
               {{ form.accept_terms }}
               <span>{{ form.accept_terms.label }}</span>
             </label>
             {% if form.accept_terms.errors %}<p class="sl-field-error">{{ form.accept_terms.errors.0 }}</p>{% endif %}
           </div>
 
-          <button type="submit" class="sl-submit-btn inline-flex w-full items-center justify-center rounded-xl px-4 py-2.5 text-sm">
+          <button type="submit" class="sl-submit-btn inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm">
             Regjistrohu dhe hyr
           </button>
         </form>
 
-        <p class="mt-3 text-center text-xs text-white/85">
+        <p class="mt-4 text-center text-sm text-white/90">
           Ke tashmë llogari?
           <a href="{% url 'cms:sign_in' %}" class="font-extrabold underline decoration-white/40 underline-offset-2 hover:decoration-white">Hyr këtu</a>
         </p>
       </div>
 
-      <p class="mt-3 text-center text-[11px] text-white/75">
+      <div class="mt-6 text-xs text-white/80">
         <a href="/" class="font-semibold underline decoration-white/30 hover:decoration-white">Kthehu te faqja</a>
-        · © {% now "Y" %} Smart Library
-      </p>
+      </div>
+
+      <div class="mt-4 text-xs text-white/80">
+        © {% now "Y" %} Smart Library • Bashkia Kamëz
+      </div>
     </div>
   </section>
 
@@ -234,7 +254,7 @@
       </div>
       <div class="mt-4 space-y-2 text-sm text-white/90">
         <p>1) Të dhënat përdoren vetëm për funksionimin e bibliotekës dhe menaxhimin e anëtarësimit.</p>
-        <p>2) Numri personal ruhet për verifikim unik të anëtarit dhe parandalim dublikatash.</p>
+        <p>2) Numri personal ruhet për verifikim unik të anëtarit dhe parandalim dublikatash në sistem.</p>
         <p>3) Të dhënat nuk shpërndahen jashtë qëllimit të shërbimit, përveç rasteve të parashikuara me ligj.</p>
         <p>4) Mund të kërkoni korrigjim të të dhënave në sportel ose përmes administratorit.</p>
       </div>

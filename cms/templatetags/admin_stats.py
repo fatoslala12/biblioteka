@@ -164,6 +164,7 @@ def top_members_by_loans(limit=5):
 def top_books_by_loans(limit=5):
     return (
         Book.objects.filter(is_deleted=False)
+        .prefetch_related("authors")
         .annotate(total_loans=Count("copies__loans"))
         .filter(total_loans__gt=0)
         .order_by("-total_loans", "title")[:limit]

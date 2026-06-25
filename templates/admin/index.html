@@ -836,7 +836,27 @@
     .sl-analytics .sl-top-table .sl-rank-5 { background: linear-gradient(135deg, #0d9488, #0f766e); }
     .sl-analytics .sl-top-table .sl-top-title {
       grid-column: 2; min-width: 0;
+      display: flex; align-items: center; gap: 0.4rem;
       font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .sl-analytics .sl-top-table .sl-top-title a {
+      min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .sl-analytics .sl-top-table .sl-top-emoji {
+      flex-shrink: 0; font-size: 0.95rem; line-height: 1;
+    }
+    .sl-analytics .sl-top-table .sl-top-member-thumb {
+      width: 1.65rem; height: 1.65rem; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+      border: 1px solid rgba(13,148,136,.2);
+    }
+    .sl-analytics .sl-top-table .sl-top-member-thumb-fallback {
+      width: 1.65rem; height: 1.65rem; border-radius: 50%; flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, rgba(13,148,136,.18), rgba(13,148,136,.32));
+      color: #0d9488; font-weight: 800; font-size: 0.68rem;
+    }
+    .sl-dashboard .sl-top-row .sl-top-emoji {
+      margin-right: 0.25rem;
     }
     .sl-analytics .sl-top-table .sl-top-title a { color: inherit; }
     .sl-analytics .sl-top-table .sl-top-title a:hover { color: #0d9488; }
@@ -1477,10 +1497,10 @@
                                         <span class="sl-rank-badge sl-rank-{{ forloop.counter }}">{{ forloop.counter }}</span>
                                         <div class="min-w-0">
                                         <div class="font-weight-bold">
-                                            <a href="/admin/catalog/book/{{ book.id }}/change/" class="sl-stealth-link">{{ book.title }}</a>
+                                            <a href="/admin/catalog/book/{{ book.id }}/change/" class="sl-stealth-link"><span class="sl-top-emoji" aria-hidden="true">📖</span>{{ book.title }}</a>
                                         </div>
                                         <small class="text-muted">
-                                            {% if book.authors.first %}{{ book.authors.first.name }}{% else %}Pa autor{% endif %}
+                                            <span class="sl-top-emoji" aria-hidden="true">👤</span>{% if book.authors.first %}{{ book.authors.first.name }}{% else %}Pa autor{% endif %}
                                         </small>
                                         </div>
                                     </div>
@@ -1607,7 +1627,7 @@
                 {% for b in top_books_15 %}
                 <div class="sl-top-row-item">
                   <span class="sl-rank-badge sl-rank-{% if forloop.counter <= 5 %}{{ forloop.counter }}{% else %}5{% endif %}">{{ forloop.counter }}</span>
-                  <div class="sl-top-title" title="{{ b.title }}"><a href="/admin/catalog/book/{{ b.id }}/change/">{{ b.title|truncatechars:32 }}</a></div>
+                  <div class="sl-top-title" title="{{ b.title }}"><span class="sl-top-emoji" aria-hidden="true">📖</span><a href="/admin/catalog/book/{{ b.id }}/change/">{{ b.title|truncatechars:32 }}</a></div>
                   <span class="sl-top-count">{{ b.total_loans }}</span>
                   <div class="sl-bar-wrap"><div class="sl-bar-fill" style="width:{% widthratio b.total_loans top_books_15.0.total_loans 100 %}%;"></div></div>
                 </div>
@@ -1624,7 +1644,7 @@
                 {% for a in top_authors_10 %}
                 <div class="sl-top-row-item">
                   <span class="sl-rank-badge sl-rank-{% if forloop.counter <= 5 %}{{ forloop.counter }}{% else %}5{% endif %}">{{ forloop.counter }}</span>
-                  <div class="sl-top-title" title="{{ a.name }}"><a href="/admin/catalog/author/{{ a.id }}/change/">{{ a.name|truncatechars:28 }}</a></div>
+                  <div class="sl-top-title" title="{{ a.name }}"><span class="sl-top-emoji" aria-hidden="true">👤</span><a href="/admin/catalog/author/{{ a.id }}/change/">{{ a.name|truncatechars:28 }}</a></div>
                   <span class="sl-top-count">{{ a.total_loans }}</span>
                   <div class="sl-bar-wrap"><div class="sl-bar-fill" style="width:{% widthratio a.total_loans top_authors_10.0.total_loans 100 %}%;"></div></div>
                 </div>
@@ -1641,7 +1661,14 @@
                 {% for m in top_members_15 %}
                 <div class="sl-top-row-item">
                   <span class="sl-rank-badge sl-rank-{% if forloop.counter <= 5 %}{{ forloop.counter }}{% else %}5{% endif %}">{{ forloop.counter }}</span>
-                  <div class="sl-top-title" title="{{ m.full_name|default:m.member_no }}"><a href="/admin/accounts/memberprofile/{{ m.id }}/change/">{{ m.full_name|default:m.member_no|truncatechars:26 }}</a></div>
+                  <div class="sl-top-title" title="{{ m.full_name|default:m.member_no }}">
+                    {% if m.photo %}
+                      <img src="{{ m.photo.url }}" alt="" class="sl-top-member-thumb">
+                    {% else %}
+                      <span class="sl-top-member-thumb-fallback">{{ m.full_name|default:m.member_no|first|upper }}</span>
+                    {% endif %}
+                    <a href="/admin/accounts/memberprofile/{{ m.id }}/change/">{{ m.full_name|default:m.member_no|truncatechars:26 }}</a>
+                  </div>
                   <span class="sl-top-count">{{ m.total_loans }}</span>
                   <div class="sl-bar-wrap"><div class="sl-bar-fill" style="width:{% widthratio m.total_loans top_members_15.0.total_loans 100 %}%;"></div></div>
                 </div>

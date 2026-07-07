@@ -204,8 +204,9 @@ def _assign_next_hold_to_copy(copy: Copy) -> Hold | None:
     from catalog.models import Book
     from notifications.services import notify_member_hold_ready
 
-    bt = Book.objects.filter(pk=next_hold.book_id).values_list("title", flat=True).first() or "Libri"
-    notify_member_hold_ready(next_hold.member, book_title=bt, expires_at=next_hold.expires_at)
+    book_obj = Book.objects.filter(pk=next_hold.book_id).prefetch_related("authors").first()
+    bt = (getattr(book_obj, "title", "") or "") or "Libri"
+    notify_member_hold_ready(next_hold.member, book_title=bt, expires_at=next_hold.expires_at, book=book_obj)
     return next_hold
 
 
@@ -444,8 +445,9 @@ def place_hold(*, member_no: str, book_id: int) -> Hold:
         from catalog.models import Book
         from notifications.services import notify_member_hold_ready
 
-        bt = Book.objects.filter(pk=hold.book_id).values_list("title", flat=True).first() or "Libri"
-        notify_member_hold_ready(member, book_title=bt, expires_at=hold.expires_at)
+        book_obj = Book.objects.filter(pk=hold.book_id).prefetch_related("authors").first()
+        bt = (getattr(book_obj, "title", "") or "") or "Libri"
+        notify_member_hold_ready(member, book_title=bt, expires_at=hold.expires_at, book=book_obj)
     return hold
 
 

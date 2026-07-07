@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="sq">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ subject }}</title>
+  </head>
+  <body style="margin:0;padding:0;background:#e9f7f6;font-family:Inter,Segoe UI,Arial,sans-serif;color:#0f172a;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#e9f7f6;padding:24px 12px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="640" cellspacing="0" cellpadding="0" style="max-width:640px;width:100%;">
+            <tr>
+              <td style="padding:0 0 12px 0;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-radius:20px;overflow:hidden;box-shadow:0 18px 40px rgba(15,23,42,.12);">
+                  <!-- Header -->
+                  <tr>
+                    <td style="background:linear-gradient(90deg,#319088,#45c0ba);padding:22px 22px;">
+                      <div style="font-weight:900;font-size:17px;letter-spacing:-0.02em;color:#ffffff;">
+                        {{ library_name }}
+                      </div>
+                      <div style="opacity:.92;color:#ffffff;font-weight:700;font-size:12px;margin-top:4px;">
+                        Njoftim automatik për anëtarin
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Body -->
+                  <tr>
+                    <td style="background:#ffffff;padding:22px 22px;">
+                      <div style="font-weight:900;font-size:20px;margin:0 0 6px 0;">{{ title }}</div>
+
+                      <span style="display:inline-block;padding:5px 12px;border-radius:999px;background:{{ badge_bg }};color:{{ badge_color }};font-weight:900;font-size:12px;">
+                        {{ badge_text }}
+                      </span>
+
+                      <div style="font-size:14px;line-height:1.6;color:#0f172a;font-weight:600;margin-top:14px;">
+                        Përshëndetje <b>{{ member_name }}</b>,<br /><br />
+                        {{ intro }}
+                      </div>
+
+                      <!-- Book card -->
+                      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-top:18px;border:1px solid rgba(15,23,42,.08);border-radius:16px;background:linear-gradient(180deg,#f8fafc,#ffffff);">
+                        <tr>
+                          {% if cover_url %}
+                          <td width="96" valign="top" style="padding:14px 0 14px 14px;">
+                            <img src="{{ cover_url }}" alt="Kopertina" width="82" style="width:82px;height:auto;border-radius:10px;display:block;box-shadow:0 6px 16px rgba(15,23,42,.18);" />
+                          </td>
+                          {% endif %}
+                          <td valign="top" style="padding:14px 16px;">
+                            <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:#0d9488;">📖 Libri</div>
+                            <div style="font-size:16px;font-weight:900;color:#0f172a;margin-top:4px;line-height:1.35;">{{ book_title }}</div>
+                            {% if authors %}
+                              <div style="font-size:13px;font-weight:700;color:#475569;margin-top:4px;">✍️ {{ authors }}{% if publication_year %} · {{ publication_year }}{% endif %}</div>
+                            {% elif publication_year %}
+                              <div style="font-size:13px;font-weight:700;color:#475569;margin-top:4px;">{{ publication_year }}</div>
+                            {% endif %}
+
+                            <table role="presentation" cellspacing="0" cellpadding="0" style="margin-top:12px;">
+                              {% if has_pickup %}
+                              <tr>
+                                <td style="font-size:12px;font-weight:700;color:#64748b;padding:2px 14px 2px 0;">📅 Data e marrjes</td>
+                                <td style="font-size:12px;font-weight:900;color:#0f172a;padding:2px 0;">{{ pickup_date }}</td>
+                              </tr>
+                              {% endif %}
+                              {% if has_return %}
+                              <tr>
+                                <td style="font-size:12px;font-weight:700;color:#64748b;padding:2px 14px 2px 0;">📆 Data e dorëzimit</td>
+                                <td style="font-size:12px;font-weight:900;color:#0f172a;padding:2px 0;">{{ return_date }}</td>
+                              </tr>
+                              {% endif %}
+                              {% if has_expiry %}
+                              <tr>
+                                <td style="font-size:12px;font-weight:700;color:#64748b;padding:2px 14px 2px 0;">⏳ Afati për tërheqje</td>
+                                <td style="font-size:12px;font-weight:900;color:#b45309;padding:2px 0;">{{ expires_at }}</td>
+                              </tr>
+                              {% endif %}
+                            </table>
+
+                            {% if decision_reason %}
+                              <div style="margin-top:12px;padding:10px 12px;border-radius:12px;background:#fef2f2;border:1px solid rgba(153,27,27,.12);font-size:12px;font-weight:700;color:#991b1b;">
+                                💬 {{ decision_reason }}
+                              </div>
+                            {% endif %}
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- Note -->
+                      <div style="margin-top:16px;padding:12px 14px;border-radius:16px;background:rgba(20,184,166,.08);border:1px solid rgba(15,118,110,.12);">
+                        <div style="font-weight:900;color:#0f766e;font-size:12px;text-transform:uppercase;letter-spacing:.05em;">Kujdes</div>
+                        <div style="margin-top:6px;color:#475569;font-weight:700;font-size:12px;line-height:1.5;">
+                          {{ note }}
+                        </div>
+                      </div>
+
+                      <!-- CTA -->
+                      <div style="margin-top:18px;">
+                        <a href="{{ cta_url|default:'/anetar/' }}" style="display:inline-block;background:linear-gradient(135deg,#0f766e,#0d9488);color:#ffffff;text-decoration:none;font-weight:900;font-size:13px;padding:12px 18px;border-radius:999px;">
+                          {{ cta_text }} →
+                        </a>
+                      </div>
+
+                      <div style="margin-top:18px;font-size:12px;color:#64748b;font-weight:700;">
+                        Faleminderit,<br />
+                        <b>{{ library_name }}</b>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:10px 2px 0;color:#64748b;font-size:11px;font-weight:700;text-align:center;">
+                © {% now "Y" %} Smart Library — Biblioteka Kamëz
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

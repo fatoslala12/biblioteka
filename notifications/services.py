@@ -161,6 +161,21 @@ def notify_member_reservation_approved(req, reservation_id: int) -> None:
         link_url="/anetar/#member-reservations",
     )
 
+    def _email():
+        from notifications.emails import send_reservation_email
+
+        send_reservation_email(
+            u,
+            event="approved",
+            book=getattr(req, "book", None),
+            book_title=getattr(getattr(req, "book", None), "title", ""),
+            pickup_date=req.pickup_date,
+            return_date=req.return_date,
+            cta_url="/anetar/#member-reservations",
+        )
+
+    _safe(_email)
+
 
 def notify_member_reservation_rejected(req) -> None:
     u = getattr(req.member, "user", None)
@@ -177,8 +192,24 @@ def notify_member_reservation_rejected(req) -> None:
         link_url="/anetar/#member-reservations",
     )
 
+    def _email():
+        from notifications.emails import send_reservation_email
 
-def notify_member_hold_ready(member, *, book_title: str, expires_at) -> None:
+        send_reservation_email(
+            u,
+            event="rejected",
+            book=getattr(req, "book", None),
+            book_title=getattr(getattr(req, "book", None), "title", ""),
+            pickup_date=req.pickup_date,
+            return_date=req.return_date,
+            decision_reason=reason,
+            cta_url="/catalog/",
+        )
+
+    _safe(_email)
+
+
+def notify_member_hold_ready(member, *, book_title: str, expires_at, book=None) -> None:
     u = getattr(member, "user", None)
     if not u:
         return
@@ -190,8 +221,22 @@ def notify_member_hold_ready(member, *, book_title: str, expires_at) -> None:
         kind=NotificationKind.HOLD_READY_MEMBER,
         title=title,
         body=body,
-        link_url="/anetar/#member-active-loans",
+        link_url="/anetar/#member-ready-pickup",
     )
+
+    def _email():
+        from notifications.emails import send_reservation_email
+
+        send_reservation_email(
+            u,
+            event="ready",
+            book=book,
+            book_title=book_title,
+            expires_at=expires_at,
+            cta_url="/anetar/#member-ready-pickup",
+        )
+
+    _safe(_email)
 
 
 def notify_member_loan_active(member, *, book_title: str, due_at) -> None:

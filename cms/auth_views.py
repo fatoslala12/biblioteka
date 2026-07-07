@@ -342,16 +342,19 @@ def member_portal(request: HttpRequest):
     )
     requests_qs = (
         ReservationRequest.objects.select_related("book")
+        .prefetch_related("book__authors")
         .filter(member=member_profile)
         .order_by("-created_at")[:20]
     )
     ready_holds = (
         Hold.objects.select_related("book")
+        .prefetch_related("book__authors")
         .filter(member=member_profile, status=HoldStatus.READY_FOR_PICKUP)
         .order_by("expires_at")[:20]
     )
     ready_reservations = (
         Reservation.objects.select_related("book")
+        .prefetch_related("book__authors")
         .filter(member=member_profile, status=ReservationStatus.APPROVED, loan__isnull=True)
         .order_by("pickup_date", "created_at")[:20]
     )

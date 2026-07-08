@@ -992,26 +992,16 @@ class ReservationAdmin(admin.ModelAdmin):
 
     actions = None
 
-    def lookup_allowed(self, lookup, value, request):
-        if lookup in {"reservation_scope"}:
-            return True
-        return super().lookup_allowed(lookup, value, request)
-
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        scope = (request.GET.get("reservation_scope") or "").upper()
-        if not scope:
-            status_exact = (request.GET.get("status__exact") or "").upper()
-            if status_exact in ("APPROVED", "BORROWED", "EXPIRED", "CANCELLED"):
-                scope = status_exact
-            elif status_exact == "ALL":
-                scope = "ALL"
-            else:
-                scope = "APPROVED"
-        if scope == "ALL":
+        # Use status__exact / status__in so Django ChangeList consumes the params
+        # (custom keys like reservation_scope trigger IncorrectLookupParameters → ?e=1).
+        status_exact = (request.GET.get("status__exact") or "").upper()
+        status_in = (request.GET.get("status__in") or "").upper()
+        if status_exact in ("APPROVED", "BORROWED", "EXPIRED", "CANCELLED"):
+            return qs.filter(status=status_exact)
+        if status_in:
             return qs
-        if scope in ("APPROVED", "BORROWED", "EXPIRED", "CANCELLED"):
-            return qs.filter(status=scope)
         return qs.filter(status="APPROVED")
 
     @admin.display(description="Anëtari")
@@ -1263,16 +1253,13 @@ class ReservationAdmin(admin.ModelAdmin):
             "pickup_date": timezone.now().date(),
             "return_date": (timezone.now() + timezone.timedelta(days=7)).date(),
         }
-        current_scope = (request.GET.get("reservation_scope") or "").upper()
-        if not current_scope:
-            status_exact = (request.GET.get("status__exact") or "").upper()
-            if status_exact in ("APPROVED", "BORROWED", "EXPIRED", "CANCELLED"):
-                current_scope = status_exact
-            elif status_exact == "ALL":
-                current_scope = "ALL"
-            else:
-                current_scope = "APPROVED"
-        if current_scope not in ("APPROVED", "BORROWED", "EXPIRED", "CANCELLED", "ALL"):
+        status_exact = (request.GET.get("status__exact") or "").upper()
+        status_in = (request.GET.get("status__in") or "").upper()
+        if status_exact in ("APPROVED", "BORROWED", "EXPIRED", "CANCELLED"):
+            current_scope = status_exact
+        elif status_in:
+            current_scope = "ALL"
+        else:
             current_scope = "APPROVED"
         keep_keys = ("q", "o", "ot")
         base_params = {}
@@ -1281,10 +1268,19 @@ class ReservationAdmin(admin.ModelAdmin):
             if vals:
                 base_params[k] = vals
 
+        def apply_reservation_status(qp, scope):
+            qp.pop("status__exact", None)
+            qp.pop("status__in", None)
+            qp.pop("reservation_scope", None)
+            if scope == "ALL":
+                qp["status__in"] = ["APPROVED,BORROWED,EXPIRED,CANCELLED"]
+            else:
+                qp["status__exact"] = [scope]
+
         reservation_scope_urls = {}
         for scope in ("APPROVED", "BORROWED", "EXPIRED", "CANCELLED", "ALL"):
             qp = {k: list(v) for k, v in base_params.items()}
-            qp["reservation_scope"] = [scope]
+            apply_reservation_status(qp, scope)
             reservation_scope_urls[scope.lower()] = "?" + urlencode(qp, doseq=True)
         ctx = {
             "quick_res_form": self.QuickReservationForm(initial=initial),
@@ -1427,26 +1423,16 @@ class ReservationRequestAdmin(admin.ModelAdmin):
 
     actions = None
 
-    def lookup_allowed(self, lookup, value, request):
-        if lookup in {"request_scope"}:
-            return True
-        return super().lookup_allowed(lookup, value, request)
-
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        scope = (request.GET.get("request_scope") or "").upper()
-        if not scope:
-            status_exact = (request.GET.get("status__exact") or "").upper()
-            if status_exact in ("PENDING", "APPROVED", "REJECTED", "CANCELLED"):
-                scope = status_exact
-            elif status_exact == "ALL":
-                scope = "ALL"
-            else:
-                scope = "PENDING"
-        if scope == "ALL":
+        # Use status__exact / status__in so Django ChangeList consumes the params
+        # (custom keys like request_scope trigger IncorrectLookupParameters → ?e=1).
+        status_exact = (request.GET.get("status__exact") or "").upper()
+        status_in = (request.GET.get("status__in") or "").upper()
+        if status_exact in ("PENDING", "APPROVED", "REJECTED", "CANCELLED"):
+            return qs.filter(status=status_exact)
+        if status_in:
             return qs
-        if scope in ("PENDING", "APPROVED", "REJECTED", "CANCELLED"):
-            return qs.filter(status=scope)
         return qs.filter(status="PENDING")
 
     @admin.display(description="Anëtari")
@@ -1630,16 +1616,13 @@ class ReservationRequestAdmin(admin.ModelAdmin):
             "pickup_date": timezone.now().date(),
             "return_date": (timezone.now() + timezone.timedelta(days=7)).date(),
         }
-        current_scope = (request.GET.get("request_scope") or "").upper()
-        if not current_scope:
-            status_exact = (request.GET.get("status__exact") or "").upper()
-            if status_exact in ("PENDING", "APPROVED", "REJECTED", "CANCELLED"):
-                current_scope = status_exact
-            elif status_exact == "ALL":
-                current_scope = "ALL"
-            else:
-                current_scope = "PENDING"
-        if current_scope not in ("PENDING", "APPROVED", "REJECTED", "ALL"):
+        status_exact = (request.GET.get("status__exact") or "").upper()
+        status_in = (request.GET.get("status__in") or "").upper()
+        if status_exact in ("PENDING", "APPROVED", "REJECTED", "CANCELLED"):
+            current_scope = status_exact
+        elif status_in:
+            current_scope = "ALL"
+        else:
             current_scope = "PENDING"
         keep_keys = ("q", "o", "ot")
         base_params = {}
@@ -1648,10 +1631,19 @@ class ReservationRequestAdmin(admin.ModelAdmin):
             if vals:
                 base_params[k] = vals
 
+        def apply_request_status(qp, scope):
+            qp.pop("status__exact", None)
+            qp.pop("status__in", None)
+            qp.pop("request_scope", None)
+            if scope == "ALL":
+                qp["status__in"] = ["PENDING,APPROVED,REJECTED,CANCELLED"]
+            else:
+                qp["status__exact"] = [scope]
+
         request_scope_urls = {}
         for scope in ("PENDING", "APPROVED", "REJECTED", "ALL"):
             qp = {k: list(v) for k, v in base_params.items()}
-            qp["request_scope"] = [scope]
+            apply_request_status(qp, scope)
             request_scope_urls[scope.lower()] = "?" + urlencode(qp, doseq=True)
         ctx = {
             "quick_req_form": self.QuickReservationRequestForm(initial=initial),

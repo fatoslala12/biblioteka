@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib import messages
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.admin.views.main import ChangeList
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -17,6 +18,27 @@ from django.shortcuts import redirect
 from .models import MemberProfile, User
 
 
+class SoftFilterChangeList(ChangeList):
+    """Drop custom UI filter keys so Django does not raise IncorrectLookupParameters."""
+
+    custom_ignored = (
+        "user_status",
+        "user_role",
+        "user_scope",
+        "member_status",
+        "member_type_filter",
+        "member_scope",
+        "request_scope",
+        "reservation_scope",
+    )
+
+    def get_filters_params(self, params=None):
+        lookup_params = super().get_filters_params(params)
+        for key in self.custom_ignored:
+            lookup_params.pop(key, None)
+        return lookup_params
+
+
 @admin.register(User)
 class UserAdmin(DjangoUserAdmin):
     change_list_template = "admin/accounts/user/change_list.html"
@@ -27,6 +49,9 @@ class UserAdmin(DjangoUserAdmin):
     list_filter = ()
     search_fields = ("username", "email", "first_name", "last_name")
     actions = None
+
+    def get_changelist(self, request, **kwargs):
+        return SoftFilterChangeList
 
     def get_queryset(self, request):
         qs = super().get_queryset(request).select_related("member_profile")
@@ -247,6 +272,9 @@ class MemberProfileAdmin(admin.ModelAdmin):
     search_fields = ("member_no", "user__username", "full_name", "phone", "national_id", "user__email")
     actions = None
 
+    def get_changelist(self, request, **kwargs):
+        return SoftFilterChangeList
+
     def get_fields(self, request, obj=None):
         fields = list(super().get_fields(request, obj))
         if "email" in fields:
@@ -260,8 +288,16 @@ class MemberProfileAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        status = (request.GET.get("member_status") or "").strip().upper() or "ALL"
-        mtype = (request.GET.get("member_type_filter") or "").strip().upper() or "ALL"
+        status = (
+            request.GET.get("status__exact")
+            or request.GET.get("member_status")
+            or ""
+        ).strip().upper() or "ALL"
+        mtype = (
+            request.GET.get("member_type__exact")
+            or request.GET.get("member_type_filter")
+            or ""
+        ).strip().upper() or "ALL"
 
         # Backward compatibility for old quick scope links.
         legacy_scope = (request.GET.get("member_scope") or "").strip().upper()
@@ -333,23 +369,36 @@ class MemberProfileAdmin(admin.ModelAdmin):
         return custom + urls
 
     def changelist_view(self, request, extra_context=None):
-        status = (request.GET.get("member_status") or "").strip().upper() or "ALL"
-        mtype = (request.GET.get("member_type_filter") or "").strip().upper() or "ALL"
+        status = (request.GET.get("member_status") or request.GET.get("status__exact") or "").strip().upper() or "ALL"
+        mtype = (request.GET.get("member_type_filter") or request.GET.get("member_type__exact") or "").strip().upper() or "ALL"
         if status not in ("ALL", "ACTIVE", "SUSPENDED", "BLOCKED"):
             status = "ALL"
         if mtype not in ("ALL", "STANDARD", "STUDENT", "VIP"):
             mtype = "ALL"
+
+        def status_qs(st, mt):
+            qs = []
+            if st != "ALL":
+                qs.append(f"member_status={st}")
+            else:
+                qs.append("member_status=ALL")
+            if mt != "ALL":
+                qs.append(f"member_type_filter={mt}")
+            else:
+                qs.append("member_type_filter=ALL")
+            return "?" + "&".join(qs)
+
         status_options = [
-            {"display": "", "query_string": f"?member_status=ALL&member_type_filter={mtype}", "selected": status == "ALL"},
-            {"display": "Aktiv", "query_string": f"?member_status=ACTIVE&member_type_filter={mtype}", "selected": status == "ACTIVE"},
-            {"display": "Pezulluar", "query_string": f"?member_status=SUSPENDED&member_type_filter={mtype}", "selected": status == "SUSPENDED"},
-            {"display": "Bllokuar", "query_string": f"?member_status=BLOCKED&member_type_filter={mtype}", "selected": status == "BLOCKED"},
+            {"display": "", "query_string": status_qs("ALL", mtype), "selected": status == "ALL"},
+            {"display": "Aktiv", "query_string": status_qs("ACTIVE", mtype), "selected": status == "ACTIVE"},
+            {"display": "Pezulluar", "query_string": status_qs("SUSPENDED", mtype), "selected": status == "SUSPENDED"},
+            {"display": "Bllokuar", "query_string": status_qs("BLOCKED", mtype), "selected": status == "BLOCKED"},
         ]
         type_options = [
-            {"display": "", "query_string": f"?member_status={status}&member_type_filter=ALL", "selected": mtype == "ALL"},
-            {"display": "Standard", "query_string": f"?member_status={status}&member_type_filter=STANDARD", "selected": mtype == "STANDARD"},
-            {"display": "Student", "query_string": f"?member_status={status}&member_type_filter=STUDENT", "selected": mtype == "STUDENT"},
-            {"display": "VIP", "query_string": f"?member_status={status}&member_type_filter=VIP", "selected": mtype == "VIP"},
+            {"display": "", "query_string": status_qs(status, "ALL"), "selected": mtype == "ALL"},
+            {"display": "Standard", "query_string": status_qs(status, "STANDARD"), "selected": mtype == "STANDARD"},
+            {"display": "Student", "query_string": status_qs(status, "STUDENT"), "selected": mtype == "STUDENT"},
+            {"display": "VIP", "query_string": status_qs(status, "VIP"), "selected": mtype == "VIP"},
         ]
         ctx = {
             "quick_member_create_url": "/admin/accounts/memberprofile/shto-anetar/krijo/",

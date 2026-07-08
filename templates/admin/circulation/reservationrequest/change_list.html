@@ -167,7 +167,7 @@
           </div>
         </li>
         <li>
-          <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quickReqModal">Shto kërkesë</a>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quickReqModal">Shto kërkesë</button>
         </li>
       </ul>
     </div>
@@ -205,6 +205,17 @@
   </div>
   <script>
     (function () {
+      function cleanupStaleBackdrops() {
+        const hasOpenModal = !!document.querySelector(".modal.show");
+        if (!hasOpenModal) {
+          document.body.classList.remove("modal-open");
+          document.body.style.removeProperty("padding-right");
+          document.querySelectorAll(".modal-backdrop").forEach((el) => el.remove());
+        }
+      }
+      cleanupStaleBackdrops();
+      document.addEventListener("hidden.bs.modal", cleanupStaleBackdrops);
+
       const apiUrl = "{{ quick_req_api_url }}";
       const createUrl = "{{ quick_req_create_url }}";
       const nid = document.getElementById("id_national_id");

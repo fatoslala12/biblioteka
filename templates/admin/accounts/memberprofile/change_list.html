@@ -284,6 +284,17 @@
 
   <script>
     (function () {
+      function cleanupStaleBackdrops() {
+        const hasOpenModal = !!document.querySelector(".modal.show");
+        if (!hasOpenModal) {
+          document.body.classList.remove("modal-open");
+          document.body.style.removeProperty("padding-right");
+          document.querySelectorAll(".modal-backdrop").forEach((el) => el.remove());
+        }
+      }
+      cleanupStaleBackdrops();
+      document.addEventListener("hidden.bs.modal", cleanupStaleBackdrops);
+
       const createUrl = "{{ quick_member_create_url }}";
       const submitBtn = document.getElementById("memberSubmit");
       const alertBox = document.getElementById("memberAlert");

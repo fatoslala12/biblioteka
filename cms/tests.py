@@ -400,13 +400,59 @@ class MemberPortalIntegrationTests(TestCase):
         r = self.client.get("/anetar/")
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "Libri Test Pickup")
-        self.assertContains(r, "Marrja:")
+        self.assertContains(r, "Rezervim i pranuar")
+
+    def test_member_portal_hides_approved_requests_from_requests_section(self):
+        self.client.force_login(self.user)
+        b_pending = Book.objects.create(title="Libri Pending Vetem", isbn="9780000000111")
+        b_approved = Book.objects.create(title="Libri Approved Jo Ne Kerkesa", isbn="9780000000222")
+        ReservationRequest.objects.create(
+            member=self.user.member_profile,
+            book=b_pending,
+            status=ReservationRequestStatus.PENDING,
+            pickup_date=timezone.localdate() + timedelta(days=1),
+            return_date=timezone.localdate() + timedelta(days=5),
+        )
+        ReservationRequest.objects.create(
+            member=self.user.member_profile,
+            book=b_approved,
+            status=ReservationRequestStatus.APPROVED,
+            pickup_date=timezone.localdate() + timedelta(days=1),
+            return_date=timezone.localdate() + timedelta(days=5),
+        )
+        r = self.client.get("/anetar/")
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "Libri Pending Vetem")
+        self.assertNotContains(r, "Libri Approved Jo Ne Kerkesa")
 
     def test_member_notifications_legacy_redirects(self):
         self.client.force_login(self.user)
         r = self.client.get("/anetar/njoftime/", follow=False)
         self.assertEqual(r.status_code, 302)
         self.assertTrue(r["Location"].startswith("/anetar/notifications/"))
+
+    def test_staff_member_profile_shows_ready_pickup_for_approved_reservation(self):
+        staff = User.objects.create_user(
+            username="staff_member_portal",
+            email="staff_member_portal@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.STAFF,
+            is_staff=False,
+            is_superuser=False,
+        )
+        self.client.force_login(staff)
+        b = Book.objects.create(title="Libri Pickup Ne Panel", isbn="9780000000333")
+        Reservation.objects.create(
+            member=self.user.member_profile,
+            book=b,
+            pickup_date=timezone.localdate() + timedelta(days=2),
+            return_date=timezone.localdate() + timedelta(days=9),
+            status=ReservationStatus.APPROVED,
+        )
+        r = self.client.get(f"/panel/members/{self.user.member_profile.id}/")
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "Libri Pickup Ne Panel")
+
 
 
 class StaffPanelNotificationsTests(TestCase):

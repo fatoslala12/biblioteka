@@ -153,6 +153,12 @@
     }
     .sl-member-photo-preview { width:68px; height:68px; border-radius:999px; object-fit:cover; border:1px solid rgba(49,145,137,.28); background:#f5fbfa; }
     .modal-backdrop.show { background:rgba(9,14,27,.42) !important; backdrop-filter:blur(14px) saturate(125%); -webkit-backdrop-filter:blur(14px) saturate(125%); }
+    @media (max-width: 767.98px) {
+      .modal-backdrop.show {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+    }
   </style>
 {% endblock %}
 

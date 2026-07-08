@@ -181,6 +181,12 @@
     </script>
     <script>
         (function () {
+            function hoistModalsToBody() {
+                document.querySelectorAll(".modal").forEach(function (modalEl) {
+                    if (!modalEl || modalEl.parentElement === document.body) return;
+                    document.body.appendChild(modalEl);
+                });
+            }
             function cleanupStaleBackdrops() {
                 var hasOpenModal = !!document.querySelector(".modal.show");
                 if (!hasOpenModal) {
@@ -190,10 +196,15 @@
                 }
             }
             if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", cleanupStaleBackdrops);
+                document.addEventListener("DOMContentLoaded", function () {
+                    hoistModalsToBody();
+                    cleanupStaleBackdrops();
+                });
             } else {
+                hoistModalsToBody();
                 cleanupStaleBackdrops();
             }
+            document.addEventListener("shown.bs.modal", cleanupStaleBackdrops);
             document.addEventListener("hidden.bs.modal", cleanupStaleBackdrops);
         })();
     </script>

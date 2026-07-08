@@ -608,3 +608,85 @@ class SendLibraryRemindersTests(TestCase):
             ).count(),
             1,
         )
+
+
+class CirculationCoreFlowTests(TestCase):
+    def setUp(self):
+        self.staff = User.objects.create_user(
+            username="staff_core",
+            email="staff_core@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.STAFF,
+            is_staff=True,
+        )
+        self.member_user = User.objects.create_user(
+            username="member_core",
+            email="member_core@test.com",
+            password="K9#mP2$vLxQw!nR8tY",
+            role=UserRole.MEMBER,
+        )
+        self.member = MemberProfile.objects.create(
+            user=self.member_user,
+            full_name="Member Core",
+            phone="0681111111",
+            national_id="CORE12345X",
+        )
+        self.book = Book.objects.create(title="Core Flow Book", isbn="9780000000099")
+        self.copy = Copy.objects.create(
+            book=self.book,
+            barcode="CORE-COPY-1",
+            status=CopyStatus.AVAILABLE,
+        )
+        LibraryPolicy.objects.get_or_create(name="default")
+
+    def test_checkout_and_return_roundtrip(self):
+        from circulation.services import checkout_copy, return_copy
+
+        loan = checkout_copy(
+            member_no=self.member.member_no,
+            copy_barcode=self.copy.barcode,
+            loaned_by=self.staff,
+        )
+        self.copy.refresh_from_db()
+        self.assertEqual(loan.status, LoanStatus.ACTIVE)
+        self.assertEqual(self.copy.status, CopyStatus.ON_LOAN)
+        self.assertTrue(
+            UserNotification.objects.filter(
+                user=self.member_user, kind=NotificationKind.LOAN_ACTIVE_MEMBER
+            ).exists()
+        )
+
+        returned = return_copy(copy_barcode=self.copy.barcode, returned_by=self.staff)
+        self.copy.refresh_from_db()
+        self.assertEqual(returned.status, LoanStatus.RETURNED)
+        self.assertEqual(self.copy.status, CopyStatus.AVAILABLE)
+        self.assertTrue(
+            UserNotification.objects.filter(
+                user=self.member_user, kind=NotificationKind.LOAN_RETURNED_MEMBER
+            ).exists()
+        )
+
+    def test_expire_ready_holds_releases_copy(self):
+        from circulation.models import Hold, HoldStatus
+        from circulation.services import _expire_ready_holds
+
+        hold = Hold.objects.create(
+            member=self.member,
+            book=self.book,
+            status=HoldStatus.READY_FOR_PICKUP,
+            position=1,
+            ready_at=timezone.now() - timedelta(days=2),
+            expires_at=timezone.now() - timedelta(hours=1),
+        )
+        self.copy.status = CopyStatus.ON_HOLD
+        self.copy.hold_for = self.member
+        self.copy.hold_expires_at = timezone.now() - timedelta(hours=1)
+        self.copy.save(update_fields=["status", "hold_for", "hold_expires_at", "updated_at"])
+
+        _expire_ready_holds(self.book.id)
+
+        hold.refresh_from_db()
+        self.copy.refresh_from_db()
+        self.assertEqual(hold.status, HoldStatus.EXPIRED)
+        self.assertEqual(self.copy.status, CopyStatus.AVAILABLE)
+        self.assertIsNone(self.copy.hold_for_id)

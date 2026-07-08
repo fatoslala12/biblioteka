@@ -254,6 +254,19 @@ def notify_member_loan_active(member, *, book_title: str, due_at) -> None:
         link_url="/anetar/#member-active-loans",
     )
 
+    def _email():
+        from notifications.emails import send_reservation_email
+
+        send_reservation_email(
+            u,
+            event="loan_active",
+            book_title=book_title,
+            return_date=due_at,
+            cta_url="/anetar/#member-active-loans",
+        )
+
+    _safe(_email)
+
 
 def notify_member_loan_returned(member, *, book_title: str) -> None:
     u = getattr(member, "user", None)
@@ -268,6 +281,18 @@ def notify_member_loan_returned(member, *, book_title: str) -> None:
         body=body,
         link_url="/anetar/",
     )
+
+    def _email():
+        from notifications.emails import send_reservation_email
+
+        send_reservation_email(
+            u,
+            event="loan_returned",
+            book_title=book_title,
+            cta_url="/anetar/",
+        )
+
+    _safe(_email)
 
 
 def notify_member_loan_renewed(member, *, book_title: str, new_due_at) -> None:
@@ -285,6 +310,19 @@ def notify_member_loan_renewed(member, *, book_title: str, new_due_at) -> None:
         link_url="/anetar/#member-active-loans",
     )
 
+    def _email():
+        from notifications.emails import send_reservation_email
+
+        send_reservation_email(
+            u,
+            event="loan_renewed",
+            book_title=book_title,
+            return_date=new_due_at,
+            cta_url="/anetar/#member-active-loans",
+        )
+
+    _safe(_email)
+
 
 def notify_member_loan_due_tomorrow(member, *, book_title: str, due_at) -> None:
     u = getattr(member, "user", None)
@@ -300,6 +338,7 @@ def notify_member_loan_due_tomorrow(member, *, book_title: str, due_at) -> None:
         body=body,
         link_url="/anetar/#member-active-loans",
     )
+    # Email for due-soon is handled by notify_members (cron) with audit dedup — avoid double send.
 
 
 def notify_member_reservation_pickup_tomorrow(member, *, book_title: str, pickup_date) -> None:
@@ -331,3 +370,47 @@ def notify_member_reservation_expired(member, *, book_title: str) -> None:
         body=body,
         link_url="/anetar/#member-reservations",
     )
+
+    def _email():
+        from notifications.emails import send_reservation_email
+
+        send_reservation_email(
+            u,
+            event="reservation_expired",
+            book_title=book_title,
+            cta_url="/catalog/",
+        )
+
+    _safe(_email)
+
+
+def notify_member_fine_created(member, *, amount, reason: str = "", book_title: str = "") -> None:
+    u = getattr(member, "user", None)
+    if not u:
+        return
+    amount_label = str(amount)
+    title = "Gjobë e re"
+    detail = (reason or "").strip() or "Pa arsye të detajuar."
+    body = f"Shuma: {amount_label} ALL. {detail}"
+    if book_title:
+        body = f"“{book_title}” — {body}"
+    notify_member_user(
+        u,
+        kind=NotificationKind.FINE_CREATED_MEMBER,
+        title=title,
+        body=body,
+        link_url="/anetar/#member-fines",
+    )
+
+    def _email():
+        from notifications.emails import send_reservation_email
+
+        send_reservation_email(
+            u,
+            event="fine_created",
+            book_title=book_title or "Llogaria juaj",
+            decision_reason=f"Shuma: {amount_label} ALL. {detail}",
+            cta_url="/anetar/#member-fines",
+        )
+
+    _safe(_email)

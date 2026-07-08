@@ -3,11 +3,13 @@ import json
 from django.contrib import admin
 from django.contrib import messages
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+from django.contrib.auth.password_validation import validate_password
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import JsonResponse
 from django.urls import path
+from django.utils.crypto import get_random_string
 from django.utils.html import format_html
 from django.utils import timezone
 from django.shortcuts import redirect
@@ -184,10 +186,37 @@ class UserAdmin(DjangoUserAdmin):
         except Exception:
             payload = {}
         raw = (payload.get("password") or "").strip()
-        new_password = raw or "12345678"
+        generated = False
+        if raw:
+            new_password = raw
+            try:
+                validate_password(new_password, user=obj)
+            except ValidationError as exc:
+                return JsonResponse(
+                    {"ok": False, "error": " ".join(exc.messages) if getattr(exc, "messages", None) else str(exc)},
+                    status=400,
+                )
+        else:
+            generated = True
+            new_password = None
+            last_error = "Nuk u gjenerua fjalëkalim i vlefshëm."
+            for _ in range(8):
+                candidate = get_random_string(14)
+                try:
+                    validate_password(candidate, user=obj)
+                    new_password = candidate
+                    break
+                except ValidationError as exc:
+                    last_error = " ".join(exc.messages) if getattr(exc, "messages", None) else str(exc)
+            if not new_password:
+                return JsonResponse({"ok": False, "error": last_error}, status=400)
         obj.set_password(new_password)
         obj.save(update_fields=["password"])
-        return JsonResponse({"ok": True, "username": obj.username, "password": new_password})
+        # Return password only when we generated it so staff can hand it to the member once.
+        resp = {"ok": True, "username": obj.username, "generated": generated}
+        if generated:
+            resp["password"] = new_password
+        return JsonResponse(resp)
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
@@ -215,8 +244,19 @@ class MemberProfileAdmin(admin.ModelAdmin):
         "open_profile_btn",
     )
     list_filter = ()
-    search_fields = ("member_no", "user__username", "full_name", "phone", "national_id")
+    search_fields = ("member_no", "user__username", "full_name", "phone", "national_id", "user__email")
     actions = None
+
+    def get_fields(self, request, obj=None):
+        fields = list(super().get_fields(request, obj))
+        if "email" in fields:
+            fields.remove("email")
+            # Place email near contact fields for staff creating members.
+            if "full_name" in fields:
+                fields.insert(fields.index("full_name") + 1, "email")
+            else:
+                fields.insert(0, "email")
+        return fields
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -355,6 +395,8 @@ class MemberProfileAdmin(admin.ModelAdmin):
             return JsonResponse({"ok": False, "error": "Email-i nuk është i vlefshëm."}, status=400)
         if User.objects.filter(email__iexact=email).exists():
             return JsonResponse({"ok": False, "error": "Ky email ekziston. Përdor një email tjetër."}, status=400)
+        if national_id and MemberProfile.objects.filter(national_id=national_id).exists():
+            return JsonResponse({"ok": False, "error": "Ky nr. ID ekziston. Përdor një tjetër."}, status=400)
         if member_type not in ("STANDARD", "STUDENT", "VIP"):
             member_type = "STANDARD"
         if status not in ("ACTIVE", "SUSPENDED", "BLOCKED"):
@@ -388,6 +430,12 @@ class MemberProfileAdmin(admin.ModelAdmin):
 
 
 class MemberProfileAdminForm(forms.ModelForm):
+    email = forms.EmailField(
+        required=True,
+        label="Email",
+        help_text="I detyrueshëm për hyrje, reset fjalëkalimi dhe njoftime.",
+    )
+
     class Meta:
         model = MemberProfile
         fields = "__all__"
@@ -396,7 +444,49 @@ class MemberProfileAdminForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # make user optional; it will be auto-created when empty
         self.fields["user"].required = False
-        self.fields["user"].help_text = "Nëse e lë bosh, krijohet automatikisht user MEMBER me password 12345678."
+        self.fields["user"].help_text = (
+            "Nëse e lë bosh, krijohet automatikisht user MEMBER me fjalëkalim të rastësishëm. "
+            "Vendosni fjalëkalimin nga lista e përdoruesve ose lëreni anëtarin të bëjë reset me email."
+        )
+        existing = ""
+        if self.instance and self.instance.pk and self.instance.user_id:
+            existing = (self.instance.user.email or "").strip()
+        self.fields["email"].initial = existing
+
+    def clean_email(self):
+        email = (self.cleaned_data.get("email") or "").strip().lower()
+        if not email:
+            raise ValidationError("Email-i është i detyrueshëm.")
+        qs = User.objects.filter(email__iexact=email)
+        if self.instance and self.instance.user_id:
+            qs = qs.exclude(pk=self.instance.user_id)
+        if qs.exists():
+            raise ValidationError("Ky email ekziston. Përdor një email tjetër.")
+        return email
+
+    def clean_national_id(self):
+        national_id = (self.cleaned_data.get("national_id") or "").strip()
+        if not national_id:
+            return ""
+        qs = MemberProfile.objects.filter(national_id=national_id)
+        if self.instance and self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise ValidationError("Ky nr. ID ekziston. Përdor një tjetër.")
+        return national_id
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        email = (self.cleaned_data.get("email") or "").strip().lower()
+        if commit and email:
+            if not instance.user_id:
+                instance.refresh_from_db()
+            if instance.user_id:
+                u = instance.user
+                if (u.email or "").strip().lower() != email:
+                    u.email = email
+                    u.save(update_fields=["email"])
+        return instance
 
 
 MemberProfileAdmin.form = MemberProfileAdminForm

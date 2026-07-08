@@ -160,13 +160,35 @@ def _ensure_member_can_borrow(member: MemberProfile, policy: PolicySnapshot) -> 
 
 
 def _expire_ready_holds(book_id: int) -> None:
+    """Mark expired ready holds and release any ON_HOLD copies tied to them."""
     now = timezone.now()
-    Hold.objects.filter(
+    expired_qs = Hold.objects.filter(
         book_id=book_id,
         status=HoldStatus.READY_FOR_PICKUP,
         expires_at__isnull=False,
         expires_at__lt=now,
-    ).update(status=HoldStatus.EXPIRED)
+    )
+    expired_member_ids = list(expired_qs.values_list("member_id", flat=True))
+    expired_qs.update(status=HoldStatus.EXPIRED)
+
+    if not expired_member_ids:
+        return
+
+    # Free copies still marked ON_HOLD for these members (same book).
+    stuck = Copy.objects.select_for_update().filter(
+        book_id=book_id,
+        status=CopyStatus.ON_HOLD,
+        hold_for_id__in=expired_member_ids,
+        is_deleted=False,
+    )
+    for copy in stuck:
+        # If hold_expires_at is still in the future, skip (another hold may own it).
+        if copy.hold_expires_at and copy.hold_expires_at >= now:
+            continue
+        copy.status = CopyStatus.AVAILABLE
+        copy.hold_for = None
+        copy.hold_expires_at = None
+        copy.save(update_fields=["status", "hold_for", "hold_expires_at", "updated_at"])
 
 
 def _assign_next_hold_to_copy(copy: Copy) -> Hold | None:
@@ -310,8 +332,9 @@ def return_copy(
     days_late = max(0, (now.date() - loan.due_at.date()).days)
     fine_amount = min(Decimal(days_late) * policy.fine_per_day, policy.fine_cap)
 
+    fine_obj = None
     if fine_amount > 0:
-        Fine.objects.update_or_create(
+        fine_obj, _ = Fine.objects.update_or_create(
             loan=loan,
             defaults={
                 "member": loan.member,
@@ -336,9 +359,26 @@ def return_copy(
             "copy_barcode": copy.barcode,
         },
     )
-    from notifications.services import notify_member_loan_returned
+    from notifications.services import notify_member_fine_created, notify_member_loan_returned
 
     notify_member_loan_returned(loan.member, book_title=copy.book.title)
+    if fine_obj is not None:
+        notify_member_fine_created(
+            loan.member,
+            amount=fine_obj.amount,
+            reason=fine_obj.reason or "Vonesë",
+            book_title=copy.book.title,
+        )
+        # Mark as notified so daily notify_members cron does not duplicate email.
+        _try_log(
+            target=fine_obj,
+            action_type="MEMBER_NOTIFICATION_FINE_CREATED",
+            actor=returned_by,
+            source_screen="system.notifications.member",
+            reason=f"fine:{fine_obj.id}:created",
+            severity=AuditSeverity.INFO,
+            metadata={"fine_id": fine_obj.id, "channel": "immediate"},
+        )
     return loan
 
 

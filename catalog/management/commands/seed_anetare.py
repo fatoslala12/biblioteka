@@ -121,5 +121,8 @@ class Command(BaseCommand):
             created += 1
 
         self.stdout.write(
-            self.style.SUCCESS(f"U shtuan {created} anëtarë. Fjalëkalimi i përdoruesve: 12345678")
+            self.style.SUCCESS(
+                f"U shtuan {created} anëtarë. Fjalëkalimet janë të rastësishëm — "
+                "vendoseni nga Admin → Përdorues ose me reset email."
+            )
         )

@@ -118,13 +118,14 @@ Konfigurime njoftimesh në `.env`:
 - `SMS_WEBHOOK_TOKEN`
 - `PUBLIC_BASE_URL` (p.sh. `https://biblioteka.example.al`, për CTA absolute në email)
 
-Auto-expire rezervimesh:
+Auto-expire rezervimesh + kujtesa ditore:
 
 ```bash
 .venv\Scripts\python manage.py expire_reservations
+.venv\Scripts\python manage.py send_library_reminders
 ```
 
-Windows scheduler helper script:
+Windows scheduler helper script (`expire_reservations` → `send_library_reminders` → `notify_members` → `daily_ops_report`):
 
 ```bash
 scripts\daily_ops_report.bat

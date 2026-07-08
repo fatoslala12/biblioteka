@@ -112,6 +112,66 @@ _EVENT_CONFIG = {
         "cta_text": "Provo një titull tjetër",
         "note": "Mund të provoni sërish me data të tjera ose një titull tjetër të disponueshëm.",
     },
+    "loan_active": {
+        "subject": "Huazimi filloi",
+        "title": "📖 Huazimi juaj u regjistrua",
+        "intro": "Libri i mëposhtëm është huazuar në emrin tuaj. Ju lutemi respektoni afatin e kthimit.",
+        "badge_text": "📗 Në huazim",
+        "badge_bg": "#e0e7ff",
+        "badge_color": "#3730a3",
+        "cta_text": "Shiko huazimet e mia",
+        "note": "Mund të renewoni/ktheni librin duke u paraqitur në bibliotekë.",
+    },
+    "loan_returned": {
+        "subject": "Libri u kthye",
+        "title": "✅ Kthimi u regjistrua",
+        "intro": "Faleminderit! Libri i mëposhtëm u regjistrua si i kthyer.",
+        "badge_text": "✔ I kthyer",
+        "badge_bg": "#dcfce7",
+        "badge_color": "#166534",
+        "cta_text": "Hap portalin",
+        "note": "Mund të rezervoni ose huazoni një titull tjetër nga katalogu.",
+    },
+    "loan_renewed": {
+        "subject": "Afati i huazimit u zgjat",
+        "title": "🔄 Afati juaj u rinovua",
+        "intro": "Afati i kthimit për librin e mëposhtëm u zgjat. Kontrolloni datën e re.",
+        "badge_text": "⏳ Afati i ri",
+        "badge_bg": "#fef3c7",
+        "badge_color": "#92400e",
+        "cta_text": "Shiko huazimet",
+        "note": "Numri i rinovimeve është i kufizuar sipas rregullave të bibliotekës.",
+    },
+    "loan_due_tomorrow": {
+        "subject": "Kujtesë: nesër është afati i kthimit",
+        "title": "⏰ Afati i kthimit është nesër",
+        "intro": "Ju kujtojmë që libri i mëposhtëm duhet të kthehet nesër në bibliotekë.",
+        "badge_text": "📌 Kujtesë",
+        "badge_bg": "#ffedd5",
+        "badge_color": "#9a3412",
+        "cta_text": "Shiko huazimet",
+        "note": "Kthimi me vonesë mund të sjellë gjobë.",
+    },
+    "fine_created": {
+        "subject": "Gjobë e re në llogarinë tuaj",
+        "title": "💶 U regjistrua një gjobë",
+        "intro": "Në profilin tuaj është regjistruar një gjobë. Ju lutemi shlyeni atë në bibliotekë.",
+        "badge_text": "🧾 Gjobë",
+        "badge_bg": "#fee2e2",
+        "badge_color": "#991b1b",
+        "cta_text": "Shiko gjobat",
+        "note": "Huazimet/rezervimet mund të bllokohen derisa gjoba të paguhet.",
+    },
+    "reservation_expired": {
+        "subject": "Rezervimi skadoi",
+        "title": "⌛ Rezervimi juaj skadoi",
+        "intro": "Rezervimi për titullin e mëposhtëm u mbyll automatikisht sepse libri nuk u mor në datën e caktuar.",
+        "badge_text": "Skaduar",
+        "badge_bg": "#f1f5f9",
+        "badge_color": "#475569",
+        "cta_text": "Rezervo sërish",
+        "note": "Mund të dërgoni një kërkesë të re nga katalogu nëse titulli është ende i interesuar.",
+    },
 }
 
 
@@ -127,7 +187,7 @@ def send_reservation_email(
     decision_reason: str = "",
     cta_url: str = "/anetar/#member-reservations",
 ) -> bool:
-    """Dërgon një email me dizajn për ngjarjet e rezervimit (pranim / gati / refuzim).
+    """Dërgon një email me dizajn për ngjarjet e rezervimit / huazimit / gjobës.
 
     Nuk hedh asnjë përjashtim jashtë funksionit; dështimet regjistrohen në log.
     """
@@ -144,6 +204,17 @@ def send_reservation_email(
         if not member_name:
             member_name = (getattr(user, "first_name", "") or getattr(user, "username", "") or "Anëtar").strip()
 
+        # Loan events use return_date as due date label in the shared template.
+        show_pickup = bool(pickup_date) and event in ("approved", "rejected")
+        show_return = bool(return_date) and event in (
+            "approved",
+            "rejected",
+            "loan_active",
+            "loan_renewed",
+            "loan_due_tomorrow",
+        )
+        show_expiry = bool(expires_at) and event == "ready"
+
         ctx = {
             "library_name": LIBRARY_NAME,
             "subject": cfg["subject"],
@@ -159,15 +230,18 @@ def send_reservation_email(
             "cover_url": _cover_url(book),
             "publication_year": getattr(book, "publication_year", None),
             "pickup_date": _fmt_date(pickup_date),
-            "return_date": _fmt_date(return_date),
+            "return_date": _fmt_date(return_date) if not hasattr(return_date, "hour") else _fmt_datetime(return_date),
             "expires_at": _fmt_datetime(expires_at) if expires_at else "",
-            "has_pickup": bool(pickup_date),
-            "has_return": bool(return_date),
-            "has_expiry": bool(expires_at),
+            "has_pickup": show_pickup,
+            "has_return": show_return,
+            "has_expiry": show_expiry,
             "decision_reason": (decision_reason or "").strip(),
             "cta_text": cfg["cta_text"],
             "cta_url": _absolute_url(cta_url),
         }
+        # Prefer datetime formatting for loan due dates.
+        if event in ("loan_active", "loan_renewed", "loan_due_tomorrow") and return_date:
+            ctx["return_date"] = _fmt_datetime(return_date) if hasattr(return_date, "hour") else _fmt_date(return_date)
 
         html_body = render_to_string("emails/reservation_notification.html", ctx)
 
@@ -180,13 +254,15 @@ def send_reservation_email(
         ]
         if ctx["authors"]:
             text_lines.append(f"Autori: {ctx['authors']}")
-        if event in ("approved", "rejected"):
+        if show_pickup:
             text_lines.append(f"Data e marrjes: {ctx['pickup_date']}")
-            text_lines.append(f"Data e dorëzimit: {ctx['return_date']}")
-        if event == "ready" and ctx["expires_at"]:
+        if show_return:
+            label = "Afati i kthimit" if event.startswith("loan_") else "Data e dorëzimit"
+            text_lines.append(f"{label}: {ctx['return_date']}")
+        if show_expiry and ctx["expires_at"]:
             text_lines.append(f"Afati për tërheqje: {ctx['expires_at']}")
         if ctx["decision_reason"]:
-            text_lines.append(f"Arsye: {ctx['decision_reason']}")
+            text_lines.append(f"Detaje: {ctx['decision_reason']}")
         text_lines += ["", cfg["note"], "", LIBRARY_NAME]
         text_body = "\n".join(text_lines)
 
@@ -200,5 +276,5 @@ def send_reservation_email(
         mail.send(fail_silently=False)
         return True
     except Exception:
-        logger.exception("Dërgimi i email-it të rezervimit dështoi (event=%s)", event)
+        logger.exception("Dërgimi i email-it dështoi (event=%s)", event)
         return False

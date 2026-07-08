@@ -24,7 +24,10 @@ class Command(BaseCommand):
         self._seed_activity(members, books_with_copies)
 
         self.stdout.write(self.style.SUCCESS("Demo data ready."))
-        self.stdout.write("Suggested logins for members (default password: 12345678):")
+        self.stdout.write(
+            "Suggested logins for members (fjalëkalimi është i rastësishëm — "
+            "vendoseni nga Admin → Përdorues → Reset, ose përdorni forgot-password):"
+        )
         for member in members:
             uname = member.user.username if member.user_id else "N/A"
             self.stdout.write(f"- {member.member_no} | {member.full_name} | username: {uname}")

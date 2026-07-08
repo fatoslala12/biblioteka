@@ -229,6 +229,28 @@ class FineAdmin(admin.ModelAdmin):
                 source_screen="admin.fine.change_form",
                 metadata={"fine_id": obj.id},
             )
+            try:
+                from notifications.services import notify_member_fine_created
+
+                book_title = ""
+                if getattr(obj, "loan_id", None) and getattr(obj.loan, "copy", None):
+                    book_title = getattr(getattr(obj.loan.copy, "book", None), "title", "") or ""
+                notify_member_fine_created(
+                    obj.member,
+                    amount=obj.amount,
+                    reason=obj.reason or "",
+                    book_title=book_title,
+                )
+                log_audit_event(
+                    target=obj,
+                    action_type="MEMBER_NOTIFICATION_FINE_CREATED",
+                    actor=request.user,
+                    source_screen="system.notifications.member",
+                    reason=f"fine:{obj.id}:created",
+                    metadata={"fine_id": obj.id, "channel": "immediate"},
+                )
+            except Exception:
+                pass
             return
         if before:
             changed = {}

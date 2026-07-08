@@ -2,6 +2,7 @@ import re
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.crypto import get_random_string
 from django.utils.text import slugify
 
 
@@ -88,9 +89,10 @@ class MemberProfile(models.Model):
         if self.user_id:
             return
         username = self._generate_username()
+        # Strong random password — staff sets/resets via admin; not a known shared default.
         user = User.objects.create_user(
             username=username,
-            password="12345678",
+            password=get_random_string(16),
             role=UserRole.MEMBER,
             is_staff=False,
         )
@@ -142,3 +144,11 @@ class MemberProfile(models.Model):
     class Meta:
         verbose_name = "Profil anëtari"
         verbose_name_plural = "Profile anëtarësh"
+        constraints = [
+            # Allow many blank IDs; non-empty values must be unique (desk checkout depends on it).
+            models.UniqueConstraint(
+                fields=["national_id"],
+                condition=~models.Q(national_id=""),
+                name="accounts_memberprofile_national_id_unique_when_set",
+            ),
+        ]

@@ -178,8 +178,8 @@
           <div id="passAlert" class="alert" style="display:none;"></div>
           <div class="mb-2 text-sm text-muted">Përdoruesi: <b id="passUserLabel">—</b></div>
           <label class="form-label">Fjalëkalimi i ri</label>
-          <input id="newPasswordInput" class="form-control" type="text" value="12345678" />
-          <small class="text-muted">Nëse e lë bosh, përdoret default <b>12345678</b>.</small>
+          <input id="newPasswordInput" class="form-control" type="text" value="" placeholder="Lëreni bosh për fjalëkalim të rastësishëm" autocomplete="new-password" />
+          <small class="text-muted">Nëse e lë bosh, gjenerohet automatikisht një fjalëkalim i fortë (shfaqet një herë).</small>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Mbyll</button>
@@ -209,7 +209,7 @@
           currentUserId = this.getAttribute("data-user-id");
           const uname = this.getAttribute("data-username") || "—";
           userLabel.textContent = uname;
-          passInput.value = "12345678";
+          passInput.value = "";
           alertBox.style.display = "none";
           if (bsModal) {
             bsModal.show();
@@ -238,11 +238,16 @@
             show("danger", data.error || "Nuk u ruajt fjalëkalimi.");
             return;
           }
-          show("success", "Fjalëkalimi u ruajt me sukses.");
-          window.setTimeout(() => {
-            if (bsModal) bsModal.hide();
-            else if (window.jQuery && window.jQuery.fn && window.jQuery.fn.modal) window.jQuery(modalEl).modal("hide");
-          }, 700);
+          if (data.generated && data.password) {
+            passInput.value = data.password;
+            show("success", "Fjalëkalimi u gjenerua. Kopjojeni tani: " + data.password);
+          } else {
+            show("success", "Fjalëkalimi u ruajt me sukses.");
+            window.setTimeout(() => {
+              if (bsModal) bsModal.hide();
+              else if (window.jQuery && window.jQuery.fn && window.jQuery.fn.modal) window.jQuery(modalEl).modal("hide");
+            }, 700);
+          }
         } catch (e) {
           show("danger", "Gabim i papritur.");
         } finally {

@@ -16,6 +16,7 @@ class NotificationKind(models.TextChoices):
     LOAN_DUE_TOMORROW_MEMBER = "loan_due_tomorrow_member", "Afati nesër (huazim)"
     RESERVATION_PICKUP_TOMORROW_MEMBER = "reservation_pickup_tomorrow_member", "Marrje nesër (rezervim)"
     RESERVATION_EXPIRED_MEMBER = "reservation_expired_member", "Rezervimi skadoi"
+    FINE_CREATED_MEMBER = "fine_created_member", "Gjobë e re"
 
 
 class UserNotification(models.Model):

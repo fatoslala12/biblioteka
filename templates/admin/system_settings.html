@@ -51,6 +51,13 @@
     .sl-ops .btn-teal:hover { color: #fff; background: linear-gradient(135deg, #0f766e, #115e59); }
     .sl-ops .sl-actions-row { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; }
     .sl-ops .sl-actions-row .form-control { min-width: 260px; }
+    .sl-ops .sl-error-log {
+      max-height: 420px; overflow: auto; margin: 0; padding: 1rem;
+      border-radius: 12px; background: #0f172a; color: #e2e8f0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .78rem; line-height: 1.45; white-space: pre-wrap; word-break: break-word;
+    }
+    .sl-ops .sl-error-log .err-line { display: block; }
     @media (max-width: 768px) {
       .sl-ops .sl-actions-row .form-control { min-width: 100%; }
     }
@@ -124,6 +131,27 @@
       </p>
       {% if s.web.pending_migration_labels %}
         <p class="sl-meta mb-0"><strong>Migrime:</strong> {{ s.web.pending_migration_labels|join:", " }}</p>
+      {% endif %}
+    </div>
+
+    <div class="sl-ops-section">
+      <h2><i class="fas fa-bug"></i> Loget e gabimeve</h2>
+      <p class="sl-meta mb-2">
+        Skedari: <code>{{ s.error_log.path }}</code>
+        {% if s.error_log.exists %} · Madhësia: <strong>{{ s.error_log.size_human }}</strong>{% endif %}
+        · Rrefresho faqen pasi të shfaqet një gabim.
+      </p>
+      {% if s.error_log.note %}
+        <p class="sl-meta mb-2">{{ s.error_log.note }}</p>
+      {% endif %}
+      {% if s.error_log.lines %}
+        <pre class="sl-error-log" id="slErrorLogBox">{% for line in s.error_log.lines %}<span class="err-line">{{ line }}</span>
+{% endfor %}</pre>
+      {% else %}
+        <div class="p-3 rounded" style="background:#f8fafc;border:1px solid rgba(15,23,42,.08);">
+          <span class="badge-status success">Nuk ka ERROR të regjistruar ende.</span>
+          <div class="sl-meta mt-2 mb-0">Kur të ndodhë një 500 / dështim email / gabim serveri, do të shfaqet këtu me traceback dhe path-in e faqes.</div>
+        </div>
       {% endif %}
     </div>
 

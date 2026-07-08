@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from django.conf import settings
@@ -18,6 +19,8 @@ from circulation.models import ReservationRequest, ReservationRequestStatus
 from cms.forms import ContactForm
 from cms.library_hours import library_clock_context
 from cms.models import Announcement, Event, WeeklyBook
+
+logger = logging.getLogger(__name__)
 
 
 def _is_ajax(request):
@@ -673,6 +676,13 @@ def page_not_found_view(request, exception=None):
 
 
 def server_error_view(request):
+    # Django already logs the traceback via django.request; add request context here.
+    logger.error(
+        "HTTP 500 path=%s method=%s user=%s",
+        getattr(request, "path", "?"),
+        getattr(request, "method", "?"),
+        getattr(getattr(request, "user", None), "username", "anon"),
+    )
     return render(request, "500.html", status=500)
 
 

@@ -136,5 +136,13 @@ Për ta planifikuar çdo ditë në Windows Task Scheduler:
 - Add arguments: `/c "C:\rruga\te\projekti\scripts\daily_ops_report.bat"`
 - Trigger: Daily (p.sh. 08:00)
 
+### Loget e gabimeve
+Pas nisjes së app-it krijohen:
+- `logs/app.log` — aktiviteti i përgjithshëm
+- `logs/errors.log` — gabime / 500 / traceback
+
+Në admin: **Settings** → seksioni **Loget e gabimeve** (fundi i `errors.log`).
+Në VPS/Dokploy: edhe loget e container-it (stdout). Opsionale: `LOG_DIR=/var/lib/biblioteka/logs` në `.env`.
+
 ### Kalimi në PostgreSQL (më vonë)
 Mjafton të vendosësh `DATABASE_URL` në `.env` dhe të bësh `migrate`.

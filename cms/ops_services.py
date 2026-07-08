@@ -27,6 +27,58 @@ def backup_dir() -> Path:
     return path
 
 
+def log_dir() -> Path:
+    raw = getattr(settings, "LOG_DIR", None)
+    if raw:
+        path = Path(raw)
+    else:
+        path = Path(settings.BASE_DIR) / "logs"
+    try:
+        path.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass
+    return path
+
+
+def recent_error_log_lines(*, max_lines: int = 80) -> dict:
+    """
+    Lexon fundin e logs/errors.log për pamjen në Admin → Settings.
+    Nuk ekspozon secret-e nga env; vetëm tekstin e skedarit të logut.
+    """
+    path = log_dir() / "errors.log"
+    result = {
+        "path": str(path),
+        "exists": path.exists(),
+        "size_human": "0 B",
+        "lines": [],
+        "note": "",
+    }
+    if not path.exists():
+        result["note"] = (
+            "Skedari errors.log ende nuk është krijuar "
+            "(nuk ka gabime deri tani, ose app-i nuk është rinisur pas deploy)."
+        )
+        return result
+    try:
+        size = path.stat().st_size
+        result["size_human"] = _human_size(size)
+        # Lexo vetëm fundin e skedarit për të shmangur ngarkimin e skedarëve të mëdhenj.
+        chunk_size = 120_000
+        with path.open("rb") as fh:
+            fh.seek(0, os.SEEK_END)
+            start = max(0, fh.tell() - chunk_size)
+            fh.seek(start)
+            raw = fh.read()
+        text = raw.decode("utf-8", errors="replace")
+        lines = [ln for ln in text.splitlines() if ln.strip()]
+        result["lines"] = lines[-max_lines:]
+        if not result["lines"]:
+            result["note"] = "Skedari ekziston por është bosh — nuk ka ERROR të regjistruar ende."
+    except OSError as exc:
+        result["note"] = f"Nuk u lexua log-u: {exc}"
+    return result
+
+
 def _bytes_to_gb(num: int | float) -> float:
     return round(float(num) / (1024 ** 3), 2)
 
@@ -799,4 +851,5 @@ def system_settings_context() -> dict:
         "backup_caps": backup_capabilities(),
         "storage_scan": scan_orphan_media(sample_limit=8),
         "storage_preview": storage_optimization_preview(),
+        "error_log": recent_error_log_lines(max_lines=100),
     }

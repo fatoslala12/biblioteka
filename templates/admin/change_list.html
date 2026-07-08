@@ -39,6 +39,21 @@
         body.change-list .app-content {
             overflow-x: auto !important;
         }
+        /* Modal stack hardening: prevent invisible overlays blocking clicks */
+        body.change-list .modal {
+            z-index: 2005 !important;
+        }
+        body.change-list .modal-backdrop {
+            z-index: 2000 !important;
+        }
+        body.change-list .modal.show .modal-dialog,
+        body.change-list .modal.show .modal-content {
+            pointer-events: auto !important;
+        }
+        body.change-list.modal-open .sidebar-overlay {
+            pointer-events: none !important;
+            opacity: 0 !important;
+        }
     </style>
     {% if cl.formset or action_form %}
         <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
@@ -163,6 +178,24 @@
     <script>
         window.filterInputLengthDefault = 0;
         window.filterInputLength = { {% for k,v in cl.model_admin.filter_input_length.items %}'{{ k }}': {{ v }},{% endfor %} };
+    </script>
+    <script>
+        (function () {
+            function cleanupStaleBackdrops() {
+                var hasOpenModal = !!document.querySelector(".modal.show");
+                if (!hasOpenModal) {
+                    document.body.classList.remove("modal-open");
+                    document.body.style.removeProperty("padding-right");
+                    document.querySelectorAll(".modal-backdrop").forEach(function (el) { el.remove(); });
+                }
+            }
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", cleanupStaleBackdrops);
+            } else {
+                cleanupStaleBackdrops();
+            }
+            document.addEventListener("hidden.bs.modal", cleanupStaleBackdrops);
+        })();
     </script>
     <script>
         (function () {

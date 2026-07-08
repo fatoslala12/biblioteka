@@ -140,6 +140,13 @@
         max-height:calc(100vh - 210px);
         overflow-y:auto;
       }
+      .sl-quick-member-modal .modal-footer {
+        position: sticky;
+        bottom: 0;
+        z-index: 3;
+        background: #fff;
+        border-top: 1px solid rgba(148, 163, 184, 0.28);
+      }
       .sl-quick-member-modal .modal-footer .btn {
         min-height:42px;
       }
@@ -276,6 +283,11 @@
 
       function csrfToken(){const m=document.cookie.match(/csrftoken=([^;]+)/);return m?decodeURIComponent(m[1]):"";}
       function show(kind,text){if(window.SLFeedback){window.SLFeedback.show(alertBox,kind,text);return;}alertBox.style.display="block";alertBox.className="alert alert-"+kind;alertBox.textContent=text;}
+      function isNationalIdValid(value){
+        const v = (value || "").trim().toUpperCase();
+        if (!v) return true;
+        return /^[A-Z][0-9]{8}[A-Z]$/.test(v);
+      }
 
       if (f.photo && photoPreview) {
         photoPreview.src = "";
@@ -292,6 +304,15 @@
       }
 
       submitBtn.addEventListener("click", async function () {
+        if (f.national_id) {
+          const normalizedId = (f.national_id.value || "").trim().toUpperCase();
+          f.national_id.value = normalizedId;
+          if (!isNationalIdValid(normalizedId)) {
+            show("warning", "Nr. ID duhet të jetë në formatin: shkronjë + 8 shifra + shkronjë.");
+            f.national_id.focus();
+            return;
+          }
+        }
         submitBtn.disabled = true;
         submitBtn.textContent = "Duke ruajtur...";
         try {

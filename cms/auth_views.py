@@ -376,6 +376,7 @@ def member_portal(request: HttpRequest):
                 "pickup_date": r.pickup_date,
                 "expires_at": None,
                 "source": "reservation",
+                "reservation_id": r.id,
             }
         )
     pickup_ready_items = sorted(

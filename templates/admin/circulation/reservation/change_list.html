@@ -239,6 +239,14 @@
       .sl-borrow-confirm-modal .modal-footer .btn {
         min-height: 42px;
       }
+      .sl-quick-res-modal .modal-footer,
+      .sl-borrow-confirm-modal .modal-footer {
+        position: sticky;
+        bottom: 0;
+        z-index: 3;
+        background: #fff;
+        border-top: 1px solid rgba(148, 163, 184, 0.28);
+      }
     }
     .sl-borrow-confirm-modal .modal-content { border-radius:16px; overflow:hidden; border:1px solid rgba(255,255,255,.65); box-shadow:0 22px 50px rgba(15,23,42,.25); }
     .sl-borrow-confirm-modal .modal-header { background:#319189; border-bottom:0; }
@@ -372,9 +380,31 @@
       function csrfToken(){const m=document.cookie.match(/csrftoken=([^;]+)/);return m?decodeURIComponent(m[1]):"";}
       function show(kind,text){if(window.SLFeedback){window.SLFeedback.show(alertBox,kind,text);return;}alertBox.style.display="block";alertBox.className="alert alert-"+kind;alertBox.textContent=text;}
       function setMember(m){if(!m){memberBox.innerHTML="—";return;} const av=m.photo_url?'<img src="'+m.photo_url+'" style="width:34px;height:34px;border-radius:999px;object-fit:cover;border:1px solid rgba(49,145,137,.25);" />':'<span style="width:34px;height:34px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;background:rgba(49,145,137,.14);color:#1f5f5a;font-weight:800;">'+((m.full_name||"A").substring(0,1).toUpperCase())+'</span>'; memberBox.innerHTML='<div style="display:flex;align-items:center;gap:8px;">'+av+'<div><b>'+(m.full_name||"")+'</b><div style="font-size:12px;opacity:.8;">'+(m.member_no||"")+'</div></div></div>'; }
+      function isNationalIdValid(value){
+        const v = (value || "").trim().toUpperCase();
+        return /^[A-Z][0-9]{8}[A-Z]$/.test(v);
+      }
+      function datesValid(){
+        if (!pickup.value || !ret.value) return false;
+        return ret.value >= pickup.value;
+      }
       async function refresh(){const p=new URLSearchParams({national_id:nid.value||"",book_id:book.value||"",pickup_date:pickup.value||"",return_date:ret.value||""}); try{const r=await fetch(apiUrl+"?"+p.toString(),{headers:{"X-Requested-With":"XMLHttpRequest"}}); const d=await r.json(); setMember(d.member); isbnBox.value=(d.book&&d.book.isbn)?d.book.isbn:"—"; if(d.error){show("warning",d.error); availBox.value="—"; return;} if(d.availability){const free=Number(d.availability.free||0); availBox.value=free>0?("I lirë ("+free+" kopje)"):"I zënë"; show(free>0?"success":"warning",free>0?"Titulli është i lirë për këto data.":"Titulli është i zënë në këto data.");} else {alertBox.style.display="none"; availBox.value="—";}}catch(e){show("danger","Gabim gjatë verifikimit.");}}
       [nid,book,pickup,ret].forEach((el)=>{el.addEventListener("change",refresh);el.addEventListener("blur",refresh);});
-      submitBtn.addEventListener("click", async function(){submitBtn.disabled=true;submitBtn.textContent="Duke ruajtur..."; try{const r=await fetch(createUrl,{method:"POST",headers:{"Content-Type":"application/json","X-CSRFToken":csrfToken(),"X-Requested-With":"XMLHttpRequest"},body:JSON.stringify({national_id:nid.value||"",book_id:book.value||"",pickup_date:pickup.value||"",return_date:ret.value||""})}); const d=await r.json(); if(!r.ok||!d.ok){show("danger",d.error||"Nuk u krijua rezervimi.");return;} show("success","Rezervimi u krijua me sukses."); window.setTimeout(()=>{window.location.href=d.redirect||window.location.href;},500);}catch(e){show("danger","Gabim i papritur.");} finally{submitBtn.disabled=false;submitBtn.textContent="Ruaj rezervimin";}});
+      submitBtn.addEventListener("click", async function(){
+        const normalizedId = (nid.value || "").trim().toUpperCase();
+        nid.value = normalizedId;
+        if (!isNationalIdValid(normalizedId)) {
+          show("warning", "Nr. ID duhet të jetë në formatin: shkronjë + 8 shifra + shkronjë.");
+          nid.focus();
+          return;
+        }
+        if (!datesValid()) {
+          show("warning", "Data e kthimit nuk mund të jetë para datës së marrjes.");
+          ret.focus();
+          return;
+        }
+        submitBtn.disabled=true;submitBtn.textContent="Duke ruajtur...";
+        try{const r=await fetch(createUrl,{method:"POST",headers:{"Content-Type":"application/json","X-CSRFToken":csrfToken(),"X-Requested-With":"XMLHttpRequest"},body:JSON.stringify({national_id:nid.value||"",book_id:book.value||"",pickup_date:pickup.value||"",return_date:ret.value||""})}); const d=await r.json(); if(!r.ok||!d.ok){show("danger",d.error||"Nuk u krijua rezervimi.");return;} show("success","Rezervimi u krijua me sukses."); window.setTimeout(()=>{window.location.href=d.redirect||window.location.href;},500);}catch(e){show("danger","Gabim i papritur.");} finally{submitBtn.disabled=false;submitBtn.textContent="Ruaj rezervimin";}});
 
       // Fancy confirm modal for Huazo action
       const confirmModalEl = document.getElementById("borrowConfirmModal");

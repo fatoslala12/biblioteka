@@ -624,11 +624,6 @@
             <span class="sl-hero-mobile-pill">💳 Pagesa</span>
             <span class="sl-hero-mobile-pill">🔐 Siguri</span>
           </div>
-          {% if staff_view_mode %}
-            <div class="mt-3 inline-flex rounded-full bg-white/15 px-3 py-1 text-xs font-extrabold text-white">
-              Pamje staf (view mode)
-            </div>
-          {% endif %}
         </div>
       </div>
     </div>
@@ -678,6 +673,10 @@
             <div class="sl-profile-view-card rounded-2xl p-4">
               <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Nr. telefoni</div>
               <div class="mt-1 text-sm font-extrabold">{{ member.phone|default:"—" }}</div>
+            </div>
+            <div class="sl-profile-view-card rounded-2xl p-4">
+              <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Email</div>
+              <div class="mt-1 text-sm font-extrabold">{{ member.user.email|default:"—" }}</div>
             </div>
             <div class="sl-profile-view-card rounded-2xl p-4">
               <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Datëlindja</div>
@@ -826,23 +825,24 @@
               targetId = reservationId ? `reservation-${reservationId}` : 'member-reservations';
             }
 
-            if (!targetId) return;
-            let target = document.getElementById(targetId) || document.getElementById(`member-${focus}`);
-            if (!target && focus === 'reservations') {
-              target = document.getElementById('member-ready-pickup') || document.getElementById('member-reservations');
+            if (targetId) {
+              let target = document.getElementById(targetId) || document.getElementById(`member-${focus}`);
+              if (!target && focus === 'reservations') {
+                target = document.getElementById('member-ready-pickup') || document.getElementById('member-reservations');
+              }
+              if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                target.classList.add('sl-deep-pulse');
+                window.setTimeout(() => target.classList.remove('sl-deep-pulse'), 2200);
+
+                // Clean query params after navigation so shared URL stays neat.
+                const cleanUrl = new URL(window.location.href);
+                ['focus', 'loan_id', 'fine_id', 'reservation_id'].forEach((k) => cleanUrl.searchParams.delete(k));
+                cleanUrl.hash = '';
+                const nextUrl = `${cleanUrl.pathname}${cleanUrl.search}`;
+                window.setTimeout(() => window.history.replaceState({}, '', nextUrl), 260);
+              }
             }
-            if (!target) return;
-
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            target.classList.add('sl-deep-pulse');
-            window.setTimeout(() => target.classList.remove('sl-deep-pulse'), 2200);
-
-            // Clean query params after navigation so shared URL stays neat.
-            const cleanUrl = new URL(window.location.href);
-            ['focus', 'loan_id', 'fine_id', 'reservation_id'].forEach((k) => cleanUrl.searchParams.delete(k));
-            cleanUrl.hash = '';
-            const nextUrl = `${cleanUrl.pathname}${cleanUrl.search}`;
-            window.setTimeout(() => window.history.replaceState({}, '', nextUrl), 260);
 
             // Premium quick filters for fines list.
             const fineFilters = Array.from(document.querySelectorAll('[data-fine-filter]'));

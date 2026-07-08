@@ -221,9 +221,13 @@
         <div class="modal-body">
           <div id="memberAlert" class="alert" style="display:none;"></div>
           <form class="row g-3" novalidate>
-            <div class="col-md-8">
+            <div class="col-md-6">
               <label class="form-label">Emri dhe mbiemri *</label>
               <input id="mp_full_name" class="form-control" type="text" placeholder="p.sh. Arben Hoxha" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Email *</label>
+              <input id="mp_email" class="form-control" type="email" placeholder="p.sh. emer@email.com" required />
             </div>
             <div class="col-md-4">
               <label class="form-label">Nr. ID</label>
@@ -300,6 +304,7 @@
       const alertBox = document.getElementById("memberAlert");
       const f = {
         full_name: document.getElementById("mp_full_name"),
+        email: document.getElementById("mp_email"),
         national_id: document.getElementById("mp_national_id"),
         phone: document.getElementById("mp_phone"),
         member_type: document.getElementById("mp_member_type"),
@@ -319,6 +324,10 @@
         if (!v) return true;
         return /^[A-Z][0-9]{8}[A-Z]$/.test(v);
       }
+      function isEmailValid(value){
+        const v = (value || "").trim();
+        return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(v);
+      }
 
       if (f.photo && photoPreview) {
         photoPreview.src = "";
@@ -335,6 +344,12 @@
       }
 
       submitBtn.addEventListener("click", async function () {
+        if (!f.email || !f.email.value || !isEmailValid(f.email.value)) {
+          show("warning", "Email-i është i detyrueshëm dhe duhet të jetë i vlefshëm.");
+          if (f.email) f.email.focus();
+          return;
+        }
+        f.email.value = (f.email.value || "").trim().toLowerCase();
         if (f.national_id) {
           const normalizedId = (f.national_id.value || "").trim().toUpperCase();
           f.national_id.value = normalizedId;

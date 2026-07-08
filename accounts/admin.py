@@ -4,6 +4,8 @@ from django.contrib import admin
 from django.contrib import messages
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django import forms
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.http import JsonResponse
 from django.urls import path
 from django.utils.html import format_html
@@ -333,6 +335,7 @@ class MemberProfileAdmin(admin.ModelAdmin):
                 payload = {}
 
         full_name = (payload.get("full_name") or "").strip()
+        email = (payload.get("email") or "").strip().lower()
         national_id = (payload.get("national_id") or "").strip()
         phone = (payload.get("phone") or "").strip()
         address = (payload.get("address") or "").strip()
@@ -344,6 +347,14 @@ class MemberProfileAdmin(admin.ModelAdmin):
 
         if not full_name:
             return JsonResponse({"ok": False, "error": "Emri dhe mbiemri është i detyrueshëm."}, status=400)
+        if not email:
+            return JsonResponse({"ok": False, "error": "Email-i është i detyrueshëm."}, status=400)
+        try:
+            validate_email(email)
+        except ValidationError:
+            return JsonResponse({"ok": False, "error": "Email-i nuk është i vlefshëm."}, status=400)
+        if User.objects.filter(email__iexact=email).exists():
+            return JsonResponse({"ok": False, "error": "Ky email ekziston. Përdor një email tjetër."}, status=400)
         if member_type not in ("STANDARD", "STUDENT", "VIP"):
             member_type = "STANDARD"
         if status not in ("ACTIVE", "SUSPENDED", "BLOCKED"):
@@ -361,6 +372,9 @@ class MemberProfileAdmin(admin.ModelAdmin):
                 status=status,
                 photo=photo,
             )
+            if member.user_id:
+                member.user.email = email
+                member.user.save(update_fields=["email"])
             return JsonResponse(
                 {
                     "ok": True,

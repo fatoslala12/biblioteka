@@ -206,6 +206,40 @@
     .sl-quick-res-modal .modal-header { background:#319189; color:#fff; border-bottom:0; }
     .sl-quick-res-modal .modal-title { color:#0f172a !important; font-weight:800 !important; }
     .sl-quick-res-modal .form-control, .sl-quick-res-modal .form-select { border-radius:12px; color:#0f172a !important; border-color:rgba(15,23,42,.16) !important; background:#fff !important; font-weight:600; }
+    .app-circulation.model-reservation.change-list .js-borrow-reservation {
+      position: relative;
+      z-index: 2;
+      pointer-events: auto !important;
+      touch-action: manipulation;
+    }
+    .sl-quick-res-modal,
+    .sl-borrow-confirm-modal {
+      z-index: 1085 !important;
+    }
+    .sl-quick-res-modal .modal-dialog,
+    .sl-borrow-confirm-modal .modal-dialog {
+      pointer-events: auto !important;
+    }
+    .sl-quick-res-modal .modal-content,
+    .sl-borrow-confirm-modal .modal-content {
+      pointer-events: auto !important;
+    }
+    @media (max-width: 767.98px) {
+      .sl-quick-res-modal .modal-dialog,
+      .sl-borrow-confirm-modal .modal-dialog {
+        margin: .5rem auto !important;
+        max-width: calc(100vw - 1rem);
+      }
+      .sl-quick-res-modal .modal-body,
+      .sl-borrow-confirm-modal .modal-body {
+        max-height: calc(100vh - 210px);
+        overflow-y: auto;
+      }
+      .sl-quick-res-modal .modal-footer .btn,
+      .sl-borrow-confirm-modal .modal-footer .btn {
+        min-height: 42px;
+      }
+    }
     .sl-borrow-confirm-modal .modal-content { border-radius:16px; overflow:hidden; border:1px solid rgba(255,255,255,.65); box-shadow:0 22px 50px rgba(15,23,42,.25); }
     .sl-borrow-confirm-modal .modal-header { background:#319189; border-bottom:0; }
     .sl-borrow-confirm-modal .modal-title { color:#fff; font-weight:800; }
@@ -259,7 +293,7 @@
           <a href="#" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exportModal" title="Eksporto me filtra"><i class="fas fa-file-pdf me-1"></i>PDF</a>
         </li>
         <li>
-          <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quickResModal">Shto rezervim</a>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quickResModal">Shto rezervim</button>
         </li>
       </ul>
     </div>
@@ -348,7 +382,9 @@
       const borrowKeepBtn = document.getElementById("borrowKeepDateBtn");
       const borrowTodayBtn = document.getElementById("borrowUseTodayBtn");
       const borrowTodayWarning = document.getElementById("borrowTodayWarning");
-      const confirmModal = confirmModalEl ? new bootstrap.Modal(confirmModalEl) : null;
+      const confirmModal = (confirmModalEl && window.bootstrap && window.bootstrap.Modal)
+        ? new window.bootstrap.Modal(confirmModalEl)
+        : null;
       let currentBorrowHref = "";
 
       document.addEventListener("click", function (e) {
@@ -370,7 +406,11 @@
             borrowTodayWarning.style.display = "block";
           }
         }
-        if (confirmModal) confirmModal.show();
+        if (confirmModal) {
+          confirmModal.show();
+          return;
+        }
+        window.location.href = currentBorrowHref;
       });
       if (borrowKeepBtn) {
         borrowKeepBtn.addEventListener("click", function () {

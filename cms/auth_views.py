@@ -344,6 +344,7 @@ def member_portal(request: HttpRequest):
         ReservationRequest.objects.select_related("book")
         .prefetch_related("book__authors")
         .filter(member=member_profile)
+        .exclude(status=ReservationRequestStatus.APPROVED)
         .order_by("-created_at")[:20]
     )
     ready_holds = (

@@ -84,7 +84,7 @@ _EVENT_CONFIG = {
         "badge_bg": "#dcfce7",
         "badge_color": "#166534",
         "cta_text": "Shiko rezervimet e mia",
-        "note": "Paraqituni në bibliotekë me kartën e anëtarit brenda afatit të marrjes.",
+        "note": "Paraqituni në bibliotekë me kartën e identitetit brenda afatit të marrjes.",
     },
     "ready": {
         "subject": "Libri është gati për tërheqje",
@@ -97,7 +97,7 @@ _EVENT_CONFIG = {
         "badge_bg": "#ccfbf1",
         "badge_color": "#115e59",
         "cta_text": "Shiko detajet",
-        "note": "Shko në bibliotekë me kartën e anëtarit për ta tërhequr librin para skadimit.",
+        "note": "Shko në bibliotekë me kartën e identitetit për ta tërhequr librin para skadimit.",
     },
     "rejected": {
         "subject": "Kërkesa për rezervim nuk u pranua",

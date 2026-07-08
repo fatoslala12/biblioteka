@@ -128,6 +128,22 @@
     .sl-quick-member-modal .modal-header { background:#319189; color:#fff; border-bottom:0; }
     .sl-quick-member-modal .modal-title { color:#0f172a !important; font-weight:800 !important; }
     .sl-quick-member-modal .form-control, .sl-quick-member-modal .form-select { border-radius:12px; color:#0f172a !important; border-color:rgba(15,23,42,.16) !important; background:#fff !important; font-weight:600; }
+    .sl-quick-member-modal { z-index:1085 !important; }
+    .sl-quick-member-modal .modal-dialog { pointer-events:auto !important; }
+    .sl-quick-member-modal .modal-content { pointer-events:auto !important; }
+    @media (max-width: 767.98px) {
+      .sl-quick-member-modal .modal-dialog {
+        margin:.5rem auto !important;
+        max-width:calc(100vw - 1rem);
+      }
+      .sl-quick-member-modal .modal-body {
+        max-height:calc(100vh - 210px);
+        overflow-y:auto;
+      }
+      .sl-quick-member-modal .modal-footer .btn {
+        min-height:42px;
+      }
+    }
     .sl-member-photo-preview { width:68px; height:68px; border-radius:999px; object-fit:cover; border:1px solid rgba(49,145,137,.28); background:#f5fbfa; }
     .modal-backdrop.show { background:rgba(9,14,27,.42) !important; backdrop-filter:blur(14px) saturate(125%); -webkit-backdrop-filter:blur(14px) saturate(125%); }
   </style>
@@ -138,7 +154,7 @@
     <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
       <ul class="object-tools d-flex flex-wrap gap-2 align-items-center m-0 p-0">
         <li>
-          <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quickMemberModal">Shto anëtar</a>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quickMemberModal">Shto anëtar</button>
         </li>
       </ul>
     </div>
@@ -162,7 +178,7 @@
 
 {% block object-tools-items %}
   <li>
-    <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#quickMemberModal">Shto anëtar</a>
+    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#quickMemberModal">Shto anëtar</button>
   </li>
 {% endblock %}
 

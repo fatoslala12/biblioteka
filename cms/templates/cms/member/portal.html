@@ -270,6 +270,24 @@
       height: 100% !important;
     }
     @media (max-width: 991.98px) {
+      .sl-member-hero .text-3xl {
+        font-size: 1.65rem !important;
+        line-height: 1.15 !important;
+      }
+      .sl-member-content {
+        padding-left: .7rem !important;
+        padding-right: .7rem !important;
+      }
+      .sl-surface-card {
+        padding: .95rem !important;
+        border-radius: 18px !important;
+      }
+      .sl-stat-card {
+        padding: .75rem !important;
+      }
+      .sl-stat-card .text-2xl {
+        font-size: 1.35rem !important;
+      }
       .sl-member-dashboard .sl-dashboard-head {
         text-align: center;
       }
@@ -310,10 +328,45 @@
         grid-template-columns: 1fr !important;
       }
       #member-reservations .sl-user-btn,
+      #member-ready-pickup .sl-user-btn,
       .sl-history-card .sl-user-btn {
         width: 100%;
         min-height: 42px;
         justify-content: center;
+      }
+      #member-reservations .rounded-full,
+      #member-ready-pickup .rounded-full,
+      .sl-history-card .rounded-full {
+        font-size: 11px !important;
+        line-height: 1.25 !important;
+      }
+    }
+    @media (max-width: 575.98px) {
+      .sl-member-content {
+        margin-top: -0.65rem !important;
+      }
+      .sl-member-hero .sl-hero-card {
+        padding: .85rem .75rem !important;
+      }
+      .sl-member-hero .text-xs {
+        font-size: .66rem !important;
+      }
+      .sl-member-hero .text-3xl {
+        font-size: 1.5rem !important;
+      }
+      .sl-profile-avatar {
+        width: 112px !important;
+        height: 112px !important;
+      }
+      #member-active-loans .sl-active-loan-mobile-card,
+      #member-reservations .sl-list-card,
+      #member-ready-pickup .sl-list-card,
+      .sl-history-card,
+      .sl-fine-item {
+        border-radius: 14px !important;
+      }
+      .sl-fine-hero {
+        border-radius: 16px !important;
       }
     }
 

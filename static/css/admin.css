@@ -2815,25 +2815,30 @@ body.app-notifications.model-usernotification.change-form #content-main .form-ro
   display: flex !important;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem 1.25rem;
-}
-.sl-admin-footer-copy {
-  min-width: 0;
-  flex: 1 1 auto;
+  justify-content: center;
+  gap: 0.35rem 1rem;
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+  min-height: 3.5rem;
 }
 .sl-lalvexa-admin-credit {
   float: none !important;
-  max-width: min(100%, 34rem);
-  text-align: right;
-  line-height: 1.35;
-  flex: 0 1 auto;
+  width: 100%;
+  max-width: 100%;
+  text-align: center;
+  line-height: 1.4;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: rgba(15, 23, 42, 0.88);
 }
 .sl-lalvexa-credit-link {
   color: #0f766e !important;
-  font-weight: 800 !important;
+  font-weight: 900 !important;
+  font-size: 1.28rem;
   text-decoration: underline !important;
-  text-underline-offset: 2px;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 2px;
 }
 .sl-lalvexa-credit-link:hover {
   color: #115e59 !important;
@@ -2846,9 +2851,11 @@ body.app-notifications.model-usernotification.change-form #content-main .form-ro
 }
 .sl-lalvexa-login-credit .sl-lalvexa-credit-link {
   color: #fff !important;
+  font-size: inherit;
   text-decoration: underline !important;
   text-decoration-color: rgba(253, 230, 138, 0.9) !important;
   text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
 }
 .sl-lalvexa-login-credit .sl-lalvexa-credit-link:hover {
   color: #fde68a !important;
@@ -2867,11 +2874,16 @@ body.login-page .app-footer .sl-lalvexa-credit-link {
 
 @media (max-width: 767.98px) {
   .sl-admin-footer {
-    flex-direction: column;
-    align-items: flex-start;
+    padding-top: 0.85rem !important;
+    padding-bottom: 0.85rem !important;
+    min-height: 0;
   }
   .sl-lalvexa-admin-credit {
-    text-align: left;
-    max-width: 100%;
+    font-size: 1.05rem;
+    padding-inline: 0.5rem;
+    text-wrap: balance;
+  }
+  .sl-lalvexa-credit-link {
+    font-size: 1.1rem;
   }
 }

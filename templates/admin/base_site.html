@@ -1,0 +1,20 @@
+{% extends "admin/base.html" %}
+{% load i18n jazzmin %}
+{% get_jazzmin_settings request as jazzmin_settings %}
+{% get_jazzmin_ui_tweaks as jazzmin_ui %}
+
+{% block footer %}
+  {% if not is_popup %}
+    <footer class="app-footer {{ jazzmin_ui.footer_classes }}">
+      <div class="float-end sl-lalvexa-admin-credit">
+        {% include "admin/includes/_lalvexa_credit.html" %}
+      </div>
+      {% autoescape off %}
+        <strong>{% trans 'Copyright' %} &copy; {% now 'Y' %} {{ jazzmin_settings.copyright }}.</strong> {% trans 'All rights reserved.' %}
+      {% endautoescape %}
+    </footer>
+    {% if jazzmin_settings.show_ui_builder %}
+      {% include "jazzmin/includes/ui_builder_panel.html" %}
+    {% endif %}
+  {% endif %}
+{% endblock %}

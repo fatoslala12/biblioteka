@@ -2809,3 +2809,33 @@ body.app-notifications.model-usernotification.change-form #content-main > .modul
 body.app-notifications.model-usernotification.change-form #content-main .form-row label {
   font-weight: 800 !important;
 }
+
+/* LalVexa developer credit in Jazzmin admin footer / login */
+.sl-lalvexa-admin-credit {
+  max-width: min(100%, 34rem);
+  text-align: right;
+  line-height: 1.35;
+}
+.sl-lalvexa-credit-link {
+  color: #0f766e !important;
+  font-weight: 800 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px;
+}
+.sl-lalvexa-credit-link:hover {
+  color: #115e59 !important;
+}
+.sl-lalvexa-login-credit .sl-lalvexa-credit-link {
+  color: #fff !important;
+  text-decoration: underline !important;
+  text-decoration-color: rgba(253, 230, 138, 0.9) !important;
+  text-underline-offset: 3px;
+}
+.sl-lalvexa-login-credit .sl-lalvexa-credit-link:hover {
+  color: #fde68a !important;
+  text-decoration-color: #fef3c7 !important;
+}
+body.login .app-footer .sl-lalvexa-credit-link,
+body.login-page .app-footer .sl-lalvexa-credit-link {
+  color: #0f766e !important;
+}

@@ -5,13 +5,15 @@
 
 {% block footer %}
   {% if not is_popup %}
-    <footer class="app-footer {{ jazzmin_ui.footer_classes }}">
-      <div class="float-end sl-lalvexa-admin-credit">
+    <footer class="app-footer {{ jazzmin_ui.footer_classes }} sl-admin-footer">
+      <div class="sl-admin-footer-copy">
+        {% autoescape off %}
+          <strong>{% trans 'Copyright' %} &copy; {% now 'Y' %} {{ jazzmin_settings.copyright }}.</strong> {% trans 'All rights reserved.' %}
+        {% endautoescape %}
+      </div>
+      <div class="sl-lalvexa-admin-credit">
         {% include "admin/includes/_lalvexa_credit.html" %}
       </div>
-      {% autoescape off %}
-        <strong>{% trans 'Copyright' %} &copy; {% now 'Y' %} {{ jazzmin_settings.copyright }}.</strong> {% trans 'All rights reserved.' %}
-      {% endautoescape %}
     </footer>
     {% if jazzmin_settings.show_ui_builder %}
       {% include "jazzmin/includes/ui_builder_panel.html" %}

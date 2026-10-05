@@ -2811,10 +2811,23 @@ body.app-notifications.model-usernotification.change-form #content-main .form-ro
 }
 
 /* LalVexa developer credit in Jazzmin admin footer / login */
+.sl-admin-footer {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1.25rem;
+}
+.sl-admin-footer-copy {
+  min-width: 0;
+  flex: 1 1 auto;
+}
 .sl-lalvexa-admin-credit {
+  float: none !important;
   max-width: min(100%, 34rem);
   text-align: right;
   line-height: 1.35;
+  flex: 0 1 auto;
 }
 .sl-lalvexa-credit-link {
   color: #0f766e !important;
@@ -2824,6 +2837,12 @@ body.app-notifications.model-usernotification.change-form #content-main .form-ro
 }
 .sl-lalvexa-credit-link:hover {
   color: #115e59 !important;
+}
+.sl-lalvexa-credit-link:focus-visible {
+  color: #115e59 !important;
+  outline: 2px solid #0f766e;
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 .sl-lalvexa-login-credit .sl-lalvexa-credit-link {
   color: #fff !important;
@@ -2835,7 +2854,24 @@ body.app-notifications.model-usernotification.change-form #content-main .form-ro
   color: #fde68a !important;
   text-decoration-color: #fef3c7 !important;
 }
+.sl-lalvexa-login-credit .sl-lalvexa-credit-link:focus-visible {
+  color: #fde68a !important;
+  outline: 2px solid rgba(253, 230, 138, 0.95);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
 body.login .app-footer .sl-lalvexa-credit-link,
 body.login-page .app-footer .sl-lalvexa-credit-link {
   color: #0f766e !important;
+}
+
+@media (max-width: 767.98px) {
+  .sl-admin-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .sl-lalvexa-admin-credit {
+    text-align: left;
+    max-width: 100%;
+  }
 }
